@@ -1,5 +1,5 @@
 {
-  "homepage": ".",
+  "homepage": "https://seven-leven.github.io/bird_dash/",
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
