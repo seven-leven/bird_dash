@@ -12,6 +12,7 @@ const BirdCard: React.FC<BirdCardProps> = ({ species, onImageClick }) => {
     ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` 
     : `${process.env.PUBLIC_URL}/placeholder_bird.png`;
   const fallbackPath = `${process.env.PUBLIC_URL}/placeholder_bird.png`;
+  console.log(`${process.env.PUBLIC_URL}/placeholder_bird.png`)
 
   return (
     <div 
