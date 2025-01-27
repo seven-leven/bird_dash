@@ -9,9 +9,9 @@ interface BirdCardProps {
 
 const BirdCard: React.FC<BirdCardProps> = ({ species, onImageClick }) => {
   const imagePath = species.spotted 
-    ? `/pictures/${species.index}.png` 
-    : '/placeholder_bird.png';
-  const fallbackPath = '/placeholder_bird.png';
+    ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` 
+    : `${process.env.PUBLIC_URL}/placeholder_bird.png`;
+  const fallbackPath = `${process.env.PUBLIC_URL}/placeholder_bird.png`;
 
   return (
     <div 
