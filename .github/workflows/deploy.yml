@@ -28,6 +28,9 @@ jobs:
       # Build the project
       - name: Build project
         run: npm run build
+        env:
+          PUBLIC_URL: /your-repo-name 
+          CI: false
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
