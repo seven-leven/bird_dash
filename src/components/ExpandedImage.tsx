@@ -10,7 +10,7 @@ const ExpandedImage: React.FC<ExpandedSpeciesState & {
   onNext?: () => void;
 }> = ({ species, family, allSpotted, currentIndex, onClose, onPrev, onNext }) => {
   const [scale, setScale] = useState(1);
-  const imageUrl = species?.spotted ? `/pictures/${species.index}.png` : null;
+  const imageUrl = species?.spotted ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` : null;
 
   useEffect(() => {
     if (!imageUrl) return;
