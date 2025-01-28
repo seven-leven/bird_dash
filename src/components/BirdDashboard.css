@@ -267,7 +267,7 @@ button {
 }
 
 .bird-card:hover .bird-name {
-  transform: translateY(100%); /* Slide name down */
+  transform: translateY(200%); /* Slide name down */
 }
 
 

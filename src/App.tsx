@@ -1,3 +1,4 @@
+import React from 'react'; // Add React import
 import { Routes, Route } from 'react-router-dom';
 import BirdDashboard from './components/BirdDashboard.tsx';
 
