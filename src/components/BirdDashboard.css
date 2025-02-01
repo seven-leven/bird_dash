@@ -44,6 +44,7 @@ body {
   overflow: hidden;
   aspect-ratio: 1;
   transition: transform var(--transition-timing), box-shadow var(--transition-timing);
+  background-color: white;
 }
 
 /* Image grid system */
