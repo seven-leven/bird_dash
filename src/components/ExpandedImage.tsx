@@ -1,27 +1,32 @@
 // ExpandedImage.tsx
-import React, { useState, useEffect } from 'react';
-import { ExpandedSpeciesState } from '../types/types';
+import React, { useState, useEffect, useCallback } from 'react';
+import { ExpandedSpeciesState } from '../types/types.tsx';
 import  {CloseButton, NavigationArrows, ZoomControls } from '../utils/ExpandedImageUtils.tsx';
+import './ExpandedImage.css';
 
-// Main component
+
 const ExpandedImage: React.FC<ExpandedSpeciesState & { 
   onClose: () => void;
-  onPrev?: () => void;
-  onNext?: () => void;
-}> = ({ species, family, allSpotted, currentIndex, onClose, onPrev, onNext }) => {
+  onPrev: () => void;
+  onNext: () => void;
+}> = React.memo(({ species, family, allSpotted, currentIndex, onClose, onPrev, onNext }) => {
   const [scale, setScale] = useState(1);
   const imageUrl = species?.spotted ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` : null;
+
+  // Memoized zoom handlers
+  const zoomIn = useCallback(() => setScale(s => Math.min(s + 0.1, 3)), []);
+  const zoomOut = useCallback(() => setScale(s => Math.max(s - 0.1, 0.5)), []);
 
   useEffect(() => {
     if (!imageUrl) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
-        case 'ArrowLeft': onPrev?.(); break;
-        case 'ArrowRight': onNext?.(); break;
+        case 'ArrowLeft': onPrev(); break;
+        case 'ArrowRight': onNext(); break;
         case 'Escape': onClose(); break;
-        case '+': setScale(s => Math.min(s + 0.1, 3)); break;
-        case '-': setScale(s => Math.max(s - 0.1, 0.5)); break;
+        case '+': zoomIn(); break;
+        case '-': zoomOut(); break;
       }
     };
 
@@ -36,9 +41,9 @@ const ExpandedImage: React.FC<ExpandedSpeciesState & {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('wheel', handleWheel);
-      setScale(1); // Reset zoom when closing
+      setScale(1);
     };
-  }, [imageUrl, onClose, onPrev, onNext]);
+  }, [imageUrl, onClose, onPrev, onNext, zoomIn, zoomOut]);
 
   if (!imageUrl) return null;
 
@@ -72,6 +77,6 @@ const ExpandedImage: React.FC<ExpandedSpeciesState & {
       <ZoomControls scale={scale} setScale={setScale} />
     </div>
   );
-};
+});
 
 export default ExpandedImage;

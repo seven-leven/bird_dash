@@ -2,7 +2,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter, Routes, Route } from 'react-router-dom';
-import BirdDashboard from './components/BirdDashboard.tsx';
+import BirdDashboard from './BirdDashboard.tsx';
 
 // Main app component
 function App() {

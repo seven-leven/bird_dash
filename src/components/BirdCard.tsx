@@ -1,37 +1,79 @@
 // BirdCard.tsx
 import React from 'react';
-import { BirdSpecies } from '../types/types';
+import styles from './BirdCard.module.css';
+import { BirdCardProps, BirdSpecies, BirdFamily } from '../types/types';
 
-interface BirdCardProps {
-  species: BirdSpecies;
-  onImageClick: (imagePath: string) => void;
-}
-
-const BirdCard: React.FC<BirdCardProps> = ({ species, onImageClick }) => {
-  const imagePath = species.spotted 
-    ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` 
-    : `${process.env.PUBLIC_URL}/placeholder_bird.png`;
-  const fallbackPath = `${process.env.PUBLIC_URL}/placeholder_bird.png`;
-  
+const BirdCard = React.memo(({ 
+  imagePath, 
+  fallbackPath, 
+  index, 
+  name, 
+  isClickable, 
+  onImageClick 
+}: BirdCardProps) => {
   return (
     <div 
-      className="bird-card"
-      onClick={() => species.spotted && onImageClick(imagePath)}
+      className={styles.birdCard}
+      onClick={isClickable ? onImageClick : undefined}
       style={{
         backgroundImage: `url(${imagePath}), url(${fallbackPath})`,
-        cursor: species.spotted ? 'pointer' : 'default'
+        cursor: isClickable ? 'pointer' : 'default'
       }}
     >
-      <div className="bird-index">
-        #{species.index.toString().padStart(2, '0')}
+      <div className={styles.birdIndex}>
+        #{index.toString().padStart(3, '0')}
       </div>
-      <div className="bird-name-container">
-        <p className="bird-name">
-          {species.name}
+      <div className={styles.birdNameContainer}>
+        <p className={styles.birdName}>
+          {name}
         </p>
       </div>
     </div>
   );
-};
+});
 
-export default BirdCard;
+interface FamilyCardProps {
+  family: BirdFamily;
+  onImageClick: (imagePath: string) => void;
+}
+
+export const FamilyCard = React.memo(({ family, onImageClick }: FamilyCardProps) => {
+  const spottedSpecies = family.species.filter(s => s.spotted);
+
+  return (
+    <div className={styles.familyCardWrapper}>
+      <BirdCard
+        imagePath=""   // No image needed.
+        fallbackPath=""// No fallback needed.
+        index={0}
+        name={family.family}
+        isClickable={spottedSpecies.length > 0}
+        onImageClick={onImageClick}
+      />
+    </div>
+  );
+});
+
+
+interface SpeciesCardProps {
+  species: BirdSpecies;
+  onImageClick: (imagePath: string) => void;
+}
+
+export const SpeciesCard = React.memo(({ species, onImageClick }: SpeciesCardProps) => {
+  const imagePath = species.spotted 
+    ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` 
+    : `${process.env.PUBLIC_URL}/placeholder_bird.png`;
+  const fallbackPath = `${process.env.PUBLIC_URL}/placeholder_bird.png`;
+
+  return (
+    <BirdCard
+      imagePath={imagePath}
+      fallbackPath={fallbackPath}
+      index={species.index}
+      name={species.name}
+      isClickable={species.spotted}
+      onImageClick={() => onImageClick(imagePath)}
+    />
+  );
+});

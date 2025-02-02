@@ -1,0 +1,106 @@
+/* Image overlay styles */
+.expanded-image-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-index-overlay);
+  }
+  
+  .expanded-image-header,
+  .navigation-arrows,
+  .zoom-controls {
+    position: absolute;
+    color: white;
+    z-index: var(--z-index-overlay-content);
+  }
+  
+  .expanded-image-header {
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .navigation-arrows {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  
+  .zoom-controls {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    background: var(--overlay-bg);
+    padding: 10px;
+    border-radius: 8px;
+  }
+  
+  /* Utility classes */
+  .image-container {
+    max-width: 90%;
+    max-height: 90%;
+    overflow: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .image-container::-webkit-scrollbar { display: none; }
+  
+  .expanded-image {
+    max-width: 100%;
+    max-height: 100vh;
+    object-fit: contain;
+    transition: transform 0.1s;
+    transform-origin: center center;
+  }
+  
+  .expanded-image-info {
+    background: var(--overlay-bg);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-family: var(--base-font);
+  }
+  
+  .species-name { font-size: 1.5em; }
+  .family-name { font-size: 0.9em; }
+  
+  /* Interactive elements */
+  button {
+    cursor: pointer;
+    transition: opacity var(--transition-timing), background var(--transition-timing);
+    background: none;
+    border: none;
+    color: inherit;
+  }
+  
+  .close-button:hover { opacity: 0.8; }
+  
+  .nav-arrow {
+    background: var(--overlay-bg);
+    font-size: 2em;
+    padding: 10px 20px;
+    border-radius: 50%;
+  }
+  
+  .nav-arrow:hover { background: rgba(0, 0, 0, 0.8); }
+  
+  .zoom-controls button {
+    background: #444;
+    padding: 8px 12px;
+    border-radius: 4px;
+  }
+  
+  .zoom-controls button:hover { background: #666; }

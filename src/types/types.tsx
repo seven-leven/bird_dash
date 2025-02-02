@@ -1,3 +1,5 @@
+// types.tsx
+
 export interface BirdSpecies {
   index: number;
   name: string;
@@ -9,6 +11,15 @@ export type BirdFamily = {
     family: string;
     species: BirdSpecies[];
   };
+
+export interface BirdCardProps {
+  imagePath: string;
+  fallbackPath: string;
+  index?: number;
+  name: string;
+  isClickable: boolean;
+  onImageClick?: () => void;
+}
 
 export interface ExpandedSpeciesState {
     species: BirdSpecies | null;
