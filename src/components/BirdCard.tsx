@@ -1,4 +1,3 @@
-// BirdCard.tsx
 import React from 'react';
 import styles from './BirdCard.module.css';
 import { BirdCardProps, BirdSpecies, BirdFamily } from '../types/types';
@@ -14,7 +13,7 @@ const BirdCard = React.memo(({
   return (
     <div 
       className={styles.birdCard}
-      onClick={isClickable ? onImageClick : undefined}
+      onClick={isClickable ? () => onImageClick(imagePath) : undefined}
       style={{
         backgroundImage: `url(${imagePath}), url(${fallbackPath})`,
         cursor: isClickable ? 'pointer' : 'default'
@@ -43,8 +42,8 @@ export const FamilyCard = React.memo(({ family, onImageClick }: FamilyCardProps)
   return (
     <div className={styles.familyCardWrapper}>
       <BirdCard
-        imagePath=""   // No image needed.
-        fallbackPath=""// No fallback needed.
+        imagePath=""   // No image needed
+        fallbackPath=""// No fallback needed
         index={0}
         name={family.family}
         isClickable={spottedSpecies.length > 0}
@@ -53,7 +52,6 @@ export const FamilyCard = React.memo(({ family, onImageClick }: FamilyCardProps)
     </div>
   );
 });
-
 
 interface SpeciesCardProps {
   species: BirdSpecies;
@@ -73,7 +71,7 @@ export const SpeciesCard = React.memo(({ species, onImageClick }: SpeciesCardPro
       index={species.index}
       name={species.name}
       isClickable={species.spotted}
-      onImageClick={() => onImageClick(imagePath)}
+      onImageClick={onImageClick}
     />
   );
 });

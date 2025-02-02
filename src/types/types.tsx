@@ -15,10 +15,10 @@ export type BirdFamily = {
 export interface BirdCardProps {
   imagePath: string;
   fallbackPath: string;
-  index?: number;
+  index: number;
   name: string;
   isClickable: boolean;
-  onImageClick?: () => void;
+  onImageClick: (imagePath: string) => void;
 }
 
 export interface ExpandedSpeciesState {
