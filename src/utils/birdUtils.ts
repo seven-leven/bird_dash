@@ -1,4 +1,4 @@
-import { BirdFamily } from '../types/types.ts';
+import { BirdFamily } from "../types/types.ts";
 
 export const calculateTotalBirds = (families: BirdFamily[]): number => {
   return families.reduce((acc, family) => acc + family.species.length, 0);
@@ -9,11 +9,11 @@ export const getTrackerTitle = (spotted: number, total: number): string => {
 };
 
 export const parseBirdData = (text: string): BirdFamily[] => {
-  const lines = text.split('\n');
+  const lines = text.split("\n");
   const families: BirdFamily[] = [];
   let currentFamily: BirdFamily | null = null;
 
-  lines.forEach(line => {
+  lines.forEach((line) => {
     const trimmed = line.trim();
     if (!trimmed) return;
 
@@ -28,7 +28,7 @@ export const parseBirdData = (text: string): BirdFamily[] => {
           index: parseInt(match[1]),
           name: match[2].trim(),
           spotted,
-          spottedDate: match[3] || undefined
+          spottedDate: match[3] || undefined,
         });
       }
     }

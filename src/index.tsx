@@ -1,8 +1,8 @@
 // App.tsx
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import BirdDashboard from './BirdDashboard.tsx';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { HashRouter, Route, Routes } from "react-router-dom";
+import BirdDashboard from "./BirdDashboard.tsx";
 
 // Main app component
 function App() {
@@ -16,7 +16,7 @@ function App() {
 
 // Root rendering logic
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement,
 );
 
 root.render(
@@ -24,5 +24,5 @@ root.render(
     <HashRouter>
       <App />
     </HashRouter>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -1,54 +1,56 @@
 :root {
-    --primary-text-color: #4a5568;
-    --overlay-bg: rgba(0, 0, 0, 0.7);
-    --base-font: Arial, sans-serif;
-    --transition-timing: 0.2s;
-    --z-index-overlay: 1000;
-    --z-index-overlay-content: 1001;
-  }
-  
-  body {
-    background-color: rgba(0, 0, 0, 0.10);
-  }
-  
-  .birdContainer {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    padding: 2rem;
-    max-width: 1400px;
-    margin: 0 auto;
-  }
-  
-  .birdTrackerTitle,
-  .familyTitle {
-    font-family: var(--base-font);
-    font-weight: 700;
-    color: var(--primary-text-color);
-    text-align: center;
-  }
-  
-  .birdTrackerTitle {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .familyTitle {
-    font-size: 2rem;
-    border: 2px solid var(--primary-text-color);
-    border-radius: 1rem;
-    padding: 0.5rem;
-    margin: 0 0 0 0 rem;
-    position: relative;
-    overflow: hidden;
-    aspect-ratio: 1;
-    transition: transform var(--transition-timing), box-shadow var(--transition-timing);
-    background-color: white;
-  }
-  
-  .speciesGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    align-items: center;
-  }
+  --primary-text-color: #4a5568;
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --base-font: Arial, sans-serif;
+  --transition-timing: 0.2s;
+  --z-index-overlay: 1000;
+  --z-index-overlay-content: 1001;
+}
+
+body {
+  background-color: rgba(0, 0, 0, 0.10);
+}
+
+.birdContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.birdTrackerTitle,
+.familyTitle {
+  font-family: var(--base-font);
+  font-weight: 700;
+  color: var(--primary-text-color);
+  text-align: center;
+}
+
+.birdTrackerTitle {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.familyTitle {
+  font-size: 2rem;
+  border: 2px solid var(--primary-text-color);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  margin: 0 0 0 0 rem;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  transition:
+    transform var(--transition-timing),
+    box-shadow var(--transition-timing);
+  background-color: white;
+}
+
+.speciesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: center;
+}

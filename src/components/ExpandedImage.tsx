@@ -1,8 +1,12 @@
 // ExpandedImage.tsx
-import React, { useState, useEffect, useCallback } from 'react';
-import { ExpandedSpeciesState } from '../types/types.tsx';
-import  {CloseButton, NavigationArrows, ZoomControls } from '../utils/ExpandedImageUtils.tsx';
-import './ExpandedImage.css';
+import React, { useCallback, useEffect, useState } from "react";
+import { ExpandedSpeciesState } from "../types/types.tsx";
+import {
+  CloseButton,
+  NavigationArrows,
+  ZoomControls,
+} from "../utils/ExpandedImageUtils.tsx";
+import "./ExpandedImage.css";
 
 interface ExpandedImageProps extends ExpandedSpeciesState {
   onClose: () => void;
@@ -18,27 +22,30 @@ const ExpandedImage: React.FC<ExpandedImageProps> = React.memo(
       : null;
 
     // Zoom handlers
-    const zoomIn = useCallback(() => setScale(s => Math.min(s + 0.1, 3)), []);
-    const zoomOut = useCallback(() => setScale(s => Math.max(s - 0.1, 0.5)), []);
+    const zoomIn = useCallback(() => setScale((s) => Math.min(s + 0.1, 3)), []);
+    const zoomOut = useCallback(
+      () => setScale((s) => Math.max(s - 0.1, 0.5)),
+      [],
+    );
 
     useEffect(() => {
       if (!imageUrl) return;
 
       const handleKeyDown = (e: KeyboardEvent) => {
         switch (e.key) {
-          case 'ArrowLeft':
+          case "ArrowLeft":
             onPrev();
             break;
-          case 'ArrowRight':
+          case "ArrowRight":
             onNext();
             break;
-          case 'Escape':
+          case "Escape":
             onClose();
             break;
-          case '+':
+          case "+":
             zoomIn();
             break;
-          case '-':
+          case "-":
             zoomOut();
             break;
           default:
@@ -48,15 +55,15 @@ const ExpandedImage: React.FC<ExpandedImageProps> = React.memo(
 
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
-        setScale(prev => Math.min(Math.max(0.5, prev + e.deltaY * -0.01), 3));
+        setScale((prev) => Math.min(Math.max(0.5, prev + e.deltaY * -0.01), 3));
       };
 
-      globalThis.addEventListener('keydown', handleKeyDown);
-      globalThis.addEventListener('wheel', handleWheel, { passive: false });
+      globalThis.addEventListener("keydown", handleKeyDown);
+      globalThis.addEventListener("wheel", handleWheel, { passive: false });
 
       return () => {
-        globalThis.removeEventListener('keydown', handleKeyDown);
-        globalThis.removeEventListener('wheel', handleWheel);
+        globalThis.removeEventListener("keydown", handleKeyDown);
+        globalThis.removeEventListener("wheel", handleWheel);
         setScale(1);
       };
     }, [imageUrl, onClose, onPrev, onNext, zoomIn, zoomOut]);
@@ -93,7 +100,7 @@ const ExpandedImage: React.FC<ExpandedImageProps> = React.memo(
         <ZoomControls scale={scale} setScale={setScale} />
       </div>
     );
-  }
+  },
 );
 
 export default ExpandedImage;

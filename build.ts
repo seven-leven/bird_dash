@@ -1,7 +1,6 @@
 import { build, stop } from "https://deno.land/x/esbuild@v0.25.0/mod.js";
 import { copy, ensureDir } from "jsr:@std/fs";
 
-
 await ensureDir("build");
 
 await build({

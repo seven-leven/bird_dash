@@ -10,10 +10,15 @@ const handler = async (req: Request): Promise<Response> => {
     const headers = new Headers();
 
     if (filePath.endsWith(".html")) headers.set("content-type", "text/html");
-    else if (filePath.endsWith(".js")) headers.set("content-type", "application/javascript");
-    else if (filePath.endsWith(".css")) headers.set("content-type", "text/css"); // ✅ Serve all CSS files
-    else if (filePath.endsWith(".png")) headers.set("content-type", "image/png");
-    else if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) headers.set("content-type", "image/jpeg");
+    else if (filePath.endsWith(".js")) {
+      headers.set("content-type", "application/javascript");
+    } else if (filePath.endsWith(".css")) {
+      headers.set("content-type", "text/css"); // ✅ Serve all CSS files
+    } else if (filePath.endsWith(".png")) {
+      headers.set("content-type", "image/png");
+    } else if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
+      headers.set("content-type", "image/jpeg");
+    }
 
     return new Response(file, { headers });
   } catch {
