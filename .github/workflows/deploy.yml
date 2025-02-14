@@ -4,8 +4,10 @@ on:
   push:
     branches:
       - main  # Trigger on pushes to the main branch
+
 permissions:
   contents: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -13,24 +15,23 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # Set up Deno 2
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
         with:
-          node-version: 18
+          deno-version: v2.x  # Use latest Deno 2.x
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm install
+      # Install esbuild
+      - name: Install esbuild
+        run: deno cache build.ts
 
-      # Build the project
+      # Build the project using Deno and esbuild
       - name: Build project
-        run: npm run build
+        run: deno run --allow-read --allow-write --allow-net --allow-env build.ts
         env:
           PUBLIC_URL: .
-          CI: false
 
       # Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
