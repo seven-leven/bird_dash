@@ -12,7 +12,7 @@ const useBirdData = () => {
     const loadBirdData = async () => {
       try {
         const baseURL = import.meta.env?.PUBLIC_URL || window.location.origin;
-        const response = await fetch(`${baseURL}/birds.txt`);
+        const response = await fetch(`./birds.txt`);
         const textData = await response.text();
         const parsedFamilies = parseBirdData(textData);
         

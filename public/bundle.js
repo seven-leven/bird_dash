@@ -154,7 +154,7 @@ var ZoomControls = ({ scale, setScale }) => /* @__PURE__ */ React2.createElement
 // src/components/ExpandedImage.tsx
 var ExpandedImage = React3.memo(({ species, family, allSpotted, currentIndex, onClose, onPrev, onNext }) => {
   const [scale, setScale] = useState2(1);
-  const imageUrl = species?.spotted ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` : null;
+  const imageUrl = species?.spotted ? `${"."}/pictures/${species.index}.png` : null;
   const zoomIn = useCallback(() => setScale((s) => Math.min(s + 0.1, 3)), []);
   const zoomOut = useCallback(() => setScale((s) => Math.max(s - 0.1, 0.5)), []);
   useEffect2(() => {
