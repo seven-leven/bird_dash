@@ -1,0 +1,250 @@
+/* src/components/BirdCard.module.css */
+.BirdCard_birdCard {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  background-color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+  --base-font: Arial, sans-serif;
+}
+.BirdCard_birdCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+.BirdCard_birdIndex {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.5rem;
+  color: white;
+  transition: transform 0.3s ease;
+  --base-font: Arial, sans-serif;
+}
+.BirdCard_birdNameContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background:
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.7),
+      transparent);
+  transition: all 0.3s ease;
+}
+.BirdCard_birdName {
+  font-family: Arial, sans-serif;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0.5rem;
+  margin: 0;
+  transition: transform 0.3s ease;
+}
+.BirdCard_birdCard:hover .BirdCard_birdNameContainer {
+  background: transparent;
+}
+.BirdCard_birdCard:hover .BirdCard_birdIndex {
+  transform: translateY(-200%);
+}
+.BirdCard_birdCard:hover .BirdCard_birdName {
+  transform: translateY(200%);
+}
+.BirdCard_familyCardWrapper {
+  border: 4px solid darkgray;
+  border-radius: 1rem;
+  overflow: hidden;
+  background-color: white;
+}
+.BirdCard_familyCardWrapper:hover {
+  background-color: darkgray;
+}
+.BirdCard_familyCardWrapper .BirdCard_birdCard {
+  background-color: transparent !important;
+  transition: none;
+}
+.BirdCard_familyCardWrapper .BirdCard_birdIndex {
+  display: none;
+}
+.BirdCard_familyCardWrapper .BirdCard_birdNameContainer {
+  bottom: auto;
+  top: 0;
+  background: transparent;
+  padding: 1rem;
+}
+.BirdCard_familyCardWrapper .BirdCard_birdName {
+  color: darkgray;
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 0;
+}
+.BirdCard_familyCardWrapper:hover .BirdCard_birdName {
+  color: white;
+}
+.BirdCard_familyCardWrapper:hover .BirdCard_birdNameContainer {
+  top: 50%;
+  transform: translateY(-170%);
+}
+
+/* src/components/ExpandedImage.css */
+.expanded-image-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-index-overlay);
+}
+.expanded-image-header,
+.navigation-arrows,
+.zoom-controls {
+  position: absolute;
+  color: white;
+  z-index: var(--z-index-overlay-content);
+}
+.expanded-image-header {
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navigation-arrows {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+.zoom-controls {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  background: var(--overlay-bg);
+  padding: 10px;
+  border-radius: 8px;
+}
+.image-container {
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.image-container::-webkit-scrollbar {
+  display: none;
+}
+.expanded-image {
+  max-width: 100%;
+  max-height: 100vh;
+  object-fit: contain;
+  transition: transform 0.1s;
+  transform-origin: center center;
+}
+.expanded-image-info {
+  background: var(--overlay-bg);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: var(--base-font);
+}
+.species-name {
+  font-size: 1.5em;
+}
+.family-name {
+  font-size: 0.9em;
+}
+button {
+  cursor: pointer;
+  transition: opacity var(--transition-timing), background var(--transition-timing);
+  background: none;
+  border: none;
+  color: inherit;
+}
+.close-button:hover {
+  opacity: 0.8;
+}
+.nav-arrow {
+  background: var(--overlay-bg);
+  font-size: 2em;
+  padding: 10px 20px;
+  border-radius: 50%;
+}
+.nav-arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+.zoom-controls button {
+  background: #444;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+.zoom-controls button:hover {
+  background: #666;
+}
+
+/* src/BirdDashboard.module.css */
+:root {
+  --primary-text-color: #4a5568;
+  --overlay-bg: rgba(0, 0, 0, 0.7);
+  --base-font: Arial, sans-serif;
+  --transition-timing: 0.2s;
+  --z-index-overlay: 1000;
+  --z-index-overlay-content: 1001;
+}
+body {
+  background-color: rgba(0, 0, 0, 0.10);
+}
+.BirdDashboard_birdContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.BirdDashboard_birdTrackerTitle,
+.BirdDashboard_familyTitle {
+  font-family: var(--base-font);
+  font-weight: 700;
+  color: var(--primary-text-color);
+  text-align: center;
+}
+.BirdDashboard_birdTrackerTitle {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+.BirdDashboard_familyTitle {
+  font-size: 2rem;
+  border: 2px solid var(--primary-text-color);
+  border-radius: 1rem;
+  padding: 0.5rem;
+  margin: 0 0 0 0 rem;
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 1;
+  transition: transform var(--transition-timing), box-shadow var(--transition-timing);
+  background-color: white;
+}
+.BirdDashboard_speciesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  align-items: center;
+}
+/*# sourceMappingURL=bundle.css.map */

@@ -1,3 +1,4 @@
+// useBirdData.ts
 import { useState, useEffect } from 'react';
 import { BirdFamily } from '../types/types.tsx';
 import { calculateTotalBirds, parseBirdData } from './birdUtils.ts';
@@ -10,7 +11,8 @@ const useBirdData = () => {
   useEffect(() => {
     const loadBirdData = async () => {
       try {
-        const response = await fetch(`${process.env.PUBLIC_URL}/birds.txt`);
+        const baseURL = import.meta.env?.PUBLIC_URL || window.location.origin;
+        const response = await fetch(`${baseURL}/birds.txt`);
         const textData = await response.text();
         const parsedFamilies = parseBirdData(textData);
         

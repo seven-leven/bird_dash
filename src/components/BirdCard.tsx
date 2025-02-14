@@ -1,3 +1,4 @@
+// BirdCard.tsx
 import React from 'react';
 import styles from './BirdCard.module.css';
 import { BirdCardProps, BirdSpecies, BirdFamily } from '../types/types';
@@ -59,10 +60,12 @@ interface SpeciesCardProps {
 }
 
 export const SpeciesCard = React.memo(({ species, onImageClick }: SpeciesCardProps) => {
+  const baseURL = import.meta.env?.PUBLIC_URL || window.location.origin;
+
   const imagePath = species.spotted 
-    ? `${process.env.PUBLIC_URL}/pictures/${species.index}.png` 
-    : `${process.env.PUBLIC_URL}/placeholder_bird.png`;
-  const fallbackPath = `${process.env.PUBLIC_URL}/placeholder_bird.png`;
+    ? `${baseURL}/pictures/${species.index}.png` 
+    : `${baseURL}/placeholder_bird.png`;
+  const fallbackPath = `${baseURL}/placeholder_bird.png`;
 
   return (
     <BirdCard
