@@ -5,7 +5,7 @@ import { copy, ensureDir } from "jsr:@std/fs";
 // Ensure the build directory exists
 await ensureDir("build");
 
-// Run the build process
+// Build the project, replacing process.env.PUBLIC_URL with "."
 await build({
   entryPoints: ["src/index.tsx"],
   bundle: true,
@@ -13,12 +13,13 @@ await build({
   sourcemap: true,
   format: "esm",
   loader: { ".tsx": "tsx", ".ts": "ts" },
+  define: {
+    "process.env.PUBLIC_URL": JSON.stringify("."),
+  },
   external: ["react", "react-dom", "react-router-dom"],
 });
 
-// Copy the public directory to build/
 await copy("public", "build", { overwrite: true });
 
 console.log("Build completed. Files moved to 'build/'.");
-
 stop();
