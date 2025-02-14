@@ -23,13 +23,20 @@ jobs:
         with:
           deno-version: v2.x  # Use latest Deno 2.x
 
-      # Install esbuild
-      - name: Install esbuild
+      # Cache dependencies (optional)
+      - name: Cache Deno modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('**/deps.ts') }}
+
+      # Install esbuild by caching the build script
+      - name: Cache esbuild
         run: deno cache build.ts
 
-      # Build the project using Deno and esbuild
+      # Build the project using Deno and esbuild with required permissions
       - name: Build project
-        run: deno run --allow-read --allow-write --allow-net --allow-env build.ts
+        run: deno run --allow-read --allow-write --allow-net --allow-env --allow-run build.ts
         env:
           PUBLIC_URL: .
 
