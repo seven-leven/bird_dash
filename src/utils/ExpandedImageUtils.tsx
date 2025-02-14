@@ -1,35 +1,57 @@
 import React from 'react';
 
-// Sub-components
+interface NavigationArrowsProps {
+  onPrev: () => void;
+  onNext: () => void;
+  showPrev: boolean;
+  showNext: boolean;
+}
+
+export const NavigationArrows: React.FC<NavigationArrowsProps> = ({
+  onPrev,
+  onNext,
+  showPrev,
+  showNext,
+}) => {
+  return (
+    <div className="navigation-arrows">
+      {showPrev ? (
+        <button className="arrow prev" onClick={onPrev} aria-label="Previous Image">
+          &#8249;
+        </button>
+      ) : (
+        // Invisible placeholder to maintain layout
+        <div className="arrow placeholder" />
+      )}
+      {showNext ? (
+        <button className="arrow next" onClick={onNext} aria-label="Next Image">
+          &#8250;
+        </button>
+      ) : (
+        <div className="arrow placeholder" />
+      )}
+    </div>
+  );
+};
+
 export const CloseButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
-  <button className="close-button" onClick={onClick}>
-    <svg viewBox="0 0 24 24" width="24" height="24">
-      <path fill="currentColor" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-    </svg>
+  <button className="close-button" onClick={onClick} aria-label="Close">
+    &times;
   </button>
 );
 
-export const NavigationArrows: React.FC<{ 
-  onPrev?: () => void; 
-  onNext?: () => void;
-  showPrev: boolean;
-  showNext: boolean;
-}> = ({ onPrev, onNext, showPrev, showNext }) => (
-  <div className="navigation-arrows">
-    {showPrev && <button className="nav-arrow prev" onClick={onPrev}>&#10094;</button>}
-    {showNext && <button className="nav-arrow next" onClick={onNext}>&#10095;</button>}
-  </div>
-);
-
-export const ZoomControls: React.FC<{ 
+export const ZoomControls: React.FC<{
   scale: number;
-  setScale: (value: number) => void;
-}> = ({ scale, setScale }) => (
-  <div className="zoom-controls">
-    <button onClick={() => setScale(1)}>Reset</button>
-    <div className="zoom-buttons">
-      <button onClick={() => setScale(Math.min(scale + 0.1, 3))}>+</button>
-      <button onClick={() => setScale(Math.max(scale - 0.1, 0.5))}>-</button>
+  setScale: React.Dispatch<React.SetStateAction<number>>;
+}> = ({ scale, setScale }) => {
+  const zoomIn = () => setScale(s => Math.min(s + 0.1, 3));
+  const zoomOut = () => setScale(s => Math.max(s - 0.1, 0.5));
+
+  return (
+    <div className="zoom-controls">
+      <button onClick={zoomOut} aria-label="Zoom Out">-</button>
+      <span>{(scale * 100).toFixed(0)}%</span>
+      <button onClick={zoomIn} aria-label="Zoom In">+</button>
     </div>
-  </div>
-);
+  );
+};

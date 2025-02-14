@@ -1,7 +1,8 @@
 // useBirdData.ts
 import { useState, useEffect } from 'react';
-import { BirdFamily } from '../types/types.tsx';
+import { BirdFamily, BirdSpecies } from '../types/types.tsx';
 import { calculateTotalBirds, parseBirdData } from './birdUtils.ts';
+
 
 const useBirdData = () => {
   const [families, setFamilies] = useState<BirdFamily[]>([]);
@@ -15,8 +16,9 @@ const useBirdData = () => {
         const textData = await response.text();
         const parsedFamilies = parseBirdData(textData);
         
+        // Add type annotation to the filter callback parameter
         const allSpotted = parsedFamilies.flatMap(f => 
-          f.species.filter(s => s.spotted)
+          f.species.filter((s: BirdSpecies) => s.spotted)
         );
         
         setFamilies(parsedFamilies);

@@ -29,13 +29,7 @@
     align-items: center;
   }
   
-  .navigation-arrows {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
-    box-sizing: border-box;
-  }
+
   
   .zoom-controls {
     bottom: 20px;
@@ -104,3 +98,31 @@
   }
   
   .zoom-controls button:hover { background: #666; }
+
+  .navigation-arrows {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    pointer-events: none; /* So that clicks pass through the container */
+  }
+  
+  .arrow {
+    pointer-events: all; /* Enable clicks on buttons */
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+  }
+  
+  .placeholder {
+    width: 50px;
+    height: 50px;
+  }
+  
