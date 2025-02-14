@@ -9,7 +9,7 @@ await ensureDir("build");
 await build({
   entryPoints: ["src/index.tsx"],
   bundle: true,
-  outfile: "public/bundle.js",
+  outfile: "build/bundle.js",
   sourcemap: true,
   format: "esm",
   loader: { ".tsx": "tsx", ".ts": "ts" },

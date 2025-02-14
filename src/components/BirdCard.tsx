@@ -63,9 +63,9 @@ export const SpeciesCard = React.memo(({ species, onImageClick }: SpeciesCardPro
   const baseURL = import.meta.env?.PUBLIC_URL || window.location.origin;
 
   const imagePath = species.spotted 
-    ? `${baseURL}/pictures/${species.index}.png` 
-    : `${baseURL}/placeholder_bird.png`;
-  const fallbackPath = `${baseURL}/placeholder_bird.png`;
+    ? `./pictures/${species.index}.png` 
+    : `./placeholder_bird.png`;
+  const fallbackPath = `./placeholder_bird.png`;
 
   return (
     <BirdCard
