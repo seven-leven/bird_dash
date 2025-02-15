@@ -1,4 +1,4 @@
-// components/Skeleton.tsx
+// src/components/Skeleton.tsx
 import React from "react";
 import styles from "./BirdCard.module.css";
 

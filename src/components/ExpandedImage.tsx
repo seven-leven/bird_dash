@@ -1,4 +1,4 @@
-// ExpandedImage.tsx
+// src/component/ExpandedImage.tsx
 import React, { useCallback, useEffect, useState } from "react";
 import { ExpandedSpeciesState } from "../types/types.tsx";
 import {

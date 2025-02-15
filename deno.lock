@@ -1,28 +1,121 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@std/assert@*": "1.0.11",
+    "jsr:@std/assert@^1.0.10": "1.0.11",
+    "jsr:@std/async@^1.0.9": "1.0.10",
+    "jsr:@std/data-structures@^1.0.6": "1.0.6",
     "jsr:@std/fs@*": "1.0.11",
-    "jsr:@std/path@^1.0.8": "1.0.8"
+    "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/path@^1.0.8": "1.0.8",
+    "jsr:@std/testing@*": "1.0.9",
+    "npm:@types/node@*": "22.5.4",
+    "npm:testing-library@*": "0.0.2_@angular+common@6.1.10__@angular+core@6.1.10___rxjs@6.6.7___zone.js@0.8.29__rxjs@6.6.7_@angular+core@6.1.10__rxjs@6.6.7__zone.js@0.8.29"
   },
   "jsr": {
+    "@std/assert@1.0.11": {
+      "integrity": "2461ef3c368fe88bc60e186e7744a93112f16fd110022e113a0849e94d1c83c1",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/async@1.0.10": {
+      "integrity": "2ff1b1c7d33d1416159989b0f69e59ec7ee8cb58510df01e454def2108b3dbec"
+    },
+    "@std/data-structures@1.0.6": {
+      "integrity": "76a7fd8080c66604c0496220a791860492ab21a04a63a969c0b9a0609bbbb760"
+    },
     "@std/fs@1.0.11": {
       "integrity": "ba674672693340c5ebdd018b4fe1af46cb08741f42b4c538154e97d217b55bdd",
       "dependencies": [
         "jsr:@std/path"
       ]
     },
+    "@std/internal@1.0.5": {
+      "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+    },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
+    },
+    "@std/testing@1.0.9": {
+      "integrity": "9bdd4ac07cb13e7594ac30e90f6ceef7254ac83a9aeaa089be0008f33aab5cd4",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.10",
+        "jsr:@std/async",
+        "jsr:@std/data-structures"
+      ]
+    }
+  },
+  "npm": {
+    "@angular/common@6.1.10_@angular+core@6.1.10__rxjs@6.6.7__zone.js@0.8.29_rxjs@6.6.7": {
+      "integrity": "sha512-73xxTSYJNKfiJ7C1Ajg+sz5l8y+blb/vNgHYg7O3yem5zLBnfPpidJ1UGg4W4d2Y+jwUVJbZKh8SKJarqAJVUQ==",
+      "dependencies": [
+        "@angular/core",
+        "rxjs",
+        "tslib"
+      ]
+    },
+    "@angular/core@6.1.10_rxjs@6.6.7_zone.js@0.8.29": {
+      "integrity": "sha512-61l3rIQTVdT45eOf6/fBJIeVmV10mcrxqS4N/1OWkuDT29YSJTZSxGcv8QjAyyutuhcqWWpO6gVRkN07rWmkPg==",
+      "dependencies": [
+        "rxjs",
+        "tslib",
+        "zone.js"
+      ]
+    },
+    "@types/node@22.5.4": {
+      "integrity": "sha512-FDuKUJQm/ju9fT/SeX/6+gBzoPzlVCzfzmGkwKvRHQVxi4BntVbyIwf6a4Xn62mrvndLiml6z/UBXIdEVjQLXg==",
+      "dependencies": [
+        "undici-types"
+      ]
+    },
+    "rxjs@6.6.7": {
+      "integrity": "sha512-hTdwr+7yYNIT5n4AMYp85KA6yw2Va0FLa3Rguvbpa4W3I5xynaBZo41cM3XM+4Q6fRMj3sBYIR1VAmZMXYJvRQ==",
+      "dependencies": [
+        "tslib"
+      ]
+    },
+    "testing-library@0.0.2_@angular+common@6.1.10__@angular+core@6.1.10___rxjs@6.6.7___zone.js@0.8.29__rxjs@6.6.7_@angular+core@6.1.10__rxjs@6.6.7__zone.js@0.8.29": {
+      "integrity": "sha512-KCbqCCllbgiCXOgmh9MdsgdJ05pmimXGuggtC78pzpxpq/40A3bS+NJoqwCIqZbNnMr6KIZ2mlMZoZCkWVnaWw==",
+      "dependencies": [
+        "@angular/common",
+        "@angular/core",
+        "tslib"
+      ]
+    },
+    "tslib@1.14.1": {
+      "integrity": "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
+    },
+    "undici-types@6.19.8": {
+      "integrity": "sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw=="
+    },
+    "zone.js@0.8.29": {
+      "integrity": "sha512-mla2acNCMkWXBD+c+yeUrBUrzOxYMNFdQ6FGfigGGtEVBPJx07BQeJekjt9DmH1FtZek4E9rE1eRR9qQpxACOQ=="
     }
   },
   "redirects": {
-    "https://deno.land/std/path/mod.ts": "https://deno.land/std@0.224.0/path/mod.ts"
+    "https://deno.land/std/path/mod.ts": "https://deno.land/std@0.224.0/path/mod.ts",
+    "https://deno.land/std/testing/mod.ts": "https://deno.land/std@0.224.0/testing/mod.ts",
+    "https://deno.land/std/testing/time.ts": "https://deno.land/std@0.224.0/testing/time.ts",
+    "https://esm.sh/@types/react-dom@~19.0.3/index.d.ts": "https://esm.sh/@types/react-dom@19.0.3/index.d.ts",
+    "https://esm.sh/@types/react-test-renderer@~19.0.0/index.d.ts": "https://esm.sh/@types/react-test-renderer@19.0.0/index.d.ts",
+    "https://esm.sh/@types/react@~19.0.7/index.d.ts": "https://esm.sh/@types/react@19.0.8/index.d.ts",
+    "https://esm.sh/@types/scheduler@~0.23.0/index.d.ts": "https://esm.sh/@types/scheduler@0.23.0/index.d.ts",
+    "https://esm.sh/react@^19.0.0?target=denonext": "https://esm.sh/react@19.0.0?target=denonext",
+    "https://esm.sh/scheduler@^0.25.0/unstable_mock?target=denonext": "https://esm.sh/scheduler@0.25.0/unstable_mock?target=denonext",
+    "https://esm.sh/scheduler@^0.25.0?target=denonext": "https://esm.sh/scheduler@0.25.0?target=denonext"
   },
   "remote": {
     "https://deno.land/std@0.203.0/async/delay.ts": "a6142eb44cdd856b645086af2b811b1fcce08ec06bb7d50969e6a872ee9b8659",
     "https://deno.land/std@0.203.0/http/server.ts": "1b2403b3c544c0624ad23e8ca4e05877e65380d9e0d75d04957432d65c3d5f41",
     "https://deno.land/std@0.224.0/assert/assert.ts": "09d30564c09de846855b7b071e62b5974b001bb72a4b797958fe0660e7849834",
     "https://deno.land/std@0.224.0/assert/assertion_error.ts": "ba8752bd27ebc51f723702fac2f54d3e94447598f54264a6653d6413738a8917",
+    "https://deno.land/std@0.224.0/async/delay.ts": "f90dd685b97c2f142b8069082993e437b1602b8e2561134827eeb7c12b95c499",
+    "https://deno.land/std@0.224.0/data_structures/_binary_search_node.ts": "ce1da11601fef0638df4d1e53c377f791f96913383277389286b390685d76c07",
+    "https://deno.land/std@0.224.0/data_structures/_red_black_node.ts": "4af8d3c5ac5f119d8058269259c46ea22ead567246cacde04584a83e43a9d2ea",
+    "https://deno.land/std@0.224.0/data_structures/binary_search_tree.ts": "2dd43d97ce5f5a4bdba11b075eb458db33e9143f50997b0eebf02912cb44f5d5",
+    "https://deno.land/std@0.224.0/data_structures/comparators.ts": "17dfa68bf1550edadbfdd453a06f9819290bcb534c9945b5cec4b30242cff475",
+    "https://deno.land/std@0.224.0/data_structures/red_black_tree.ts": "2222be0c46842fc932e2c8589a66dced9e6eae180914807c5c55d1aa4c8c1b9b",
     "https://deno.land/std@0.224.0/path/_common/assert_path.ts": "dbdd757a465b690b2cc72fc5fb7698c51507dec6bfafce4ca500c46b76ff7bd8",
     "https://deno.land/std@0.224.0/path/_common/basename.ts": "569744855bc8445f3a56087fd2aed56bdad39da971a8d92b138c9913aecc5fa2",
     "https://deno.land/std@0.224.0/path/_common/common.ts": "ef73c2860694775fe8ffcbcdd387f9f97c7a656febf0daa8c73b56f4d8a7bd4c",
@@ -100,10 +193,25 @@
     "https://deno.land/std@0.224.0/path/windows/resolve.ts": "8dae1dadfed9d46ff46cc337c9525c0c7d959fb400a6308f34595c45bdca1972",
     "https://deno.land/std@0.224.0/path/windows/to_file_url.ts": "40e560ee4854fe5a3d4d12976cef2f4e8914125c81b11f1108e127934ced502e",
     "https://deno.land/std@0.224.0/path/windows/to_namespaced_path.ts": "4ffa4fb6fae321448d5fe810b3ca741d84df4d7897e61ee29be961a6aac89a4c",
+    "https://deno.land/std@0.224.0/testing/_time.ts": "fefd1ff35b50a410db9b0e7227e05163e1b172c88afd0d2071df0125958c3ff3",
+    "https://deno.land/std@0.224.0/testing/time.ts": "7119072a198e9913da0d21106b1f05a90a4c05b07075529770ff0e2a9eb5eaba",
     "https://deno.land/x/denoflate@1.2.1/mod.ts": "f5628e44b80b3d80ed525afa2ba0f12408e3849db817d47a883b801f9ce69dd6",
     "https://deno.land/x/denoflate@1.2.1/pkg/denoflate.js": "b9f9ad9457d3f12f28b1fb35c555f57443427f74decb403113d67364e4f2caf4",
     "https://deno.land/x/denoflate@1.2.1/pkg/denoflate_bg.wasm.js": "d581956245407a2115a3d7e8d85a9641c032940a8e810acbd59ca86afd34d44d",
     "https://deno.land/x/esbuild@v0.17.19/mod.js": "7f4398625828a42fcb2c32da5eb874f16341d778e473d5403e5ebeee95a5b96b",
-    "https://deno.land/x/esbuild@v0.25.0/mod.js": "0a1cbaa89f99043e836de256455f609583bb626482396c74f4eabf7df07529bc"
+    "https://deno.land/x/esbuild@v0.25.0/mod.js": "0a1cbaa89f99043e836de256455f609583bb626482396c74f4eabf7df07529bc",
+    "https://esm.sh/@testing-library/react-hooks@8.0.1": "31875882759a85192f2771685eb2c8f8827234e5d871fd82ab36831a71a28650",
+    "https://esm.sh/@testing-library/react-hooks@8.0.1/denonext/react-hooks.mjs": "6486de0741257153003341640bc2671c688aa478415ffbaef5091c21da8e714b",
+    "https://esm.sh/react-dom@19.0.0": "d057f65e74eca8add1702ba9a5ecbcc8e60a73dd358b7852094bde0361725137",
+    "https://esm.sh/react-dom@19.0.0/denonext/react-dom.mjs": "a2f7bc344e1d5b7ca47e68665291e206ae4db17ee84f234f3d3e2533b9119f63",
+    "https://esm.sh/react-test-renderer@19.0.0": "d279af301690300f5c9166940fd6d1dcbe9724201f069034e04ce0a97e73bc18",
+    "https://esm.sh/react-test-renderer@19.0.0/denonext/react-test-renderer.mjs": "861695e8bbf11219dd9914d37da39eafaf57418373b8e6c68800ec61f81d0c72",
+    "https://esm.sh/react@19.0.0": "ab1f4aa20ac56c237bbb204632bdb55f03a0ab005d21944eeb447e5e37879637",
+    "https://esm.sh/react@19.0.0/denonext/react.mjs": "87fdb28d39ca8983bdba3e7ec329305f95463cfc70c015b2620b4900fa15efdd",
+    "https://esm.sh/react@19.0.0?target=denonext": "ab1f4aa20ac56c237bbb204632bdb55f03a0ab005d21944eeb447e5e37879637",
+    "https://esm.sh/scheduler@0.25.0/denonext/scheduler.mjs": "50687edf9e0034b6db97303b1b16893b59c5833c21ea8cf913dc380b537f6aaf",
+    "https://esm.sh/scheduler@0.25.0/denonext/unstable_mock.mjs": "060ec878aa99e57eb208c57a341625c1c3adaf4448197c18912e57d203674423",
+    "https://esm.sh/scheduler@0.25.0/unstable_mock?target=denonext": "dc5b3e794ddbed2a5cbd3b8c91b7b587c1bcd42cc27cad40012e69b90bc3dd20",
+    "https://esm.sh/scheduler@0.25.0?target=denonext": "c12810f51123057a8a8e309cc8befaac0b5cd371cb4d61bf0372ab8046acc8e0"
   }
 }

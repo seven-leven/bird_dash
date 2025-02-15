@@ -1,4 +1,4 @@
-// types.tsx
+// src/types/types.tsx
 
 export interface BirdSpecies {
   index: number;

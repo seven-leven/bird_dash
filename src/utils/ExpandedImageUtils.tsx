@@ -1,3 +1,5 @@
+// src\utils\ExpandedImageUtils.tsx
+
 import React from "react";
 
 interface NavigationArrowsProps {

@@ -1,4 +1,4 @@
-// BirdCard.tsx
+// src/components/BirdCard.tsx
 import React from "react";
 import styles from "./BirdCard.module.css";
 import { BirdCardProps, BirdFamily, BirdSpecies } from "../types/types.tsx";

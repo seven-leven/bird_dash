@@ -1,4 +1,6 @@
-import { BirdFamily } from "../types/types.ts";
+// src\utils\birdUtils.ts
+
+import { BirdFamily } from "../types/types.tsx";
 
 export const calculateTotalBirds = (families: BirdFamily[]): number => {
   return families.reduce((acc, family) => acc + family.species.length, 0);
@@ -17,22 +19,34 @@ export const parseBirdData = (text: string): BirdFamily[] => {
     const trimmed = line.trim();
     if (!trimmed) return;
 
-    if (!/^\d/.test(trimmed)) {
-      currentFamily = { family: trimmed, species: [] };
-      families.push(currentFamily);
-    } else {
-      const match = trimmed.match(/^(\d+)\t([^,]+)(?:,(\d{4}-\d{2}-\d{2}))?/);
-      if (match && currentFamily) {
-        const spotted = !!match[3];
+    // Check if the line is a species line.
+    const speciesMatch = trimmed.match(
+      /^(\d+)\s+([^,]+)(?:,(\d{4}-\d{2}-\d{2}))?/
+    );
+    if (speciesMatch) {
+      if (currentFamily) {
+        const spotted = !!speciesMatch[3];
         currentFamily.species.push({
-          index: parseInt(match[1]),
-          name: match[2].trim(),
+          index: parseInt(speciesMatch[1]),
+          name: speciesMatch[2].trim(),
           spotted,
-          spottedDate: match[3] || undefined,
+          spottedDate: speciesMatch[3] || undefined,
         });
       }
+      return;
+    }
+
+    // If the line is not a species line, it might be a family header.
+    // Only create a new family header if:
+    // 1. There is no current family, or
+    // 2. The current family already has at least one species.
+    // Otherwise, skip the line (malformed or misplaced).
+    if (!currentFamily || (currentFamily && currentFamily.species.length > 0)) {
+      currentFamily = { family: trimmed, species: [] };
+      families.push(currentFamily);
     }
   });
 
   return families;
 };
+
