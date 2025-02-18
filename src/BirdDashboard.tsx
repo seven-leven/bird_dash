@@ -6,8 +6,7 @@ import {
   ExpandedSpeciesState,
   INITIAL_EXPANDED_STATE,
 } from "./types/types.tsx";
-import { getTrackerTitle } from "./utils/birdUtils.ts";
-import useBirdData from "./utils/useBirdData.ts";
+import { getTrackerTitle, useBirdData } from "./utils/index.tsx";
 import {
   ExpandedImage,
   FamilyCard,
