@@ -1,6 +1,9 @@
 {
   "imports": {
     "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0"
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "@std/fs": "jsr:@std/fs",
+    "@std/path": "jsr:@std/path",
+    "@std/media-types": "jsr:@std/media-types"
   }
 }

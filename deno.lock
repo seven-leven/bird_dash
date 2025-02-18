@@ -7,6 +7,8 @@
     "jsr:@std/data-structures@^1.0.6": "1.0.6",
     "jsr:@std/fs@*": "1.0.11",
     "jsr:@std/internal@^1.0.5": "1.0.5",
+    "jsr:@std/media-types@*": "1.1.0",
+    "jsr:@std/path@*": "1.0.8",
     "jsr:@std/path@^1.0.8": "1.0.8",
     "jsr:@std/testing@*": "1.0.9",
     "npm:@types/node@*": "22.5.4",
@@ -28,11 +30,14 @@
     "@std/fs@1.0.11": {
       "integrity": "ba674672693340c5ebdd018b4fe1af46cb08741f42b4c538154e97d217b55bdd",
       "dependencies": [
-        "jsr:@std/path"
+        "jsr:@std/path@^1.0.8"
       ]
     },
     "@std/internal@1.0.5": {
       "integrity": "54a546004f769c1ac9e025abd15a76b6671ddc9687e2313b67376125650dc7ba"
+    },
+    "@std/media-types@1.1.0": {
+      "integrity": "c9d093f0c05c3512932b330e3cc1fe1d627b301db33a4c2c2185c02471d6eaa4"
     },
     "@std/path@1.0.8": {
       "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
@@ -213,5 +218,12 @@
     "https://esm.sh/scheduler@0.25.0/denonext/unstable_mock.mjs": "060ec878aa99e57eb208c57a341625c1c3adaf4448197c18912e57d203674423",
     "https://esm.sh/scheduler@0.25.0/unstable_mock?target=denonext": "dc5b3e794ddbed2a5cbd3b8c91b7b587c1bcd42cc27cad40012e69b90bc3dd20",
     "https://esm.sh/scheduler@0.25.0?target=denonext": "c12810f51123057a8a8e309cc8befaac0b5cd371cb4d61bf0372ab8046acc8e0"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/fs@*",
+      "jsr:@std/media-types@*",
+      "jsr:@std/path@*"
+    ]
   }
 }
