@@ -2,13 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Bird Observation Tracking Dashboard" />
+
+    <!-- Preconnect to improve performance for external fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preload the font stylesheet for better performance -->
     <link
-    rel="preload"
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    as="style"
-    onload="this.onload=null;this.rel='stylesheet'"
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
     />
     <noscript>
       <link
@@ -16,8 +22,11 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       />
     </noscript>
+
     <title>Bird Tracking Dashboard</title>
-    <link rel="stylesheet" href="./bundle.css">
+    <link rel="stylesheet" href="./bundle.css" />
+
+    <!-- Import Map for module resolution -->
     <script type="importmap">
       {
         "imports": {
@@ -28,7 +37,8 @@
         }
       }
     </script>
-    <link rel="icon" href="./favicon.png" type="image/png">
+
+    <link rel="icon" href="./favicon.png" type="image/png" />
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

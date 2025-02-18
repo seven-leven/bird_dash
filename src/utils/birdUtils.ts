@@ -21,7 +21,7 @@ export const parseBirdData = (text: string): BirdFamily[] => {
 
     // Check if the line is a species line.
     const speciesMatch = trimmed.match(
-      /^(\d+)\s+([^,]+)(?:,(\d{4}-\d{2}-\d{2}))?/
+      /^(\d+)\s+([^,]+)(?:,(\d{4}-\d{2}-\d{2}))?/,
     );
     if (speciesMatch) {
       if (currentFamily) {
@@ -49,4 +49,3 @@ export const parseBirdData = (text: string): BirdFamily[] => {
 
   return families;
 };
-

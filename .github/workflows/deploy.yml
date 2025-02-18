@@ -30,6 +30,17 @@ jobs:
           path: ~/.cache/deno
           key: ${{ runner.os }}-deno-${{ hashFiles('**/deps.ts') }}
 
+      # Run tests and output JSON report
+      - name: Run tests
+        run: deno test --json > test-report.json
+
+      # Upload the test report as an artifact
+      - name: Upload test report
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-report
+          path: test-report.json
+
       # Install esbuild by caching the build script
       - name: Cache esbuild
         run: deno cache build.ts

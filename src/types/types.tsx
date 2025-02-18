@@ -4,7 +4,7 @@ export interface BirdSpecies {
   index: number;
   name: string;
   spotted: boolean;
-  spottedDate?: string; // Add spottedDate to the type
+  spottedDate?: string;
 }
 
 export type BirdFamily = {

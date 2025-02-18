@@ -94,17 +94,25 @@ Deno.test("parseBirdData: ignores orphan species", () => {
 });
 
 Deno.test("parseBirdData: skips malformed lines", () => {
-    const input = "Valid Family\nInvalidLine\n2\tValid Species";
-    const result = parseBirdData(input);
-  
-    // If "InvalidLine" were skipped, we’d expect one family ("Valid Family")
-    // with one species. Adjust your parser if you need to enforce this behavior.
-    assertEquals(result.length, 1, "Expected one valid family");
-    assertEquals(result[0].family, "Valid Family", "Expected family to be 'Valid Family'");
-    assertEquals(result[0].species.length, 1, "Expected one valid species");
-    assertEquals(result[0].species[0].index, 2, "Expected species index to be 2");
-    assertEquals(result[0].species[0].name, "Valid Species", "Expected species name to be 'Valid Species'");
-  });
+  const input = "Valid Family\nInvalidLine\n2\tValid Species";
+  const result = parseBirdData(input);
+
+  // If "InvalidLine" were skipped, we’d expect one family ("Valid Family")
+  // with one species. Adjust your parser if you need to enforce this behavior.
+  assertEquals(result.length, 1, "Expected one valid family");
+  assertEquals(
+    result[0].family,
+    "Valid Family",
+    "Expected family to be 'Valid Family'",
+  );
+  assertEquals(result[0].species.length, 1, "Expected one valid species");
+  assertEquals(result[0].species[0].index, 2, "Expected species index to be 2");
+  assertEquals(
+    result[0].species[0].name,
+    "Valid Species",
+    "Expected species name to be 'Valid Species'",
+  );
+});
 
 Deno.test("parseBirdData: handles multiple families", () => {
   const input = `

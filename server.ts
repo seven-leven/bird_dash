@@ -1,4 +1,3 @@
-// server.ts
 import { contentType } from "jsr:@std/media-types";
 import { join, resolve } from "jsr:@std/path";
 import { dirname, fromFileUrl } from "jsr:@std/path";
@@ -13,7 +12,7 @@ const COMMON_HEADERS = {
   "X-Frame-Options": "DENY",
 };
 
-const handler = async (req: Request): Promise<Response> => {
+export const handler = async (req: Request): Promise<Response> => {
   // Handle only GET and HEAD requests
   if (!["GET", "HEAD"].includes(req.method)) {
     return new Response("Method Not Allowed", { status: 405 });
@@ -31,7 +30,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const file = await Deno.readFile(filePath);
     const headers = new Headers(COMMON_HEADERS);
-    
+
     // Set content type using standard library
     const type = contentType(pathname.split(".").pop() || "");
     if (type) headers.set("Content-Type", type);
@@ -46,7 +45,7 @@ const handler = async (req: Request): Promise<Response> => {
     if (error instanceof Deno.errors.NotFound) {
       // Only handle HTML requests for SPA fallback
       const acceptsHtml = req.headers.get("Accept")?.includes("text/html");
-      
+
       if (acceptsHtml) {
         try {
           const file = await Deno.readFile(join(BUILD_DIR, "index.html"));
