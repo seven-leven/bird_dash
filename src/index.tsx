@@ -2,6 +2,7 @@
 import React, { FC } from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter, Route, Routes } from "react-router-dom";
+
 import BirdDashboard from "./BirdDashboard.tsx";
 
 const NotFound: FC = () => (

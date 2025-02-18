@@ -1,7 +1,7 @@
 // build.ts
 import { build, stop } from "https://deno.land/x/esbuild@v0.25.0/mod.js";
-import { copy, ensureDir } from "jsr:@std/fs";
-import { dirname, fromFileUrl, join } from "jsr:@std/path";
+import { copy, ensureDir } from "@std/fs";
+import { dirname, fromFileUrl, join } from "@std/path";
 
 // Get absolute build directory path
 const __dirname = dirname(fromFileUrl(import.meta.url));

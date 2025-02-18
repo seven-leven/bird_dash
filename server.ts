@@ -1,6 +1,5 @@
-import { contentType } from "jsr:@std/media-types";
-import { join, resolve } from "jsr:@std/path";
-import { dirname, fromFileUrl } from "jsr:@std/path";
+import { contentType } from "@std/media-types";
+import { dirname, fromFileUrl, join, resolve } from "@std/path";
 
 const PORT = 3000;
 const __dirname = dirname(fromFileUrl(import.meta.url));
