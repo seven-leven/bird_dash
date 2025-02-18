@@ -8,7 +8,13 @@ import {
 } from "./types/types.tsx";
 import { getTrackerTitle } from "./utils/birdUtils.ts";
 import useBirdData from "./utils/useBirdData.ts";
-import { FamilyCard, SpeciesCard, ExpandedImage, FamilySkeleton, SpeciesSkeleton } from "./components/index.tsx";
+import {
+  ExpandedImage,
+  FamilyCard,
+  FamilySkeleton,
+  SpeciesCard,
+  SpeciesSkeleton,
+} from "./components/index.tsx";
 import styles from "./BirdDashboard.module.css";
 
 const BirdDashboard: React.FC = () => {
