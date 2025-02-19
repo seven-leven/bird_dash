@@ -1,9 +1,17 @@
 {
-  "importMap": "./import_map.json",
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react-router-dom": "https://esm.sh/react-router-dom@7.1.5",
+    "@std/fs": "jsr:@std/fs",
+    "@std/path": "jsr:@std/path",
+    "@std/media-types": "jsr:@std/media-types"
+  },
   "tasks": {
-    "build": "deno run --allow-read --allow-write --allow-env --allow-run build.ts",
-    "start": "deno run --allow-net --allow-read server.ts",
-    "dev": "deno run --allow-net --allow-read --watch server.ts",
+    "build": "deno run --allow-read --allow-write --allow-env --allow-run bundler/build.ts",
+    "start": "deno run --allow-net --allow-read server/server.ts",
+    "dev": "deno run --allow-net --allow-read --watch server/server.ts",
     "lint": "deno lint",
     "fmt": "deno fmt",
     "test": "deno test"
