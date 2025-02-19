@@ -6,6 +6,7 @@
     "react-router-dom": "https://esm.sh/react-router-dom@7.1.5",
     "@std/fs": "jsr:@std/fs",
     "@std/path": "jsr:@std/path",
+    "@std/assert": "jsr:@std/assert",
     "@std/media-types": "jsr:@std/media-types"
   },
   "tasks": {
@@ -14,6 +15,6 @@
     "dev": "deno run --allow-net --allow-read --watch server/server.ts",
     "lint": "deno lint",
     "fmt": "deno fmt",
-    "test": "deno test"
+    "test": "deno test --allow-read --allow-write"
   }
 }

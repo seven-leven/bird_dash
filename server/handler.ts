@@ -1,6 +1,6 @@
 // server/handler.ts
 import { contentType } from "@std/media-types";
-import { join, resolve } from "@std/path";
+import { join, relative, resolve } from "@std/path";
 
 export function createHandler({
   buildDir,
@@ -20,8 +20,9 @@ export function createHandler({
     const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
     const filePath = resolve(buildDir, `.${pathname}`);
 
-    // Prevent directory traversal.
-    if (!filePath.startsWith(buildDir)) {
+    // Prevent directory traversal by checking if filePath is outside buildDir.
+    // If the relative path starts with "..", then filePath is not under buildDir.
+    if (relative(buildDir, filePath).startsWith("..")) {
       return new Response("Forbidden", { status: 403 });
     }
 
