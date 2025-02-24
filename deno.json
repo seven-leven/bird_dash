@@ -7,7 +7,8 @@
     "@std/fs": "jsr:@std/fs",
     "@std/path": "jsr:@std/path",
     "@std/assert": "jsr:@std/assert",
-    "@std/media-types": "jsr:@std/media-types"
+    "@std/media-types": "jsr:@std/media-types",
+    "esbuild": "https://deno.land/x/esbuild@v0.25.0/mod.js"
   },
   "tasks": {
     "build": "deno run --allow-read --allow-write --allow-env --allow-run bundler/build.ts",
@@ -15,6 +16,6 @@
     "dev": "deno run --allow-net --allow-read --watch server/server.ts",
     "lint": "deno lint",
     "fmt": "deno fmt",
-    "test": "deno test --allow-read --allow-write"
+    "test": "deno test --allow-read --allow-write --allow-net --allow-run --allow-env"
   }
 }

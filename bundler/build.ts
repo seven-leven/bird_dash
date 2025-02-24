@@ -1,5 +1,5 @@
 // bundler/build.ts
-import { build, stop } from "https://deno.land/x/esbuild@v0.25.0/mod.js";
+import { build, stop } from "esbuild";
 import { copy, ensureDir } from "@std/fs";
 import { BUILD_DIR, buildConfig } from "./build_config.ts";
 
