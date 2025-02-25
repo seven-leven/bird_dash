@@ -1,0 +1,257 @@
+	Ducks, geese, and waterfowl
+1	Lesser whistling-duck,2024-10-10
+2	Cotton pygmy-goose,2024-10-15
+3	Garganey,2025-01-11
+4	Northern shoveler
+5	Northern pintail
+6	Green-winged teal
+7	Ferruginous duck
+8	Tufted duck
+	Pheasants, grouse, and allies
+9	Common quail
+10	Red junglefowl
+	Flamingos
+11	Greater flamingo
+	Pigeons and doves
+12	Rock pigeon
+13	European turtle-dove
+14	Oriental turtle-dove
+15	Zebra dove
+	Cuckoos
+16	Chestnut-winged cuckoo
+17	Asian koel
+18	Gray-bellied cuckoo
+19	Indian cuckoo
+20	Common cuckoo
+	Nightjars and allies
+21	Jungle nightjar
+22	White-throated needletail
+23	Indian swiftlet
+24	Himalayan swiftlet
+25	Common swift
+26	Pallid swift
+27	Blyth's swift
+28	Little swift
+	Rails, gallinules, and coots
+29	Eurasian moorhen
+30	Eurasian coot
+31	Watercock
+32	White-breasted waterhen
+	Stilts and avocets
+33	Black-winged stilt
+	Oyster-catchers
+34	Eurasian oystercatcher
+	Plovers and lapwings
+35	Black-bellied plover
+36	Pacific golden-plover
+37	Sociable lapwing
+38	Lesser sand-plover
+39	Greater sand-plover
+40	Caspian plover
+41	Kentish plover
+42	Common ringed plover
+43	Little ringed plover
+	Sandpipers and allies
+44	Whimbrel
+45	Eurasian curlew
+46	Bar-tailed godwit
+47	Black-tailed godwit
+48	Ruddy turnstone
+49	Ruff (bird)
+50	Curlew sandpiper
+51	Temminck's stint
+52	Long-toed stint
+53	Sanderling
+54	Dunlin
+55	Little stint
+56	Common snipe
+57	Pin-tailed snipe
+58	Swinhoe's snipe
+59	Terek sandpiper
+60	Common sandpiper
+61	Green sandpiper
+62	Spotted redshank
+63	Common greenshank
+64	Marsh sandpiper
+65	Wood sandpiper
+66	Common redshank
+	Crab-plover
+67	Crab-plover
+	Pratincoles and coursers
+68	Collared pratincole
+69	Oriental pratincole
+	Skuas and jaegers
+70	South polar skua
+71	Brown skua
+72	Pomarine jaeger
+73	Parasitic jaeger
+74	Long-tailed jaeger
+	Gulls, terns, and skimmers
+75	Black-headed gull
+76	Brown-headed gull
+77	White-eyed gull
+78	Sooty gull
+79	Pallas's gull
+80	Lesser black-backed gull
+81	Brown noddy
+82	Lesser noddy
+83	White tern
+84	Sooty tern
+85	Bridled tern
+86	Little tern
+87	Saunders's tern
+88	Gull-billed tern
+89	Caspian tern
+90	White-winged tern
+91	Whiskered tern
+92	Roseate tern
+93	Black-naped tern
+94	Common tern
+95	White-cheeked tern
+96	Great crested tern
+97	Sandwich tern
+98	Lesser crested tern
+	Tropicbirds
+99	White-tailed tropicbird
+100	Red-billed tropicbird
+101	Red-tailed tropicbird
+	Southern storm-petrels
+102	Wilson's storm-petrel
+103	White-faced storm-petrel
+	Northern storm-petrels
+104	Leach's storm-petrel
+105	Swinhoe's storm-petrel
+106	Band-rumped storm-petrel
+107	Matsudaira's storm-petrel
+	Shearwaters and petrels
+108	Trindade petrel
+109	Bulwer's petrel
+110	Jouanin's petrel
+111	Streaked shearwater
+112	Flesh-footed shearwater
+113	Wedge-tailed shearwater
+114	Sooty shearwater
+115	Short-tailed shearwater
+116	Tropical shearwater
+117	Persian shearwater
+	Frigatebirds
+118	Lesser frigatebird
+119	Great frigatebird
+	Boobies and gannets
+120	Masked booby
+121	Brown booby
+122	Red-footed booby
+123	Abbott's booby
+	Anhingas
+124	Oriental darter
+	Cormorants and shags
+125	Little cormorant
+126	Indian cormorant
+	Pelicans
+127	Great white pelican
+128	Spot-billed pelican
+	Herons, egrets, and bitterns
+129	Great bittern
+130	Yellow bittern
+131	Cinnamon bittern
+132	Black bittern
+133	Gray heron
+134	Purple heron
+135	Great egret
+136	Intermediate egret
+137	Little egret
+138	Western reef-heron
+139	Cattle egret
+140	Indian pond-heron
+141	Striated heron
+142	Black-crowned night-heron
+	Ibises and spoonbills
+143	Glossy ibis
+144	Black-headed ibis
+145	Eurasian spoonbill
+	Osprey
+146	Osprey
+	Hawks, eagles, and kites
+147	Black-winged kite
+148	Oriental honey-buzzard
+149	Eurasian marsh-harrier
+150	Pallid harrier
+151	Montagu's harrier
+152	Shikra
+153	Black kite
+154	Brahminy kite
+	Owls
+155	Pallid scops-owl
+156	Short-eared owl
+	Hoopoes
+157	Eurasian hoopoe
+	Kingfishers
+158	Common kingfisher
+	Bee-eaters
+159	Blue-cheeked bee-eater
+160	Blue-tailed bee-eater
+161	European bee-eater
+	Rollers
+162	European roller
+163	Indian roller
+	Falcons and caracaras
+164	Lesser kestrel
+165	Eurasian kestrel
+166	Amur falcon
+167	Eurasian hobby
+168	Oriental hobby
+169	Peregrine falcon
+	Old World parrots
+170	Rose-ringed parakeet
+	Cuckoo-shrikes
+171	Large cuckooshrike
+	Old World orioles
+172	Indian golden oriole
+	Wood-swallows, bellmagpies, and allies
+173	Ashy woodswallow
+	Monarch flycatchers
+174	Indian paradise-flycatcher
+	Shrikes
+175	Brown shrike
+176	Long-tailed shrike
+	Crows, jays, and magpies
+177	House crow
+	Larks
+178	Mongolian short-toed lark
+	Grassbirds and allies
+179	Common grasshopper-warbler
+	Swallows
+180	Bank swallow
+181	Barn swallow
+182	Red-rumped swallow
+183	Streak-throated swallow
+184	Common house-martin
+	Sylviid warblers, parrotbills, and allies
+185	Garden warbler
+	Starlings
+186	European starling
+187	Rosy starling
+188	Common myna
+	Thrushes and allies
+189	Eyebrowed thrush
+	Old World flycatchers
+190	Indian robin
+191	Northern wheatear
+192	Isabelline wheatear
+193	Pied wheatear
+	Waxbills and allies
+194	Red-cheeked cordonbleu
+	Old World sparrows
+195	House sparrow
+	Wagtails and pipits
+196	Forest wagtail
+197	Gray wagtail
+198	Western yellow wagtail
+199	Citrine wagtail
+200	White wagtail
+201	Tree pipit
+202	Red-throated pipit
+	Finches, euphonias, and allies
+203	Common rosefinch
+	Old World buntings
+204	Ortolan bunting
