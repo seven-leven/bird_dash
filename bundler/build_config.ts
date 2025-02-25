@@ -1,9 +1,6 @@
 // bundler/build_config.ts
 import { dirname, fromFileUrl, join } from "@std/path";
-import type {
-  BuildOptions,
-  Loader,
-} from "https://deno.land/x/esbuild@v0.25.0/mod.js";
+import type { BuildOptions, Loader } from "esbuild";
 
 const __dirname = dirname(fromFileUrl(import.meta.url));
 export const BUILD_DIR = join(__dirname, "..", "build");

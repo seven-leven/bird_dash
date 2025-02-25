@@ -58,5 +58,3 @@ Deno.test("build script should complete and create build directory", async () =>
     "The BUILD_DIR path exists but is not a directory.",
   );
 });
-
-

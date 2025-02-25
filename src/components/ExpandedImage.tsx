@@ -1,4 +1,5 @@
-// src/component/ExpandedImage.tsx
+/// <reference lib="dom" />
+
 import React, { useCallback, useEffect, useState } from "react";
 import { ExpandedSpeciesState } from "../types/types.tsx";
 import {
@@ -7,6 +8,10 @@ import {
   ZoomControls,
 } from "../utils/ExpandedImageUtils.tsx";
 import "./ExpandedImage.css";
+
+const MIN_SCALE = 0.5;
+const MAX_SCALE = 3;
+const SCALE_STEP = 0.1;
 
 interface ExpandedImageProps extends ExpandedSpeciesState {
   onClose: () => void;
@@ -22,11 +27,13 @@ const ExpandedImage: React.FC<ExpandedImageProps> = React.memo(
       : null;
 
     // Zoom handlers
-    const zoomIn = useCallback(() => setScale((s) => Math.min(s + 0.1, 3)), []);
-    const zoomOut = useCallback(
-      () => setScale((s) => Math.max(s - 0.1, 0.5)),
-      [],
-    );
+    const zoomIn = useCallback(() => {
+      setScale((s) => Math.min(s + SCALE_STEP, MAX_SCALE));
+    }, []);
+
+    const zoomOut = useCallback(() => {
+      setScale((s) => Math.max(s - SCALE_STEP, MIN_SCALE));
+    }, []);
 
     useEffect(() => {
       if (!imageUrl) return;
@@ -55,7 +62,9 @@ const ExpandedImage: React.FC<ExpandedImageProps> = React.memo(
 
       const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
-        setScale((prev) => Math.min(Math.max(0.5, prev + e.deltaY * -0.01), 3));
+        setScale((prev) =>
+          Math.min(Math.max(MIN_SCALE, prev + e.deltaY * -0.01), MAX_SCALE)
+        );
       };
 
       globalThis.addEventListener("keydown", handleKeyDown);
@@ -64,7 +73,6 @@ const ExpandedImage: React.FC<ExpandedImageProps> = React.memo(
       return () => {
         globalThis.removeEventListener("keydown", handleKeyDown);
         globalThis.removeEventListener("wheel", handleWheel);
-        setScale(1);
       };
     }, [imageUrl, onClose, onPrev, onNext, zoomIn, zoomOut]);
 
