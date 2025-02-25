@@ -3,7 +3,7 @@ import React from "react";
 import styles from "./BirdCard.module.css";
 import { BirdCardProps, BirdFamily, BirdSpecies } from "../types/types.tsx";
 
-const BirdCard = React.memo(({
+export const BirdCard = React.memo(({
   imagePath,
   fallbackPath,
   index,
