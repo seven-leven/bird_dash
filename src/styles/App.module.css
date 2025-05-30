@@ -1,0 +1,64 @@
+/* src/styles/App.module.css */
+.appContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Reduced gap as family title is now in the grid */
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.appTitle {
+  font-family: var(--base-font);
+  font-weight: 700;
+  color: var(--primary-text-color);
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 1rem; /* Reduced margin */
+}
+
+.masterGrid {
+  display: grid;
+  grid-template-columns:
+    repeat(
+    auto-fill,
+    minmax(200px, 1fr)
+  ); /* Adjust minmax for desired card size */
+  gap: var(--grid-gap);
+  align-items: stretch; /* Make items fill height */
+}
+
+.noItemsMessage {
+  grid-column: 1 / -1; /* Span full width */
+  text-align: center;
+  padding: 1rem;
+  color: #6c757d;
+  font-style: italic;
+  min-height: 100px; /* Ensure it has some space */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Skeleton Styles (can also be moved to Card.module.css if specific to cards) */
+.loadingContainer {
+  /* Inherits .masterGrid styles, so no need to redefine grid here */
+}
+
+.skeletonCard {
+  /* General skeleton for any card in the grid */
+  aspect-ratio: 1; /* Ensure square shape for skeletons too */
+  border-radius: var(--card-border-radius);
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
