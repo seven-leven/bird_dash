@@ -69,7 +69,7 @@ onMounted(async () => {
   const resourceName = 'birds.txt';
 
   // Recommended construction for fetch path relative to base
-  let filePath = rawBaseUrl;
+const filePath = `${import.meta.env.BASE_URL}birds.txt`;
   if (!rawBaseUrl.endsWith('/')) {
     filePath += '/';
   }
