@@ -56,24 +56,71 @@ const processRawData = (text: string): GridItem[] => {
 };
 
 onMounted(async () => {
+  console.log("--- App.vue onMounted Diagnostics ---");
+  console.log("Window Location Origin:", window.location.origin);
+  console.log("Window Location Pathname:", window.location.pathname);
+  console.log("import.meta.env.MODE:", import.meta.env.MODE);
+  console.log("import.meta.env.DEV:", import.meta.env.DEV);
+  console.log("import.meta.env.PROD:", import.meta.env.PROD);
+  console.log("import.meta.env.SSR:", import.meta.env.SSR);
+  console.log("import.meta.env.BASE_URL (raw):", `'${import.meta.env.BASE_URL}'`); // Log with quotes to see leading/trailing spaces
+
+  const rawBaseUrl = import.meta.env.BASE_URL;
+  const resourceName = 'birds.txt';
+
+  // Recommended construction for fetch path relative to base
+  let filePath = rawBaseUrl;
+  if (!rawBaseUrl.endsWith('/')) {
+    filePath += '/';
+  }
+  filePath += resourceName;
+
+  // Remove leading slash if BASE_URL is '/' and resourceName starts with one (unlikely for 'birds.txt')
+  // Or if base is '/foo/' and resource is '/bar.txt' (also unlikely here)
+  // More robustly for joining paths, but fetch usually handles '/foo/bar.txt' fine
+  if (filePath.startsWith('//') && filePath.length > 1) {
+      filePath = filePath.substring(1);
+  }
+
+
+  console.log("Calculated filePath for fetch:", `'${filePath}'`);
+
   try {
     isLoading.value = true;
     error.value = null;
     await new Promise(resolve => setTimeout(resolve, 500));
-    const response = await fetch('/birds.txt');
+
+    // Test direct absolute path (should work locally if public dir is served at root)
+    console.log("Attempting fetch with direct absolute path: '/birds.txt'");
+    try {
+        const directFetchResponse = await fetch('/birds.txt');
+        console.log("Direct fetch '/birds.txt' status:", directFetchResponse.status);
+        if(directFetchResponse.ok) console.log("Direct fetch '/birds.txt' succeeded.");
+    } catch (directFetchError) {
+        console.error("Direct fetch '/birds.txt' FAILED:", directFetchError);
+    }
+
+
+    console.log(`Attempting fetch with calculated path: '${filePath}'`);
+    const response = await fetch(filePath);
+    console.log(`Fetch status for '${filePath}':`, response.status);
+
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status} while fetching birds.txt`);
+      throw new Error(`HTTP error! status: ${response.status} while fetching ${filePath}`);
     }
     const textData = await response.text();
     gridItems.value = processRawData(textData);
+    console.log("Successfully fetched and processed data.");
   } catch (e: any) {
-    console.error("Failed to load or parse bird data:", e);
+    console.error("Original error object during fetch/processing:", e);
+    console.error("Failed to load or parse bird data (message):", e.message);
     error.value = e.message || "Failed to load bird data.";
   } finally {
     isLoading.value = false;
+    console.log("--- End App.vue onMounted Diagnostics ---");
   }
 });
-
 const skeletonCardsCount = 8;
 
 // const handleCardInteraction = (item: GridItem) => {
