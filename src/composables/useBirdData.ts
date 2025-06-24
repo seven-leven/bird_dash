@@ -6,7 +6,7 @@ import type { GridItem } from '../components/GridItemCard.vue'; // Adjust path i
 const BIRD_DATA_FILE = 'birds.txt';
 const DEFAULT_FAMILY_NAME = "Uncategorized Birds";
 const ASSETS_PATH_PREFIX = 'assets/';
-const PLACEHOLDER_IMAGE = 'placeholder.png';
+const PLACEHOLDER_IMAGE = 'placeholder.webp';
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 const BIRD_LINE_REGEX = /^(\d+)[,\s]+(.+)/;
 
@@ -45,7 +45,7 @@ function _parseLineToGridItem(
         const date = datePart && datePart.match(DATE_REGEX) ? datePart : undefined;
 
         const imageUrl = date
-            ? `${baseUrl}${ASSETS_PATH_PREFIX}${id}.png`
+            ? `${baseUrl}${ASSETS_PATH_PREFIX}${id}.webp`
             : `${baseUrl}${PLACEHOLDER_IMAGE}`;
 
         return {
@@ -105,7 +105,7 @@ function processRawData(text: string, baseUrl: string): GridItem[] {
             const date = datePart && datePart.match(DATE_REGEX) ? datePart : undefined;
 
             const imageUrl = date
-                ? `${baseUrl}${ASSETS_PATH_PREFIX}${id}.png`
+                ? `${baseUrl}${ASSETS_PATH_PREFIX}${id}.webp`
                 : `${baseUrl}${PLACEHOLDER_IMAGE}`;
 
             items.push({
