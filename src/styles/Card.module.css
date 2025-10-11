@@ -25,11 +25,11 @@
 /* Specific to Bird Cards */
 .birdCard {
   /* Image display properties */
-  background-size: contain; /* Scale image to fit within bounds, maintaining aspect ratio */
-  background-position: center; /* Center the image */
+  background-size: contain;     /* Scale image to fit within bounds, maintaining aspect ratio */
+  background-position: center;  /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   /* background-color: white; */ /* Set via --card-background from gridItem or specific override if needed */
-  /* If an image is smaller than the card, the .gridItem background shows */
+                                /* If an image is smaller than the card, the .gridItem background shows */
   /* padding: 0; ensure padding is handled by name container */
 }
 
@@ -77,8 +77,7 @@
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
 }
 
-.birdCard .birdScientificName {
-  /* New style for scientific name */
+.birdCard .birdScientificName { /* New style for scientific name */
   font-family: var(--base-font);
   color: #e0e0e0; /* Slightly lighter than common name */
   font-size: 0.75rem;
@@ -91,6 +90,7 @@
   opacity: 0.9;
 }
 
+
 .birdCard:hover .birdIndex {
   opacity: 0;
   transform: translateY(-150%);
@@ -99,8 +99,8 @@
 .birdCard:hover .birdNameContainer {
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.65) 20%,
-    /* Slightly lighter on hover */ transparent
+    rgba(0, 0, 0, 0.65) 20%, /* Slightly lighter on hover */
+    transparent
   );
 }
 .birdCard:hover .birdName {

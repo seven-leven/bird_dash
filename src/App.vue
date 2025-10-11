@@ -56,7 +56,7 @@
           <p>{{ error }}</p>
           <p>
             Please ensure public/birds.txt exists, is correctly formatted, and accessible.
-            Also, verify image paths (e.g., in public/thumb/ for bird images, and public/placeholder.webp for the placeholder) are correct.
+            Also, verify image paths (e.g., in public/assets/ for bird images, and public/placeholder.webp for the placeholder) are correct.
             The base URL in your vite.config.js must be correctly set for your deployment environment (e.g., base: '/your-repo-name/' for GitHub Pages).
           </p>
         </div>
@@ -100,12 +100,12 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'; // Added onBeforeUnmount
-import GridItemCard from './GridItemCard.vue';
+import GridItemCard from './components/GridItemCard.vue';
 import styles from './styles/App.module.css';
 
 // Constants
 const DATA_URL = `${import.meta.env.BASE_URL}birds.txt`;
-const IMAGE_BASE_URL = `${import.meta.env.BASE_URL}thumb`;
+const IMAGE_BASE_URL = `${import.meta.env.BASE_URL}assets/`;
 const PLACEHOLDER_IMAGE_URL = `${import.meta.env.BASE_URL}placeholder.webp`;
 
 // Reactive State
