@@ -12,7 +12,7 @@ Number,Common Name,Scientific Name
 9,"Common Quail","Coturnix coturnix"
 10,"Red Junglefowl","Gallus gallus"
 ,"Flamingos",
-11,"Greater Flamingo","Phoenicopterus roseus"
+11,"Greater Flamingo","Phoenicopterus roseus",2025-10-07
 ,"Pigeons and doves",
 12,"Rock Pigeon","Columba livia"
 13,"European Turtle-Dove","Streptopelia turtur"
@@ -47,7 +47,7 @@ Number,Common Name,Scientific Name
 36,"Pacific Golden-Plover","Pluvialis fulva"
 37,"Sociable Lapwing","Vanellus gregarius"
 38,"Lesser Sand-Plover","Charadrius mongolus"
-39,"Greater Sand-Plover","Charadrius leschenaultii"
+39,"Greater Sand-Plover","Charadrius leschenaultii",2025-10-07
 40,"Caspian Plover","Charadrius asiaticus"
 41,"Kentish Plover","Charadrius alexandrinus"
 42,"Common Ringed Plover","Charadrius hiaticula"
@@ -113,7 +113,7 @@ Number,Common Name,Scientific Name
 97,"Sandwich Tern","Thalasseus sandvicensis"
 98,"Lesser Crested Tern","Thalasseus bengalensis"
 ,"Tropicbirds",
-99,"White-tailed Tropicbird","Phaethon lepturus"
+99,"White-tailed Tropicbird","Phaethon lepturus",2025-10-07
 100,"Red-billed Tropicbird","Phaethon aethereus"
 101,"Red-tailed Tropicbird","Phaethon rubricauda"
 ,"Southern storm-petrels",
@@ -153,16 +153,16 @@ Number,Common Name,Scientific Name
 128,"Spot-billed Pelican","Pelecanus philippensis"
 ,"Herons, egrets, and bitterns",
 129,"Great Bittern","Botaurus stellaris"
-130,"Yellow Bittern","Ixobrychus sinensis"
+130,"Yellow Bittern","Ixobrychus sinensis",2025-10-07
 131,"Cinnamon Bittern","Ixobrychus cinnamomeus"
 132,"Black Bittern","Ixobrychus flavicollis"
-133,"Gray Heron","Ardea cinerea"
+133,"Gray Heron","Ardea cinerea",2025-10-07
 134,"Purple Heron","Ardea purpurea"
 135,"Great Egret","Ardea alba"
 136,"Intermediate Egret","Ardea intermedia"
 137,"Little Egret","Egretta garzetta"
 138,"Western Reef-Heron","Egretta gularis"
-139,"Cattle Egret","Bubulcus ibis"
+139,"Cattle Egret","Bubulcus ibis",2025-10-07
 140,"Indian Pond-Heron","Ardeola grayii"
 141,"Striated Heron","Butorides striata"
 142,"Black-crowned Night-Heron","Nycticorax nycticorax"
