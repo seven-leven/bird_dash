@@ -28,7 +28,6 @@
   }
 }
 
-
 /* --- Sidebar --- */
 /* Mobile Default: Overlay, Hidden */
 .sidebar {
@@ -45,7 +44,7 @@
   transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
   z-index: 1100; /* Above overlay */
-  box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar.isOpen {
@@ -99,7 +98,7 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden; 
+  overflow: hidden;
   background-color: #f0f2f5;
   width: 100%; /* Important for mobile when sidebar is fixed overlay */
 }
@@ -122,12 +121,12 @@
   flex-grow: 1;
   overflow-y: auto;
   padding: 0 1.5rem;
-  position: relative; 
+  position: relative;
 }
 
 .familySection {
-  padding-top: 1.5rem; 
-  margin-bottom: 1rem; 
+  padding-top: 1.5rem;
+  margin-bottom: 1rem;
 }
 .familySection:first-child {
   padding-top: 1rem;
@@ -167,7 +166,6 @@
   margin-bottom: 0.5rem;
 }
 
-
 .skeletonCard {
   aspect-ratio: 1;
   border-radius: var(--card-border-radius);
@@ -177,8 +175,12 @@
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 .errorMessage {
@@ -192,10 +194,20 @@
   max-width: 90%;
   width: 700px;
 }
-.errorMessage h2 { color: inherit; margin-top: 0; font-size: 1.5rem; margin-bottom: 0.75rem; }
-.errorMessage p { line-height: 1.6; font-size: 0.95rem; margin-bottom: 0.5rem; }
-.errorMessage p:last-child { margin-bottom: 0; }
-
+.errorMessage h2 {
+  color: inherit;
+  margin-top: 0;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+.errorMessage p {
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+.errorMessage p:last-child {
+  margin-bottom: 0;
+}
 
 /* --- Overlay for Mobile Sidebar --- */
 .sidebarOverlay {
@@ -204,18 +216,19 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1050; /* Below sidebar, above main content */
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease-in-out, visibility 0s 0.3s linear; /* Delay visibility transition */
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0s 0.3s linear; /* Delay visibility transition */
 }
 .sidebarOverlay.isOpen {
   opacity: 1;
   visibility: visible;
   transition-delay: 0s; /* Remove delay for showing */
 }
-
 
 /* --- Desktop Styles (min-width: 992px) --- */
 @media (min-width: 992px) {
