@@ -105,7 +105,7 @@ import styles from './styles/App.module.css';
 
 // Constants
 const DATA_URL = `${import.meta.env.BASE_URL}birds.txt`;
-const IMAGE_BASE_URL = `${import.meta.env.BASE_URL}thumb/`;
+const IMAGE_BASE_URL = `${import.meta.env.BASE_URL}thumb`;
 const PLACEHOLDER_IMAGE_URL = `${import.meta.env.BASE_URL}placeholder.webp`;
 
 // Reactive State
