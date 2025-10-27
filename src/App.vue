@@ -83,16 +83,18 @@
             <h2 :class="styles.familyTitleInContent" :ref="setFamilyHeaderRef(familyName)">
               {{ familyName }}
             </h2>
-            <div :class="styles.masterGrid">
-              <GridItemCard
-                v-for="bird in birdsInFamily"
-                :key="bird.id" 
-                :item="bird" 
-                :image-base-url="IMAGE_BASE_URL"
-                :placeholder-image="PLACEHOLDER_IMAGE_URL"
-                @card-click="openBirdOverlay"
-              />
-            </div>
+            <div :class="styles.masterGrid" v-bind="$attrs">
+            <GridItemCard
+              v-for="bird in birdsInFamily"
+              :key="bird.id"
+              :id="`bird-card-${bird.birdId}`"
+              :ref="setBirdCardRef(bird)" 
+              :item="bird"
+              :image-base-url="IMAGE_BASE_URL"
+              :placeholder-image="PLACEHOLDER_IMAGE_URL"
+              @card-click="openBirdOverlay"
+            />
+          </div>
           </section>
         </template>
       </div>
@@ -103,15 +105,70 @@
       v-if="isClient && isMobileView"
       :class="[styles.sidebarOverlay, { [styles.isOpen]: isSidebarOpen }]"
       @click="closeSidebar"
-      aria-hidden="true" 
+      aria-hidden="true"
     ></div>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import GridItemCard from './components/GridItemCard.vue';
 import styles from './styles/App.module.css';
+
+// =================================================================
+// SCRIPT SETUP TOP-LEVEL SCOPE
+// Anything defined here is directly available to the <template>
+// =================================================================
+
+// --- DOM ELEMENT REFS ---
+// Object to hold a reference to each bird card DOM element.
+const birdCardRefs = ref({});
+
+// This function populates the `birdCardRefs` object.
+// Because it's at the top level, the template can now see and use it.
+const setBirdCardRef = (bird) => (el) => {
+  if (el) {
+    birdCardRefs.value[bird.birdId] = el;
+  }
+};
+
+
+// --- SCROLL LOGIC ---
+const scrollToBird = (birdId) => {
+  const componentInstance = birdCardRefs.value[birdId];
+
+  if (componentInstance) {
+    const element = componentInstance.$el;
+
+    if (element && typeof element.scrollIntoView === 'function') {
+      // 1. Scroll the element into view
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // 2. Add the highlight class to trigger the animation
+      element.classList.add(styles.highlight);
+
+      // 3. Remove the class after the animation finishes (1500ms = 1.5s)
+      //    so it can be re-triggered later if needed.
+      setTimeout(() => {
+        element.classList.remove(styles.highlight);
+      }, 1500);
+    }
+  } else {
+    console.warn(`Attempted to scroll to bird ID #${birdId}, but its component ref was not found.`);
+  }
+};
+
+const handleHashChange = () => {
+  const hash = window.location.hash;
+  if (hash) {
+    const birdId = parseInt(hash.substring(1), 10);
+    if (!isNaN(birdId)) {
+      // Wait for the DOM to be fully updated before scrolling
+      nextTick(() => {
+        scrollToBird(birdId);
+      });
+    }
+  }
+};
 
 // --- COMPOSABLE: Data Management ---
 function useBirdData(constants) {
@@ -133,7 +190,7 @@ function useBirdData(constants) {
     const parsedBirds = [];
     let currentFamily = '';
     let uniqueVueKeyCounter = 1;
-    
+
     for (let i = 1; i < lines.length; i++) { // Skip header
       const line = lines[i].trim();
       if (!line || line.startsWith('//') || line.startsWith('#')) continue;
@@ -147,7 +204,7 @@ function useBirdData(constants) {
         const birdName = parts[1];
         const scientificName = parts[2];
         const observationDate = parts.length > 3 ? parts[3] : '';
-        
+
         if (birdName) {
           const hasImage = !!observationDate;
           const imageFileToUse = hasImage ? `${birdIndexInFile}.webp` : 'placeholder.webp';
@@ -227,7 +284,7 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
 
   const setFamilyHeaderRef = (familyName) => (el) => { if (el) familyHeaderRefs.value[familyName] = el; };
   const setSidebarItemRef = (familyName) => (el) => { if (el) sidebarItemRefs.value[familyName] = el; };
-  
+
   const scrollToFamily = (familyName) => {
     const headerEl = familyHeaderRefs.value[familyName];
     if (headerEl && scrollableContentRef.value) {
@@ -235,7 +292,7 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
       scrollableContentRef.value.scrollTo({ top: offset, behavior: 'smooth' });
     }
   };
-  
+
   const handleSidebarItemClick = (familyName) => {
     scrollToFamily(familyName);
     if (isMobileView.value && isSidebarOpen.value) {
@@ -255,14 +312,14 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
         bestCandidate = familyName;
       }
     }
-    
+
     if (bestCandidate) {
       currentStickyFamily.value = bestCandidate;
     } else if (uniqueFamilyNames.value.length > 0) {
       currentStickyFamily.value = uniqueFamilyNames.value[0];
     }
   };
-  
+
   watch(currentStickyFamily, (newFamily) => {
     nextTick(() => {
       const activeItem = sidebarItemRefs.value[newFamily];
@@ -272,20 +329,20 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
     });
   });
 
-  return { 
-    currentStickyFamily, 
-    scrollableContentRef, 
-    sidebarScrollableRef, 
-    handleScroll, 
+  return {
+    currentStickyFamily,
+    scrollableContentRef,
+    sidebarScrollableRef,
+    handleScroll,
     handleSidebarItemClick,
-    setFamilyHeaderRef, 
-    setSidebarItemRef 
+    setFamilyHeaderRef,
+    setSidebarItemRef
   };
 }
 
 
 // =================================================================
-// DECLARATIVE SCRIPT SETUP
+// INITIALIZATION
 // =================================================================
 
 // 1. Define Constants
@@ -302,14 +359,14 @@ const { isLoading, error, groupedBirds, uniqueFamilyNames, fetchData } = useBird
 
 const { isSidebarOpen, isMobileView, isClient, toggleSidebar, closeSidebar } = useUIState();
 
-const { 
-  currentStickyFamily, 
-  scrollableContentRef, 
-  sidebarScrollableRef, 
-  handleScroll, 
+const {
+  currentStickyFamily,
+  scrollableContentRef,
+  sidebarScrollableRef,
+  handleScroll,
   handleSidebarItemClick,
-  setFamilyHeaderRef, 
-  setSidebarItemRef 
+  setFamilyHeaderRef,
+  setSidebarItemRef
 } = useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeSidebar);
 
 // 3. Define Component-Specific Event Handlers
@@ -321,14 +378,20 @@ const openBirdOverlay = (bird) => {
 // 4. Set up Lifecycle Hooks
 onMounted(() => {
   fetchData();
+  window.addEventListener('hashchange', handleHashChange);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('hashchange', handleHashChange);
 });
 
 // 5. Watch for data changes to initialize scroll position
 watch(groupedBirds, (newGroups) => {
-    if (Object.keys(newGroups).length > 0) {
-        nextTick(() => {
-            handleScroll(); // Set initial sticky header
-        });
-    }
-});
+  if (Object.keys(newGroups).length > 0) {
+    nextTick(() => {
+      handleScroll(); // Set initial sticky header
+      handleHashChange(); // Handle the initial hash on page load
+    });
+  }
+}, { deep: true }); // Using deep watch just in case, though not strictly necessary here
 </script>
