@@ -250,10 +250,9 @@
   /* mainAreaWrapper already has flex-grow: 1, so it will take remaining space */
 }
 
-
 .highlight {
   /* This creates a pulsing glow effect */
-  animation: pulse-glow 1.5s 1; 
+  animation: pulse-glow 1.5s 1;
 }
 
 @keyframes pulse-glow {

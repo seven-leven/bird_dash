@@ -88,7 +88,7 @@
               v-for="bird in birdsInFamily"
               :key="bird.id"
               :id="`bird-card-${bird.birdId}`"
-              :ref="setBirdCardRef(bird)" 
+              :ref="setBirdCardRef(bird)"
               :item="bird"
               :image-base-url="IMAGE_BASE_URL"
               :placeholder-image="PLACEHOLDER_IMAGE_URL"
@@ -140,17 +140,34 @@ const scrollToBird = (birdId) => {
     const element = componentInstance.$el;
 
     if (element && typeof element.scrollIntoView === 'function') {
-      // 1. Scroll the element into view
+      const observer = new IntersectionObserver(
+        (entries, observerInstance) => {
+          const [entry] = entries;
+          if (entry.isIntersecting) {
+            // The element is now in view, so the scroll is complete.
+            // 1. Add the highlight class to trigger the animation.
+            element.classList.add(styles.highlight);
+
+            // 2. Remove the class after the animation finishes.
+            setTimeout(() => {
+              element.classList.remove(styles.highlight);
+            }, 1500);
+
+            // 3. Disconnect the observer to clean up resources.
+            observerInstance.disconnect();
+          }
+        },
+        {
+          root: scrollableContentRef.value, // Observe within the main scrollable area.
+          threshold: 0.9, // Trigger when at least 90% of the card is visible.
+        }
+      );
+
+      // Start observing the target element.
+      observer.observe(element);
+
+      // Start scrolling. The observer's callback will fire when this is done.
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-      // 2. Add the highlight class to trigger the animation
-      element.classList.add(styles.highlight);
-
-      // 3. Remove the class after the animation finishes (1500ms = 1.5s)
-      //    so it can be re-triggered later if needed.
-      setTimeout(() => {
-        element.classList.remove(styles.highlight);
-      }, 1500);
     }
   } else {
     console.warn(`Attempted to scroll to bird ID #${birdId}, but its component ref was not found.`);
