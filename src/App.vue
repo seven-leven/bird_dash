@@ -12,7 +12,7 @@
         <li
           v-for="familyName in uniqueFamilyNames"
           :key="familyName"
-          :class="[styles.sidebarItem, { [styles.sidebarItemActive]: familyName === currentStickyFamily }]"
+          :class="[styles.sidebarItem, { [styles.sidebarItemActive]: familyName === stickyFamilyName }]"
           @click="handleSidebarItemClick(familyName)"
           tabindex="0"
           @keydown.enter="handleSidebarItemClick(familyName)"
@@ -22,33 +22,45 @@
           {{ familyName }}
         </li>
       </ul>
-      <div v-else-if="!isLoading && !error" :class="styles.sidebarNoItems">
+      <div v-else-if="!isLoading && !dataLoadingError" :class="styles.sidebarNoItems">
         No bird families found.
       </div>
     </aside>
 
     <!-- Main Content -->
     <main :class="styles.mainAreaWrapper">
-      <!-- Sticky Header -->
+      <!-- Sticky Header - MODIFIED FOR PROGRESS BAR -->
       <div :class="styles.stickyFamilyHeaderDisplay">
-        <button
-          v-if="isMobileView"
-          :class="styles.sidebarToggleButton"
-          @click="toggleSidebar"
-          aria-label="Toggle bird groups menu"
-          :aria-expanded="isSidebarOpen.toString()"
-          aria-controls="appSidebar"
+        <div :class="styles.headerLeft">
+          <button
+            v-if="isMobileView"
+            :class="styles.sidebarToggleButton"
+            @click="toggleSidebar"
+            aria-label="Toggle bird groups menu"
+            :aria-expanded="isSidebarOpen.toString()"
+            aria-controls="appSidebar"
+          >
+            <!-- SVG Icon -->
+            <svg viewBox="0 0 100 80" width="24" height="24" fill="currentColor">
+              <rect width="100" height="15" rx="8"></rect>
+              <rect y="30" width="100" height="15" rx="8"></rect>
+              <rect y="60" width="100" height="15" rx="8"></rect>
+            </svg>
+          </button>
+          <span v-if="!isLoading && !dataLoadingError && uniqueFamilyNames.length > 0 && stickyFamilyName">
+            {{ stickyFamilyName }}
+          </span>
+        </div>
+        
+        <!-- NEW PROGRESS BAR DISPLAY -->
+        <div 
+          v-if="!isLoading && totalBirds > 0" 
+          :class="styles.progressDisplay"
+          aria-live="polite"
         >
-          <!-- SVG Icon -->
-          <svg viewBox="0 0 100 80" width="24" height="24" fill="currentColor">
-            <rect width="100" height="15" rx="8"></rect>
-            <rect y="30" width="100" height="15" rx="8"></rect>
-            <rect y="60" width="100" height="15" rx="8"></rect>
-          </svg>
-        </button>
-        <span v-if="!isLoading && !error && uniqueFamilyNames.length > 0 && currentStickyFamily">
-          {{ currentStickyFamily }}
-        </span>
+          {{ drawnBirdCount }} of {{ totalBirds }} Drawn
+        </div>
+        <!-- END PROGRESS BAR DISPLAY -->
       </div>
 
       <!-- Scrollable Content Area -->
@@ -58,9 +70,9 @@
           <div v-for="n in 6" :key="`skeleton-${n}`" :class="styles.skeletonCard"></div>
         </div>
         <!-- Error State -->
-        <div v-else-if="error" :class="styles.errorMessage">
+        <div v-else-if="dataLoadingError" :class="styles.errorMessage">
           <h2>Error Loading Data</h2>
-          <p>{{ error }}</p>
+          <p>{{ dataLoadingError }}</p>
           <p>
             Please ensure public/birds.txt exists, is correctly formatted, and accessible.
             Also, verify image paths (e.g., in public/assets/ for bird images, and public/placeholder.webp for the placeholder) are correct.
@@ -89,7 +101,7 @@
               :key="bird.id"
               :id="`bird-card-${bird.birdId}`"
               :ref="setBirdCardRef(bird)"
-              :item="bird"
+              :bird="bird"
               :image-base-url="IMAGE_BASE_URL"
               :placeholder-image="PLACEHOLDER_IMAGE_URL"
               @card-click="openBirdOverlay"
@@ -116,15 +128,11 @@ import styles from './styles/App.module.css';
 
 // =================================================================
 // SCRIPT SETUP TOP-LEVEL SCOPE
-// Anything defined here is directly available to the <template>
 // =================================================================
 
 // --- DOM ELEMENT REFS ---
-// Object to hold a reference to each bird card DOM element.
 const birdCardRefs = ref({});
 
-// This function populates the `birdCardRefs` object.
-// Because it's at the top level, the template can now see and use it.
 const setBirdCardRef = (bird) => (el) => {
   if (el) {
     birdCardRefs.value[bird.birdId] = el;
@@ -145,28 +153,23 @@ const scrollToBird = (birdId) => {
           const [entry] = entries;
           if (entry.isIntersecting) {
             // The element is now in view, so the scroll is complete.
-            // 1. Add the highlight class to trigger the animation.
             element.classList.add(styles.highlight);
 
-            // 2. Remove the class after the animation finishes.
             setTimeout(() => {
               element.classList.remove(styles.highlight);
             }, 1500);
 
-            // 3. Disconnect the observer to clean up resources.
             observerInstance.disconnect();
           }
         },
         {
-          root: scrollableContentRef.value, // Observe within the main scrollable area.
-          threshold: 0.9, // Trigger when at least 90% of the card is visible.
+          root: scrollableContentRef.value,
+          threshold: 0.9,
         }
       );
 
-      // Start observing the target element.
       observer.observe(element);
 
-      // Start scrolling. The observer's callback will fire when this is done.
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   } else {
@@ -179,7 +182,6 @@ const handleHashChange = () => {
   if (hash) {
     const birdId = parseInt(hash.substring(1), 10);
     if (!isNaN(birdId)) {
-      // Wait for the DOM to be fully updated before scrolling
       nextTick(() => {
         scrollToBird(birdId);
       });
@@ -187,11 +189,19 @@ const handleHashChange = () => {
   }
 };
 
-// --- COMPOSABLE: Data Management ---
+// --- COMPOSABLE: Data Management (MODIFIED for count) ---
 function useBirdData(constants) {
   const allBirds = ref([]);
   const isLoading = ref(true);
-  const error = ref(null);
+  const dataLoadingError = ref(null);
+  
+  // NEW COMPUTED PROPERTIES
+  const totalBirds = computed(() => allBirds.value.length);
+  const drawnBirdCount = computed(() =>
+    allBirds.value.filter(bird => bird.imageUrl !== constants.PLACEHOLDER_IMAGE_URL).length
+  );
+  // END NEW COMPUTED PROPERTIES
+
   const groupedBirds = computed(() => {
     const groups = {};
     allBirds.value.forEach(bird => {
@@ -208,7 +218,7 @@ function useBirdData(constants) {
     let currentFamily = '';
     let uniqueVueKeyCounter = 1;
 
-    for (let i = 1; i < lines.length; i++) { // Skip header
+    for (let i = 1; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line || line.startsWith('//') || line.startsWith('#')) continue;
 
@@ -218,11 +228,11 @@ function useBirdData(constants) {
         currentFamily = parts[1];
       } else if (parts.length >= 3 && parts[0] !== '' && !isNaN(parseInt(parts[0], 10))) {
         const birdIndexInFile = parseInt(parts[0], 10);
-        const birdName = parts[1];
+        const commonName = parts[1];
         const scientificName = parts[2];
         const observationDate = parts.length > 3 ? parts[3] : '';
 
-        if (birdName) {
+        if (commonName) {
           const hasImage = !!observationDate;
           const imageFileToUse = hasImage ? `${birdIndexInFile}.webp` : 'placeholder.webp';
           const imageUrlToUse = hasImage ? constants.IMAGE_BASE_URL + imageFileToUse : constants.PLACEHOLDER_IMAGE_URL;
@@ -230,7 +240,7 @@ function useBirdData(constants) {
           parsedBirds.push({
             id: `bird-vuekey-${uniqueVueKeyCounter++}`,
             birdId: birdIndexInFile,
-            name: birdName,
+            commonName,
             scientificName,
             family: currentFamily,
             imageFile: imageFileToUse,
@@ -245,20 +255,20 @@ function useBirdData(constants) {
 
   const fetchData = async () => {
     isLoading.value = true;
-    error.value = null;
+    dataLoadingError.value = null;
     try {
       const response = await fetch(constants.DATA_URL);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const text = await response.text();
       parseBirdData(text);
     } catch (e) {
-      error.value = e.message || 'Failed to load bird data.';
+      dataLoadingError.value = e.message || 'Failed to load bird data.';
     } finally {
       isLoading.value = false;
     }
   };
 
-  return { isLoading, error, groupedBirds, uniqueFamilyNames, fetchData };
+  return { isLoading, dataLoadingError, groupedBirds, uniqueFamilyNames, fetchData, totalBirds, drawnBirdCount }; // Added totalBirds, drawnBirdCount
 }
 
 // --- COMPOSABLE: UI State Management ---
@@ -293,7 +303,7 @@ function useUIState() {
 
 // --- COMPOSABLE: Scroll Synchronization and Refs Management ---
 function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeSidebar) {
-  const currentStickyFamily = ref('');
+  const stickyFamilyName = ref('');
   const familyHeaderRefs = ref({});
   const sidebarItemRefs = ref({});
   const scrollableContentRef = ref(null);
@@ -320,7 +330,7 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
   const handleScroll = () => {
     if (!scrollableContentRef.value || uniqueFamilyNames.value.length === 0) return;
     const scrollContainer = scrollableContentRef.value;
-    const offset = scrollContainer.scrollTop + 5; // 5px buffer
+    const offset = scrollContainer.scrollTop + 5;
     let bestCandidate = null;
 
     for (const familyName of uniqueFamilyNames.value) {
@@ -331,13 +341,13 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
     }
 
     if (bestCandidate) {
-      currentStickyFamily.value = bestCandidate;
+      stickyFamilyName.value = bestCandidate;
     } else if (uniqueFamilyNames.value.length > 0) {
-      currentStickyFamily.value = uniqueFamilyNames.value[0];
+      stickyFamilyName.value = uniqueFamilyNames.value[0];
     }
   };
 
-  watch(currentStickyFamily, (newFamily) => {
+  watch(stickyFamilyName, (newFamily) => {
     nextTick(() => {
       const activeItem = sidebarItemRefs.value[newFamily];
       if (activeItem?.scrollIntoView) {
@@ -347,7 +357,7 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
   });
 
   return {
-    currentStickyFamily,
+    stickyFamilyName,
     scrollableContentRef,
     sidebarScrollableRef,
     handleScroll,
@@ -368,7 +378,7 @@ const IMAGE_BASE_URL = `${import.meta.env.BASE_URL}assets/`;
 const PLACEHOLDER_IMAGE_URL = `${import.meta.env.BASE_URL}placeholder.webp`;
 
 // 2. Instantiate Composables to get state and functions
-const { isLoading, error, groupedBirds, uniqueFamilyNames, fetchData } = useBirdData({
+const { isLoading, dataLoadingError, groupedBirds, uniqueFamilyNames, fetchData, totalBirds, drawnBirdCount } = useBirdData({ // Destructuring added: totalBirds, drawnBirdCount
   DATA_URL,
   IMAGE_BASE_URL,
   PLACEHOLDER_IMAGE_URL,
@@ -377,7 +387,7 @@ const { isLoading, error, groupedBirds, uniqueFamilyNames, fetchData } = useBird
 const { isSidebarOpen, isMobileView, isClient, toggleSidebar, closeSidebar } = useUIState();
 
 const {
-  currentStickyFamily,
+  stickyFamilyName,
   scrollableContentRef,
   sidebarScrollableRef,
   handleScroll,
@@ -406,9 +416,9 @@ onBeforeUnmount(() => {
 watch(groupedBirds, (newGroups) => {
   if (Object.keys(newGroups).length > 0) {
     nextTick(() => {
-      handleScroll(); // Set initial sticky header
-      handleHashChange(); // Handle the initial hash on page load
+      handleScroll();
+      handleHashChange();
     });
   }
-}, { deep: true }); // Using deep watch just in case, though not strictly necessary here
+}, { deep: true });
 </script>

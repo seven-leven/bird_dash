@@ -1,5 +1,6 @@
 /* src/styles/global.css */
 :root {
+  /* ... (rest of variables remain unchanged) ... */
   --primary-text-color: #4a5568;
   --overlay-bg: rgba(0, 0, 0, 0.7);
   --base-font: Arial, sans-serif;
@@ -13,6 +14,11 @@
   --grid-gap: 1.5rem;
   --text-on-dark-bg: white;
   --text-on-light-bg: #333;
+}
+
+html, body { /* ADDED html selector and height/overflow properties */
+  height: 100%;
+  overflow: hidden; /* Crucial for single scrollbar */
 }
 
 body {

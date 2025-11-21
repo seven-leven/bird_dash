@@ -2,18 +2,18 @@
   <div
     :class="[cardStyles.gridItem, cardStyles.birdCard]"
     :style="backgroundImageStyle"
-    @click="$emit('cardClick', props.item)"
+    @click="$emit('cardClick', props.bird)"
     tabindex="0"
-    @keydown.enter="$emit('cardClick', props.item)"
-    @keydown.space.prevent="$emit('cardClick', props.item)"
+    @keydown.enter="$emit('cardClick', props.bird)"
+    @keydown.space.prevent="$emit('cardClick', props.bird)"
   >
-    <div :class="cardStyles.birdIndex">{{ props.item.birdId }}</div>
+    <div :class="cardStyles.birdIndex">{{ props.bird.birdId }}</div>
     <div :class="cardStyles.birdNameContainer">
-      <h3 :class="cardStyles.birdName">{{ props.item.name }}</h3>
-      <p v-if="props.item.scientificName" :class="cardStyles.birdScientificName">
-        {{ props.item.scientificName }}
+      <h3 :class="cardStyles.birdName">{{ props.bird.commonName }}</h3>
+      <p v-if="props.bird.scientificName" :class="cardStyles.birdScientificName">
+        {{ props.bird.scientificName }}
       </p>
-      <!-- <p v-if="props.item.observationDate" :class="cardStyles.birdObservationDate">{{ props.item.observationDate }}</p> -->
+      <!-- <p v-if="props.bird.observationDate" :class="cardStyles.birdObservationDate">{{ props.bird.observationDate }}</p> -->
     </div>
   </div>
 </template>
@@ -23,7 +23,7 @@ import { ref, computed, watch } from 'vue';
 import cardStyles from '../styles/Card.module.css'; // Path is relative to GridItemCard.vue
 
 const props = defineProps({
-  item: {
+  bird: { // Renamed from 'item'
     type: Object,
     required: true,
   },
@@ -31,7 +31,7 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  // imageBaseUrl is not used here if App.vue provides full item.imageUrl
+  // imageBaseUrl is not used here if App.vue provides full bird.imageUrl
 });
 
 const emit = defineEmits(['cardClick']);
@@ -39,7 +39,7 @@ const emit = defineEmits(['cardClick']);
 const imageToDisplay = ref('');
 
 const loadImage = () => {
-  const targetUrl = props.item.imageUrl;
+  const targetUrl = props.bird.imageUrl; // Changed from props.item.imageUrl
 
   if (!targetUrl || targetUrl === props.placeholderImage) {
     imageToDisplay.value = props.placeholderImage;
@@ -57,7 +57,7 @@ const loadImage = () => {
   img.src = targetUrl;
 };
 
-watch(() => props.item.imageUrl, loadImage, { immediate: true });
+watch(() => props.bird.imageUrl, loadImage, { immediate: true }); // Changed from props.item.imageUrl
 
 const backgroundImageStyle = computed(() => {
   // Styles for background-size: contain, etc., are now primarily in Card.module.css

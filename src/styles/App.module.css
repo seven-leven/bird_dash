@@ -111,10 +111,25 @@
   font-weight: 700;
   color: var(--primary-text-color);
   flex-shrink: 0;
-  z-index: 10; /* Below sidebar and overlay */
+  z-index: 10;
   line-height: 1.3;
-  display: flex; /* For aligning toggle button and text */
+  display: flex;
   align-items: center;
+  justify-content: space-between; /* ADDED to push items to the edges */
+}
+
+.headerLeft { /* New wrapper for button and family name */
+  display: flex;
+  align-items: center;
+  /* Allows the family name to take up available space */
+}
+
+.progressDisplay { /* NEW STYLE for the top-right progress counter */
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6c757d; /* Muted color */
+  flex-shrink: 0; /* Prevent shrinking */
+  margin-left: 1rem; /* Space between family name and progress */
 }
 
 .scrollableContent {
