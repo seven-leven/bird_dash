@@ -1,23 +1,27 @@
 /* src/styles/global.css */
 :root {
   /* --- Palette --- */
-  --color-primary: #4a5568;       /* Dark Grey for text */
-  --color-active: #0056b3;        /* Blue for active states */
-  --color-bg-body: #f0f2f5;       /* Light Grey for app background */
-  --color-bg-card: #ffffff;       /* White for cards */
-  --color-bg-sidebar: #f8fafc;    /* Very light blue-grey */
-  --color-text-inverse: #ffffff;  /* White text on dark backgrounds */
-  --color-text-muted: #6c757d;    /* Grey text for secondary info */
-  
+  --color-primary: #4a5568; /* Dark Grey for text */
+  --color-active: #0056b3; /* Blue for active states */
+  --color-bg-body: #f0f2f5; /* Light Grey for app background */
+  --color-bg-card: #ffffff; /* White for cards */
+  --color-bg-sidebar: #f8fafc; /* Very light blue-grey */
+  --color-text-inverse: #ffffff; /* White text on dark backgrounds */
+  --color-text-muted: #6c757d; /* Grey text for secondary info */
+
   /* --- Overlays & Gradients --- */
   --overlay-dark: rgba(0, 0, 0, 0.5);
-  --gradient-card-bottom: linear-gradient(to top, rgba(0, 0, 0, 0.85) 10%, transparent);
-  
+  --gradient-card-bottom: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 10%,
+    transparent
+  );
+
   /* --- Layout Dimensions --- */
   --sidebar-width: 280px;
   --grid-gap: 1.5rem;
   --card-radius: 1rem;
-  
+
   /* --- Z-Indices --- */
   --z-card-content: 10;
   --z-header: 100;
@@ -79,4 +83,28 @@ body {
 .status-message h2 {
   margin: 0 0 0.5rem 0;
   font-size: 1.25rem;
+}
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0; /* Light grey matching your theme */
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0; /* Darker on hover */
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent;
 }

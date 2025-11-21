@@ -7,18 +7,30 @@
   overflow: hidden; /* Critical: clips the content when it slides out */
   background-color: var(--color-bg-card);
   cursor: pointer;
-  
+
   /* Base styles for the image itself */
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
-  
-  transition: transform var(--duration-normal), box-shadow var(--duration-normal);
+
+  transition:
+    transform var(--duration-normal),
+    box-shadow var(--duration-normal);
+  content-visibility: auto;
+  contain-intrinsic-size: 200px;
+}
+
+.gridItem:active {
+  transform: scale(0.97) translateY(-2px); /* Subtle shrink */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow collapses */
+  transition: transform 0.1s; /* Faster transition for clicks */
 }
 
 .gridItem:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* --- Card UI Elements --- */
@@ -35,9 +47,11 @@
   padding: 0.25rem 0.6rem;
   border-radius: 0.5rem;
   z-index: var(--z-card-content);
-  
+
   /* Animation Config */
-  transition: transform var(--duration-normal) var(--ease-slide), opacity var(--duration-normal);
+  transition:
+    transform var(--duration-normal) var(--ease-slide),
+    opacity var(--duration-normal);
 }
 
 /* 2. The Name & Gradient Container (Bottom) */
@@ -53,9 +67,22 @@
   justify-content: flex-end;
   align-items: center;
   z-index: var(--z-card-content);
-  
+
   /* Animation Config */
-  transition: transform var(--duration-normal) var(--ease-slide), opacity var(--duration-normal);
+  transition:
+    transform var(--duration-normal) var(--ease-slide),
+    opacity var(--duration-normal);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.4) 70%,
+    transparent 100%
+  );
+  backdrop-filter: blur(4px); /* The glass effect */
+  -webkit-backdrop-filter: blur(4px); /* Safari support */
+
+  mask-image: linear-gradient(to bottom, transparent, black 20%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 20%);
 }
 
 .birdName {
@@ -64,7 +91,7 @@
   font-weight: 600;
   text-align: center;
   margin: 0 0 0.25rem 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .birdScientificName {
@@ -73,7 +100,7 @@
   font-style: italic;
   text-align: center;
   margin: 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* --- The "Curtain Open" Hover Effect --- */
