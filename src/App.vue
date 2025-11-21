@@ -166,15 +166,11 @@ function useBirdData(constants) {
 
       const parts = line.split(',').map(part => part.trim().replace(/^"|"$/g, '').trim());
 
-      // Check if this is a Category Header (Empty Number, Has Name)
       if (parts.length >= 2 && parts[0] === '' && parts[1] !== '') {
         currentFamily = parts[1];
       } 
-      // Check if this is a Bird Row (Has Number)
-      // We check regex /^\d+$/ to ensure it's a number string like "001"
       else if (parts.length >= 3 && parts[0] !== '' && /^\d+$/.test(parts[0])) {
         
-        // DIRECTLY use the string from file (e.g., "001")
         const idString = parts[0]; 
         
         const commonName = parts[1];
@@ -183,7 +179,6 @@ function useBirdData(constants) {
 
         if (commonName) {
           const hasImage = !!observationDate;
-          // File name matches ID exactly: "001.webp"
           const imageFileToUse = hasImage ? `${idString}.webp` : 'placeholder.webp';
           const imageUrlToUse = hasImage ? constants.IMAGE_BASE_URL + imageFileToUse : constants.PLACEHOLDER_IMAGE_URL;
 
@@ -286,7 +281,6 @@ function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeS
   };
 
   const scrollToBird = (birdId) => {
-    // We expect birdId to be a string "001"
     const componentInstance = birdCardRefs.value[birdId];
     if (componentInstance) {
       const element = componentInstance.$el;
@@ -379,9 +373,8 @@ const {
 } = useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeSidebar);
 
 const handleHashChange = () => {
-  const hash = window.location.hash; // e.g., "#001"
+  const hash = window.location.hash;
   if (hash) {
-    // Remove the '#' and use the string directly (e.g., "001")
     const birdId = hash.substring(1);
     if (birdId) {
       nextTick(() => scrollToBird(birdId));
