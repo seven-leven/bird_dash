@@ -57,7 +57,12 @@
         </div>
       </div>
 
-      <div ref="scrollableContentRef" :class="styles.scrollableContent" @scroll="handleScroll">
+            <div 
+        ref="scrollableContentRef" 
+        :class="styles.scrollableContent" 
+        @scroll="handleScroll"
+        style="padding-bottom: 150px;"
+      >
         <!-- Loading Skeleton -->
         <div v-if="isLoading" :class="[styles.masterGrid, styles.loadingContainer]">
           <div v-for="n in 6" :key="`skeleton-${n}`" :class="styles.skeletonCard"></div>
