@@ -1,134 +1,91 @@
 /* src/styles/Card.module.css */
+
 .gridItem {
   position: relative;
-  aspect-ratio: 1; /* Key for square grid items */
-  border-radius: var(--card-border-radius);
-  overflow: hidden; /* Important for background image and rounded corners */
-  background-color: var(--card-background); /* Default background */
-  transition:
-    transform var(--transition-timing),
-    box-shadow var(--transition-timing);
+  aspect-ratio: 1;
+  border-radius: var(--card-radius);
+  overflow: hidden; /* Critical: clips the content when it slides out */
+  background-color: var(--color-bg-card);
   cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0; /* Padding will be managed by inner elements or specific card types */
-  box-sizing: border-box;
+  
+  /* Base styles for the image itself */
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  transition: transform var(--duration-normal), box-shadow var(--duration-normal);
 }
 
 .gridItem:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15), 0 6px 6px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* Specific to Bird Cards */
-.birdCard {
-  /* Image display properties */
-  background-size: contain; /* Scale image to fit within bounds, maintaining aspect ratio */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Do not repeat the image */
-  /* background-color: white; */ /* Set via --card-background from gridItem or specific override if needed */
-  /* If an image is smaller than the card, the .gridItem background shows */
-  /* padding: 0; ensure padding is handled by name container */
-}
+/* --- Card UI Elements --- */
 
-.birdCard .birdIndex {
+/* 1. The Number Badge (Top Left) */
+.birdIndex {
   position: absolute;
   top: 0.75rem;
   left: 0.75rem;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--color-text-inverse);
   font-weight: 700;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.35rem;
-  color: var(--text-on-dark-bg);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-  font-size: 0.8rem;
-  line-height: 1;
-  z-index: 2;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.5rem;
+  z-index: var(--z-card-content);
+  
+  /* Animation Config */
+  transition: transform var(--duration-normal) var(--ease-slide), opacity var(--duration-normal);
 }
 
-.birdCard .birdNameContainer {
+/* 2. The Name & Gradient Container (Bottom) */
+.birdNameContainer {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 0.75rem;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 20%, transparent);
-  transition: background 0.3s ease, transform 0.3s ease;
+  padding: 1.5rem 0.75rem 0.75rem; /* Extra top padding for gradient fade */
+  background: var(--gradient-card-bottom);
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
-  min-height: 35%; /* Increased slightly to accommodate scientific name */
-  z-index: 1;
-  box-sizing: border-box;
+  z-index: var(--z-card-content);
+  
+  /* Animation Config */
+  transition: transform var(--duration-normal) var(--ease-slide), opacity var(--duration-normal);
 }
 
-.birdCard .birdName {
-  font-family: var(--base-font);
-  color: var(--text-on-dark-bg);
+.birdName {
+  color: var(--color-text-inverse);
   font-size: 1rem;
   font-weight: 600;
   text-align: center;
-  margin: 0 0 0.2rem 0; /* Add small margin below common name */
-  padding: 0.25rem;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  margin: 0 0 0.25rem 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
-.birdCard .birdScientificName {
-  /* New style for scientific name */
-  font-family: var(--base-font);
-  color: #e0e0e0; /* Slightly lighter than common name */
+.birdScientificName {
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.75rem;
   font-style: italic;
-  font-weight: 400;
   text-align: center;
   margin: 0;
-  padding: 0 0.25rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
-  opacity: 0.9;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
 }
 
-.birdCard:hover .birdIndex {
-  opacity: 0;
+/* --- The "Curtain Open" Hover Effect --- */
+
+/* Slide Index UP and away */
+.gridItem:hover .birdIndex {
   transform: translateY(-150%);
+  opacity: 0;
 }
 
-.birdCard:hover .birdNameContainer {
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.65) 20%,
-    /* Slightly lighter on hover */ transparent
-  );
-}
-.birdCard:hover .birdName {
-  transform: scale(1.03);
-}
-.birdCard:hover .birdScientificName {
-  opacity: 1; /* Ensure full opacity on hover if it was less */
-}
-
-/* Specific to Family Name Cards (if you still have them, though current logic doesn't create them) */
-.familyCard {
-  border: 3px solid var(--primary-text-color);
-  background-color: var(--card-background);
-}
-.familyCard .familyName {
-  font-family: var(--base-font);
-  color: var(--primary-text-color);
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-  margin: 0;
-  padding: 0.5rem;
-  word-break: break-word;
-  transition: color var(--transition-timing);
-}
-.familyCard:hover {
-  background-color: var(--primary-text-color);
-}
-.familyCard:hover .familyName {
-  color: var(--text-on-dark-bg);
+/* Slide Name/Gradient DOWN and away */
+.gridItem:hover .birdNameContainer {
+  transform: translateY(100%);
+  opacity: 0;
 }
