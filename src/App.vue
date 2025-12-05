@@ -130,7 +130,7 @@ import styles from './styles/App.module.css';
 // ------------------------------------------------------------------
 // CONFIGURATION & CONSTANTS
 // ------------------------------------------------------------------
-const DATA_URL = `${import.meta.env.BASE_URL}birds.txt`;
+const DATA_URL = `${import.meta.env.BASE_URL}birds.json`;
 const IMAGE_BASE_URL = `${import.meta.env.BASE_URL}assets/`;
 const PLACEHOLDER_IMAGE_URL = `${import.meta.env.BASE_URL}placeholder.webp`;
 
@@ -144,10 +144,12 @@ function useBirdData(constants) {
 
   const totalBirds = computed(() => allBirds.value.length);
   
+  // Updated to check for the new internal property 'drawnDate'
   const drawnBirdCount = computed(() =>
     allBirds.value.filter(bird => bird.imageUrl !== constants.PLACEHOLDER_IMAGE_URL).length
   );
 
+  // Grouping Logic (remains the same, dependent on allBirds)
   const groupedBirds = computed(() => {
     const groups = {};
     allBirds.value.forEach(bird => {
@@ -159,61 +161,49 @@ function useBirdData(constants) {
 
   const uniqueFamilyNames = computed(() => Object.keys(groupedBirds.value));
 
-  const parseBirdData = (text) => {
-    const lines = text.trim().split('\n');
-    const parsedBirds = [];
-    let currentFamily = '';
-    let uniqueVueKeyCounter = 1;
-
-    for (let i = 1; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line || line.startsWith('//') || line.startsWith('#')) continue;
-
-      const parts = line.split(',').map(part => part.trim().replace(/^"|"$/g, '').trim());
-
-      if (parts.length >= 2 && parts[0] === '' && parts[1] !== '') {
-        currentFamily = parts[1];
-      } 
-      else if (parts.length >= 3 && parts[0] !== '' && /^\d+$/.test(parts[0])) {
-        
-        const idString = parts[0]; 
-        
-        const commonName = parts[1];
-        const scientificName = parts[2];
-        const observationDate = parts.length > 3 ? parts[3] : '';
-
-        if (commonName) {
-          const hasImage = !!observationDate;
-          const imageFileToUse = hasImage ? `${idString}.webp` : 'placeholder.webp';
-          const imageUrlToUse = hasImage ? constants.IMAGE_BASE_URL + imageFileToUse : constants.PLACEHOLDER_IMAGE_URL;
-
-          parsedBirds.push({
-            // Unique internal key for Vue v-for
-            id: `bird-vuekey-${uniqueVueKeyCounter++}`, 
-            // The actual ID from the file (String "001") used for logic/display
-            birdId: idString, 
-            commonName,
-            scientificName,
-            family: currentFamily,
-            imageFile: imageFileToUse,
-            imageUrl: imageUrlToUse,
-            observationDate,
-          });
-        }
-      }
-    }
-    allBirds.value = parsedBirds;
-  };
-
   const fetchData = async () => {
     isLoading.value = true;
     dataLoadingError.value = null;
     try {
       const response = await fetch(constants.DATA_URL);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const text = await response.text();
-      parseBirdData(text);
+      
+      // 1. Get the Hierarchical Data { "Family": [birds...] }
+      const rawGroups = await response.json();
+      const parsedBirds = [];
+      let uniqueVueKeyCounter = 1;
+
+      // 2. Flatten it into the format the UI expects
+      // We iterate over the Family Keys in the JSON
+      for (const [familyName, birds] of Object.entries(rawGroups)) {
+        
+        birds.forEach(bird => {
+          // 'bird' comes from JSON as: { id, name, sci, drawn? }
+          
+          const hasImage = !!bird.drawn; // Check the new 'drawn' key
+          const imageFileToUse = hasImage ? `${bird.id}.webp` : 'placeholder.webp';
+          const imageUrlToUse = hasImage ? constants.IMAGE_BASE_URL + imageFileToUse : constants.PLACEHOLDER_IMAGE_URL;
+
+          parsedBirds.push({
+            // Restore Internal Keys for UI
+            id: `bird-vuekey-${uniqueVueKeyCounter++}`,
+            birdId: bird.id,
+            commonName: bird.name,
+            scientificName: bird.sci,
+            family: familyName, // We inject the family name back here for the UI logic
+            drawnDate: bird.drawn || '', // Normalize to empty string if missing
+            
+            // Image Logic
+            imageFile: imageFileToUse,
+            imageUrl: imageUrlToUse
+          });
+        });
+      }
+
+      allBirds.value = parsedBirds;
+
     } catch (e) {
+      console.error(e);
       dataLoadingError.value = e.message || 'Failed to load bird data.';
     } finally {
       isLoading.value = false;
