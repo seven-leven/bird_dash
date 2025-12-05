@@ -1,44 +1,41 @@
 <template>
   <div :class="styles.appShell">
-    <!-- Sidebar Navigation -->
     <aside
       id="appSidebar"
-      ref="sidebarScrollableRef"
-      :class="[styles.sidebar, { [styles.isOpen]: isSidebarOpen }]"
+      :class="[styles.sidebar, { [styles.isOpen]: ui.sidebarOpen }]"
       aria-labelledby="sidebarTitleHeading"
     >
       <h1 id="sidebarTitleHeading" :class="styles.sidebarTitle">Bird Groups</h1>
       
-      <ul v-if="uniqueFamilyNames.length > 0" :class="styles.sidebarList">
+      <ul v-if="data.families.length" :class="styles.sidebarList">
         <li
-          v-for="familyName in uniqueFamilyNames"
-          :key="familyName"
-          :ref="setSidebarItemRef(familyName)"
-          :class="[styles.sidebarItem, { [styles.sidebarItemActive]: familyName === stickyFamilyName }]"
+          v-for="name in data.families"
+          :key="name"
+          :ref="el => refs.sidebar[name] = el"
+          :class="[styles.sidebarItem, { [styles.sidebarItemActive]: name === scroll.activeFamily }]"
           tabindex="0"
-          @click="handleSidebarItemClick(familyName)"
-          @keydown.enter="handleSidebarItemClick(familyName)"
-          @keydown.space.prevent="handleSidebarItemClick(familyName)"
+          @click="goToFamily(name)"
+          @keydown.enter="goToFamily(name)"
+          @keydown.space.prevent="goToFamily(name)"
         >
-          {{ familyName }}
+          {{ name }}
         </li>
       </ul>
       
-      <div v-else-if="!isLoading && !dataLoadingError" :class="styles.sidebarNoItems">
+      <div v-else-if="!data.loading && !data.error" :class="styles.sidebarNoItems">
         No bird families found.
       </div>
     </aside>
 
-    <!-- Main Content Area -->
     <main :class="styles.mainAreaWrapper">
       <div :class="styles.stickyFamilyHeaderDisplay">
         <div :class="styles.headerLeft">
           <button
-            v-if="isMobileView"
+            v-if="ui.mobile"
             :class="styles.sidebarToggleButton"
-            @click="toggleSidebar"
+            @click="ui.sidebarOpen = !ui.sidebarOpen"
             aria-label="Toggle bird groups menu"
-            :aria-expanded="isSidebarOpen.toString()"
+            :aria-expanded="ui.sidebarOpen.toString()"
             aria-controls="appSidebar"
           >
             <svg viewBox="0 0 100 80" width="24" height="24" fill="currentColor">
@@ -47,63 +44,55 @@
               <rect y="60" width="100" height="15" rx="8"></rect>
             </svg>
           </button>
-          <span v-if="!isLoading && !dataLoadingError && uniqueFamilyNames.length > 0 && stickyFamilyName">
-            {{ stickyFamilyName }}
+          <span v-if="!data.loading && !data.error && scroll.activeFamily">
+            {{ scroll.activeFamily }}
           </span>
         </div>
         
-        <div v-if="!isLoading && totalBirds > 0" :class="styles.progressDisplay" aria-live="polite">
-          {{ drawnBirdCount }} of {{ totalBirds }} Drawn
+        <div v-if="!data.loading && data.total > 0" :class="styles.progressDisplay" aria-live="polite">
+          {{ data.drawn }} of {{ data.total }} Drawn
         </div>
       </div>
 
-            <div 
-        ref="scrollableContentRef" 
+      <div 
+        ref="scrollRef" 
         :class="styles.scrollableContent" 
-        @scroll="handleScroll"
+        @scroll="updateActiveFamily"
         style="padding-bottom: 150px;"
       >
-        <!-- Loading Skeleton -->
-        <div v-if="isLoading" :class="[styles.masterGrid, styles.loadingContainer]">
-          <div v-for="n in 6" :key="`skeleton-${n}`" :class="styles.skeletonCard"></div>
+        <div v-if="data.loading" :class="[styles.masterGrid, styles.loadingContainer]">
+          <div v-for="n in 6" :key="n" :class="styles.skeletonCard"></div>
         </div>
 
-        <!-- Error Message -->
-        <div v-else-if="dataLoadingError" :class="styles.errorMessage">
+        <div v-else-if="data.error" :class="styles.errorMessage">
           <h2>Error Loading Data</h2>
-          <p>{{ dataLoadingError }}</p>
-          <p>
-            Please ensure public/birds.txt exists and is accessible.
-            Verify image paths and base URL configuration in vite.config.js.
-          </p>
+          <p>{{ data.error }}</p>
+          <p>Please ensure public/birds.txt exists and is accessible.</p>
         </div>
 
-        <!-- Empty State -->
-        <div v-else-if="uniqueFamilyNames.length === 0" :class="styles.noItemsMessage">
-          No birds or families found.<br />
-          Check your public/birds.txt data file.
+        <div v-else-if="!data.families.length" :class="styles.noItemsMessage">
+          No birds or families found.<br />Check your public/birds.txt data file.
         </div>
 
-        <!-- Bird Grid -->
         <template v-else>
           <section
-            v-for="(birdsInFamily, familyName) in groupedBirds"
-            :key="familyName"
-            :id="`family-section-${familyName.replace(/\s+/g, '-')}`"
+            v-for="(birds, family) in data.grouped"
+            :key="family"
+            :id="`family-section-${family.replace(/\s+/g, '-')}`"
             :class="styles.familySection"
           >
-            <h2 :ref="setFamilyHeaderRef(familyName)" :class="styles.familyTitleInContent">
-              {{ familyName }}
+            <h2 :ref="el => refs.headers[family] = el" :class="styles.familyTitleInContent">
+              {{ family }}
             </h2>
-            <div :class="styles.masterGrid" v-bind="$attrs">
+            <div :class="styles.masterGrid">
               <GridItemCard
-                v-for="bird in birdsInFamily"
+                v-for="bird in birds"
                 :key="bird.id"
                 :id="`bird-card-${bird.birdId}`"
-                :ref="setBirdCardRef(bird)"
+                :ref="el => refs.cards[bird.birdId] = el"
                 :bird="bird"
-                :image-base-url="IMAGE_BASE_URL"
-                :placeholder-image="PLACEHOLDER_IMAGE_URL"
+                :image-base-url="IMAGE_BASE"
+                :placeholder-image="PLACEHOLDER"
                 @card-click="openBirdOverlay"
               />
             </div>
@@ -112,268 +101,166 @@
       </div>
     </main>
 
-    <!-- Mobile Sidebar Overlay -->
     <div
-      v-if="isClient && isMobileView"
-      :class="[styles.sidebarOverlay, { [styles.isOpen]: isSidebarOpen }]"
-      @click="closeSidebar"
+      v-if="ui.client && ui.mobile"
+      :class="[styles.sidebarOverlay, { [styles.isOpen]: ui.sidebarOpen }]"
+      @click="ui.sidebarOpen = false"
       aria-hidden="true"
     ></div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import GridItemCard from './components/GridItemCard.vue';
 import styles from './styles/App.module.css';
 
 // ------------------------------------------------------------------
 // CONFIGURATION & CONSTANTS
 // ------------------------------------------------------------------
-const DATA_URL = `${import.meta.env.BASE_URL}birds.json`;
-const IMAGE_BASE_URL = `${import.meta.env.BASE_URL}assets/`;
-const PLACEHOLDER_IMAGE_URL = `${import.meta.env.BASE_URL}placeholder.webp`;
+const BASE = import.meta.env.BASE_URL;
+const IMAGE_BASE = `${BASE}assets/`;
+const PLACEHOLDER = `${BASE}placeholder.webp`;
+const DATA_URL = `${BASE}birds.json`;
+
+// ------------------------------------------------------------------
+// STATE: DATA, UI, SCROLL, REFS
+// ------------------------------------------------------------------
+const data = reactive({
+  birds: [],
+  loading: true,
+  error: null,
+  grouped: computed(() => {
+    const groups = {};
+    data.birds.forEach(b => {
+      if (!groups[b.family]) groups[b.family] = [];
+      groups[b.family].push(b);
+    });
+    return groups;
+  }),
+  families: computed(() => Object.keys(data.grouped)),
+  total: computed(() => data.birds.length),
+  drawn: computed(() => data.birds.filter(b => b.imageUrl !== PLACEHOLDER).length)
+});
+
+const ui = reactive({
+  sidebarOpen: false,
+  mobile: false,
+  client: false
+});
+
+const scroll = reactive({
+  activeFamily: ''
+});
+
+const refs = reactive({
+  headers: {},
+  sidebar: {},
+  cards: {}
+});
+
+const scrollRef = ref(null);
 
 // ------------------------------------------------------------------
 // LOGIC: DATA FETCHING & PARSING
 // ------------------------------------------------------------------
-function useBirdData(constants) {
-  const allBirds = ref([]);
-  const isLoading = ref(true);
-  const dataLoadingError = ref(null);
+const checkMobile = () => {
+  if (typeof window !== 'undefined') {
+    ui.mobile = window.innerWidth < 992;
+    if (!ui.mobile) ui.sidebarOpen = false;
+  }
+};
 
-  const totalBirds = computed(() => allBirds.value.length);
-  
-  // Updated to check for the new internal property 'drawnDate'
-  const drawnBirdCount = computed(() =>
-    allBirds.value.filter(bird => bird.imageUrl !== constants.PLACEHOLDER_IMAGE_URL).length
-  );
-
-  // Grouping Logic (remains the same, dependent on allBirds)
-  const groupedBirds = computed(() => {
-    const groups = {};
-    allBirds.value.forEach(bird => {
-      if (!groups[bird.family]) groups[bird.family] = [];
-      groups[bird.family].push(bird);
-    });
-    return groups;
-  });
-
-  const uniqueFamilyNames = computed(() => Object.keys(groupedBirds.value));
-
-  const fetchData = async () => {
-    isLoading.value = true;
-    dataLoadingError.value = null;
-    try {
-      const response = await fetch(constants.DATA_URL);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      
-      // 1. Get the Hierarchical Data { "Family": [birds...] }
-      const rawGroups = await response.json();
-      const parsedBirds = [];
-      let uniqueVueKeyCounter = 1;
-
-      // 2. Flatten it into the format the UI expects
-      // We iterate over the Family Keys in the JSON
-      for (const [familyName, birds] of Object.entries(rawGroups)) {
-        
-        birds.forEach(bird => {
-          // 'bird' comes from JSON as: { id, name, sci, drawn? }
-          
-          const hasImage = !!bird.drawn; // Check the new 'drawn' key
-          const imageFileToUse = hasImage ? `${bird.id}.webp` : 'placeholder.webp';
-          const imageUrlToUse = hasImage ? constants.IMAGE_BASE_URL + imageFileToUse : constants.PLACEHOLDER_IMAGE_URL;
-
-          parsedBirds.push({
-            // Restore Internal Keys for UI
-            id: `bird-vuekey-${uniqueVueKeyCounter++}`,
-            birdId: bird.id,
-            commonName: bird.name,
-            scientificName: bird.sci,
-            family: familyName, // We inject the family name back here for the UI logic
-            drawnDate: bird.drawn || '', // Normalize to empty string if missing
-            
-            // Image Logic
-            imageFile: imageFileToUse,
-            imageUrl: imageUrlToUse
-          });
-        });
-      }
-
-      allBirds.value = parsedBirds;
-
-    } catch (e) {
-      console.error(e);
-      dataLoadingError.value = e.message || 'Failed to load bird data.';
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
-  return { isLoading, dataLoadingError, groupedBirds, uniqueFamilyNames, fetchData, totalBirds, drawnBirdCount };
-}
-
-// ------------------------------------------------------------------
-// LOGIC: UI STATE (SIDEBAR & RESPONSIVE)
-// ------------------------------------------------------------------
-function useUIState() {
-  const isSidebarOpen = ref(false);
-  const isMobileView = ref(false);
-  const isClient = ref(false);
-
-  const checkIfMobile = () => {
-    if (typeof window !== 'undefined') {
-      isMobileView.value = window.innerWidth < 992;
-      if (!isMobileView.value && isSidebarOpen.value) {
-        isSidebarOpen.value = false;
-      }
-    }
-  };
-
-  onMounted(() => {
-    isClient.value = true;
-    checkIfMobile();
-    window.addEventListener('resize', checkIfMobile);
-  });
-
-  onBeforeUnmount(() => {
-    window.removeEventListener('resize', checkIfMobile);
-  });
-
-  const toggleSidebar = () => isSidebarOpen.value = !isSidebarOpen.value;
-  const closeSidebar = () => { if (isSidebarOpen.value) isSidebarOpen.value = false; };
-
-  return { isSidebarOpen, isMobileView, isClient, toggleSidebar, closeSidebar };
-}
-
-// ------------------------------------------------------------------
-// LOGIC: SCROLLING & REFS
-// ------------------------------------------------------------------
-function useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeSidebar) {
-  const stickyFamilyName = ref('');
-  const familyHeaderRefs = ref({});
-  const sidebarItemRefs = ref({});
-  const birdCardRefs = ref({});
-  const scrollableContentRef = ref(null);
-
-  // Element Setters
-  const setFamilyHeaderRef = (familyName) => (el) => { if (el) familyHeaderRefs.value[familyName] = el; };
-  const setSidebarItemRef = (familyName) => (el) => { if (el) sidebarItemRefs.value[familyName] = el; };
-  const setBirdCardRef = (bird) => (el) => { if (el) birdCardRefs.value[bird.birdId] = el; };
-
-  // Navigation
-  const scrollToFamily = (familyName) => {
-    const headerEl = familyHeaderRefs.value[familyName];
-    if (headerEl && scrollableContentRef.value) {
-      const offset = headerEl.offsetTop;
-      scrollableContentRef.value.scrollTo({ top: offset, behavior: 'smooth' });
-    }
-  };
-
-  const handleSidebarItemClick = (familyName) => {
-    scrollToFamily(familyName);
-    if (isMobileView.value && isSidebarOpen.value) closeSidebar();
-  };
-
-  const scrollToBird = (birdId) => {
-    const componentInstance = birdCardRefs.value[birdId];
-    if (componentInstance) {
-      const element = componentInstance.$el;
-      if (element && typeof element.scrollIntoView === 'function') {
-        const observer = new IntersectionObserver(
-          (entries, observerInstance) => {
-            const [entry] = entries;
-            if (entry.isIntersecting) {
-              element.classList.add(styles.highlight);
-              setTimeout(() => element.classList.remove(styles.highlight), 1500);
-              observerInstance.disconnect();
-            }
-          },
-          { root: scrollableContentRef.value, threshold: 0.9 }
-        );
-        observer.observe(element);
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-  };
-
-  const handleScroll = () => {
-    if (!scrollableContentRef.value || uniqueFamilyNames.value.length === 0) return;
-    const scrollContainer = scrollableContentRef.value;
-    const offset = scrollContainer.scrollTop + 5;
+const loadData = async () => {
+  data.loading = true;
+  data.error = null;
+  try {
+    const res = await fetch(DATA_URL);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
-    let bestCandidate = null;
-    for (const familyName of uniqueFamilyNames.value) {
-      const el = familyHeaderRefs.value[familyName];
-      if (el && el.offsetTop <= offset) {
-        bestCandidate = familyName;
-      }
+    const rawGroups = await res.json();
+    const birds = [];
+    let id = 1;
+
+    for (const [family, list] of Object.entries(rawGroups)) {
+      list.forEach(b => {
+        const hasImg = !!b.drawn;
+        const imgFile = hasImg ? `${b.id}.webp` : 'placeholder.webp';
+        const imgUrl = hasImg ? IMAGE_BASE + imgFile : PLACEHOLDER;
+
+        birds.push({
+          id: `bird-vuekey-${id++}`,
+          birdId: b.id,
+          commonName: b.name,
+          scientificName: b.sci,
+          family,
+          drawnDate: b.drawn || '',
+          imageFile: imgFile,
+          imageUrl: imgUrl
+        });
+      });
     }
 
-    if (bestCandidate) stickyFamilyName.value = bestCandidate;
-    else if (uniqueFamilyNames.value.length > 0) stickyFamilyName.value = uniqueFamilyNames.value[0];
-  };
-
-  watch(stickyFamilyName, (newFamily) => {
-    nextTick(() => {
-      const activeItem = sidebarItemRefs.value[newFamily];
-      if (activeItem?.scrollIntoView) {
-        activeItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    });
-  });
-
-  return {
-    stickyFamilyName,
-    scrollableContentRef,
-    handleScroll,
-    handleSidebarItemClick,
-    scrollToBird,
-    setFamilyHeaderRef,
-    setSidebarItemRef,
-    setBirdCardRef
-  };
-}
+    data.birds = birds;
+  } catch (e) {
+    console.error(e);
+    data.error = e.message || 'Failed to load bird data.';
+  } finally {
+    data.loading = false;
+  }
+};
 
 // ------------------------------------------------------------------
-// COMPONENT INITIALIZATION
+// LOGIC: NAVIGATION & SCROLLING
 // ------------------------------------------------------------------
-const { 
-  isLoading, 
-  dataLoadingError, 
-  groupedBirds, 
-  uniqueFamilyNames, 
-  fetchData, 
-  totalBirds, 
-  drawnBirdCount 
-} = useBirdData({ DATA_URL, IMAGE_BASE_URL, PLACEHOLDER_IMAGE_URL });
+const goToFamily = (family) => {
+  const el = refs.headers[family];
+  if (el && scrollRef.value) {
+    scrollRef.value.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
+  }
+  if (ui.mobile && ui.sidebarOpen) ui.sidebarOpen = false;
+};
 
-const { 
-  isSidebarOpen, 
-  isMobileView, 
-  isClient, 
-  toggleSidebar, 
-  closeSidebar 
-} = useUIState();
+const goToBird = (birdId) => {
+  const comp = refs.cards[birdId];
+  if (!comp) return;
+  
+  const el = comp.$el;
+  if (el?.scrollIntoView) {
+    const observer = new IntersectionObserver(
+      (entries, obs) => {
+        if (entries[0].isIntersecting) {
+          el.classList.add(styles.highlight);
+          setTimeout(() => el.classList.remove(styles.highlight), 1500);
+          obs.disconnect();
+        }
+      },
+      { root: scrollRef.value, threshold: 0.9 }
+    );
+    observer.observe(el);
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+};
 
-const {
-  stickyFamilyName,
-  scrollableContentRef,
-  handleScroll,
-  handleSidebarItemClick,
-  scrollToBird,
-  setFamilyHeaderRef,
-  setSidebarItemRef,
-  setBirdCardRef
-} = useScrollAndRefs(uniqueFamilyNames, isMobileView, isSidebarOpen, closeSidebar);
+const updateActiveFamily = () => {
+  if (!scrollRef.value || !data.families.length) return;
+  
+  const offset = scrollRef.value.scrollTop + 5;
+  let best = null;
+  
+  for (const family of data.families) {
+    const el = refs.headers[family];
+    if (el && el.offsetTop <= offset) best = family;
+  }
+  
+  scroll.activeFamily = best || data.families[0];
+};
 
-const handleHashChange = () => {
+const handleHash = () => {
   const hash = window.location.hash;
   if (hash) {
     const birdId = hash.substring(1);
-    if (birdId) {
-      nextTick(() => scrollToBird(birdId));
-    }
+    if (birdId) nextTick(() => goToBird(birdId));
   }
 };
 
@@ -381,21 +268,37 @@ const openBirdOverlay = (bird) => {
   console.log('Card clicked:', bird);
 };
 
-watch(groupedBirds, (newGroups) => {
+// ------------------------------------------------------------------
+// WATCHERS & LIFECYCLE
+// ------------------------------------------------------------------
+watch(() => scroll.activeFamily, (newFamily) => {
+  nextTick(() => {
+    const el = refs.sidebar[newFamily];
+    if (el?.scrollIntoView) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  });
+});
+
+watch(() => data.grouped, (newGroups) => {
   if (Object.keys(newGroups).length > 0) {
     nextTick(() => {
-      handleScroll();
-      handleHashChange();
+      updateActiveFamily();
+      handleHash();
     });
   }
 }, { deep: true });
 
 onMounted(() => {
-  fetchData();
-  window.addEventListener('hashchange', handleHashChange);
+  ui.client = true;
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+  window.addEventListener('hashchange', handleHash);
+  loadData();
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('hashchange', handleHashChange);
+  window.removeEventListener('resize', checkMobile);
+  window.removeEventListener('hashchange', handleHash);
 });
 </script>
