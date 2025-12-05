@@ -111,7 +111,7 @@
 </template>
 
 <script setup>
-import { reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import GridItemCard from './components/GridItemCard.vue';
 import styles from './styles/App.module.css';
 
