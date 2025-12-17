@@ -91,8 +91,8 @@
                 :id="`bird-card-${bird.birdId}`"
                 :ref="el => refs.cards[bird.birdId] = el"
                 :bird="bird"
-                :image-base-url="IMAGE_BASE"
-                :placeholder-image="PLACEHOLDER"
+                :image-base-url="config.imageBase"
+                :placeholder-image="config.placeholder"
                 @card-click="openBirdOverlay"
               />
             </div>
@@ -118,13 +118,15 @@ import styles from './styles/App.module.css';
 // ------------------------------------------------------------------
 // CONFIGURATION & CONSTANTS
 // ------------------------------------------------------------------
-const BASE = import.meta.env.BASE_URL;
-const IMAGE_BASE = `${BASE}assets/`;
-const PLACEHOLDER = `${BASE}placeholder.webp`;
-const DATA_URL = `${BASE}birds.json`;
+const config = {
+  base: import.meta.env.BASE_URL,
+  get imageBase() { return `${this.base}assets/`; },
+  get placeholder() { return `${this.base}placeholder.webp`; },
+  get dataUrl() { return `${this.base}birds.json`; }
+};
 
 // ------------------------------------------------------------------
-// STATE: DATA, UI, SCROLL, REFS
+// STATE: DATA MANAGEMENT
 // ------------------------------------------------------------------
 const data = reactive({
   birds: [],
@@ -140,42 +142,43 @@ const data = reactive({
   }),
   families: computed(() => Object.keys(data.grouped)),
   total: computed(() => data.birds.length),
-  drawn: computed(() => data.birds.filter(b => b.imageUrl !== PLACEHOLDER).length)
+  drawn: computed(() => data.birds.filter(b => b.imageUrl !== config.placeholder).length)
 });
 
+// ------------------------------------------------------------------
+// STATE: UI MANAGEMENT
+// ------------------------------------------------------------------
 const ui = reactive({
   sidebarOpen: false,
   mobile: false,
   client: false
 });
 
+// ------------------------------------------------------------------
+// STATE: SCROLL TRACKING
+// ------------------------------------------------------------------
 const scroll = reactive({
   activeFamily: ''
 });
 
+// ------------------------------------------------------------------
+// STATE: ELEMENT REFS
+// ------------------------------------------------------------------
 const refs = reactive({
   headers: {},
   sidebar: {},
   cards: {}
 });
-
 const scrollRef = ref(null);
 
 // ------------------------------------------------------------------
-// LOGIC: DATA FETCHING & PARSING
+// LOGIC: DATA FETCHING
 // ------------------------------------------------------------------
-const checkMobile = () => {
-  if (typeof window !== 'undefined') {
-    ui.mobile = window.innerWidth < 992;
-    if (!ui.mobile) ui.sidebarOpen = false;
-  }
-};
-
 const loadData = async () => {
   data.loading = true;
   data.error = null;
   try {
-    const res = await fetch(DATA_URL);
+    const res = await fetch(config.dataUrl);
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     
     const rawGroups = await res.json();
@@ -186,7 +189,7 @@ const loadData = async () => {
       list.forEach(b => {
         const hasImg = !!b.drawn;
         const imgFile = hasImg ? `${b.id}.webp` : 'placeholder.webp';
-        const imgUrl = hasImg ? IMAGE_BASE + imgFile : PLACEHOLDER;
+        const imgUrl = hasImg ? config.imageBase + imgFile : config.placeholder;
 
         birds.push({
           id: `bird-vuekey-${id++}`,
@@ -211,7 +214,17 @@ const loadData = async () => {
 };
 
 // ------------------------------------------------------------------
-// LOGIC: NAVIGATION & SCROLLING
+// LOGIC: RESPONSIVE UI
+// ------------------------------------------------------------------
+const updateMobileState = () => {
+  if (typeof window !== 'undefined') {
+    ui.mobile = window.innerWidth < 992;
+    if (!ui.mobile) ui.sidebarOpen = false;
+  }
+};
+
+// ------------------------------------------------------------------
+// LOGIC: NAVIGATION
 // ------------------------------------------------------------------
 const goToFamily = (family) => {
   const el = refs.headers[family];
@@ -242,6 +255,17 @@ const goToBird = (birdId) => {
   }
 };
 
+const handleHash = () => {
+  const hash = window.location.hash;
+  if (hash) {
+    const birdId = hash.substring(1);
+    if (birdId) nextTick(() => goToBird(birdId));
+  }
+};
+
+// ------------------------------------------------------------------
+// LOGIC: SCROLL TRACKING
+// ------------------------------------------------------------------
 const updateActiveFamily = () => {
   if (!scrollRef.value || !data.families.length) return;
   
@@ -256,20 +280,15 @@ const updateActiveFamily = () => {
   scroll.activeFamily = best || data.families[0];
 };
 
-const handleHash = () => {
-  const hash = window.location.hash;
-  if (hash) {
-    const birdId = hash.substring(1);
-    if (birdId) nextTick(() => goToBird(birdId));
-  }
-};
-
+// ------------------------------------------------------------------
+// LOGIC: EVENT HANDLERS
+// ------------------------------------------------------------------
 const openBirdOverlay = (bird) => {
   console.log('Card clicked:', bird);
 };
 
 // ------------------------------------------------------------------
-// WATCHERS & LIFECYCLE
+// WATCHERS
 // ------------------------------------------------------------------
 watch(() => scroll.activeFamily, (newFamily) => {
   nextTick(() => {
@@ -289,16 +308,19 @@ watch(() => data.grouped, (newGroups) => {
   }
 }, { deep: true });
 
+// ------------------------------------------------------------------
+// LIFECYCLE HOOKS
+// ------------------------------------------------------------------
 onMounted(() => {
   ui.client = true;
-  checkMobile();
-  window.addEventListener('resize', checkMobile);
+  updateMobileState();
+  window.addEventListener('resize', updateMobileState);
   window.addEventListener('hashchange', handleHash);
   loadData();
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', checkMobile);
+  window.removeEventListener('resize', updateMobileState);
   window.removeEventListener('hashchange', handleHash);
 });
 </script>
