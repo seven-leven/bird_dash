@@ -1,69 +1,51 @@
-[https://seven-leven.github.io/bird_dash/](https://seven-leven.github.io/bird_dash/)
-
 # Birds of Maldives
 
-A simple webpage dedicated to showcasing the birds of the Maldives. I created
-this site to draw and celebrate these beautiful creatures.
+[Live Demo](https://seven-leven.github.io/bird_dash/)
 
-## About
+A digital collection showcasing illustrations of all bird species found in the Maldives.
 
-Inspired by the vibrant bird life in the Maldives, this project features
-hand-drawn illustrations and basic data about each species. It's a passion
-project meant to capture the beauty and diversity of the birds found in this
-tropical paradise.
+## Tech Stack
 
-## Features
+*   **Runtime:** [Deno](https://deno.land/)
+*   **Framework:** Vue 3
+*   **Build Tool:** Vite
+*   **Styling:** Tailwind CSS v4
 
-- **Artwork**: Explore hand-drawn birds.
-- **Modern Web Technologies**: Built using React, esbuild, and Deno.
-- **Responsive Design**: Enjoy a clean and simple layout on any device.
+## Local Development
 
-## Getting Started
-
-### Running Locally
-
-To run the project on your local machine:
-
-1. **Clone the Repository**
+1. **Clone the repo**
    ```bash
    git clone https://github.com/seven-leven/bird_dash.git
-   cd your-repo-name
+   cd bird_dash
    ```
 
-2. **Build the Project** Make sure you have [Deno](https://deno.land/)
-   installed. Then run:
+2. **Install dependencies**
    ```bash
-   deno run --allow-read --allow-write --allow-net --allow-env --allow-run build.ts
+   deno install
    ```
 
-3. **Serve the Project** Start the server with:
+3. **Start the dev server**
    ```bash
-   deno run --allow-read --allow-net server.ts
+   deno task dev
    ```
-   Now, open [http://localhost:3000](http://localhost:3000) in your browser.
+   Open [http://localhost:5173](http://localhost:5173).
 
-### Deployment
+## Deployment
 
-This project is automatically deployed to GitHub Pages on pushes to the `main`
-branch. The build script compiles the source code using esbuild and Deno, and
-then copies the static files to the `build/` directory.
+The project uses GitHub Actions to build and deploy to GitHub Pages automatically on push to `main`.
 
-## Project Structure
+**Build command:**
+```bash
+deno task build
+```
 
-- `src/`: Contains the React source code and components.
-- `public/`: Contains static assets like `birds.txt` and CSS files.
-- `build.ts`: The build script using esbuild.
-- `server.ts`: A simple Deno server for local development.
-- `deploy.yml`: GitHub Actions workflow for deploying to GitHub Pages.
+## Structure
+
+*   `src/`: Vue components and application logic.
+*   `public/`: Static assets (images, `birds.json`).
+*   `deno.jsonc`: Project configuration and task definitions.
+*   `vite.config.ts`: Build configuration.
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
-
-## Acknowledgements
-
-- Inspired by the rich and diverse bird life of the Maldives.
-- Built with love using [Deno](https://deno.land/),
-  [React](https://reactjs.org/), and [esbuild](https://esbuild.github.io/).
-
-Enjoy exploring the birds of the Maldives!
+MIT
