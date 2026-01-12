@@ -4,14 +4,18 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+# If you push 3 times in a row, this cancels the first 2 automatically to save time.
+concurrency:
+  group: "pages-deploy"
+  cancel-in-progress: true
 
 jobs:
-  build-and-deploy:
-    name: Build and Deploy
+  # JOB 1: BUILD & CHECK
+  build:
+    name: Build Project
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,33 +23,74 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: "v2.x" # Use v2.x to ensure you get the latest stable v2
+          deno-version: "v2.x"
 
-      - name: Cache Deno dependencies
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/deno
             ./node_modules
           key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deno-
+          restore-keys: ${{ runner.os }}-deno-
 
-      # NEW STEP: Explicitly install dependencies.
-      # This generates the node_modules folder required by Tailwind v4
-      # and ensures the lockfile is respected.
       - name: Install Dependencies
-        run: deno install --allow-scripts
+        run: |
+          deno install --allow-scripts
+          # Quick check to ensure Tailwind's folder exists
+          ls -F node_modules/ || echo "WARNING: node_modules folder missing!"
 
-      - name: Build project
-        # We removed the --base argument because it's now in vite.config.ts
-        # We add --frozen=false to prevent CI failure if the lockfile is slightly out of sync
-        run: deno task build
+      - name: Build project (Verbose)
         env:
-          CI: true 
+          CI: true
+          DEBUG: "vite:*,rollup:*" # Keeps the detailed error logs you wanted
+        run: |
+          # The '||' allows us to print the directory state if the build crashes
+          deno task build -- --debug || { 
+            echo "❌ BUILD FAILED. Listing files for debugging:"; 
+            ls -R; 
+            exit 1; 
+          }
+
+      # The Safety Check: verify the file exists before we approve deployment
+      - name: Verify Build Artifact
+        run: |
+          if [ -f "./dist/index.html" ]; then
+            echo "✅ Build successful."
+          else
+            echo "❌ Error: dist/index.html is missing."
+            exit 1
+          fi
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: gh-pages-artifact
+          path: ./dist
+
+  # JOB 2: DEPLOY
+  # This runs ONLY if 'build' passed successfully.
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: gh-pages-artifact
+          path: ./dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+          # Ensures the deployment branch is wiped clean and replaced with the new build
+          force_orphan: true
