@@ -7,4 +7,5 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   plugins: [deno(), vue(), tailwindcss()],
   publicDir: "public",
+  base: './', 
 });
