@@ -68,37 +68,57 @@
       
       <!-- Sticky Header -->
       <div class="
-        sticky top-0 z-30 flex items-center justify-between 
-        bg-white/90 backdrop-blur-md dark:bg-slate-900/90
-        border-b border-slate-200 dark:border-slate-800
-        px-6 py-4 shadow-sm
-      ">
-        <div class="flex items-center gap-3">
-          <!-- Mobile Hamburger -->
-          <button
-            v-if="ui.mobile"
-            class="p-1 -ml-1 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-md lg:hidden"
-            @click="ui.sidebarOpen = !ui.sidebarOpen"
-            aria-label="Toggle bird groups menu"
-            :aria-expanded="ui.sidebarOpen.toString()"
-            aria-controls="appSidebar"
-          >
-            <svg viewBox="0 0 100 80" width="20" height="20" fill="currentColor">
-              <rect width="100" height="15" rx="8"></rect>
-              <rect y="30" width="100" height="15" rx="8"></rect>
-              <rect y="60" width="100" height="15" rx="8"></rect>
-            </svg>
-          </button>
-          
-          <span v-if="!data.loading && !data.error && scroll.activeFamily" class="text-lg font-bold">
-            {{ scroll.activeFamily }}
-          </span>
-        </div>
-        
-        <div v-if="!data.loading && data.total > 0" class="text-sm font-medium text-slate-500 dark:text-slate-400" aria-live="polite">
-          {{ data.drawn }} <span class="text-slate-300 mx-1">/</span> {{ data.total }} Drawn
-        </div>
-      </div>
+  sticky top-0 z-30 flex items-center justify-between 
+  bg-white/90 backdrop-blur-md dark:bg-slate-900/90
+  border-b border-slate-200 dark:border-slate-800
+  px-6 py-4 shadow-sm
+">
+  <div class="flex items-center gap-3">
+    <!-- ... Mobile Toggle Button ... -->
+    <!-- ... Family Title ... -->
+    <span v-if="!data.loading && !data.error && scroll.activeFamily" class="text-lg font-bold text-slate-800 dark:text-slate-100">
+      {{ scroll.activeFamily }}
+    </span>
+  </div>
+  
+  <!-- RIGHT SIDE: Stats + Theme Toggle -->
+  <div class="flex items-center gap-4">
+    
+    <!-- Stats Display -->
+    <div v-if="!data.loading && data.total > 0" class="text-sm font-medium text-slate-500 dark:text-slate-400">
+      {{ data.drawn }} <span class="text-slate-300 mx-1">/</span> {{ data.total }} Drawn
+    </div>
+
+    <!-- THEME SWITCH BUTTON -->
+    <button 
+      @click="isDark = !isDark"
+      class="
+        flex items-center justify-center w-8 h-8 rounded-full transition-colors
+        bg-slate-100 text-slate-600 hover:bg-slate-200 
+        dark:bg-slate-800 dark:text-yellow-400 dark:hover:bg-slate-700
+      "
+      aria-label="Toggle Dark Mode"
+    >
+      <!-- Sun Icon (Show when Dark) -->
+      <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      
+      <!-- Moon Icon (Show when Light) -->
+      <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
+</div>
 
       <!-- Scrollable Grid Area -->
       <div 
@@ -168,7 +188,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import GridItemCard from './components/GridItemCard.vue';
-// Note: styles import is removed
 
 // ------------------------------------------------------------------
 // CONFIGURATION & CONSTANTS
@@ -379,6 +398,9 @@ watch(() => data.grouped, (newGroups) => {
   }
 }, { deep: true });
 
+// --- THEME LOGIC ---
+const isDark = ref(false);
+
 // ------------------------------------------------------------------
 // LIFECYCLE HOOKS
 // ------------------------------------------------------------------
@@ -388,10 +410,21 @@ onMounted(() => {
   window.addEventListener('resize', updateMobileState);
   window.addEventListener('hashchange', handleHash);
   loadData();
+    // 1. Check System Preference on load
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  isDark.value = systemPrefersDark;
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', updateMobileState);
   window.removeEventListener('hashchange', handleHash);
 });
+
+watch(isDark, (val) => {
+  if (val) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}, { immediate: true });
 </script>
