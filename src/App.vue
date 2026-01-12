@@ -1,197 +1,35 @@
 <template>
-  <!-- App Shell -->
-  <div class="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
-    
-    <!-- Mobile Overlay -->
-    <div
-      v-if="ui.client && ui.mobile"
-      class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
-      :class="ui.sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
-      @click="ui.sidebarOpen = false"
-      aria-hidden="true"
-    />
-
-    <!-- Sidebar -->
-    <aside
-      id="appSidebar"
-      class="
-        fixed inset-y-0 left-0 z-50 w-72 flex-shrink-0
-        flex flex-col
-        bg-white dark:bg-slate-900 
-        border-r border-slate-200 dark:border-slate-800
-        transition-transform duration-300 ease-out shadow-2xl lg:shadow-none
-        lg:static lg:translate-x-0
-      "
-      :class="ui.sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-      aria-labelledby="sidebarTitleHeading"
-    >
-      <!-- Sidebar Title -->
-      <div class="sticky top-0 z-10 bg-white dark:bg-slate-900 p-6 pb-4">
-        <h1 id="sidebarTitleHeading" class="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
-          Bird Groups
-        </h1>
-      </div>
-      
-      <!-- Sidebar List -->
-      <div class="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
-        <ul v-if="data.families.length" class="space-y-1">
-          <li
-            v-for="name in data.families"
-            :key="name"
-            :ref="el => refs.sidebar[name] = el"
-            class="
-              cursor-pointer rounded-lg px-4 py-2.5 text-sm font-medium transition-colors
-              focus:outline-none focus:ring-2 focus:ring-blue-500
-            "
-            :class="[
-              name === scroll.activeFamily 
-                ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300' 
-                : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800'
-            ]"
-            tabindex="0"
-            @click="goToFamily(name)"
-            @keydown.enter="goToFamily(name)"
-            @keydown.space.prevent="goToFamily(name)"
-          >
-            {{ name }}
-          </li>
-        </ul>
-        
-        <div v-else-if="!data.loading && !data.error" class="p-4 text-center text-sm text-slate-500 italic">
-          No bird families found.
-        </div>
-      </div>
-    </aside>
-
-    <!-- Main Content Area -->
-    <main class="relative flex flex-1 flex-col overflow-hidden">
-      
-      <!-- Sticky Header -->
-      <div class="
-  sticky top-0 z-30 flex items-center justify-between 
-  bg-white/90 backdrop-blur-md dark:bg-slate-900/90
-  border-b border-slate-200 dark:border-slate-800
-  px-6 py-4 shadow-sm
-">
-  <div class="flex items-center gap-3">
-    <!-- ... Mobile Toggle Button ... -->
-    <!-- ... Family Title ... -->
-    <span v-if="!data.loading && !data.error && scroll.activeFamily" class="text-lg font-bold text-slate-800 dark:text-slate-100">
-      {{ scroll.activeFamily }}
-    </span>
-  </div>
-  
-  <!-- RIGHT SIDE: Stats + Theme Toggle -->
-  <div class="flex items-center gap-4">
-    
-    <!-- Stats Display -->
-    <div v-if="!data.loading && data.total > 0" class="text-sm font-medium text-slate-500 dark:text-slate-400">
-      {{ data.drawn }} <span class="text-slate-300 mx-1">/</span> {{ data.total }} Drawn
-    </div>
-
-    <!-- THEME SWITCH BUTTON -->
-    <button 
-      @click="isDark = !isDark"
-      class="
-        flex items-center justify-center w-8 h-8 rounded-full transition-colors
-        bg-slate-100 text-slate-600 hover:bg-slate-200 
-        dark:bg-slate-800 dark:text-yellow-400 dark:hover:bg-slate-700
-      "
-      aria-label="Toggle Dark Mode"
-    >
-      <!-- Sun Icon (Show when Dark) -->
-      <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"></circle>
-        <line x1="12" y1="1" x2="12" y2="3"></line>
-        <line x1="12" y1="21" x2="12" y2="23"></line>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-        <line x1="1" y1="12" x2="3" y2="12"></line>
-        <line x1="21" y1="12" x2="23" y2="12"></line>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-      </svg>
-      
-      <!-- Moon Icon (Show when Light) -->
-      <svg v-else xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-      </svg>
-    </button>
-  </div>
-</div>
-
-      <!-- Scrollable Grid Area -->
-      <div 
-        ref="scrollRef" 
-        class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar pb-32" 
-        @scroll="updateActiveFamily"
-      >
-        <!-- Loading State (Skeletons) -->
-        <div v-if="data.loading" class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
-          <div 
-            v-for="n in 10" 
-            :key="n" 
-            class="aspect-square rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse"
-          />
-        </div>
-
-        <!-- Error State -->
-        <div v-else-if="data.error" class="mx-auto mt-10 max-w-lg rounded-xl border border-red-200 bg-red-50 p-6 text-center dark:bg-red-900/20 dark:border-red-800">
-          <h2 class="mb-2 text-lg font-bold text-red-700 dark:text-red-400">Error Loading Data</h2>
-          <p class="text-red-600 dark:text-red-300">{{ data.error }}</p>
-          <p class="mt-4 text-xs text-red-500">Please ensure public/birds.txt exists and is accessible.</p>
-        </div>
-
-        <!-- Empty State -->
-        <div v-else-if="!data.families.length" class="mt-20 text-center text-slate-500">
-          <h2 class="text-xl font-semibold">No birds found</h2>
-          <p class="mt-2">Check your data file.</p>
-        </div>
-
-        <!-- Content Grid -->
-        <template v-else>
-          <section
-            v-for="(birds, family) in data.grouped"
-            :key="family"
-            :id="`family-section-${family.replace(/\s+/g, '-')}`"
-            class="mb-12 scroll-mt-24"
-          >
-            <!-- Section Header -->
-            <h2 
-              :ref="el => refs.headers[family] = el" 
-              class="mb-6 border-b border-slate-200 pb-2 text-2xl font-bold text-slate-800 dark:text-slate-100 dark:border-slate-800"
-            >
-              {{ family }}
-            </h2>
-
-            <!-- Grid -->
-            <!-- Using minmax for a responsive grid without media queries -->
-            <div class="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
-              <GridItemCard
-                v-for="bird in birds"
-                :key="bird.id"
-                :id="`bird-card-${bird.birdId}`"
-                :ref="el => refs.cards[bird.birdId] = el"
-                :bird="bird"
-                :image-base-url="config.imageBase"
-                :placeholder-image="config.placeholder"
-                @card-click="openBirdOverlay"
-              />
-            </div>
-          </section>
-        </template>
-      </div>
-    </main>
-  </div>
+  <UI
+    ref="uiRef"
+    :sidebar-open="ui.sidebarOpen"
+    :mobile="ui.mobile"
+    :client="ui.client"
+    :is-dark="theme.isDark"
+    :loading="data.loading"
+    :error="data.error"
+    :families="data.families"
+    :grouped="data.grouped"
+    :active-family="scroll.activeFamily"
+    :total="data.total"
+    :drawn="data.drawn"
+    :image-base-url="config.imageBase"
+    :placeholder-image="config.placeholder"
+    @close-sidebar="ui.sidebarOpen = false"
+    @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
+    @toggle-theme="theme.isDark = !theme.isDark"
+    @go-to-family="goToFamily"
+    @scroll="updateActiveFamily"
+    @card-click="openBirdOverlay"
+  />
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
-import GridItemCard from './components/GridItemCard.vue';
+import UI from './components/UI.vue';
 
-// ------------------------------------------------------------------
-// CONFIGURATION & CONSTANTS
-// ------------------------------------------------------------------
+// =============================================================================
+// CONFIGURATION
+// =============================================================================
 const config = {
   base: import.meta.env.BASE_URL,
   get imageBase() { return `${this.base}assets/`; },
@@ -199,9 +37,11 @@ const config = {
   get dataUrl() { return `${this.base}birds.json`; }
 };
 
-// ------------------------------------------------------------------
-// STATE: DATA MANAGEMENT
-// ------------------------------------------------------------------
+// =============================================================================
+// STATE (Declarative)
+// =============================================================================
+
+// Data State
 const data = reactive({
   birds: [],
   loading: true,
@@ -219,35 +59,30 @@ const data = reactive({
   drawn: computed(() => data.birds.filter(b => b.imageUrl !== config.placeholder).length)
 });
 
-// ------------------------------------------------------------------
-// STATE: UI MANAGEMENT
-// ------------------------------------------------------------------
+// UI State
 const ui = reactive({
   sidebarOpen: false,
   mobile: false,
   client: false
 });
 
-// ------------------------------------------------------------------
-// STATE: SCROLL TRACKING
-// ------------------------------------------------------------------
+// Scroll State
 const scroll = reactive({
   activeFamily: ''
 });
 
-// ------------------------------------------------------------------
-// STATE: ELEMENT REFS
-// ------------------------------------------------------------------
-const refs = reactive({
-  headers: {},
-  sidebar: {},
-  cards: {}
+// Theme State
+const theme = reactive({
+  isDark: false
 });
-const scrollRef = ref(null);
 
-// ------------------------------------------------------------------
-// LOGIC: DATA FETCHING
-// ------------------------------------------------------------------
+// Component Refs
+const uiRef = ref(null);
+
+// =============================================================================
+// DATA OPERATIONS (Imperative)
+// =============================================================================
+
 const loadData = async () => {
   data.loading = true;
   data.error = null;
@@ -287,46 +122,54 @@ const loadData = async () => {
   }
 };
 
-// ------------------------------------------------------------------
-// LOGIC: RESPONSIVE UI
-// ------------------------------------------------------------------
+// =============================================================================
+// UI OPERATIONS (Imperative)
+// =============================================================================
+
 const updateMobileState = () => {
   if (typeof window !== 'undefined') {
-    ui.mobile = window.innerWidth < 1024; // Matching 'lg' breakpoint in Tailwind
+    ui.mobile = window.innerWidth < 1024;
     if (!ui.mobile) ui.sidebarOpen = false;
   }
 };
 
-// ------------------------------------------------------------------
-// LOGIC: NAVIGATION
-// ------------------------------------------------------------------
+// =============================================================================
+// NAVIGATION OPERATIONS (Imperative)
+// =============================================================================
+
 const goToFamily = (family) => {
-  const el = refs.headers[family];
-  if (el && scrollRef.value) {
-    // Offset for the sticky header (approx 80px)
+  if (!uiRef.value) return;
+  
+  const el = uiRef.value.headerRefs[family];
+  const scrollContainer = uiRef.value.scrollContainer;
+  
+  if (el && scrollContainer) {
     const headerOffset = 80;
     const elementPosition = el.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + scrollRef.value.scrollTop - headerOffset;
+    const offsetPosition = elementPosition + scrollContainer.scrollTop - headerOffset;
 
-    scrollRef.value.scrollTo({
+    scrollContainer.scrollTo({
       top: offsetPosition,
       behavior: 'smooth'
     });
   }
+  
   if (ui.mobile && ui.sidebarOpen) ui.sidebarOpen = false;
 };
 
 const goToBird = (birdId) => {
-  const comp = refs.cards[birdId];
+  if (!uiRef.value) return;
+  
+  const comp = uiRef.value.cardRefs[birdId];
   if (!comp) return;
   
-  const el = comp.$el; // Access the DOM element from the Vue Component ref
+  const el = comp.$el;
+  const scrollContainer = uiRef.value.scrollContainer;
+  
   if (el?.scrollIntoView) {
     const observer = new IntersectionObserver(
       (entries, obs) => {
         if (entries[0].isIntersecting) {
-          // highlight logic replaced with Tailwind classes
-          // 'ring-4' creates a border glow, 'ring-blue-500' sets color
           const highlightClasses = ['ring-4', 'ring-blue-500', 'ring-offset-4', 'dark:ring-offset-slate-900', 'z-10', 'transition-all', 'duration-500'];
           el.classList.add(...highlightClasses);
           
@@ -337,7 +180,7 @@ const goToBird = (birdId) => {
           obs.disconnect();
         }
       },
-      { root: scrollRef.value, threshold: 0.5 }
+      { root: scrollContainer, threshold: 0.5 }
     );
     observer.observe(el);
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -352,43 +195,48 @@ const handleHash = () => {
   }
 };
 
-// ------------------------------------------------------------------
-// LOGIC: SCROLL TRACKING
-// ------------------------------------------------------------------
 const updateActiveFamily = () => {
-  if (!scrollRef.value || !data.families.length) return;
+  if (!uiRef.value || !data.families.length) return;
   
-  // Adjust offset based on sticky header height
-  const offset = scrollRef.value.scrollTop + 100;
+  const scrollContainer = uiRef.value.scrollContainer;
+  if (!scrollContainer) return;
+  
+  const offset = scrollContainer.scrollTop + 100;
   let best = null;
   
   for (const family of data.families) {
-    const el = refs.headers[family];
+    const el = uiRef.value.headerRefs[family];
     if (el && el.offsetTop <= offset) best = family;
   }
   
   scroll.activeFamily = best || data.families[0];
 };
 
-// ------------------------------------------------------------------
-// LOGIC: EVENT HANDLERS
-// ------------------------------------------------------------------
+// =============================================================================
+// EVENT HANDLERS (Imperative)
+// =============================================================================
+
 const openBirdOverlay = (bird) => {
   console.log('Card clicked:', bird);
 };
 
-// ------------------------------------------------------------------
-// WATCHERS
-// ------------------------------------------------------------------
+// =============================================================================
+// REACTIVITY (Declarative)
+// =============================================================================
+
+// Sync sidebar scroll with active family
 watch(() => scroll.activeFamily, (newFamily) => {
+  if (!uiRef.value) return;
+  
   nextTick(() => {
-    const el = refs.sidebar[newFamily];
+    const el = uiRef.value.sidebarRefs[newFamily];
     if (el?.scrollIntoView) {
       el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
   });
 });
 
+// Update scroll position when data loads
 watch(() => data.grouped, (newGroups) => {
   if (Object.keys(newGroups).length > 0) {
     nextTick(() => {
@@ -398,33 +246,38 @@ watch(() => data.grouped, (newGroups) => {
   }
 }, { deep: true });
 
-// --- THEME LOGIC ---
-const isDark = ref(false);
-
-// ------------------------------------------------------------------
-// LIFECYCLE HOOKS
-// ------------------------------------------------------------------
-onMounted(() => {
-  ui.client = true;
-  updateMobileState();
-  window.addEventListener('resize', updateMobileState);
-  window.addEventListener('hashchange', handleHash);
-  loadData();
-    // 1. Check System Preference on load
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  isDark.value = systemPrefersDark;
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener('resize', updateMobileState);
-  window.removeEventListener('hashchange', handleHash);
-});
-
-watch(isDark, (val) => {
+// Sync theme with DOM
+watch(() => theme.isDark, (val) => {
   if (val) {
     document.documentElement.classList.add('dark');
   } else {
     document.documentElement.classList.remove('dark');
   }
 }, { immediate: true });
+
+// =============================================================================
+// LIFECYCLE
+// =============================================================================
+
+onMounted(() => {
+  // Initialize UI state
+  ui.client = true;
+  updateMobileState();
+  
+  // Set up event listeners
+  window.addEventListener('resize', updateMobileState);
+  window.addEventListener('hashchange', handleHash);
+  
+  // Load data
+  loadData();
+  
+  // Initialize theme from system preference
+  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  theme.isDark = systemPrefersDark;
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateMobileState);
+  window.removeEventListener('hashchange', handleHash);
+});
 </script>

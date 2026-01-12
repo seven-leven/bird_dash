@@ -42,7 +42,7 @@
     <div class="
       absolute bottom-0 inset-x-0 z-10
       flex flex-col justify-end
-      bg-gradient-to-t from-black/90 via-black/50 to-transparent
+      bg-linear-to-t from-black/90 via-black/50 to-transparent
       px-4 pb-4 pt-12
       transition-transform duration-300 ease-out
       group-hover:translate-y-full
