@@ -2,14 +2,15 @@
 
 [Live Demo](https://seven-leven.github.io/bird_dash/)
 
-A digital collection showcasing illustrations of all bird species found in the Maldives.
+A digital collection showcasing illustrations of all bird species found in the
+Maldives.
 
 ## Tech Stack
 
-*   **Runtime:** [Deno](https://deno.land/)
-*   **Framework:** Vue 3
-*   **Build Tool:** Vite
-*   **Styling:** Tailwind CSS v4
+- **Runtime:** [Deno](https://deno.land/)
+- **Framework:** Vue 3
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS v4
 
 ## Local Development
 
@@ -32,19 +33,21 @@ A digital collection showcasing illustrations of all bird species found in the M
 
 ## Deployment
 
-The project uses GitHub Actions to build and deploy to GitHub Pages automatically on push to `main`.
+The project uses GitHub Actions to build and deploy to GitHub Pages
+automatically on push to `main`.
 
 **Build command:**
+
 ```bash
 deno task build
 ```
 
 ## Structure
 
-*   `src/`: Vue components and application logic.
-*   `public/`: Static assets (images, `birds.json`).
-*   `deno.jsonc`: Project configuration and task definitions.
-*   `vite.config.ts`: Build configuration.
+- `src/`: Vue components and application logic.
+- `public/`: Static assets (images, `birds.json`).
+- `deno.jsonc`: Project configuration and task definitions.
+- `vite.config.ts`: Build configuration.
 
 ## License
 
