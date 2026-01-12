@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* 
+   In v4, 'darkMode' is enabled by default. 
+   If you used custom themes in tailwind.config.ts, 
+   you now define them here using standard CSS variables 
+   inside a @theme block.
+*/
+
+@theme {
+  /* Example: If you had custom colors or animations */
+  --animate-shimmer: shimmer 1.5s infinite linear;
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+/* 
+   Your custom scrollbar logic can stay as standard CSS, 
+   but @apply works slightly differently in v4 (it's built-in).
+*/
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    /* @apply still works in v4 */
+    @apply bg-slate-300 rounded-full hover:bg-slate-400 dark:bg-slate-700
+      dark:hover:bg-slate-600;
+  }
+}
