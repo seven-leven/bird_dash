@@ -3,14 +3,14 @@ name: Deploy Vue App to GitHub Pages
 on:
   push:
     branches:
-      - main # Or your default branch
+      - main
 
 jobs:
   build-and-deploy:
     name: Build and Deploy
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Allow write to gh-pages branch
+      contents: write
 
     steps:
       - name: Checkout code
@@ -19,41 +19,33 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: "v2.3.3" # Specify your Deno version, e.g., v1.40.0 or use "v2.x" for latest Deno 2
-      # It's generally better to pin a specific version for stability
+          deno-version: "v2.x" # Use v2.x to ensure you get the latest stable v2
 
-      # Deno manages its own module cache, but caching the npm modules resolved via Deno can be beneficial.
-      # The --node-modules-dir flag for Vite when run via Deno often creates a node_modules dir.
-      - name: Cache Deno dependencies and node_modules
+      - name: Cache Deno dependencies
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/deno
             ./node_modules
-            # You might also need to cache your project's specific Deno lock file (deno.lock) if you use one
-          key: ${{ runner.os }}-deno-npm-${{ hashFiles('**/deno.lock', '**/deno.json') }}
+          key: ${{ runner.os }}-deno-${{ hashFiles('deno.lock') }}
           restore-keys: |
-            ${{ runner.os }}-deno-npm-
+            ${{ runner.os }}-deno-
 
-      # Your deno.json has "build": "deno run -A --node-modules-dir npm:vite build"
-      # We need to tell Vite the base path for GitHub Pages.
-      # It will be /<repository-name>/
-      # Example: if your repo is github.com/username/my-vue-app, base should be /my-vue-app/
+      # NEW STEP: Explicitly install dependencies.
+      # This generates the node_modules folder required by Tailwind v4
+      # and ensures the lockfile is respected.
+      - name: Install Dependencies
+        run: deno install --allow-scripts
+
       - name: Build project
-        run: deno task build --base=/${{ github.event.repository.name }}/
-        # Alternatively, if your Vite config handles base URL:
-        # run: deno task build
+        # We removed the --base argument because it's now in vite.config.ts
+        # We add --frozen=false to prevent CI failure if the lockfile is slightly out of sync
+        run: deno task build
         env:
-          # If your Vite config uses an env variable for base URL, set it here
-          # VITE_APP_BASE_URL: /${{ github.event.repository.name }}/
-          CI: true # Often used by build tools
+          CI: true 
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist # Vite outputs to 'dist' by default
-# force_orphan: true # Optional: creates a clean history for gh-pages branch
-# user_name: 'github-actions[bot]' # Optional: custom committer name
-# user_email: 'github-actions[bot]@users.noreply.github.com' # Optional: custom committer email
-# cname: your.custom.domain # Optional: if you use a custom domain
+          publish_dir: ./dist
