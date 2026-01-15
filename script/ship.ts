@@ -21,8 +21,15 @@ async function main() {
     Deno.exit(1);
   }
 
-  // 2. Update Version (Counts drawn birds only)
-  const fullVersion = await updateVersion();
+  // 2. Update Version (includes Integrity Check)
+  let fullVersion = '';
+  try {
+    fullVersion = await updateVersion();
+  } catch (_e) {
+    // We use _e to silence the linter, but we know updateVersion handles its own error logging
+    console.error('❌ Aborting ship due to version error.');
+    Deno.exit(1);
+  }
 
   // 3. Update Changelog
   const date = new Date().toISOString().split('T')[0];
