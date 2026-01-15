@@ -8,10 +8,7 @@
     // MAINTENANCE TASKS
     "check": "deno fmt --check && deno lint",
     "fix": "deno fmt",
-    "update": "deno outdated --update",
-
-    // SETUP (Fixed the 'hookPath' typo here - it must be plural 'hooksPath')
-    "setup:hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit"
+    "update": "deno outdated --update"
   },
 
   "compilerOptions": {
@@ -32,6 +29,7 @@
 
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",
+    "@std/path": "jsr:@std/path@^1.1.4",
     "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.3",
     "tailwindcss": "npm:tailwindcss@^4.1.18",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.18",

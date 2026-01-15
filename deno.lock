@@ -1,6 +1,9 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@std/internal@^1.0.12": "1.0.12",
+    "jsr:@std/path@*": "1.1.4",
+    "jsr:@std/path@^1.1.4": "1.1.4",
     "npm:@deno/vite-plugin@^1.0.6": "1.0.6_vite@7.3.1__picomatch@4.0.3",
     "npm:@tailwindcss/vite@^4.1.18": "4.1.18_vite@7.3.1__picomatch@4.0.3",
     "npm:@vitejs/plugin-vue@^6.0.3": "6.0.3_vite@7.3.1__picomatch@4.0.3_vue@3.5.26",
@@ -8,6 +11,17 @@
     "npm:vite@*": "7.3.1_picomatch@4.0.3",
     "npm:vite@^7.3.1": "7.3.1_picomatch@4.0.3",
     "npm:vue@^3.5.26": "3.5.26"
+  },
+  "jsr": {
+    "@std/internal@1.0.12": {
+      "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
+    },
+    "@std/path@1.1.4": {
+      "integrity": "1d2d43f39efb1b42f0b1882a25486647cb851481862dc7313390b2bb044314b5",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    }
   },
   "npm": {
     "@babel/helper-string-parser@7.27.1": {
@@ -750,6 +764,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@std/path@^1.1.4",
       "npm:@deno/vite-plugin@^1.0.6",
       "npm:@tailwindcss/vite@^4.1.18",
       "npm:@vitejs/plugin-vue@^6.0.3",

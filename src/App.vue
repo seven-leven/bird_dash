@@ -1,38 +1,45 @@
 <template>
-  <UI
-    ref="uiRef"
-    :sidebar-open="ui.sidebarOpen"
-    :mobile="ui.mobile"
-    :client="ui.client"
-    :is-dark="theme.isDark"
-    :loading="data.loading"
-    :error="data.error"
-    :families="data.families"
-    :grouped="data.grouped"
-    :active-family="scroll.activeFamily"
-    :total="data.total"
-    :drawn="data.drawn"
-    :image-base-url="config.imageBase"
-    :placeholder-image="config.placeholder"
-    @close-sidebar="ui.sidebarOpen = false"
-    @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
-    @toggle-theme="theme.isDark = !theme.isDark"
-    @go-to-family="goToFamily"
-    @scroll="updateActiveFamily"
-    @card-click="openBirdOverlay"
-  />
+  <div>
+    <!-- Your Main UI -->
+    <UI
+      ref="uiRef"
+      :sidebar-open="ui.sidebarOpen"
+      :mobile="ui.mobile"
+      :client="ui.client"
+      :is-dark="theme.isDark"
+      :loading="data.loading"
+      :error="data.error"
+      :families="data.families"
+      :grouped="data.grouped"
+      :active-family="scroll.activeFamily"
+      :total="data.total"
+      :drawn="data.drawn"
+      :image-base-url="config.imageBase"
+      :placeholder-image="config.placeholder"
+      @close-sidebar="ui.sidebarOpen = false"
+      @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
+      @toggle-theme="theme.isDark = !theme.isDark"
+      @go-to-family="goToFamily"
+      @scroll="updateActiveFamily"
+      @card-click="openBirdOverlay"
+    />
+
+    <!-- The Footer Component -->
+    <Footer />
+  </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import UI from './components/UI.vue';
+import Footer from './components/Footer.vue';
 
 // =============================================================================
 // CONFIGURATION
 // =============================================================================
 const config = {
   base: import.meta.env.BASE_URL,
-  get imageBase() { return `${this.base}assets/`; },
+  get imageBase() { return `${this.base}thumb/`; },
   get placeholder() { return `${this.base}placeholder.webp`; },
   get dataUrl() { return `${this.base}birds.json`; }
 };
