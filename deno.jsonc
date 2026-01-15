@@ -1,0 +1,41 @@
+{
+  "tasks": {
+    "dev": "deno run -A --node-modules-dir npm:vite",
+    "build": "deno run -A --node-modules-dir npm:vite build",
+    "preview": "deno run -A --node-modules-dir npm:vite preview",
+    "serve:dist": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
+
+    // MAINTENANCE TASKS
+    "check": "deno fmt --check && deno lint",
+    "fix": "deno fmt",
+    "update": "deno outdated --update",
+
+    // SETUP (Fixed the 'hookPath' typo here - it must be plural 'hooksPath')
+    "setup:hooks": "git config core.hooksPath .githooks && chmod +x .githooks/pre-commit"
+  },
+
+  "compilerOptions": {
+    // 'esnext' allows newer JS features than 'es2020'
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "strict": true
+  },
+
+  // PREVENT LINTING/FORMATTING GENERATED FILES
+  "lint": {
+    "exclude": ["dist", "node_modules"]
+  },
+  "fmt": {
+    "exclude": ["dist", "node_modules"],
+    "singleQuote": true,
+    "lineWidth": 100
+  },
+
+  "imports": {
+    "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",
+    "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.3",
+    "tailwindcss": "npm:tailwindcss@^4.1.18",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.18",
+    "vite": "npm:vite@^7.3.1",
+    "vue": "npm:vue@^3.5.26"
+  }
+}

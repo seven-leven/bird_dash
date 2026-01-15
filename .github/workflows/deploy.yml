@@ -8,7 +8,7 @@ on:
 
 # If you push 3 times in a row, this cancels the first 2 automatically to save time.
 concurrency:
-  group: "pages-deploy"
+  group: 'pages-deploy'
   cancel-in-progress: true
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Set up Deno
         uses: denoland/setup-deno@v1
         with:
-          deno-version: "v2.x"
+          deno-version: 'v2.x'
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -43,7 +43,7 @@ jobs:
       - name: Build project (Verbose)
         env:
           CI: true
-          DEBUG: "vite:*,rollup:*" # Keeps the detailed error logs you wanted
+          DEBUG: 'vite:*,rollup:*' # Keeps the detailed error logs you wanted
         run: |
           # The '||' allows us to print the directory state if the build crashes
           deno task build -- --debug || {

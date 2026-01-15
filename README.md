@@ -2,8 +2,7 @@
 
 [Live Demo](https://seven-leven.github.io/bird_dash/)
 
-A digital collection showcasing illustrations of all bird species found in the
-Maldives.
+A digital collection showcasing illustrations of all bird species found in the Maldives.
 
 ## Tech Stack
 
@@ -33,8 +32,7 @@ Maldives.
 
 ## Deployment
 
-The project uses GitHub Actions to build and deploy to GitHub Pages
-automatically on push to `main`.
+The project uses GitHub Actions to build and deploy to GitHub Pages automatically on push to `main`.
 
 **Build command:**
 
