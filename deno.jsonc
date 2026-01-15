@@ -4,6 +4,7 @@
     "build": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve:dist": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
+    "ship": "deno run -A script/ship.ts",
 
     // MAINTENANCE TASKS
     "check": "deno fmt --check && deno lint",
