@@ -1,31 +1,42 @@
 <template>
-  <UI
-    ref="uiRef"
-    :sidebar-open="ui.sidebarOpen"
-    :mobile="ui.mobile"
-    :client="ui.client"
-    :is-dark="theme.isDark"
-    :loading="data.loading"
-    :error="data.error"
-    :families="data.families"
-    :grouped="data.grouped"
-    :active-family="scroll.activeFamily"
-    :total="data.total"
-    :drawn="data.drawn"
-    :image-base-url="config.imageBase"
-    :placeholder-image="config.placeholder"
-    @close-sidebar="ui.sidebarOpen = false"
-    @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
-    @toggle-theme="theme.isDark = !theme.isDark"
-    @go-to-family="goToFamily"
-    @scroll="updateActiveFamily"
-    @card-click="openBirdOverlay"
-  />
+  <div>
+    <UI
+      ref="uiRef"
+      :sidebar-open="ui.sidebarOpen"
+      :mobile="ui.mobile"
+      :client="ui.client"
+      :is-dark="theme.isDark"
+      :loading="data.loading"
+      :error="data.error"
+      :families="data.families"
+      :grouped="data.grouped"
+      :active-family="scroll.activeFamily"
+      :total="data.total"
+      :drawn="data.drawn"
+      :image-base-url="config.imageBase"
+      :placeholder-image="config.placeholder"
+      @close-sidebar="ui.sidebarOpen = false"
+      @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
+      @toggle-theme="theme.isDark = !theme.isDark"
+      @go-to-family="goToFamily"
+      @scroll="updateActiveFamily"
+      @card-click="openBirdOverlay"
+    />
+
+    <!-- Expanded Image Modal -->
+    <ExpandedImage
+      :is-open="expandedImage.isOpen"
+      :bird="expandedImage.bird"
+      :full-image-base-url="config.fullImageBase"
+      @close="closeBirdOverlay"
+    />
+  </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import UI from './components/UI.vue';
+import ExpandedImage from './components/ExpandedImage.vue';
 
 // =============================================================================
 // CONFIGURATION
@@ -33,6 +44,7 @@ import UI from './components/UI.vue';
 const config = {
   base: import.meta.env.BASE_URL,
   get imageBase() { return `${this.base}thumb/`; },
+  get fullImageBase() { return `${this.base}full/`; }, // Added this
   get placeholder() { return `${this.base}placeholder.webp`; },
   get dataUrl() { return `${this.base}birds.json`; }
 };
@@ -64,6 +76,12 @@ const ui = reactive({
   sidebarOpen: false,
   mobile: false,
   client: false
+});
+
+// Modal State (Added this)
+const expandedImage = reactive({
+  isOpen: false,
+  bird: null
 });
 
 // Scroll State
@@ -217,7 +235,18 @@ const updateActiveFamily = () => {
 // =============================================================================
 
 const openBirdOverlay = (bird) => {
-  console.log('Card clicked:', bird);
+  // Only open if the bird actually has a drawn image
+  if (bird.imageUrl === config.placeholder) return;
+  
+  expandedImage.bird = bird;
+  expandedImage.isOpen = true;
+};
+
+const closeBirdOverlay = () => {
+  expandedImage.isOpen = false;
+  setTimeout(() => {
+    expandedImage.bird = null;
+  }, 300); // Clear data after transition
 };
 
 // =============================================================================
