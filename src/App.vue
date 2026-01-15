@@ -26,7 +26,6 @@
 <script setup>
 import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
 import UI from './components/UI.vue';
-import Footer from './components/Footer.vue';
 
 // =============================================================================
 // CONFIGURATION
