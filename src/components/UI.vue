@@ -135,7 +135,7 @@
       <!-- Scrollable Grid Area -->
       <div 
         ref="scrollContainer" 
-        class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar pb-32" 
+        class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar" 
         @scroll="$emit('scroll')"
       >
         <!-- Loading State (Skeletons) -->
@@ -191,6 +191,12 @@
             </div>
           </section>
         </template>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-8 pb-6 border-t border-slate-200 dark:border-slate-800 text-center text-slate-500 dark:text-slate-500 text-sm">
+          <p class="mb-1">Bird Dash © {{ new Date().getFullYear() }}</p>
+          <p class="opacity-50">v{{ appVersion }}</p>
+        </footer>
       </div>
     </main>
   </div>
@@ -199,6 +205,9 @@
 <script setup>
 import { ref } from 'vue';
 import GridItemCard from './GridItemCard.vue';
+import { APP_VERSION } from '../version';
+
+const appVersion = APP_VERSION;
 
 // Props
 defineProps({

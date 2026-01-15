@@ -1,32 +1,26 @@
 <template>
-  <div>
-    <!-- Your Main UI -->
-    <UI
-      ref="uiRef"
-      :sidebar-open="ui.sidebarOpen"
-      :mobile="ui.mobile"
-      :client="ui.client"
-      :is-dark="theme.isDark"
-      :loading="data.loading"
-      :error="data.error"
-      :families="data.families"
-      :grouped="data.grouped"
-      :active-family="scroll.activeFamily"
-      :total="data.total"
-      :drawn="data.drawn"
-      :image-base-url="config.imageBase"
-      :placeholder-image="config.placeholder"
-      @close-sidebar="ui.sidebarOpen = false"
-      @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
-      @toggle-theme="theme.isDark = !theme.isDark"
-      @go-to-family="goToFamily"
-      @scroll="updateActiveFamily"
-      @card-click="openBirdOverlay"
-    />
-
-    <!-- The Footer Component -->
-    <Footer />
-  </div>
+  <UI
+    ref="uiRef"
+    :sidebar-open="ui.sidebarOpen"
+    :mobile="ui.mobile"
+    :client="ui.client"
+    :is-dark="theme.isDark"
+    :loading="data.loading"
+    :error="data.error"
+    :families="data.families"
+    :grouped="data.grouped"
+    :active-family="scroll.activeFamily"
+    :total="data.total"
+    :drawn="data.drawn"
+    :image-base-url="config.imageBase"
+    :placeholder-image="config.placeholder"
+    @close-sidebar="ui.sidebarOpen = false"
+    @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
+    @toggle-theme="theme.isDark = !theme.isDark"
+    @go-to-family="goToFamily"
+    @scroll="updateActiveFamily"
+    @card-click="openBirdOverlay"
+  />
 </template>
 
 <script setup>
