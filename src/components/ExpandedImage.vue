@@ -9,7 +9,7 @@
     >
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+        class="fixed inset-0 z-100 flex items-center justify-center bg-black/95 backdrop-blur-sm"
         @click="handleBackdropClick"
       >
         <!-- Close button -->
