@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 
 // === CONFIGURATION ===
-const HUMAN_VERSION = '0.6.0';
+const HUMAN_VERSION = '0.7.0';
 
 const FILES = {
   data: './public/birds.json', // Source JSON
