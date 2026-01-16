@@ -30,11 +30,17 @@
 
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",
+    "sharp": "npm:sharp@0.33.5",
     "@std/path": "jsr:@std/path@^1.1.4",
     "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.3",
     "tailwindcss": "npm:tailwindcss@^4.1.18",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.1.18",
     "vite": "npm:vite@^7.3.1",
     "vue": "npm:vue@^3.5.26"
+  },
+  "nodeModulesDir": "auto",
+  "allowScripts": {
+    "allow": [],
+    "deny": ["npm:esbuild@0.27.2", "npm:sharp@0.33.5"]
   }
 }
