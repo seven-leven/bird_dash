@@ -66,80 +66,88 @@
     <main class="relative flex flex-1 flex-col overflow-hidden">
       
       <!-- Sticky Header -->
-      <div class="sticky top-0 z-30 flex items-center justify-between bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-3 shadow-sm">
-        <div class="flex items-center gap-3 flex-1 min-w-0">
-          <!-- Mobile Toggle Button -->
-          <button
-            v-if="mobile"
-            @click="$emit('toggleSidebar')"
-            class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
-            aria-label="Toggle Sidebar"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12"></line>
-              <line x1="3" y1="6" x2="21" y2="6"></line>
-              <line x1="3" y1="18" x2="21" y2="18"></line>
-            </svg>
-          </button>
-          
-          <!-- Family Title -->
-          <span v-if="!loading && !error && activeFamily && !(mobile && searchQuery)" class="text-base font-bold text-slate-800 dark:text-slate-100 truncate hidden md:block shrink-0">
-            {{ activeFamily }}
-          </span>
+<!-- Sticky Header - SINGLE COMPACT VERSION -->
+<div class="sticky top-0 z-30 flex items-center justify-between bg-white/90 backdrop-blur-md dark:bg-slate-900/90 border-b border-slate-200 dark:border-slate-800 px-4 sm:px-6 py-3 shadow-sm">
+  <div class="flex items-center gap-4 flex-1 min-w-0">
+    <!-- Mobile Toggle Button -->
+    <button
+      v-if="mobile"
+      @click="$emit('toggleSidebar')"
+      class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shrink-0"
+      aria-label="Toggle Sidebar"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+    
+    <!-- Family Title -->
+    <span v-if="!loading && !error && activeFamily" class="text-base font-bold text-slate-800 dark:text-slate-100 truncate shrink-0">
+      {{ activeFamily }}
+    </span>
 
-          <!-- Search Input -->
-          <div class="relative flex-1 max-w-xs sm:max-w-sm">
-            <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-              <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
-              </svg>
-            </div>
-            <input
-              type="text"
-              :value="searchQuery"
-              @input="$emit('updateSearch', $event.target.value)"
-              placeholder="Search..."
-              class="block w-full pl-8 pr-7 py-1.5 border border-slate-200 dark:border-slate-700 rounded-md leading-5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors"
-            />
-            <button
-              v-if="searchQuery"
-              @click="$emit('updateSearch', '')"
-              class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-            >
-              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </div>
-        </div>
-        
-        <div class="flex items-center gap-3 ml-3 shrink-0">
-          <div v-if="!loading && total > 0" class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
-            {{ drawn }}<span class="text-slate-300 mx-1">/</span>{{ total }}
-          </div>
+    <!-- BIG SPACER - pushes search to the right -->
+    <div class="flex-1"></div>
 
-          <button 
-            @click="$emit('toggleTheme')"
-            class="flex items-center justify-center w-8 h-8 rounded-full transition-colors bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-yellow-400 dark:hover:bg-slate-700 shrink-0"
-            aria-label="Toggle Dark Mode"
-          >
-            <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-            <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-            </svg>
-          </button>
-        </div>
+    <!-- SEARCH INPUT - now on the right side -->
+    <div class="relative w-64 sm:w-72 md:w-80 shrink-0">
+      <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+        <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+        </svg>
       </div>
+      <input
+        type="text"
+        :value="searchQuery"
+        @input="$emit('updateSearch', $event.target.value)"
+        placeholder="Search..."
+        class="block w-full pl-8 pr-7 py-1.5 border border-slate-200 dark:border-slate-700 rounded-md leading-5 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm transition-colors"
+      />
+      <!-- Clear button -->
+      <button
+        v-if="searchQuery"
+        @click="$emit('updateSearch', '')"
+        class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+      >
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  <!-- RIGHT SIDE: Stats + Theme Toggle -->
+  <div class="flex items-center gap-3 ml-4 shrink-0">
+    <!-- Stats Display -->
+    <div v-if="!loading && total > 0" class="text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
+      {{ drawn }}<span class="text-slate-300 mx-1">/</span>{{ total }}
+    </div>
+
+    <!-- THEME SWITCH BUTTON -->
+    <button 
+      @click="$emit('toggleTheme')"
+      class="flex items-center justify-center w-8 h-8 rounded-full transition-colors bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-yellow-400 dark:hover:bg-slate-700 shrink-0"
+      aria-label="Toggle Dark Mode"
+    >
+      <svg v-if="isDark" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <svg v-else xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+      </svg>
+    </button>
+  </div>
+</div>
 
       <!-- Scrollable Grid Area -->
       <div 
