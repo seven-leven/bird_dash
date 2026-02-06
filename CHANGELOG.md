@@ -1,7 +1,7 @@
 # Changelog
 
 ## v0.6.0 (Current)
-
+- **0.6.0+14** - added search bar (2026-02-06)
 - **0.6.0+14** - rewrote build process (2026-02-06)
 - **Bird 029**: Added Eurasian Moorhen illustration (2026-02-06)
 - **0.6.0+14** - added known issues documentation (2026-01-16)
