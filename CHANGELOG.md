@@ -74,3 +74,4 @@
 
 - **Bird 002** - Added Cotton Pygmy-Goose illustration (2024-10-15)
 - **Bird 001** - Added Lesser Whistling-Duck illustration (2024-10-10)
+- **Bird 029**: Added Eurasian Moorhen illustration (2026-02-06)

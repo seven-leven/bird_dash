@@ -205,9 +205,10 @@
 <script setup>
 import { ref } from 'vue';
 import GridItemCard from './GridItemCard.vue';
-import { APP_VERSION } from '../version';
+import versionData from '../version.json';
 
-const appVersion = APP_VERSION;
+const displayVersion = `${versionData.major}.${versionData.minor}.${versionData.patch}`;
+const appVersion = `${displayVersion}+${versionData.count}`;;
 
 // Props
 defineProps({

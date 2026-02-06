@@ -1,24 +1,24 @@
 {
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
-    "build": "deno run -A --node-modules-dir npm:vite build",
+    "build": "deno task build:assets && deno task build:vite",
+    "build:vite": "deno run -A --node-modules-dir npm:vite build",
+    "build:assets": "deno run -A script/build.ts",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve:dist": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
-    "ship": "deno run -A script/ship.ts",
 
-    // MAINTENANCE TASKS
-    "check": "deno fmt --check && deno lint",
+    "ship": "deno task build:assets && deno task build:vite",
+    "check": "deno run -A script/build.ts check",
+
     "fix": "deno fmt",
     "update": "deno outdated --update"
   },
 
   "compilerOptions": {
-    // 'esnext' allows newer JS features than 'es2020'
     "lib": ["esnext", "dom", "dom.iterable"],
     "strict": true
   },
 
-  // PREVENT LINTING/FORMATTING GENERATED FILES
   "lint": {
     "exclude": ["dist", "node_modules"]
   },
