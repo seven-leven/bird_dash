@@ -2,6 +2,8 @@
 
 ## v0.6.0 (Current)
 
+- **0.6.0+14** - rewrote build process (2026-02-06)
+- **Bird 029**: Added Eurasian Moorhen illustration (2026-02-06)
 - **0.6.0+14** - added known issues documentation (2026-01-16)
 - **0.6.0+14** - ship script now skips existing images (2026-01-16)
 - **0.6.0+14** - fixed versioning system (2026-01-15)
@@ -74,4 +76,3 @@
 
 - **Bird 002** - Added Cotton Pygmy-Goose illustration (2024-10-15)
 - **Bird 001** - Added Lesser Whistling-Duck illustration (2024-10-10)
-- **Bird 029**: Added Eurasian Moorhen illustration (2026-02-06)
