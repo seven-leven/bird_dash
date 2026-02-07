@@ -17,6 +17,7 @@ interface Bird {
   drawnDate: string;
   imageFile: string;
   imageUrl: string;
+  illustratorNote?: string;
 }
 
 interface DataState {
@@ -47,6 +48,7 @@ const search = reactive({ query: '' });
 const ui = reactive({ sidebarOpen: false, mobile: false, client: false });
 const theme = reactive({ isDark: false });
 const expandedImage = reactive({ isOpen: false, bird: undefined as Bird | undefined });
+
 
 // =============================================================================
 // COMPUTED & LOGIC INJECTION
@@ -130,6 +132,11 @@ const updateMobileState = () => {
   }
 };
 
+// Computed list of only drawn birds (with actual images)
+const drawnBirds = computed(() => {
+  return data.birds.filter((b: Bird) => b.imageUrl !== config.placeholder);
+});
+
 const openBirdOverlay = (bird: Bird) => {
   if (bird.imageUrl === config.placeholder) return;
   expandedImage.bird = bird;
@@ -199,8 +206,11 @@ onBeforeUnmount(() => {
     <ExpandedImage
       :is-open="expandedImage.isOpen"
       :bird="expandedImage.bird"
+      :drawn-birds="drawnBirds"
       :full-image-base-url="config.fullImageBase"
       @close="closeBirdOverlay"
+      @update:bird="expandedImage.bird = $event"
     />
+
   </div>
 </template>
