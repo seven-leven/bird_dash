@@ -23,8 +23,10 @@ interface Bird {
 interface DataState {
   birds: Bird[];
   loading: boolean;
-  error: string | undefined; // Corrected type
+  error: string | undefined;
 }
+
+type ViewMode = 'family' | 'date';
 
 // =============================================================================
 // STATE & CONFIG
@@ -41,46 +43,180 @@ const uiRef = ref(null);
 const data = reactive<DataState>({
   birds: [],
   loading: true,
-  error: undefined // Initialize as undefined
+  error: undefined
 });
 
 const search = reactive({ query: '' });
-const ui = reactive({ sidebarOpen: false, mobile: false, client: false });
+const ui = reactive({ 
+  sidebarOpen: false, 
+  mobile: false, 
+  client: false,
+  viewMode: 'family' as ViewMode
+});
 const theme = reactive({ isDark: false });
 const expandedImage = reactive({ isOpen: false, bird: undefined as Bird | undefined });
 
+// =============================================================================
+// COMPUTED - ALL BIRDS (for family mode) vs DRAWN ONLY (for date mode)
+// =============================================================================
 
-// =============================================================================
-// COMPUTED & LOGIC INJECTION
-// =============================================================================
-const filteredData = computed(() => {
+// For family mode: ALL birds including undrawn
+const allBirds = computed(() => {
   const q = search.query.toLowerCase().trim();
-  const filtered = q === '' 
-    ? data.birds 
-    : data.birds.filter((b: Bird) => 
-        b.commonName.toLowerCase().includes(q) ||
-        b.family.toLowerCase().includes(q) ||
-        b.scientificName.toLowerCase().includes(q)
-      );
+  if (q === '') return data.birds;
+  
+  return data.birds.filter((b: Bird) => 
+    b.commonName.toLowerCase().includes(q) ||
+    b.family.toLowerCase().includes(q) ||
+    b.scientificName.toLowerCase().includes(q)
+  );
+});
 
+// For date mode: only drawn birds
+const drawnBirds = computed(() => {
+  return data.birds.filter((b: Bird) => b.imageUrl !== config.placeholder);
+});
+
+const searchedDrawnBirds = computed(() => {
+  const q = search.query.toLowerCase().trim();
+  if (q === '') return drawnBirds.value;
+  
+  return drawnBirds.value.filter((b: Bird) => 
+    b.commonName.toLowerCase().includes(q) ||
+    b.family.toLowerCase().includes(q) ||
+    b.scientificName.toLowerCase().includes(q)
+  );
+});
+
+// =============================================================================
+// FAMILY MODE (Default) - Shows ALL birds
+// =============================================================================
+const familyData = computed(() => {
   const grouped: Record<string, Bird[]> = {};
-  filtered.forEach((b: Bird) => {
+  
+  allBirds.value.forEach((b: Bird) => {
     if (!grouped[b.family]) grouped[b.family] = [];
     grouped[b.family].push(b);
   });
 
+  // Sort: drawn birds first, then by birdId
+  Object.keys(grouped).forEach(family => {
+    grouped[family].sort((a, b) => {
+      // Drawn birds first
+      const aDrawn = a.imageUrl !== config.placeholder;
+      const bDrawn = b.imageUrl !== config.placeholder;
+      if (aDrawn !== bDrawn) return bDrawn ? 1 : -1;
+      
+      // Then by birdId
+      return parseInt(a.birdId) - parseInt(b.birdId);
+    });
+  });
+
+  // Count drawn birds for sidebar
   return {
     grouped,
-    families: Object.keys(grouped),
-    total: filtered.length,
-    drawn: filtered.filter((b: Bird) => b.imageUrl !== config.placeholder).length
+    sidebarItems: Object.keys(grouped).map(family => {
+      const birds = grouped[family];
+      const drawnCount = birds.filter(b => b.imageUrl !== config.placeholder).length;
+      return {
+        id: family,
+        label: family,
+        count: drawnCount,
+        total: birds.length,
+        disabled: false
+      };
+    })
   };
 });
 
-// Sync scroll logic via Composable
-const { activeFamily, updateActiveFamily, goToFamily, handleHash } = useScrollLogic(
-  uiRef, 
-  reactive({ families: computed(() => filteredData.value.families) }), 
+// =============================================================================
+// DATE MODE - Only drawn birds, but show all months in sidebar
+// =============================================================================
+
+// Get all months from first drawing to now
+const allMonths = computed(() => {
+  const months: string[] = [];
+  
+  // Find date range
+  const dates = drawnBirds.value
+    .map(b => b.drawnDate ? new Date(b.drawnDate) : null)
+    .filter((d): d is Date => d !== null && !isNaN(d.getTime()));
+  
+  if (dates.length === 0) return months;
+  
+  const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
+  const maxDate = new Date(); // up to current month
+  
+  // Generate all months between min and max
+  let current = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  const end = new Date(maxDate.getFullYear(), maxDate.getMonth(), 1);
+  
+  while (current <= end) {
+    const key = `${current.toLocaleString('default', { month: 'long' })} ${current.getFullYear()}`;
+    months.push(key);
+    current.setMonth(current.getMonth() + 1);
+  }
+  
+  return months;
+});
+
+const dateData = computed(() => {
+  // Sort drawn birds by date
+  const sorted = [...searchedDrawnBirds.value].sort((a, b) => {
+    const dateA = a.drawnDate ? new Date(a.drawnDate).getTime() : 0;
+    const dateB = b.drawnDate ? new Date(b.drawnDate).getTime() : 0;
+    
+    if (dateA !== dateB) return dateA - dateB;
+    return parseInt(a.birdId) - parseInt(b.birdId);
+  });
+
+  // Group by month/year
+  const grouped: Record<string, Bird[]> = {};
+  
+  sorted.forEach((b: Bird) => {
+    if (!b.drawnDate) return;
+    
+    const date = new Date(b.drawnDate);
+    const key = `${date.toLocaleString('default', { month: 'long' })} ${date.getFullYear()}`;
+    
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(b);
+  });
+
+  // Build sidebar with all months (including empty)
+  const sidebarItems = allMonths.value.map(month => ({
+    id: month,
+    label: month,
+    count: grouped[month]?.length || 0,
+    total: 0,
+    disabled: !grouped[month] || grouped[month].length === 0
+  }));
+
+  return { grouped, sidebarItems };
+});
+
+// =============================================================================
+// ACTIVE DATA BASED ON MODE
+// =============================================================================
+const activeData = computed(() => {
+  return ui.viewMode === 'family' ? familyData.value : dateData.value;
+});
+
+const stats = computed(() => {
+  const totalDrawn = drawnBirds.value.length;
+  const totalAll = data.birds.length;
+  
+  return {
+    total: ui.viewMode === 'family' ? totalAll : totalDrawn,
+    filtered: ui.viewMode === 'family' ? allBirds.value.length : searchedDrawnBirds.value.length,
+    drawn: totalDrawn,
+    mode: ui.viewMode
+  };
+});
+
+// Scroll logic
+const { activeSection, updateActiveSection, goToSection, handleHash } = useScrollLogic(
+  uiRef,
   ui
 );
 
@@ -89,7 +225,7 @@ const { activeFamily, updateActiveFamily, goToFamily, handleHash } = useScrollLo
 // =============================================================================
 const loadData = async () => {
   data.loading = true;
-  data.error = undefined; // FIXED: Changed from null to undefined
+  data.error = undefined;
   
   try {
     const res = await fetch(config.dataUrl);
@@ -110,7 +246,8 @@ const loadData = async () => {
           family,
           drawnDate: b.drawn || '',
           imageFile: hasImg ? `${b.id}.webp` : 'placeholder.webp',
-          imageUrl: hasImg ? config.imageBase + `${b.id}.webp` : config.placeholder
+          imageUrl: hasImg ? config.imageBase + `${b.id}.webp` : config.placeholder,
+          illustratorNote: b.note || ''
         });
       });
     }
@@ -132,10 +269,12 @@ const updateMobileState = () => {
   }
 };
 
-// Computed list of only drawn birds (with actual images)
-const drawnBirds = computed(() => {
-  return data.birds.filter((b: Bird) => b.imageUrl !== config.placeholder);
-});
+const toggleViewMode = () => {
+  ui.viewMode = ui.viewMode === 'family' ? 'date' : 'family';
+  nextTick(() => {
+    updateActiveSection();
+  });
+};
 
 const openBirdOverlay = (bird: Bird) => {
   if (bird.imageUrl === config.placeholder) return;
@@ -153,7 +292,7 @@ const closeBirdOverlay = () => {
 // =============================================================================
 watch(() => data.birds, (newBirds) => {
   if (newBirds.length > 0) {
-    nextTick(() => { updateActiveFamily(); handleHash(); });
+    nextTick(() => { updateActiveSection(); handleHash(); });
   }
 });
 
@@ -186,19 +325,20 @@ onBeforeUnmount(() => {
       :is-dark="theme.isDark"
       :loading="data.loading"
       :error="data.error"
-      :families="filteredData.families"
-      :grouped="filteredData.grouped"
-      :active-family="activeFamily"
-      :total="filteredData.total"
-      :drawn="filteredData.drawn"
+      :grouped="activeData.grouped"
+      :sidebar-items="activeData.sidebarItems"
+      :active-section="activeSection"
+      :view-mode="ui.viewMode"
+      :stats="stats"
       :image-base-url="config.imageBase"
       :placeholder-image="config.placeholder"
       :search-query="search.query"
       @close-sidebar="ui.sidebarOpen = false"
       @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
       @toggle-theme="theme.isDark = !theme.isDark"
-      @go-to-family="goToFamily"
-      @scroll="updateActiveFamily"
+      @toggle-view-mode="toggleViewMode"
+      @go-to-section="goToSection"
+      @scroll="updateActiveSection"
       @card-click="openBirdOverlay"
       @update-search="search.query = $event"
     />
@@ -206,11 +346,10 @@ onBeforeUnmount(() => {
     <ExpandedImage
       :is-open="expandedImage.isOpen"
       :bird="expandedImage.bird"
-      :drawn-birds="drawnBirds"
+      :drawn-birds="searchedDrawnBirds"
       :full-image-base-url="config.fullImageBase"
       @close="closeBirdOverlay"
       @update:bird="expandedImage.bird = $event"
     />
-
   </div>
 </template>

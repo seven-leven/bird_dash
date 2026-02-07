@@ -1,27 +1,9 @@
-// src/composables/useScrollLogic.ts
-import { nextTick, type Ref, ref, watch } from 'vue';
+import { ref, type Ref } from 'vue';
 
-interface VueComponentInstance {
-  $el: HTMLElement;
-}
-
-interface UIExpose {
+// Define interfaces for better type safety
+interface ScrollUI {
   scrollContainer: HTMLElement | null;
-  sidebarRefs: Record<string, HTMLElement | null>;
   headerRefs: Record<string, HTMLElement | null>;
-  // Replace 'any' with the Component Instance interface
-  cardRefs: Record<string, VueComponentInstance | null>;
-}
-
-// Define the shape of the UI component's exposed refs
-interface UIExpose {
-  scrollContainer: HTMLElement | null;
-  sidebarRefs: Record<string, HTMLElement | null>;
-  headerRefs: Record<string, HTMLElement | null>;
-}
-
-interface DataState {
-  families: string[];
 }
 
 interface UIState {
@@ -30,116 +12,58 @@ interface UIState {
 }
 
 export function useScrollLogic(
-  uiRef: Ref<UIExpose | null>,
-  data: DataState,
-  ui: UIState,
+  uiRef: Ref<ScrollUI | null>, 
+  ui: UIState
 ) {
-  const activeFamily = ref<string>('');
+  const activeSection = ref<string>('');
 
-  const updateActiveFamily = () => {
-    if (!uiRef.value || !data.families.length) return;
-
-    const container = uiRef.value.scrollContainer;
+  const updateActiveSection = () => {
+    const container = uiRef.value?.scrollContainer;
     if (!container) return;
+    
+    const scrollPos = container.scrollTop + 100; // offset for header
 
-    const offset = container.scrollTop + 100;
-    let best = '';
+    // Check all section headers
+    const headers = uiRef.value?.headerRefs || {};
+    let current = '';
 
-    for (const family of data.families) {
-      const el = uiRef.value.headerRefs[family];
-      if (el && el.offsetTop <= offset) {
-        best = family;
+    for (const [name, el] of Object.entries(headers)) {
+      if (el && el.offsetTop <= scrollPos) {
+        current = name;
       }
     }
 
-    activeFamily.value = best || data.families[0];
+    if (current && current !== activeSection.value) {
+      activeSection.value = current;
+    }
   };
 
-  const goToFamily = (family: string) => {
-    if (!uiRef.value) return;
-
-    const el = uiRef.value.headerRefs[family];
-    const container = uiRef.value.scrollContainer;
-
+  const goToSection = (name: string) => {
+    const el = uiRef.value?.headerRefs?.[name];
+    const container = uiRef.value?.scrollContainer;
+    
     if (el && container) {
-      const headerOffset = 80;
-      const elementPosition = el.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + container.scrollTop - headerOffset;
-
       container.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
+        top: el.offsetTop - 80, // account for sticky header
+        behavior: 'smooth'
       });
-    }
-
-    // Auto-close sidebar on mobile after navigation
-    if (ui.mobile && ui.sidebarOpen) {
-      ui.sidebarOpen = false;
-    }
-  };
-
-  const goToBird = (birdId: string) => {
-    if (!uiRef.value) return;
-
-    const comp = uiRef.value.cardRefs[birdId];
-    if (!comp) return;
-
-    // Now TypeScript knows comp has an $el property without using 'any'
-    const el = comp.$el;
-    const container = uiRef.value.scrollContainer;
-
-    if (el && container) {
-      {
-        const observer = new IntersectionObserver(
-          (entries, obs) => {
-            if (entries[0].isIntersecting) {
-              const cls = [
-                'ring-4',
-                'ring-blue-500',
-                'ring-offset-4',
-                'dark:ring-offset-slate-900',
-                'z-10',
-                'transition-all',
-                'duration-500',
-              ];
-              el.classList.add(...cls);
-              setTimeout(() => el.classList.remove(...cls), 2000);
-              obs.disconnect();
-            }
-          },
-          { root: container, threshold: 0.5 },
-        );
-        observer.observe(el);
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      activeSection.value = name;
+      
+      // Close mobile sidebar
+      if (ui.mobile) {
+        ui.sidebarOpen = false;
       }
     }
   };
 
   const handleHash = () => {
-    const hash = globalThis.location.hash;
-    if (hash) {
-      const birdId = hash.substring(1);
-      if (birdId) nextTick(() => goToBird(birdId));
-    }
+    // Optional: handle URL hash for direct linking
   };
 
-  // Logic to sync sidebar scroll with active family
-  watch(activeFamily, (newFamily) => {
-    if (!uiRef.value || !newFamily) return;
-
-    nextTick(() => {
-      const el = uiRef.value?.sidebarRefs[newFamily];
-      if (el?.scrollIntoView) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    });
-  });
-
   return {
-    activeFamily,
-    updateActiveFamily,
-    goToFamily,
-    goToBird,
-    handleHash,
+    activeSection,
+    updateActiveSection,
+    goToSection,
+    handleHash
   };
 }

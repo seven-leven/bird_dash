@@ -4,8 +4,9 @@
 
 - [ ] **Thumbnail Aspect Ratio**: Fix squeezed images; ensure they maintain ratio.
 - [x] **Expanded Image Scaling**: Fix overflow; ensure images fit within the viewport.
-- [ ] **Build Script Efficiency**: Update script to skip existing images instead of regenerating
+- [x] **Build Script Efficiency**: Update script to skip existing images instead of regenerating
       everything.
+- [ ] **Fix version numbering**
 
 ## 🛠️ Workflow & Tooling
 
