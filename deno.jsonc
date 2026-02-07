@@ -3,29 +3,43 @@
     "dev": "deno run -A --node-modules-dir npm:vite",
     "build": "deno task build:assets && deno task build:vite",
     "build:vite": "deno run -A --node-modules-dir npm:vite build",
-    "build:assets": "deno run -A script/build.ts",
+    "build:assets": "deno run -A script/build.ts build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
     "serve:dist": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
 
     "ship": "deno task build:assets && deno task build:vite",
     "check": "deno run -A script/build.ts check",
+    "check:verbose": "deno run -A script/build.ts check",
 
+    "clean": "rm -rf dist && rm -rf node_modules",
     "fix": "deno fmt",
-    "update": "deno outdated --update"
+    "update": "deno outdated --update",
+    "lint": "deno lint",
+    "format": "deno fmt"
   },
 
   "compilerOptions": {
     "lib": ["esnext", "dom", "dom.iterable"],
-    "strict": true
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true
   },
 
   "lint": {
-    "exclude": ["dist", "node_modules"]
+    "exclude": ["dist", "node_modules", "public/full", "public/thumb", "raw_png"]
   },
+
   "fmt": {
-    "exclude": ["dist", "node_modules"],
+    "exclude": ["dist", "node_modules", "public/full", "public/thumb", "raw_png"],
     "singleQuote": true,
-    "lineWidth": 100
+    "lineWidth": 100,
+    "indentWidth": 2,
+    "semiColons": true,
+    "proseWrap": "always"
   },
 
   "imports": {
@@ -38,9 +52,11 @@
     "vite": "npm:vite@^7.3.1",
     "vue": "npm:vue@^3.5.26"
   },
+
   "nodeModulesDir": "auto",
+
   "allowScripts": {
-    "allow": [],
-    "deny": ["npm:esbuild@0.27.2", "npm:sharp@0.33.5"]
+    "allow": ["npm:sharp@0.33.5"],
+    "deny": ["npm:esbuild@0.27.2"]
   }
 }

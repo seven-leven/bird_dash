@@ -5,10 +5,10 @@
       group relative aspect-square w-full overflow-hidden rounded-2xl cursor-pointer
       
       /* Background & Fallback Colors */
-      bg-slate-100 dark:bg-slate-800
+      bg-white dark:bg-slate-900
       
-      /* Image Positioning */
-      bg-cover bg-center bg-no-repeat
+      /* Image Positioning - CONTAIN instead of COVER */
+      bg-contain bg-center bg-no-repeat
       
       /* Transitions & Hover Effects */
       shadow-sm transition-all duration-300 ease-out

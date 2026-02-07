@@ -247,7 +247,7 @@ const loadData = async () => {
           drawnDate: b.drawn || '',
           imageFile: hasImg ? `${b.id}.webp` : 'placeholder.webp',
           imageUrl: hasImg ? config.imageBase + `${b.id}.webp` : config.placeholder,
-          illustratorNote: b.note || ''
+          illustratorNote: b.illustratorNote || ''  // <-- fixed: use illustratorNote not note
         });
       });
     }

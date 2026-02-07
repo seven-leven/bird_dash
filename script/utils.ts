@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 
-/// === utils.ts ===
+// === utils.ts - Consolidated file operations ===
 
 export const DIRS = {
   raw: './raw_png/',
@@ -16,6 +16,7 @@ export const FILES = {
 
 export const THUMB_SIZE = 400;
 
+// Types
 export interface Bird {
   id: string;
   name: string;
@@ -35,50 +36,74 @@ export interface VersionData {
   updated: string;
 }
 
+export interface ProcessResult {
+  filename: string;
+  baseName: string;
+  isNew: boolean;
+}
+
+export interface IntegrityResult {
+  missing: string[];
+  orphaned: string[];
+  passed: boolean;
+}
+
+// File operations
+export async function listFiles(dir: string, filter: (name: string) => boolean): Promise<string[]> {
+  try {
+    const files: string[] = [];
+    for await (const entry of Deno.readDir(dir)) {
+      if (entry.isFile && filter(entry.name)) files.push(entry.name);
+    }
+    return files.sort();
+  } catch (err) {
+    if (err instanceof Deno.errors.NotFound) return [];
+    throw err;
+  }
+}
+
 export async function ensureDir(path: string): Promise<void> {
   try {
     await Deno.mkdir(path, { recursive: true });
   } catch (err) {
-    if (!(err instanceof Deno.errors.AlreadyExists)) {
-      throw err;
-    }
+    if (!(err instanceof Deno.errors.AlreadyExists)) throw err;
   }
 }
 
-export async function getImageFiles(dir: string, ext: string): Promise<string[]> {
-  const files: string[] = [];
-  try {
-    for await (const entry of Deno.readDir(dir)) {
-      if (entry.isFile && entry.name.toLowerCase().endsWith(ext)) {
-        files.push(entry.name);
-      }
-    }
-  } catch (err) {
-    if (err instanceof Deno.errors.NotFound) {
-      return [];
-    }
-    throw err;
-  }
-  return files.sort();
+export async function readJson<T>(path: string): Promise<T> {
+  return JSON.parse(await Deno.readTextFile(path));
 }
 
-export async function loadJson<T>(path: string): Promise<T> {
-  const content = await Deno.readTextFile(path);
-  return JSON.parse(content);
-}
-
-export async function saveJson(path: string, data: unknown): Promise<void> {
+export async function writeJson(path: string, data: unknown): Promise<void> {
   await Deno.writeTextFile(path, JSON.stringify(data, null, 2) + '\n');
 }
 
+export async function appendText(path: string, text: string): Promise<void> {
+  await Deno.writeTextFile(path, text, { append: true });
+}
+
+// String utilities
 export function getBaseName(filename: string): string {
   return filename.replace(/\.(png|webp)$/i, '');
 }
 
 export function formatVersion(v: VersionData): string {
-  return `${v.major}.${v.minor}.${v.patch}`;
+  return `${v.major}.${v.minor}.${v.patch}+${v.count}`;
 }
 
-export function formatFullVersion(v: VersionData): string {
-  return `${v.major}.${v.minor}.${v.patch}+${v.count}`;
+// Integrity check helper
+export async function checkIntegrity(birdIds: Set<string>): Promise<IntegrityResult> {
+  const fullFiles = await listFiles(DIRS.full, (n) => n.endsWith('.webp'));
+  const thumbFiles = await listFiles(DIRS.thumb, (n) => n.endsWith('.webp'));
+
+  const fullIds = new Set(fullFiles.map(getBaseName));
+  const thumbIds = new Set(thumbFiles.map(getBaseName));
+
+  const missing = Array.from(birdIds).filter((id) => !fullIds.has(id) || !thumbIds.has(id));
+  const orphaned = [
+    ...Array.from(fullIds).filter((id) => !birdIds.has(id)),
+    ...Array.from(thumbIds).filter((id) => !birdIds.has(id)),
+  ];
+
+  return { missing, orphaned, passed: missing.length === 0 && orphaned.length === 0 };
 }

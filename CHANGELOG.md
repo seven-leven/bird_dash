@@ -1,6 +1,7 @@
 # Changelog
 
 ## v0.6.0 (Current)
+
 - **0.6.0+15** - added sort by date (2026-02-07)
 - **0.6.0+15** - added info panel to expanded iamge (2026-02-07)
 - **0.6.0+15** - adjustedadded search bar (2026-02-06)

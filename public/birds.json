@@ -4,25 +4,29 @@
       "id": "001",
       "name": "Lesser Whistling-Duck",
       "sci": "Dendrocygna javanica",
-      "drawn": "2024-10-10"
+      "drawn": "2024-10-10",
+      "illustratorNote": "The first drawing—more of a benchmark to compare future work against. Drew this with the pen I'm most comfortable using."
     },
     {
       "id": "002",
       "name": "Cotton Pygmy-Goose",
       "sci": "Nettapus coromandelianus",
-      "drawn": "2024-10-15"
+      "drawn": "2024-10-15",
+      "illustratorNote": "Experimented with markers, trying to blend grays into a gradient effect. Didn't quite work out."
     },
     {
       "id": "003",
       "name": "Garganey",
       "sci": "Spatula querquedula",
-      "drawn": "2025-01-11"
+      "drawn": "2025-01-11",
+      "illustratorNote": "Used a brush pen to mimic the different feather patterns found across its body."
     },
     {
       "id": "004",
       "name": "Northern Shoveler",
       "sci": "Spatula clypeata",
-      "drawn": "2025-12-19"
+      "drawn": "2025-12-19",
+      "illustratorNote": "Wanted to try a purely Photoshop workflow. Came out stiffer than I expected."
     },
     {
       "id": "005",
@@ -62,7 +66,8 @@
       "id": "011",
       "name": "Greater Flamingo",
       "sci": "Phoenicopterus roseus",
-      "drawn": "2025-10-07"
+      "drawn": "2025-10-07",
+      "illustratorNote": "Pen sketch scanned and colored in Photoshop with a hard brush. First time trying this technique—was in a rush for the book."
     }
   ],
   "Pigeons and doves": [
@@ -161,25 +166,29 @@
       "id": "029",
       "name": "Eurasian Moorhen",
       "sci": "Gallinula chloropus",
-      "drawn": "2026-02-06"
+      "drawn": "2026-02-06",
+      "illustratorNote": "First time trying pastels—couldn't quite get the feel for them. Softer than expected."
     },
     {
       "id": "030",
       "name": "Eurasian Coot",
       "sci": "Fulica atra",
-      "drawn": "2026-01-15"
+      "drawn": "2026-01-15",
+      "illustratorNote": "Wanted to give the bird more personality. Feel like I should have gone with a hard brush in Clip Studio instead."
     },
     {
       "id": "031",
       "name": "Watercock",
       "sci": "Gallicrex cinerea",
-      "drawn": "2025-10-15"
+      "drawn": "2025-10-15",
+      "illustratorNote": "Tried mixing Photoshop with watercolor techniques. Mixed feelings about how it turned out."
     },
     {
       "id": "032",
       "name": "White-breasted Waterhen",
       "sci": "Amaurornis phoenicurus",
-      "drawn": "2025-11-09"
+      "drawn": "2025-11-09",
+      "illustratorNote": "Tried using multiple watercolor colors, but in the end only the tail had that extra color thing going."
     }
   ],
   "Stilts and avocets": [
@@ -221,7 +230,8 @@
       "id": "039",
       "name": "Greater Sand-Plover",
       "sci": "Charadrius leschenaultii",
-      "drawn": "2025-10-07"
+      "drawn": "2025-10-07",
+      "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
       "id": "040",
@@ -534,7 +544,8 @@
       "id": "099",
       "name": "White-tailed Tropicbird",
       "sci": "Phaethon lepturus",
-      "drawn": "2025-10-07"
+      "drawn": "2025-10-07",
+      "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
       "id": "100",
@@ -708,7 +719,8 @@
       "id": "130",
       "name": "Yellow Bittern",
       "sci": "Ixobrychus sinensis",
-      "drawn": "2025-10-07"
+      "drawn": "2025-10-07",
+      "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
       "id": "131",
@@ -724,7 +736,8 @@
       "id": "133",
       "name": "Gray Heron",
       "sci": "Ardea cinerea",
-      "drawn": "2025-10-07"
+      "drawn": "2025-10-07",
+      "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
       "id": "134",
@@ -755,7 +768,8 @@
       "id": "139",
       "name": "Cattle Egret",
       "sci": "Bubulcus ibis",
-      "drawn": "2025-10-07"
+      "drawn": "2025-10-07",
+      "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
       "id": "140",
@@ -978,7 +992,8 @@
       "id": "177",
       "name": "House Crow",
       "sci": "Corvus splendens",
-      "drawn": "2025-10-24"
+      "drawn": "2025-10-24",
+      "illustratorNote": "Feels like my best work so far—watercolor actually clicked here. Really liked how the strokes came out."
     }
   ],
   "Larks": [
