@@ -2,8 +2,7 @@
 
 ## 🐛 Fixes
 
-- [-] **Thumbnail Aspect Ratio**: Fix squeezed images; ensure they maintain ratio. (fixed the image
-  processing part, but it still display streached/ squeezed one)
+- [x] **Thumbnail Aspect Ratio**: Fix squeezed images; ensure they maintain ratio.
 - [x] **Expanded Image Scaling**: Fix overflow; ensure images fit within the viewport.
 - [x] **Build Script Efficiency**: Update script to skip existing images instead of regenerating
       everything.

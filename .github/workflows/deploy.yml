@@ -46,7 +46,7 @@ jobs:
           DEBUG: 'vite:*,rollup:*' # Keeps the detailed error logs you wanted
         run: |
           # The '||' allows us to print the directory state if the build crashes
-          deno task build -- --debug || {
+          deno task build:vite -- --debug || {
             echo "❌ BUILD FAILED. Listing files for debugging:";
             ls -R;
             exit 1;
