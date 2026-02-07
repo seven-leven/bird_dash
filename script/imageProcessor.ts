@@ -24,18 +24,22 @@ export async function processImage(filename: string): Promise<ProcessResult> {
   await ensureDir(DIRS.full);
   await ensureDir(DIRS.thumb);
 
-  // Process both sizes in parallel
-  await Promise.all([
-    createWebPImage(`${DIRS.raw}${filename}`, `${DIRS.full}${baseName}.webp`),
-    createWebPImage(`${DIRS.raw}${filename}`, `${DIRS.thumb}${baseName}.webp`, THUMB_SIZE),
-  ]);
+  // First create the full-size square image
+  const fullPath = `${DIRS.full}${baseName}.webp`;
+  await createWebPImage(`${DIRS.raw}${filename}`, fullPath);
+
+  // Then create thumbnail by resizing the full image
+  await sharp(fullPath)
+    .resize(THUMB_SIZE, THUMB_SIZE, { fit: 'fill' })
+    .webp({ quality: 90 })
+    .toFile(`${DIRS.thumb}${baseName}.webp`);
 
   console.log(`  ✅ Processed: ${baseName}`);
   return { filename, baseName, isNew: true };
 }
 
 // Helper function to create WebP image
-async function createWebPImage(input: string, output: string, size?: number): Promise<void> {
+async function createWebPImage(input: string, output: string): Promise<void> {
   const image = sharp(input);
   const metadata = await image.metadata();
 
@@ -48,8 +52,7 @@ async function createWebPImage(input: string, output: string, size?: number): Pr
     background: { r: 255, g: 255, b: 255, alpha: 1 },
   });
 
-  const resized = size ? padded.resize(size, size, { fit: 'fill' }) : padded;
-  await resized.webp({ quality: 90 }).toFile(output);
+  await padded.webp({ quality: 90 }).toFile(output);
 }
 
 // File listing helper
