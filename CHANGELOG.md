@@ -80,3 +80,9 @@
 
 - **Bird 002** - Added Cotton Pygmy-Goose illustration (2024-10-15)
 - **Bird 001** - Added Lesser Whistling-Duck illustration (2024-10-10)
+- **Bird 039**: Added Little Ringed Plover illustration (2026-02-15)
+- **Bird 130**: Added Great Bittern illustration (2026-02-15)
+- **Bird 139**: Added Purple Heron illustration (2026-02-15)
+- **Bird 039**: Added Little Ringed Plover illustration (2026-02-15)
+- **Bird 130**: Added Great Bittern illustration (2026-02-15)
+- **Bird 139**: Added Purple Heron illustration (2026-02-15)

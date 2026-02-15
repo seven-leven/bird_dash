@@ -8,6 +8,7 @@
       everything.
 - [ ] **Fix version numbering**
 - [ ] when sorted by date make sure it cycles by date not id
+- [ ] create a file dataManager.ts
 
 ## 🛠️ Workflow & Tooling
 

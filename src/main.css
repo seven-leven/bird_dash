@@ -33,3 +33,15 @@
     @apply bg-slate-300 rounded-full hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600;
   }
 }
+
+@font-face {
+  font-family: 'Faruma';
+  src: url('./Faruma.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap; /* optional, improves perceived performance */
+}
+.font-dhivehi {
+  font-family: 'Faruma', 'Arial Unicode MS', 'FreeSerif', sans-serif;
+  /* optional: you may set direction if not handled elsewhere */
+}

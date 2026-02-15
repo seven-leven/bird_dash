@@ -1,8 +1,10 @@
 {
-  "Ducks, geese, and waterfowl": [
+  "Ducks, Geese, and Swans": [
     {
       "id": "001",
       "name": "Lesser Whistling-Duck",
+      "dhiv": "Reyru",
+      "dhiv_script": "ރޭރު",
       "sci": "Dendrocygna javanica",
       "drawn": "2024-10-10",
       "illustratorNote": "The first drawing—more of a benchmark to compare future work against. Drew this with the pen I'm most comfortable using."
@@ -10,6 +12,8 @@
     {
       "id": "002",
       "name": "Cotton Pygmy-Goose",
+      "dhiv": "Reyru",
+      "dhiv_script": "ރޭރު",
       "sci": "Nettapus coromandelianus",
       "drawn": "2024-10-15",
       "illustratorNote": "Experimented with markers, trying to blend grays into a gradient effect. Didn't quite work out."
@@ -17,6 +21,8 @@
     {
       "id": "003",
       "name": "Garganey",
+      "dhiv": "Kunburu Reyru",
+      "dhiv_script": "ކުންބުރު ރޭރު",
       "sci": "Spatula querquedula",
       "drawn": "2025-01-11",
       "illustratorNote": "Used a brush pen to mimic the different feather patterns found across its body."
@@ -24,525 +30,893 @@
     {
       "id": "004",
       "name": "Northern Shoveler",
+      "dhiv": "Reyru",
+      "dhiv_script": "ރޭރު",
       "sci": "Spatula clypeata",
       "drawn": "2025-12-19",
       "illustratorNote": "Wanted to try a purely Photoshop workflow. Came out stiffer than I expected."
     },
     {
       "id": "005",
-      "name": "Northern Pintail",
-      "sci": "Anas acuta"
+      "name": "Green-winged Teal",
+      "dhiv": "Reyru",
+      "dhiv_script": "ރޭރު",
+      "sci": "Anas crecca",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "006",
-      "name": "Green-winged Teal",
-      "sci": "Anas crecca"
+      "name": "Northern Pintail",
+      "dhiv": "Reyru",
+      "dhiv_script": "ރޭރު",
+      "sci": "Anas acuta",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "007",
-      "name": "Ferruginous Duck",
-      "sci": "Aythya nyroca"
+      "name": "Tufted Duck",
+      "dhiv": "Reyru",
+      "dhiv_script": "ރޭރު",
+      "sci": "Aythya fuligula",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "008",
-      "name": "Tufted Duck",
-      "sci": "Aythya fuligula"
+      "name": "Ferruginous Duck",
+      "dhiv": "Rathu Reyru",
+      "dhiv_script": "ރަތް ރޭރު",
+      "sci": "Aythya nyroca",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Pheasants, grouse, and allies": [
+  "Pheasants and Allies": [
     {
       "id": "009",
       "name": "Common Quail",
-      "sci": "Coturnix coturnix"
+      "dhiv": "",
+      "sci": "Coturnix coturnix",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "010",
       "name": "Red Junglefowl",
-      "sci": "Gallus gallus"
+      "dhiv": "Kukulhu",
+      "dhiv_script": "ކުކުޅު",
+      "sci": "Gallus gallus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Flamingos": [
     {
       "id": "011",
       "name": "Greater Flamingo",
+      "dhiv": "Gudugudaa Dhooni",
+      "dhiv_script": "ގުޑުގުޑާ ދޫނި",
       "sci": "Phoenicopterus roseus",
       "drawn": "2025-10-07",
       "illustratorNote": "Pen sketch scanned and colored in Photoshop with a hard brush. First time trying this technique—was in a rush for the book."
     }
   ],
-  "Pigeons and doves": [
+  "Pigeons and Doves": [
     {
       "id": "012",
       "name": "Rock Pigeon",
-      "sci": "Columba livia"
+      "dhiv": "Kotharu",
+      "dhiv_script": "ކޮތަރު",
+      "sci": "Columba livia",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "013",
       "name": "European Turtle-Dove",
-      "sci": "Streptopelia turtur"
+      "dhiv": "Kotharu",
+      "dhiv_script": "ކޮތަރު",
+      "sci": "Streptopelia turtur",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "014",
       "name": "Oriental Turtle-Dove",
-      "sci": "Streptopelia orientalis"
+      "dhiv": "Kotharu",
+      "dhiv_script": "ކޮތަރު",
+      "sci": "Streptopelia orientalis",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "015",
       "name": "Zebra Dove",
-      "sci": "Geopelia striata"
+      "dhiv": "Kuda Kotharu",
+      "dhiv_script": "ކުޑަ ކޮތަރު",
+      "sci": "Geopelia striata",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Nightjars": [
+    {
+      "id": "016",
+      "name": "Jungle Nightjar",
+      "dhiv": "Bukuru",
+      "dhiv_script": "ބުކުރު",
+      "sci": "Caprimulgus indicus",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Swifts": [
+    {
+      "id": "017",
+      "name": "White-throated Needletail",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Hirundapus caudacutus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "018",
+      "name": "Indian Swiftlet",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Aerodramus unicolor",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "019",
+      "name": "Himalayan Swiftlet",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Aerodramus brevirostris",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "020",
+      "name": "Common Swift",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Apus apus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "021",
+      "name": "Pallid Swift",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Apus pallidus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "022",
+      "name": "Blyth's Swift",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Apus leuconyx",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "023",
+      "name": "Little Swift",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Apus affinis",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Cuckoos": [
     {
-      "id": "016",
-      "name": "Chestnut-winged Cuckoo",
-      "sci": "Clamator coromandus"
-    },
-    {
-      "id": "017",
-      "name": "Asian Koel",
-      "sci": "Eudynamys scolopaceus"
-    },
-    {
-      "id": "018",
-      "name": "Gray-bellied Cuckoo",
-      "sci": "Cacomantis passerinus"
-    },
-    {
-      "id": "019",
-      "name": "Indian Cuckoo",
-      "sci": "Cuculus micropterus"
-    },
-    {
-      "id": "020",
-      "name": "Common Cuckoo",
-      "sci": "Cuculus canorus"
-    }
-  ],
-  "Nightjars and allies": [
-    {
-      "id": "021",
-      "name": "Jungle Nightjar",
-      "sci": "Caprimulgus indicus"
-    },
-    {
-      "id": "022",
-      "name": "White-throated Needletail",
-      "sci": "Hirundapus caudacutus"
-    },
-    {
-      "id": "023",
-      "name": "Indian Swiftlet",
-      "sci": "Aerodramus unicolor"
-    },
-    {
       "id": "024",
-      "name": "Himalayan Swiftlet",
-      "sci": "Aerodramus brevirostris"
+      "name": "Chestnut-winged Cuckoo",
+      "dhiv": "Koveli",
+      "dhiv_script": "ކޮވެލި",
+      "sci": "Clamator coromandus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "025",
-      "name": "Common Swift",
-      "sci": "Apus apus"
+      "name": "Gray-bellied Cuckoo",
+      "dhiv": "Koveli",
+      "dhiv_script": "ކޮވެލި",
+      "sci": "Cacomantis passerinus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "026",
-      "name": "Pallid Swift",
-      "sci": "Apus pallidus"
+      "name": "Asian Koel",
+      "dhiv": "Koveli / Dhivehi Koveli",
+      "dhiv_script": "ކޮވެލި / ދިވެހި ކޮވެލި",
+      "sci": "Eudynamys scolopaceus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "027",
-      "name": "Blyth's Swift",
-      "sci": "Apus leuconyx"
+      "name": "Indian Cuckoo",
+      "dhiv": "Koveli",
+      "dhiv_script": "ކޮވެލި",
+      "sci": "Cuculus micropterus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "028",
-      "name": "Little Swift",
-      "sci": "Apus affinis"
+      "name": "Common Cuckoo",
+      "dhiv": "Koveli",
+      "dhiv_script": "ކޮވެލި",
+      "sci": "Cuculus canorus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Rails, gallinules, and coots": [
+  "Rails, Crakes, and Coots": [
     {
       "id": "029",
-      "name": "Eurasian Moorhen",
-      "sci": "Gallinula chloropus",
-      "drawn": "2026-02-06",
-      "illustratorNote": "First time trying pastels—couldn't quite get the feel for them. Softer than expected."
+      "name": "White-breasted Waterhen",
+      "dhiv": "Kanbili",
+      "dhiv_script": "ކަނބިލި",
+      "sci": "Amaurornis phoenicurus",
+      "drawn": "2025-11-09",
+      "illustratorNote": "Tried using multiple watercolor colors, but in the end only the tail had that extra color thing going."
     },
     {
       "id": "030",
-      "name": "Eurasian Coot",
-      "sci": "Fulica atra",
-      "drawn": "2026-01-15",
-      "illustratorNote": "Wanted to give the bird more personality. Feel like I should have gone with a hard brush in Clip Studio instead."
-    },
-    {
-      "id": "031",
       "name": "Watercock",
+      "dhiv": "Valu Kukulhu / Kulhee Kukulhu",
+      "dhiv_script": "ވަލު ކުކުޅު / ކުލީ ކުކުޅު",
       "sci": "Gallicrex cinerea",
       "drawn": "2025-10-15",
       "illustratorNote": "Tried mixing Photoshop with watercolor techniques. Mixed feelings about how it turned out."
     },
     {
+      "id": "031",
+      "name": "Eurasian Moorhen",
+      "dhiv": "Kulhee Kukulhu / Olhuvalu Kanbili",
+      "dhiv_script": "ކުލީ ކުކުޅު / އޮޅުވަލު ކަނބިލި",
+      "sci": "Gallinula chloropus",
+      "drawn": "2026-02-06",
+      "illustratorNote": "First time trying pastels—couldn't quite get the feel for them. Softer than expected."
+    },
+    {
       "id": "032",
-      "name": "White-breasted Waterhen",
-      "sci": "Amaurornis phoenicurus",
-      "drawn": "2025-11-09",
-      "illustratorNote": "Tried using multiple watercolor colors, but in the end only the tail had that extra color thing going."
+      "name": "Eurasian Coot",
+      "dhiv": "Salvaa Dhooni",
+      "dhiv_script": "ސަލްވާ ދޫނި",
+      "sci": "Fulica atra",
+      "drawn": "2026-01-15",
+      "illustratorNote": "Wanted to give the bird more personality. Feel like I should have gone with a hard brush in Clip Studio instead."
     }
   ],
-  "Stilts and avocets": [
+  "Oystercatchers": [
     {
       "id": "033",
-      "name": "Black-winged Stilt",
-      "sci": "Himantopus himantopus"
+      "name": "Eurasian Oystercatcher",
+      "dhiv": "Fiyala Dhooni",
+      "dhiv_script": "ފިޔަލަ ދޫނި",
+      "sci": "Haematopus ostralegus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Oyster-catchers": [
+  "Stilts and Avocets": [
     {
       "id": "034",
-      "name": "Eurasian Oystercatcher",
-      "sci": "Haematopus ostralegus"
+      "name": "Black-winged Stilt",
+      "dhiv": "Theyravaa Ilolhi",
+      "dhiv_script": "ތޭރަވާ އިލޮޅި",
+      "sci": "Himantopus himantopus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Plovers and lapwings": [
+  "Plovers and Lapwings": [
     {
       "id": "035",
       "name": "Black-bellied Plover",
-      "sci": "Pluvialis squatarola"
+      "dhiv": "Alaka",
+      "dhiv_script": "އަލަކަ",
+      "sci": "Pluvialis squatarola",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "036",
       "name": "Pacific Golden-Plover",
-      "sci": "Pluvialis fulva"
+      "dhiv": "Bileymaa Dhushin",
+      "dhiv_script": "ބިލޭމާ ދުޝިން",
+      "sci": "Pluvialis fulva",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "037",
       "name": "Sociable Lapwing",
-      "sci": "Vanellus gregarius"
+      "dhiv": "Bondana",
+      "dhiv_script": "ބޮންޑަނަ",
+      "sci": "Vanellus gregarius",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "038",
-      "name": "Lesser Sand-Plover",
-      "sci": "Charadrius mongolus"
+      "name": "Common Ringed Plover",
+      "dhiv": "Angoti Bondana",
+      "dhiv_script": "އަންގޮޓި ބޮންޑަނަ",
+      "sci": "Charadrius hiaticula",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "039",
+      "name": "Little Ringed Plover",
+      "dhiv": "Lolo Bondana",
+      "dhiv_script": "ލޯލޯ ބޮންޑަނަ",
+      "sci": "Charadrius dubius",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "040",
+      "name": "Kentish Plover",
+      "dhiv": "Kiru Bondana",
+      "dhiv_script": "ކިރު ބޮންޑަނަ",
+      "sci": "Charadrius alexandrinus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "041",
+      "name": "Lesser Sand-Plover",
+      "dhiv": "Bondana",
+      "dhiv_script": "ބޮންޑަނަ",
+      "sci": "Charadrius mongolus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "042",
       "name": "Greater Sand-Plover",
+      "dhiv": "Valu Bondana",
+      "dhiv_script": "ވަލު ބޮންޑަނަ",
       "sci": "Charadrius leschenaultii",
       "drawn": "2025-10-07",
       "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
-      "id": "040",
-      "name": "Caspian Plover",
-      "sci": "Charadrius asiaticus"
-    },
-    {
-      "id": "041",
-      "name": "Kentish Plover",
-      "sci": "Charadrius alexandrinus"
-    },
-    {
-      "id": "042",
-      "name": "Common Ringed Plover",
-      "sci": "Charadrius hiaticula"
-    },
-    {
       "id": "043",
-      "name": "Little Ringed Plover",
-      "sci": "Charadrius dubius"
+      "name": "Caspian Plover",
+      "dhiv": "Bondana",
+      "dhiv_script": "ބޮންޑަނަ",
+      "sci": "Charadrius asiaticus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Sandpipers and allies": [
+  "Sandpipers, Snipes, and Allies": [
     {
       "id": "044",
       "name": "Whimbrel",
-      "sci": "Numenius phaeopus"
+      "dhiv": "Bulhithunbi",
+      "dhiv_script": "ބުޅިތުންބި",
+      "sci": "Numenius phaeopus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "045",
       "name": "Eurasian Curlew",
-      "sci": "Numenius arquata"
+      "dhiv": "Bodu Bulhithunbi",
+      "dhiv_script": "ބޮޑު ބުޅިތުންބި",
+      "sci": "Numenius arquata",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "046",
-      "name": "Bar-tailed Godwit",
-      "sci": "Limosa lapponica"
+      "name": "Black-tailed Godwit",
+      "dhiv": "Eshunga Ilolhi",
+      "dhiv_script": "އެޝުންގަ އިލޮޅި",
+      "sci": "Limosa limosa",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "047",
-      "name": "Black-tailed Godwit",
-      "sci": "Limosa limosa"
+      "name": "Bar-tailed Godwit",
+      "dhiv": "Eshunga Ilolhi",
+      "dhiv_script": "އެޝުންގަ އިލޮޅި",
+      "sci": "Limosa lapponica",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "048",
       "name": "Ruddy Turnstone",
-      "sci": "Arenaria interpres"
+      "dhiv": "Rathafai",
+      "dhiv_script": "ރަތަފައި",
+      "sci": "Arenaria interpres",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "049",
       "name": "Ruff",
-      "sci": "Calidris pugnax"
+      "dhiv": "Bondana",
+      "dhiv_script": "ބޮންޑަނަ",
+      "sci": "Calidris pugnax",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "050",
       "name": "Curlew Sandpiper",
-      "sci": "Calidris ferruginea"
+      "dhiv": "Bondana Ilolhi",
+      "dhiv_script": "ބޮންޑަނަ އިލޮޅި",
+      "sci": "Calidris ferruginea",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "051",
       "name": "Temminck's Stint",
-      "sci": "Calidris temminckii"
+      "dhiv": "Kuda Bondana",
+      "dhiv_script": "ކުޑަ ބޮންޑަނަ",
+      "sci": "Calidris temminckii",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "052",
       "name": "Long-toed Stint",
-      "sci": "Calidris subminuta"
+      "dhiv": "Kuda Bondana",
+      "dhiv_script": "ކުޑަ ބޮންޑަނަ",
+      "sci": "Calidris subminuta",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "053",
       "name": "Sanderling",
-      "sci": "Calidris alba"
+      "dhiv": "Bondana",
+      "dhiv_script": "ބޮންޑަނަ",
+      "sci": "Calidris alba",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "054",
       "name": "Dunlin",
-      "sci": "Calidris alpina"
+      "dhiv": "Bondana",
+      "dhiv_script": "ބޮންޑަނަ",
+      "sci": "Calidris alpina",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "055",
       "name": "Little Stint",
-      "sci": "Calidris minuta"
+      "dhiv": "Kuda Bondana",
+      "dhiv_script": "ކުޑަ ބޮންޑަނަ",
+      "sci": "Calidris minuta",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "056",
-      "name": "Common Snipe",
-      "sci": "Gallinago gallinago"
+      "name": "Swinhoe's Snipe",
+      "dhiv": "Dhivehi Iruvaihudhu",
+      "dhiv_script": "ދިވެހި އިރުވައިހުދު",
+      "sci": "Gallinago megala",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "057",
       "name": "Pin-tailed Snipe",
-      "sci": "Gallinago stenura"
+      "dhiv": "Dhivehi Iruvaihudhu",
+      "dhiv_script": "ދިވެހި އިރުވައިހުދު",
+      "sci": "Gallinago stenura",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "058",
-      "name": "Swinhoe's Snipe",
-      "sci": "Gallinago megala"
+      "name": "Common Snipe",
+      "dhiv": "Dhivehi Iruvaihudhu",
+      "dhiv_script": "ދިވެހި އިރުވައިހުދު",
+      "sci": "Gallinago gallinago",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "059",
       "name": "Terek Sandpiper",
-      "sci": "Xenus cinereus"
+      "dhiv": "Fureddhe Ilolhi",
+      "dhiv_script": "ފުރެއްދެ އިލޮޅި",
+      "sci": "Xenus cinereus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "060",
       "name": "Common Sandpiper",
-      "sci": "Actitis hypoleucos"
+      "dhiv": "Findhana",
+      "dhiv_script": "ފިންދަނަ",
+      "sci": "Actitis hypoleucos",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "061",
       "name": "Green Sandpiper",
-      "sci": "Tringa ochropus"
+      "dhiv": "Fuku",
+      "dhiv_script": "ފުކު",
+      "sci": "Tringa ochropus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "062",
-      "name": "Spotted Redshank",
-      "sci": "Tringa erythropus"
+      "name": "Marsh Sandpiper",
+      "dhiv": "Furedhdhe Ilolhi / Furehdhi Ilolhi",
+      "dhiv_script": "ފުރެއްދެ އިލޮޅި",
+      "sci": "Tringa stagnatilis",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "063",
-      "name": "Common Greenshank",
-      "sci": "Tringa nebularia"
+      "name": "Wood Sandpiper",
+      "dhiv": "Ilolhi",
+      "dhiv_script": "އިލޮޅި",
+      "sci": "Tringa glareola",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "064",
-      "name": "Marsh Sandpiper",
-      "sci": "Tringa stagnatilis"
+      "name": "Common Redshank",
+      "dhiv": "Rathafai Ilolhi",
+      "dhiv_script": "ރަތަފައި އިލޮޅި",
+      "sci": "Tringa totanus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "065",
-      "name": "Wood Sandpiper",
-      "sci": "Tringa glareola"
+      "name": "Spotted Redshank",
+      "dhiv": "Rathafai Ilolhi",
+      "dhiv_script": "ރަތަފައި އިލޮޅި",
+      "sci": "Tringa erythropus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "066",
-      "name": "Common Redshank",
-      "sci": "Tringa totanus"
+      "name": "Common Greenshank",
+      "dhiv": "Chon Chon Ilolhi",
+      "dhiv_script": "ޗޮން ޗޮން އިލޮޅި",
+      "sci": "Tringa nebularia",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Crab-plover": [
+  "Crab-Plover": [
     {
       "id": "067",
       "name": "Crab-Plover",
-      "sci": "Dromas ardeola"
+      "dhiv": "Theyravaa / Moalha Lunbo",
+      "dhiv_script": "ތޭރަވާ / މޯޅަ ލުނބޯ",
+      "sci": "Dromas ardeola",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Pratincoles and coursers": [
+  "Pratincoles and Coursers": [
     {
       "id": "068",
       "name": "Collared Pratincole",
-      "sci": "Glareola pratincola"
+      "dhiv": "Abulagee",
+      "dhiv_script": "އަބުލަގީ",
+      "sci": "Glareola pratincola",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "069",
       "name": "Oriental Pratincole",
-      "sci": "Glareola maldivarum"
+      "dhiv": "Abulagee",
+      "dhiv_script": "އަބުލަގީ",
+      "sci": "Glareola maldivarum",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Skuas and jaegers": [
+  "Skuas and Jaegers": [
     {
       "id": "070",
       "name": "South Polar Skua",
-      "sci": "Stercorarius maccormicki"
+      "dhiv": "Jahaa Dhooni",
+      "dhiv_script": "ޖަހާ ދޫނި",
+      "sci": "Stercorarius maccormicki",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "071",
       "name": "Brown Skua",
-      "sci": "Stercorarius antarcticus"
+      "dhiv": "Jahaa Dhooni",
+      "dhiv_script": "ޖަހާ ދޫނި",
+      "sci": "Stercorarius antarcticus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "072",
       "name": "Pomarine Jaeger",
-      "sci": "Stercorarius pomarinus"
+      "dhiv": "Jahaa Dhooni",
+      "dhiv_script": "ޖަހާ ދޫނި",
+      "sci": "Stercorarius pomarinus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "073",
       "name": "Parasitic Jaeger",
-      "sci": "Stercorarius parasiticus"
+      "dhiv": "Jahaa Dhooni",
+      "dhiv_script": "ޖަހާ ދޫނި",
+      "sci": "Stercorarius parasiticus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "074",
       "name": "Long-tailed Jaeger",
-      "sci": "Stercorarius longicaudus"
+      "dhiv": "Jahaa Dhooni",
+      "dhiv_script": "ޖަހާ ދޫނި",
+      "sci": "Stercorarius longicaudus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Gulls, terns, and skimmers": [
+  "Gulls, Terns, and Noddies": [
     {
       "id": "075",
-      "name": "Black-headed Gull",
-      "sci": "Chroicocephalus ridibundus"
+      "name": "Brown Noddy",
+      "dhiv": "Maaranga",
+      "dhiv_script": "މާރަނގަ",
+      "sci": "Anous stolidus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "076",
-      "name": "Brown-headed Gull",
-      "sci": "Chroicocephalus brunnicephalus"
+      "name": "Lesser Noddy",
+      "dhiv": "Kurangi",
+      "dhiv_script": "ކުރަނގި",
+      "sci": "Anous tenuirostris",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "077",
-      "name": "White-eyed Gull",
-      "sci": "Ichthyaetus leucophthalmus"
+      "name": "White Tern",
+      "dhiv": "Dhondheeni / Kandhumatheegai",
+      "dhiv_script": "ދޮންދީނި / ކަނޑުމަތީގައި",
+      "sci": "Gygis alba",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "078",
-      "name": "Sooty Gull",
-      "sci": "Ichthyaetus hemprichii"
+      "name": "Black-headed Gull",
+      "dhiv": "Boakalhu Gohorukey",
+      "dhiv_script": "ބޯކަޅު ގޮހޮރުކޭ",
+      "sci": "Chroicocephalus ridibundus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "079",
-      "name": "Pallas's Gull",
-      "sci": "Ichthyaetus ichthyaetus"
+      "name": "Brown-headed Gull",
+      "dhiv": "Gohorukey",
+      "dhiv_script": "ގޮހޮރުކޭ",
+      "sci": "Chroicocephalus brunnicephalus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "080",
-      "name": "Lesser Black-backed Gull",
-      "sci": "Larus fuscus"
+      "name": "Sooty Gull",
+      "dhiv": "Gohorukey",
+      "dhiv_script": "ގޮހޮރުކޭ",
+      "sci": "Ichthyaetus hemprichii",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "081",
-      "name": "Brown Noddy",
-      "sci": "Anous stolidus"
+      "name": "White-eyed Gull",
+      "dhiv": "Gohorukey",
+      "dhiv_script": "ގޮހޮރުކޭ",
+      "sci": "Ichthyaetus leucophthalmus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "082",
-      "name": "Lesser Noddy",
-      "sci": "Anous tenuirostris"
+      "name": "Pallas's Gull",
+      "dhiv": "Gohorukey",
+      "dhiv_script": "ގޮހޮރުކޭ",
+      "sci": "Ichthyaetus ichthyaetus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "083",
-      "name": "White Tern",
-      "sci": "Gygis alba"
+      "name": "Lesser Black-backed Gull",
+      "dhiv": "Gohorukey",
+      "dhiv_script": "ގޮހޮރުކޭ",
+      "sci": "Larus fuscus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "084",
-      "name": "Sooty Tern",
-      "sci": "Onychoprion fuscatus"
+      "name": "Gull-billed Tern",
+      "dhiv": "Gaa Dhooni",
+      "dhiv_script": "ގާ ދޫނި",
+      "sci": "Gelochelidon nilotica",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "085",
-      "name": "Bridled Tern",
-      "sci": "Onychoprion anaethetus"
+      "name": "Caspian Tern",
+      "dhiv": "Miyaremu Dhooni",
+      "dhiv_script": "މިޔަރެމު ދޫނި",
+      "sci": "Hydroprogne caspia",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "086",
-      "name": "Little Tern",
-      "sci": "Sternula albifrons"
+      "name": "Great Crested Tern",
+      "dhiv": "Bodu Gaadhooni",
+      "dhiv_script": "ބޮޑު ގާދޫނި",
+      "sci": "Thalasseus bergii",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "087",
-      "name": "Saunders's Tern",
-      "sci": "Sternula saundersi"
+      "name": "Lesser Crested Tern",
+      "dhiv": "Ainmathee Gaadhooni",
+      "dhiv_script": "އައިންމަތީ ގާދޫނި",
+      "sci": "Thalasseus bengalensis",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "088",
-      "name": "Gull-billed Tern",
-      "sci": "Gelochelidon nilotica"
+      "name": "Sandwich Tern",
+      "dhiv": "Gaa Dhooni",
+      "dhiv_script": "ގާ ދޫނި",
+      "sci": "Thalasseus sandvicensis",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "089",
-      "name": "Caspian Tern",
-      "sci": "Hydroprogne caspia"
+      "name": "Sooty Tern",
+      "dhiv": "Beyndhu",
+      "dhiv_script": "ބޭންދު",
+      "sci": "Onychoprion fuscatus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "090",
-      "name": "White-winged Tern",
-      "sci": "Chlidonias leucopterus"
+      "name": "Bridled Tern",
+      "dhiv": "Vaali",
+      "dhiv_script": "ވާލި",
+      "sci": "Onychoprion anaethetus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "091",
-      "name": "Whiskered Tern",
-      "sci": "Chlidonias hybrida"
+      "name": "Little Tern",
+      "dhiv": "",
+      "sci": "Sternula albifrons",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "092",
-      "name": "Roseate Tern",
-      "sci": "Sterna dougallii"
+      "name": "Saunders's Tern",
+      "dhiv": "Bondhu Dhooni",
+      "dhiv_script": "ބޮންޑު ދޫނި",
+      "sci": "Sternula saundersi",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "093",
-      "name": "Black-naped Tern",
-      "sci": "Sterna sumatrana"
+      "name": "Common Tern",
+      "dhiv": "Valla",
+      "dhiv_script": "ވައްލަ",
+      "sci": "Sterna hirundo",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "094",
-      "name": "Common Tern",
-      "sci": "Sterna hirundo"
+      "name": "Roseate Tern",
+      "dhiv": "Valla",
+      "dhiv_script": "ވައްލަ",
+      "sci": "Sterna dougallii",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "095",
-      "name": "White-cheeked Tern",
-      "sci": "Sterna repressa"
+      "name": "Black-naped Tern",
+      "dhiv": "Kiru Dhooni",
+      "dhiv_script": "ކިރު ދޫނި",
+      "sci": "Sterna sumatrana",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "096",
-      "name": "Great Crested Tern",
-      "sci": "Thalasseus bergii"
+      "name": "White-cheeked Tern",
+      "dhiv": "Valla",
+      "dhiv_script": "ވައްލަ",
+      "sci": "Sterna repressa",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "097",
-      "name": "Sandwich Tern",
-      "sci": "Thalasseus sandvicensis"
+      "name": "Whiskered Tern",
+      "dhiv": "Valoa Dhooni",
+      "dhiv_script": "ވަލޯ ދޫނި",
+      "sci": "Chlidonias hybrida",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "098",
-      "name": "Lesser Crested Tern",
-      "sci": "Thalasseus bengalensis"
+      "name": "White-winged Tern",
+      "dhiv": "Valoa Dhooni",
+      "dhiv_script": "ވަލޯ ދޫނި",
+      "sci": "Chlidonias leucopterus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Tropicbirds": [
     {
       "id": "099",
       "name": "White-tailed Tropicbird",
+      "dhiv": "Dhandifulhu Dhooni",
+      "dhiv_script": "ދަނޑިފުޅު ދޫނި",
       "sci": "Phaethon lepturus",
       "drawn": "2025-10-07",
       "illustratorNote": "See note for #11 (Greater Flamingo)."
@@ -550,447 +924,751 @@
     {
       "id": "100",
       "name": "Red-billed Tropicbird",
-      "sci": "Phaethon aethereus"
+      "dhiv": "Dhandifulhu Dhooni",
+      "dhiv_script": "ދަނޑިފުޅު ދޫނި",
+      "sci": "Phaethon aethereus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "101",
       "name": "Red-tailed Tropicbird",
-      "sci": "Phaethon rubricauda"
+      "dhiv": "Dhandifulhu Dhooni",
+      "dhiv_script": "ދަނޑިފުޅު ދޫނި",
+      "sci": "Phaethon rubricauda",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Southern storm-petrels": [
+  "Austral Storm Petrels": [
     {
       "id": "102",
       "name": "Wilson's Storm-Petrel",
-      "sci": "Oceanites oceanicus"
+      "dhiv": "Kandu Kanbaa",
+      "dhiv_script": "ކަނޑު ކަންބާ",
+      "sci": "Oceanites oceanicus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "103",
       "name": "White-faced Storm-Petrel",
-      "sci": "Pelagodroma marina"
+      "dhiv": "Kandu Kanbaa",
+      "dhiv_script": "ކަނޑު ކަންބާ",
+      "sci": "Pelagodroma marina",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Northern storm-petrels": [
+  "Northern Storm Petrels": [
     {
       "id": "104",
       "name": "Leach's Storm-Petrel",
-      "sci": "Hydrobates leucorhous"
+      "dhiv": "Kandu Kanbaa",
+      "dhiv_script": "ކަނޑު ކަންބާ",
+      "sci": "Hydrobates leucorhous",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "105",
       "name": "Swinhoe's Storm-Petrel",
-      "sci": "Hydrobates monorhis"
+      "dhiv": "Kandu Kanbaa",
+      "dhiv_script": "ކަނޑު ކަންބާ",
+      "sci": "Hydrobates monorhis",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "106",
       "name": "Band-rumped Storm-Petrel",
-      "sci": "Hydrobates castro"
+      "dhiv": "Kandu Kanbaa",
+      "dhiv_script": "ކަނޑު ކަންބާ",
+      "sci": "Hydrobates castro",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "107",
       "name": "Matsudaira's Storm-Petrel",
-      "sci": "Hydrobates matsudairae"
+      "dhiv": "Kandu Kanbaa",
+      "dhiv_script": "ކަނޑު ކަންބާ",
+      "sci": "Hydrobates matsudairae",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Shearwaters and petrels": [
+  "Shearwaters and Petrels": [
     {
       "id": "108",
       "name": "Trindade Petrel",
-      "sci": "Pterodroma arminjoniana"
+      "dhiv": "Hoagulhaa",
+      "dhiv_script": "ހޯގުޅާ",
+      "sci": "Pterodroma arminjoniana",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "109",
       "name": "Bulwer's Petrel",
-      "sci": "Bulweria bulwerii"
+      "dhiv": "Hoagulhaa",
+      "dhiv_script": "ހޯގުޅާ",
+      "sci": "Bulweria bulwerii",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "110",
       "name": "Jouanin's Petrel",
-      "sci": "Bulweria fallax"
+      "dhiv": "Hoagulhaa",
+      "dhiv_script": "ހޯގުޅާ",
+      "sci": "Bulweria fallax",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "111",
       "name": "Streaked Shearwater",
-      "sci": "Calonectris leucomelas"
+      "dhiv": "Hoagulhaa",
+      "dhiv_script": "ހޯގުޅާ",
+      "sci": "Calonectris leucomelas",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "112",
-      "name": "Flesh-footed Shearwater",
-      "sci": "Ardenna carneipes"
+      "name": "Wedge-tailed Shearwater",
+      "dhiv": "Bodu Hoagulhaa / Bondu Hoagulhaa",
+      "dhiv_script": "ބޮޑު ހޯގުޅާ / ބޮންޑު ހޯގުޅާ",
+      "sci": "Ardenna pacifica",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "113",
-      "name": "Wedge-tailed Shearwater",
-      "sci": "Ardenna pacifica"
+      "name": "Flesh-footed Shearwater",
+      "dhiv": "Maa Hoagulhaa",
+      "dhiv_script": "މާ ހޯގުޅާ",
+      "sci": "Ardenna carneipes",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "114",
       "name": "Sooty Shearwater",
-      "sci": "Ardenna grisea"
+      "dhiv": "Hoagulhaa",
+      "dhiv_script": "ހޯގުޅާ",
+      "sci": "Ardenna grisea",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "115",
       "name": "Short-tailed Shearwater",
-      "sci": "Ardenna tenuirostris"
+      "dhiv": "Hoagulhaa",
+      "dhiv_script": "ހޯގުޅާ",
+      "sci": "Ardenna tenuirostris",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "116",
       "name": "Tropical Shearwater",
-      "sci": "Puffinus bailloni"
+      "dhiv": "Dhivehi Hoagulhaa / Dhivehi Hoagulha",
+      "dhiv_script": "ދިވެހި ހޯގުޅާ",
+      "sci": "Puffinus bailloni",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "117",
       "name": "Persian Shearwater",
-      "sci": "Puffinus persicus"
+      "dhiv": "Hoagulhaa",
+      "dhiv_script": "ހޯގުޅާ",
+      "sci": "Puffinus persicus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Frigatebirds": [
     {
       "id": "118",
       "name": "Lesser Frigatebird",
-      "sci": "Fregata ariel"
+      "dhiv": "Hoara",
+      "dhiv_script": "ހޯރަ",
+      "sci": "Fregata ariel",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "119",
       "name": "Great Frigatebird",
-      "sci": "Fregata minor"
+      "dhiv": "Maahoara / Maa Hoara",
+      "dhiv_script": "މާހޯރަ / މާ ހޯރަ",
+      "sci": "Fregata minor",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Boobies and gannets": [
+  "Boobies": [
     {
       "id": "120",
-      "name": "Masked Booby",
-      "sci": "Sula dactylatra"
+      "name": "Abbott's Booby",
+      "dhiv": "Maa Dhooni",
+      "dhiv_script": "މާ ދޫނި",
+      "sci": "Papasula abbotti",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "121",
-      "name": "Brown Booby",
-      "sci": "Sula leucogaster"
+      "name": "Masked Booby",
+      "dhiv": "Hudhumaa Dhooni / Hudhu Maadhooni",
+      "dhiv_script": "ހުދުުމާ ދޫނި / ހުދު މާދޫނި",
+      "sci": "Sula dactylatra",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "122",
-      "name": "Red-footed Booby",
-      "sci": "Sula sula"
+      "name": "Brown Booby",
+      "dhiv": "Kalhu Maadhooni",
+      "dhiv_script": "ކަޅު މާދޫނި",
+      "sci": "Sula leucogaster",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "123",
-      "name": "Abbott's Booby",
-      "sci": "Papasula abbotti"
+      "name": "Red-footed Booby",
+      "dhiv": "Rathafai Maadhooni",
+      "dhiv_script": "ރަތަފައި މާދޫނި",
+      "sci": "Sula sula",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Anhingas": [
+  "Darters": [
     {
       "id": "124",
       "name": "Oriental Darter",
-      "sci": "Anhinga melanogaster"
+      "dhiv": "Kandi Kukulhu",
+      "dhiv_script": "ކަނޑި ކުކުޅު",
+      "sci": "Anhinga melanogaster",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Cormorants and shags": [
+  "Cormorants": [
     {
       "id": "125",
       "name": "Little Cormorant",
-      "sci": "Microcarbo niger"
+      "dhiv": "Lola",
+      "dhiv_script": "ލޯލަ",
+      "sci": "Microcarbo niger",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "126",
       "name": "Indian Cormorant",
-      "sci": "Phalacrocorax fuscicollis"
+      "dhiv": "Lola",
+      "dhiv_script": "ލޯލަ",
+      "sci": "Phalacrocorax fuscicollis",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Pelicans": [
+  "Ibises and Spoonbills": [
     {
       "id": "127",
-      "name": "Great White Pelican",
-      "sci": "Pelecanus onocrotalus"
+      "name": "Glossy Ibis",
+      "dhiv": "Kalhu Bulhithunbi",
+      "dhiv_script": "ކަޅު ބުޅިތުންބި",
+      "sci": "Plegadis falcinellus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "128",
-      "name": "Spot-billed Pelican",
-      "sci": "Pelecanus philippensis"
-    }
-  ],
-  "Herons, egrets, and bitterns": [
-    {
-      "id": "129",
-      "name": "Great Bittern",
-      "sci": "Botaurus stellaris"
+      "name": "Black-headed Ibis",
+      "dhiv": "Bulhithunbi",
+      "dhiv_script": "ބުޅިތުންބި",
+      "sci": "Threskiornis melanocephalus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
+      "id": "129",
+      "name": "Eurasian Spoonbill",
+      "dhiv": "Dheyfaiy Dhooni",
+      "dhiv_script": "ދޭފަތް ދޫނި",
+      "sci": "Platalea leucorodia",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Herons, Egrets, and Bitterns": [
+    {
       "id": "130",
+      "name": "Great Bittern",
+      "dhiv": "Raabondhi",
+      "dhiv_script": "ރާބޮންދި",
+      "sci": "Botaurus stellaris",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "131",
+      "name": "Cinnamon Bittern",
+      "dhiv": "Kuda Raabondhi",
+      "dhiv_script": "ކުޑަ ރާބޮންދި",
+      "sci": "Ixobrychus cinnamomeus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "132",
+      "name": "Black Bittern",
+      "dhiv": "Kalhu Raabondhi",
+      "dhiv_script": "ކަޅު ރާބޮންދި",
+      "sci": "Ixobrychus flavicollis",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "133",
       "name": "Yellow Bittern",
+      "dhiv": "Dhon Raabondhi",
+      "dhiv_script": "ދޮން ރާބޮންދި",
       "sci": "Ixobrychus sinensis",
       "drawn": "2025-10-07",
       "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
-      "id": "131",
-      "name": "Cinnamon Bittern",
-      "sci": "Ixobrychus cinnamomeus"
-    },
-    {
-      "id": "132",
-      "name": "Black Bittern",
-      "sci": "Ixobrychus flavicollis"
-    },
-    {
-      "id": "133",
-      "name": "Gray Heron",
-      "sci": "Ardea cinerea",
-      "drawn": "2025-10-07",
-      "illustratorNote": "See note for #11 (Greater Flamingo)."
-    },
-    {
       "id": "134",
-      "name": "Purple Heron",
-      "sci": "Ardea purpurea"
+      "name": "Black-crowned Night-Heron",
+      "dhiv": "Raabondhi",
+      "dhiv_script": "ރާބޮންދި",
+      "sci": "Nycticorax nycticorax",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "135",
-      "name": "Great Egret",
-      "sci": "Ardea alba"
+      "name": "Striated Heron",
+      "dhiv": "Dhivehi Raabondhi",
+      "dhiv_script": "ދިވެހި ރާބޮންދި",
+      "sci": "Butorides striata",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "136",
-      "name": "Intermediate Egret",
-      "sci": "Ardea intermedia"
+      "name": "Indian Pond-Heron",
+      "dhiv": "Huvadhoo Raabondhi",
+      "dhiv_script": "ހުވަދޫ ރާބޮންދި",
+      "sci": "Ardeola grayii",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "137",
-      "name": "Little Egret",
-      "sci": "Egretta garzetta"
-    },
-    {
-      "id": "138",
-      "name": "Western Reef-Heron",
-      "sci": "Egretta gularis"
-    },
-    {
-      "id": "139",
       "name": "Cattle Egret",
+      "dhiv": "Iruvaihudhu",
+      "dhiv_script": "އިރުވައިހުދު",
       "sci": "Bubulcus ibis",
       "drawn": "2025-10-07",
       "illustratorNote": "See note for #11 (Greater Flamingo)."
     },
     {
+      "id": "138",
+      "name": "Gray Heron",
+      "dhiv": "Alhi Maakanaa / Maakanaa",
+      "dhiv_script": "އަޅި މާކަނާ / މާކަނާ",
+      "sci": "Ardea cinerea",
+      "drawn": "2025-10-07",
+      "illustratorNote": "See note for #11 (Greater Flamingo)."
+    },
+    {
+      "id": "139",
+      "name": "Purple Heron",
+      "dhiv": "Dhanbu Maakanaa",
+      "dhiv_script": "ދަންބު މާކަނާ",
+      "sci": "Ardea purpurea",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
       "id": "140",
-      "name": "Indian Pond-Heron",
-      "sci": "Ardeola grayii"
+      "name": "Great Egret",
+      "dhiv": "Lagana / Lagnaa",
+      "dhiv_script": "ލަގަނަ / ލަގްނާ",
+      "sci": "Ardea alba",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "141",
-      "name": "Striated Heron",
-      "sci": "Butorides striata"
+      "name": "Intermediate Egret",
+      "dhiv": "Lagnaa",
+      "dhiv_script": "ލަގްނާ",
+      "sci": "Ardea intermedia",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "142",
-      "name": "Black-crowned Night-Heron",
-      "sci": "Nycticorax nycticorax"
-    }
-  ],
-  "Ibises and spoonbills": [
-    {
-      "id": "143",
-      "name": "Glossy Ibis",
-      "sci": "Plegadis falcinellus"
+      "name": "Little Egret",
+      "dhiv": "Kuda Lagana",
+      "dhiv_script": "ކުޑަ ލަގަނަ",
+      "sci": "Egretta garzetta",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
+      "id": "143",
+      "name": "Western Reef-Heron",
+      "dhiv": "Bodu Raabondhi",
+      "dhiv_script": "ބޮޑު ރާބޮންދި",
+      "sci": "Egretta gularis",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Pelicans": [
+    {
       "id": "144",
-      "name": "Black-headed Ibis",
-      "sci": "Threskiornis melanocephalus"
+      "name": "Great White Pelican",
+      "dhiv": "Girubaa Dhooni",
+      "dhiv_script": "ގިރުބާ ދޫނި",
+      "sci": "Pelecanus onocrotalus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "145",
-      "name": "Eurasian Spoonbill",
-      "sci": "Platalea leucorodia"
+      "name": "Spot-billed Pelican",
+      "dhiv": "Girubaa Dhooni",
+      "dhiv_script": "ގިރުބާ ދޫނި",
+      "sci": "Pelecanus philippensis",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Osprey": [
+  "Ospreys": [
     {
       "id": "146",
       "name": "Osprey",
-      "sci": "Pandion haliaetus"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Pandion haliaetus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Hawks, eagles, and kites": [
+  "Hawks, Eagles, and Kites": [
     {
       "id": "147",
       "name": "Black-winged Kite",
-      "sci": "Elanus caeruleus"
+      "dhiv": "Fiyakalhu Baazu",
+      "dhiv_script": "ފިޔަކަޅު ބާޒު",
+      "sci": "Elanus caeruleus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "148",
       "name": "Oriental Honey-Buzzard",
-      "sci": "Pernis ptilorhynchus"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Pernis ptilorhynchus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "149",
-      "name": "Eurasian Marsh-Harrier",
-      "sci": "Circus aeruginosus"
+      "name": "Shikra",
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Accipiter badius",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "150",
-      "name": "Pallid Harrier",
-      "sci": "Circus macrourus"
+      "name": "Eurasian Marsh-Harrier",
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Circus aeruginosus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "151",
-      "name": "Montagu's Harrier",
-      "sci": "Circus pygargus"
+      "name": "Pallid Harrier",
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Circus macrourus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "152",
-      "name": "Shikra",
-      "sci": "Accipiter badius"
+      "name": "Montagu's Harrier",
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Circus pygargus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "153",
       "name": "Black Kite",
-      "sci": "Milvus migrans"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Milvus migrans",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "154",
       "name": "Brahminy Kite",
-      "sci": "Haliastur indus"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Haliastur indus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Owls": [
     {
       "id": "155",
       "name": "Pallid Scops-Owl",
-      "sci": "Otus brucei"
+      "dhiv": "Bukuru",
+      "dhiv_script": "ބުކުރު",
+      "sci": "Otus brucei",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "156",
       "name": "Short-eared Owl",
-      "sci": "Asio flammeus"
+      "dhiv": "Bukuru",
+      "dhiv_script": "ބުކުރު",
+      "sci": "Asio flammeus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Hoopoes": [
     {
       "id": "157",
       "name": "Eurasian Hoopoe",
-      "sci": "Upupa epops"
+      "dhiv": "Hudhudhu",
+      "dhiv_script": "ހުދުހުދު",
+      "sci": "Upupa epops",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Kingfishers": [
     {
       "id": "158",
       "name": "Common Kingfisher",
-      "sci": "Alcedo atthis"
+      "dhiv": "Dhanbuge",
+      "dhiv_script": "ދަންބުގެ",
+      "sci": "Alcedo atthis",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Bee-eaters": [
     {
       "id": "159",
       "name": "Blue-cheeked Bee-eater",
-      "sci": "Merops persicus"
+      "dhiv": "Fuggahu Guraa",
+      "dhiv_script": "ފުއްގަހު ގުރާ",
+      "sci": "Merops persicus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "160",
       "name": "Blue-tailed Bee-eater",
-      "sci": "Merops philippinus"
+      "dhiv": "Fuggahu Guraa",
+      "dhiv_script": "ފުއްގަހު ގުރާ",
+      "sci": "Merops philippinus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "161",
       "name": "European Bee-eater",
-      "sci": "Merops apiaster"
+      "dhiv": "Fuggahu Guraa",
+      "dhiv_script": "ފުއްގަހު ގުރާ",
+      "sci": "Merops apiaster",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Rollers": [
     {
       "id": "162",
       "name": "European Roller",
-      "sci": "Coracias garrulus"
+      "dhiv": "Maakanaa",
+      "dhiv_script": "މާކަނާ",
+      "sci": "Coracias garrulus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "163",
       "name": "Indian Roller",
-      "sci": "Coracias benghalensis"
+      "dhiv": "Roller",
+      "dhiv_script": "ރޯލަރ",
+      "sci": "Coracias benghalensis",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Falcons and caracaras": [
+  "Asian Barbets": [],
+  "Falcons and Caracaras": [
     {
       "id": "164",
       "name": "Lesser Kestrel",
-      "sci": "Falco naumanni"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Falco naumanni",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "165",
       "name": "Eurasian Kestrel",
-      "sci": "Falco tinnunculus"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Falco tinnunculus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "166",
       "name": "Amur Falcon",
-      "sci": "Falco amurensis"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Falco amurensis",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "167",
       "name": "Eurasian Hobby",
-      "sci": "Falco subbuteo"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Falco subbuteo",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "168",
       "name": "Oriental Hobby",
-      "sci": "Falco severus"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Falco severus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "169",
       "name": "Peregrine Falcon",
-      "sci": "Falco peregrinus"
+      "dhiv": "Baazu",
+      "dhiv_script": "ބާޒު",
+      "sci": "Falco peregrinus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Old World parrots": [
+  "Old World Parrots": [
     {
       "id": "170",
       "name": "Rose-ringed Parakeet",
-      "sci": "Psittacula krameri"
+      "dhiv": "Guraa",
+      "dhiv_script": "ގުރާ",
+      "sci": "Psittacula krameri",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Cuckoo-shrikes": [
+  "Woodswallows": [
     {
       "id": "171",
-      "name": "Large Cuckooshrike",
-      "sci": "Coracina macei"
+      "name": "Ashy Woodswallow",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Artamus fuscus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Old World orioles": [
+  "Orioles": [
     {
       "id": "172",
       "name": "Indian Golden Oriole",
-      "sci": "Oriolus kundoo"
+      "dhiv": "Reendhoo Dhooni",
+      "dhiv_script": "ރީނދޫ ދޫނި",
+      "sci": "Oriolus kundoo",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Wood-swallows, bellmagpies, and allies": [
+  "Cuckooshrikes": [
     {
       "id": "173",
-      "name": "Ashy Woodswallow",
-      "sci": "Artamus fuscus"
+      "name": "Large Cuckooshrike",
+      "dhiv": "",
+      "sci": "Coracina macei",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Monarch flycatchers": [
+  "Monarch Flycatchers": [
     {
       "id": "174",
       "name": "Indian Paradise-Flycatcher",
-      "sci": "Terpsiphone paradisi"
+      "dhiv": "Naru Dhooni",
+      "dhiv_script": "ނަރު ދޫނި",
+      "sci": "Terpsiphone paradisi",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
   "Shrikes": [
     {
       "id": "175",
       "name": "Brown Shrike",
-      "sci": "Lanius cristatus"
+      "dhiv": "Kuda Baazu",
+      "dhiv_script": "ކުޑަ ބާޒު",
+      "sci": "Lanius cristatus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "176",
       "name": "Long-tailed Shrike",
-      "sci": "Lanius schach"
+      "dhiv": "Kuda Baazu",
+      "dhiv_script": "ކުޑަ ބާޒު",
+      "sci": "Lanius schach",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Crows, jays, and magpies": [
+  "Crows": [
     {
       "id": "177",
       "name": "House Crow",
+      "dhiv": "Kaalu",
+      "dhiv_script": "ކާލު",
       "sci": "Corvus splendens",
       "drawn": "2025-10-24",
       "illustratorNote": "Feels like my best work so far—watercolor actually clicked here. Really liked how the strokes came out."
@@ -1000,159 +1678,268 @@
     {
       "id": "178",
       "name": "Mongolian Short-toed Lark",
-      "sci": "Alaudala dukhunensis"
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Alaudala dukhunensis",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Grassbirds and allies": [
+  "Swallows and Martins": [
     {
       "id": "179",
-      "name": "Common Grasshopper-Warbler",
-      "sci": "Locustella naevia"
-    }
-  ],
-  "Swallows": [
+      "name": "Bank Swallow",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Riparia riparia",
+      "drawn": "",
+      "illustratorNote": ""
+    },
     {
       "id": "180",
-      "name": "Bank Swallow",
-      "sci": "Riparia riparia"
+      "name": "Barn Swallow",
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Hirundo rustica",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "181",
-      "name": "Barn Swallow",
-      "sci": "Hirundo rustica"
+      "name": "Common House-Martin",
+      "dhiv": "Rahmathee Forike",
+      "dhiv_script": "ރަހްމަތީ ފޮރިކެ",
+      "sci": "Delichon urbicum",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "182",
       "name": "Red-rumped Swallow",
-      "sci": "Cecropis daurica"
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Cecropis daurica",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "183",
       "name": "Streak-throated Swallow",
-      "sci": "Petrochelidon fluvicola"
-    },
+      "dhiv": "Iruvai Dhooni",
+      "dhiv_script": "އިރުވައި ދޫނި",
+      "sci": "Petrochelidon fluvicola",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Starlings and Mynas": [
     {
       "id": "184",
-      "name": "Common House-Martin",
-      "sci": "Delichon urbicum"
-    }
-  ],
-  "Sylviid warblers, parrotbills, and allies": [
+      "name": "European Starling",
+      "dhiv": "Mainaa",
+      "dhiv_script": "މައިނާ",
+      "sci": "Sturnus vulgaris",
+      "drawn": "",
+      "illustratorNote": ""
+    },
     {
       "id": "185",
-      "name": "Garden Warbler",
-      "sci": "Sylvia borin"
-    }
-  ],
-  "Starlings": [
+      "name": "Rosy Starling",
+      "dhiv": "Mainaa",
+      "dhiv_script": "މައިނާ",
+      "sci": "Pastor roseus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
     {
       "id": "186",
-      "name": "European Starling",
-      "sci": "Sturnus vulgaris"
-    },
+      "name": "Common Myna",
+      "dhiv": "Mainaa",
+      "dhiv_script": "މައިނާ",
+      "sci": "Acridotheres tristis",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Old World Sparrows": [
     {
       "id": "187",
-      "name": "Rosy Starling",
-      "sci": "Pastor roseus"
-    },
+      "name": "House Sparrow",
+      "dhiv": "Kurulla Dhooni",
+      "dhiv_script": "ކުރެއްލަ ދޫނި",
+      "sci": "Passer domesticus",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Wagtails and Pipits": [
     {
       "id": "188",
-      "name": "Common Myna",
-      "sci": "Acridotheres tristis"
-    }
-  ],
-  "Thrushes and allies": [
+      "name": "Forest Wagtail",
+      "dhiv": "Fenfoah Dhooni",
+      "dhiv_script": "ފެންފޯއް ދޫނި",
+      "sci": "Dendronanthus indicus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
     {
       "id": "189",
-      "name": "Eyebrowed Thrush",
-      "sci": "Turdus obscurus"
-    }
-  ],
-  "Old World flycatchers": [
+      "name": "Western Yellow Wagtail",
+      "dhiv": "Fenfoah Dhooni",
+      "dhiv_script": "ފެންފޯއް ދޫނި",
+      "sci": "Motacilla flava",
+      "drawn": "",
+      "illustratorNote": ""
+    },
     {
       "id": "190",
-      "name": "Indian Robin",
-      "sci": "Copsychus fulicatus"
+      "name": "Citrine Wagtail",
+      "dhiv": "Fenfoah Dhooni",
+      "dhiv_script": "ފެންފޯއް ދޫނި",
+      "sci": "Motacilla citreola",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "191",
-      "name": "Northern Wheatear",
-      "sci": "Oenanthe oenanthe"
+      "name": "Gray Wagtail",
+      "dhiv": "Fenfoah Dhooni",
+      "dhiv_script": "ފެންފޯއް ދޫނި",
+      "sci": "Motacilla cinerea",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "192",
-      "name": "Isabelline Wheatear",
-      "sci": "Oenanthe isabellina"
+      "name": "White Wagtail",
+      "dhiv": "Fenfoah Dhooni",
+      "dhiv_script": "ފެންފޯއް ދޫނި",
+      "sci": "Motacilla alba",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "193",
-      "name": "Pied Wheatear",
-      "sci": "Oenanthe pleschanka"
-    }
-  ],
-  "Waxbills and allies": [
+      "name": "Tree Pipit",
+      "dhiv": "Dhon Fenfoah Dhooni",
+      "dhiv_script": "ދޮން ފެންފޯއް ދޫނި",
+      "sci": "Anthus trivialis",
+      "drawn": "",
+      "illustratorNote": ""
+    },
     {
       "id": "194",
-      "name": "Red-cheeked Cordonbleu",
-      "sci": "Uraeginthus bengalus"
+      "name": "Red-throated Pipit",
+      "dhiv": "Mushi Fenfoah Dhooni",
+      "dhiv_script": "މުށި ފެންފޯއް ދޫނި",
+      "sci": "Anthus cervinus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Old World sparrows": [
+  "Grassbirds": [
     {
       "id": "195",
-      "name": "House Sparrow",
-      "sci": "Passer domesticus"
+      "name": "Common Grasshopper-Warbler",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Locustella naevia",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Wagtails and pipits": [
+  "Leaf Warblers": [],
+  "Sylviid Warblers": [
     {
       "id": "196",
-      "name": "Forest Wagtail",
-      "sci": "Dendronanthus indicus"
-    },
+      "name": "Garden Warbler",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Sylvia borin",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Thrushes": [
     {
       "id": "197",
-      "name": "Gray Wagtail",
-      "sci": "Motacilla cinerea"
-    },
+      "name": "Eyebrowed Thrush",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Turdus obscurus",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Old World Flycatchers & Chats": [
     {
       "id": "198",
-      "name": "Western Yellow Wagtail",
-      "sci": "Motacilla flava"
+      "name": "Indian Robin",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Copsychus fulicatus",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "199",
-      "name": "Citrine Wagtail",
-      "sci": "Motacilla citreola"
+      "name": "Northern Wheatear",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Oenanthe oenanthe",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "200",
-      "name": "White Wagtail",
-      "sci": "Motacilla alba"
+      "name": "Isabelline Wheatear",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Oenanthe isabellina",
+      "drawn": "",
+      "illustratorNote": ""
     },
     {
       "id": "201",
-      "name": "Tree Pipit",
-      "sci": "Anthus trivialis"
-    },
-    {
-      "id": "202",
-      "name": "Red-throated Pipit",
-      "sci": "Anthus cervinus"
+      "name": "Pied Wheatear",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Oenanthe pleschanka",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Finches, euphonias, and allies": [
+  "Waxbills": [
+    {
+      "id": "202",
+      "name": "Red-cheeked Cordonbleu",
+      "dhiv": "Noo dhooni",
+      "dhiv_script": "ނޫ ދޫނި",
+      "sci": "Uraeginthus bengalus",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Finches": [
     {
       "id": "203",
       "name": "Common Rosefinch",
-      "sci": "Carpodacus erythrinus"
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carpodacus erythrinus",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ],
-  "Old World buntings": [
+  "Buntings": [
     {
       "id": "204",
       "name": "Ortolan Bunting",
-      "sci": "Emberiza hortulana"
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Emberiza hortulana",
+      "drawn": "",
+      "illustratorNote": ""
     }
   ]
 }

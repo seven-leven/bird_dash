@@ -17,6 +17,18 @@
         {{ bird.scientificName }}
       </p>
     </div>
+<!-- Dhivehi Name -->
+<div v-if="bird.dhiv_script || bird.dhiv" class="mt-3">
+  <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+    Dhivehi Name
+  </h3>
+<p class="font-dhivehi text-xl text-white leading-tight" dir="rtl">
+  {{ bird.dhiv_script }}
+</p>
+  <p class="text-sm text-slate-400">
+    {{ bird.dhiv }}
+  </p>
+</div>
 
     <!-- Illustrator Comment -->
     <div v-if="bird.illustratorNote" class="mb-6">
@@ -98,6 +110,8 @@ interface Bird {
   imageFile: string;
   imageUrl: string;
   illustratorNote?: string;
+  dhiv?: string;
+  dhiv_script?: string;
 }
 const props = defineProps<{
   bird: Bird;

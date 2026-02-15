@@ -18,6 +18,8 @@ interface Bird {
   imageFile: string;
   imageUrl: string;
   illustratorNote?: string;
+  dhiv?: string;          // transliterated Dhivehi name
+  dhiv_script?: string;   // Thaana script Dhivehi name
 }
 
 interface DataState {
@@ -238,17 +240,19 @@ const loadData = async () => {
     for (const [family, list] of Object.entries(rawGroups)) {
       list.forEach((b: any) => {
         const hasImg = !!b.drawn;
-        birdList.push({
-          id: `bird-vuekey-${idCounter++}`,
-          birdId: b.id,
-          commonName: b.name,
-          scientificName: b.sci,
-          family,
-          drawnDate: b.drawn || '',
-          imageFile: hasImg ? `${b.id}.webp` : 'placeholder.webp',
-          imageUrl: hasImg ? config.imageBase + `${b.id}.webp` : config.placeholder,
-          illustratorNote: b.illustratorNote || ''  // <-- fixed: use illustratorNote not note
-        });
+birdList.push({
+  id: `bird-vuekey-${idCounter++}`,
+  birdId: b.id,
+  commonName: b.name,
+  scientificName: b.sci,
+  family,
+  drawnDate: b.drawn || '',
+  imageFile: hasImg ? `${b.id}.webp` : 'placeholder.webp',
+  imageUrl: hasImg ? config.imageBase + `${b.id}.webp` : config.placeholder,
+  illustratorNote: b.illustratorNote || '',
+  dhiv: b.dhiv || '',           // new
+  dhiv_script: b.dhiv_script || '' // new
+});
       });
     }
     data.birds = birdList;

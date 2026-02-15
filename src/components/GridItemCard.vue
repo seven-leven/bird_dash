@@ -47,12 +47,15 @@
       transition-transform duration-300 ease-out
       group-hover:translate-y-full
     ">
-      <h3 class="text-lg font-bold leading-tight text-white drop-shadow-sm">
-        {{ props.bird.commonName }}
-      </h3>
+<h3
+  class="font-dhivehi text-lg font-bold leading-tight text-white drop-shadow-sm"
+  dir="rtl"
+>
+  {{ props.bird.dhiv_script }}
+</h3>
       
       <p v-if="props.bird.scientificName" class="mt-1 text-xs italic text-slate-300 drop-shadow-sm">
-        {{ props.bird.scientificName }}
+        {{ props.bird.commonName }}
       </p>
     </div>
 
