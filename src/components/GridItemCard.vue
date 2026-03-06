@@ -1,44 +1,33 @@
 <template>
   <div
     class="
-      /* Layout & Base */
       group relative aspect-square w-full overflow-hidden rounded-2xl cursor-pointer
-      
-      /* Background & Fallback Colors */
       bg-white dark:bg-slate-900
-      
-      /* Image Positioning - CONTAIN instead of COVER */
       bg-contain bg-center bg-no-repeat
-      
-      /* Transitions & Hover Effects */
       shadow-sm transition-all duration-300 ease-out
       hover:-translate-y-1 hover:shadow-xl
       active:scale-95
-      
-      /* Accessibility Focus Ring */
       focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900
     "
     :style="backgroundImageStyle"
-    @click="$emit('cardClick', props.bird)"
+    @click="$emit('cardClick', props.item)"
     tabindex="0"
-    @keydown.enter="$emit('cardClick', props.bird)"
-    @keydown.space.prevent="$emit('cardClick', props.bird)"
+    @keydown.enter="$emit('cardClick', props.item)"
+    @keydown.space.prevent="$emit('cardClick', props.item)"
   >
-    
-    <!-- Bird Index Badge (Top Left) -->
-    <!-- Logic: Slides UP (-translate-y-12) when parent (group) is hovered -->
+
+    <!-- Item ID badge — slides up on hover -->
     <div class="
-      absolute top-3 left-3 z-10 
-      rounded-md bg-black/60 px-2.5 py-1 
+      absolute top-3 left-3 z-10
+      rounded-md bg-black/60 px-2.5 py-1
       text-xs font-bold text-white backdrop-blur-md
       transition-transform duration-300 ease-out
       group-hover:-translate-y-12
     ">
-      {{ props.bird.birdId }}
+      {{ props.item.itemId }}
     </div>
 
-    <!-- Name Container (Bottom) -->
-    <!-- Logic: Slides DOWN (translate-y-full) when parent (group) is hovered -->
+    <!-- Name container — slides down on hover -->
     <div class="
       absolute bottom-0 inset-x-0 z-10
       flex flex-col justify-end
@@ -47,41 +36,44 @@
       transition-transform duration-300 ease-out
       group-hover:translate-y-full
     ">
-<h3
-  class="font-dhivehi text-lg font-bold leading-tight text-white drop-shadow-sm"
-  dir="rtl"
->
-  {{ props.bird.dhiv_script }}
-</h3>
-      
-      <p v-if="props.bird.scientificName" class="mt-1 text-xs italic text-slate-300 drop-shadow-sm">
-        {{ props.bird.commonName }}
+      <!-- Show Dhivehi script if available in meta, otherwise common name -->
+      <h3
+        v-if="props.item.meta?.dhiv_script"
+        class="font-dhivehi text-lg font-bold leading-tight text-white drop-shadow-sm"
+        dir="rtl"
+      >
+        {{ props.item.meta.dhiv_script }}
+      </h3>
+      <h3
+        v-else
+        class="text-sm font-bold leading-tight text-white drop-shadow-sm"
+      >
+        {{ props.item.commonName }}
+      </h3>
+
+      <p v-if="props.item.scientificName" class="mt-1 text-xs italic text-slate-300 drop-shadow-sm">
+        {{ props.item.commonName }}
       </p>
     </div>
 
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch } from 'vue';
+import type { CollectionItem } from '../collections';
 
-const props = defineProps({
-  bird: { 
-    type: Object,
-    required: true,
-  },
-  placeholderImage: {
-    type: String,
-    required: true,
-  },
-});
+const props = defineProps<{
+  item:             CollectionItem;
+  placeholderImage: string;
+}>();
 
-const emit = defineEmits(['cardClick']);
+defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
 
 const imageToDisplay = ref('');
 
 const loadImage = () => {
-  const targetUrl = props.bird.imageUrl;
+  const targetUrl = props.item.imageUrl;
 
   if (!targetUrl || targetUrl === props.placeholderImage) {
     imageToDisplay.value = props.placeholderImage;
@@ -89,22 +81,17 @@ const loadImage = () => {
   }
 
   const img = new Image();
-  img.onload = () => {
-    imageToDisplay.value = targetUrl;
-  };
+  img.onload  = () => { imageToDisplay.value = targetUrl; };
   img.onerror = () => {
-    console.warn(`[GridItemCard] Failed to load image: ${targetUrl}. Using placeholder.`);
+    console.warn(`[GridItemCard] Failed to load: ${targetUrl}`);
     imageToDisplay.value = props.placeholderImage;
   };
   img.src = targetUrl;
 };
 
-watch(() => props.bird.imageUrl, loadImage, { immediate: true });
+watch(() => props.item.imageUrl, loadImage, { immediate: true });
 
-const backgroundImageStyle = computed(() => {
-  if (imageToDisplay.value) {
-    return { backgroundImage: `url('${imageToDisplay.value}')` };
-  }
-  return {};
-});
+const backgroundImageStyle = computed(() =>
+  imageToDisplay.value ? { backgroundImage: `url('${imageToDisplay.value}')` } : {}
+);
 </script>
