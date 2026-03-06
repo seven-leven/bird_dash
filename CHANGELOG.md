@@ -8,10 +8,13 @@ All versions follow `x.y.z+w` where:
 - `w` = total illustrations across all collections at time of commit
 
 ---
-
-## v0.6.0 (Current — Multi-collection Architecture)
+## v0.7.0 (Current — Multi-collection Architecture)
+"MVP for multi collections"
 "created subfolders for bird pics and updated version manager"
-- **0.6.31+14** - updated TODO with new multi-collection plans (2026-03-06)
+- **0.7.31+14** - updated TODO with new multi-collection plans (2026-03-06)
+
+## v0.6.0 (learning build scripts and adding Qol features)
+
 - **0.6.30+14** - added Dhivehi names (2026-02-15)
 - **0.6.29+14** - added illustrator notes (2026-02-07)
 - **0.6.28+14** - added sort by date (2026-02-07)

@@ -37,12 +37,23 @@ function switchCollection(id: string) {
   if (id === activeCollectionId.value) return;
   activeCollectionId.value = id;
   search.query = '';
-  // Load from cache if available, otherwise fetch
+
+  // Clear stale section headers from previous collection
+  if (uiRef.value?.headerRefs) {
+    uiRef.value.headerRefs = {};
+  }
+
   if (collectionCache[id]) {
     data.items   = collectionCache[id];
     data.loading = false;
     data.error   = undefined;
-    nextTick(() => { updateActiveSection(); handleHash(); });
+    nextTick(() => {
+      if (uiRef.value?.scrollContainer) {
+        uiRef.value.scrollContainer.scrollTop = 0;
+      }
+      updateActiveSection();
+      handleHash();
+    });
   } else {
     loadData();
   }
@@ -328,7 +339,17 @@ const closeOverlay = () => {
 // WATCHERS & LIFECYCLE
 // =============================================================================
 watch(() => data.items, items => {
-  if (items.length > 0) nextTick(() => { updateActiveSection(); handleHash(); });
+  if (items.length > 0) nextTick(() => {
+    // Scroll to top and clear stale headers whenever collection data changes
+    if (uiRef.value?.scrollContainer) {
+      uiRef.value.scrollContainer.scrollTop = 0;
+    }
+    if (uiRef.value?.headerRefs) {
+      uiRef.value.headerRefs = {};
+    }
+    updateActiveSection();
+    handleHash();
+  });
 });
 
 watch(() => theme.isDark, val => {
