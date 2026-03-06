@@ -1,8 +1,8 @@
-# Birds of Maldives
+# Wildlife of Maldives
 
 [Live Demo](https://seven-leven.github.io/bird_dash/)
 
-A digital collection showcasing illustrations of all bird species found in the Maldives.
+A digital collection showcasing illustrations of wild life species found in the Maldives.
 
 ## Tech Stack
 

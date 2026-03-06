@@ -1,0 +1,15 @@
+#!/bin/sh
+# .githooks/post-commit
+#
+# Runs after every commit to auto-bump version.json and append to CHANGELOG.md.
+# The script amends the triggering commit to include those file changes.
+#
+# Install once with:  ./scripts/install-hooks.sh
+
+SCRIPT_DIR="$(git rev-parse --show-toplevel)/scripts"
+
+deno run \
+  --allow-read \
+  --allow-write \
+  --allow-run=git \
+  "$SCRIPT_DIR/bump.ts"

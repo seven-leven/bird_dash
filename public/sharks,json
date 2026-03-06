@@ -1,0 +1,392 @@
+{
+  "Carpet Sharks": [
+    {
+      "id": "001",
+      "name": "Whale Shark",
+      "dhiv": "Fehurihi",
+      "dhiv_script": "ފެހުރިހި",
+      "sci": "Rhincodon typus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "002",
+      "name": "Tawny Nurse Shark",
+      "dhiv": "Nidhan Miyaru",
+      "dhiv_script": "ނިދަން މިޔަރު",
+      "sci": "Nebrius ferrugineus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "003",
+      "name": "Zebra Shark",
+      "dhiv": "Madi Miyaru",
+      "dhiv_script": "މަޑި މިޔަރު",
+      "sci": "Stegostoma tigrinum",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Mackerel Sharks": [
+    {
+      "id": "004",
+      "name": "Shortfin Mako Shark",
+      "dhiv": "Woa Miyaru",
+      "dhiv_script": "ވޯ މިޔަރު",
+      "sci": "Isurus oxyrinchus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "005",
+      "name": "Longfin Mako Shark",
+      "dhiv": "Woa Miyaru",
+      "dhiv_script": "ވޯ މިޔަރު",
+      "sci": "Isurus paucus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "006",
+      "name": "Pelagic Thresher Shark",
+      "dhiv": "Kandi Miyaru",
+      "dhiv_script": "ކަނޑި މިޔަރު",
+      "sci": "Alopias pelagicus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "007",
+      "name": "Bigeye Thresher Shark",
+      "dhiv": "Bodu-lo Kandi Miyaru",
+      "dhiv_script": "ބޮޑުލޯ ކަނޑި މިޔަރު",
+      "sci": "Alopias superciliosus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "008",
+      "name": "Common Thresher Shark",
+      "dhiv": "Kandi Miyaru",
+      "dhiv_script": "ކަނޑި މިޔަރު",
+      "sci": "Alopias vulpinus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "009",
+      "name": "Smalltooth Sand Tiger Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Odontaspis ferox",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "010",
+      "name": "Crocodile Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Pseudocarcharias kamoharai",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Requiem Sharks": [
+    {
+      "id": "011",
+      "name": "Blacktip Reef Shark",
+      "dhiv": "Thundi Miyaru",
+      "dhiv_script": "ތުންޑި މިޔަރު",
+      "sci": "Carcharhinus melanopterus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "012",
+      "name": "Blacktip Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carcharhinus limbatus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "013",
+      "name": "Grey Reef Shark",
+      "dhiv": "Thila Miyaru",
+      "dhiv_script": "ތިލަ މިޔަރު",
+      "sci": "Carcharhinus amblyrhynchos",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "014",
+      "name": "Silky Shark",
+      "dhiv": "Odi Miyaru",
+      "dhiv_script": "އޮޑި މިޔަރު",
+      "sci": "Carcharhinus falciformis",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "015",
+      "name": "Oceanic Whitetip Shark",
+      "dhiv": "Kandhu Miyaru",
+      "dhiv_script": "ކަނޑު މިޔަރު",
+      "sci": "Carcharhinus longimanus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "016",
+      "name": "Silvertip Shark",
+      "dhiv": "Velli Miyaru",
+      "dhiv_script": "ވެލި މިޔަރު",
+      "sci": "Carcharhinus albimarginatus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "017",
+      "name": "Galapagos Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carcharhinus galapagensis",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "018",
+      "name": "Spinner Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carcharhinus brevipinna",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "019",
+      "name": "Bignose Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carcharhinus altimus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "020",
+      "name": "Spot-tail Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carcharhinus sorrah",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "021",
+      "name": "Bull Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carcharhinus leucas",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "022",
+      "name": "Hardnose Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Carcharhinus macloti",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Reef Sharks": [
+    {
+      "id": "023",
+      "name": "Whitetip Reef Shark",
+      "dhiv": "Faana Miyaru",
+      "dhiv_script": "ފާނަ މިޔަރު",
+      "sci": "Triaenodon obesus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "024",
+      "name": "Sicklefin Lemon Shark",
+      "dhiv": "Onu-thundi Miyaru",
+      "dhiv_script": "އޮނުތުންޑި މިޔަރު",
+      "sci": "Negaprion acutidens",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "025",
+      "name": "Sliteye Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Loxodon macrorhinus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "026",
+      "name": "Blue Shark",
+      "dhiv": "Noo Miyaru",
+      "dhiv_script": "ނޫ މިޔަރު",
+      "sci": "Prionace glauca",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "027",
+      "name": "Snaggletooth Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Hemipristis elongata",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Hammerhead Sharks": [
+    {
+      "id": "028",
+      "name": "Scalloped Hammerhead Shark",
+      "dhiv": "Kalhibilihai",
+      "dhiv_script": "ކަޅިބިލިހައި",
+      "sci": "Sphyrna lewini",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "029",
+      "name": "Great Hammerhead Shark",
+      "dhiv": "Bodu Kalhibilihai",
+      "dhiv_script": "ބޮޑު ކަޅިބިލިހައި",
+      "sci": "Sphyrna mokarran",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "030",
+      "name": "Smooth Hammerhead",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Sphyrna zygaena",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Deep Sea Sharks": [
+    {
+      "id": "031",
+      "name": "Bramble Shark",
+      "dhiv": "Kashi Miyaru",
+      "dhiv_script": "ކަށި މިޔަރު",
+      "sci": "Echinorhinus brucus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "032",
+      "name": "Bluntnose Sixgill Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Hexanchus griseus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "033",
+      "name": "Bigeye Sixgill Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Hexanchus nakamurai",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "034",
+      "name": "Smallfin Gulper Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Centrophorus moluccensis",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "035",
+      "name": "Lowfin Gulper Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Centrophorus lusitanicus",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "036",
+      "name": "Kitefin Shark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Dalatias licha",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "037",
+      "name": "Shortspine Spurdog",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Squalus mitsukurii",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "038",
+      "name": "Longnose Spurdog",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Squalus blainville",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "039",
+      "name": "Pygmy Ribbontail Catshark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Eridacnis radcliffei",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "040",
+      "name": "Arabian Catshark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Bythaelurus alcockii",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "041",
+      "name": "Graceful Catshark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Proscyllium habereri",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "042",
+      "name": "Brown Lanternshark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Etmopterus unicolor",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ]
+}
