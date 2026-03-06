@@ -1,99 +1,118 @@
 /// <reference lib="deno.ns" />
 import sharp from 'sharp';
 import {
-  checkIntegrity,
-  DIRS,
+  CollectionEntry,
   ensureDir,
+  fullDir,
   getBaseName,
+  IntegrityIssues,
+  listFiles,
   ProcessResult,
+  thumbDir,
   THUMB_SIZE,
 } from './utils.ts';
 
-export { checkIntegrity };
+// ---------------------------------------------------------------------------
+// Image creation
+// ---------------------------------------------------------------------------
 
-// Find PNGs not yet in birds.json
-export async function findNewImages(existingBirdIds: Set<string>): Promise<string[]> {
-  const rawFiles = await listFiles(DIRS.raw, (n) => n.toLowerCase().endsWith('.png'));
-  return rawFiles.filter((filename) => !existingBirdIds.has(getBaseName(filename)));
-}
-
-// Create both full and thumbnail WebP images
-export async function processImage(filename: string): Promise<ProcessResult> {
-  const baseName = getBaseName(filename);
-
-  await ensureDir(DIRS.full);
-  await ensureDir(DIRS.thumb);
-
-  // First create the full-size square image
-  const fullPath = `${DIRS.full}${baseName}.webp`;
-  await createWebPImage(`${DIRS.raw}${filename}`, fullPath);
-
-  // Then create thumbnail by resizing the full image
-  await sharp(fullPath)
-    .resize(THUMB_SIZE, THUMB_SIZE, { fit: 'fill' })
-    .webp({ quality: 90 })
-    .toFile(`${DIRS.thumb}${baseName}.webp`);
-
-  console.log(`  ✅ Processed: ${baseName}`);
-  return { filename, baseName, isNew: true };
-}
-
-// Helper function to create WebP image
-async function createWebPImage(input: string, output: string): Promise<void> {
+async function createWebPImage(input: string, output: string, size?: number): Promise<void> {
   const image = sharp(input);
   const metadata = await image.metadata();
 
-  const maxDim = Math.max(metadata.width || 0, metadata.height || 0);
+  if (!metadata.width || !metadata.height) {
+    throw new Error(`Could not read dimensions for ${input}`);
+  }
+
+  const maxDim = Math.max(metadata.width, metadata.height);
   const padded = image.extend({
-    top: Math.floor((maxDim - (metadata.height || 0)) / 2),
-    bottom: Math.ceil((maxDim - (metadata.height || 0)) / 2),
-    left: Math.floor((maxDim - (metadata.width || 0)) / 2),
-    right: Math.ceil((maxDim - (metadata.width || 0)) / 2),
+    top:    Math.floor((maxDim - metadata.height) / 2),
+    bottom: Math.ceil( (maxDim - metadata.height) / 2),
+    left:   Math.floor((maxDim - metadata.width)  / 2),
+    right:  Math.ceil( (maxDim - metadata.width)  / 2),
     background: { r: 255, g: 255, b: 255, alpha: 1 },
   });
 
-  await padded.webp({ quality: 90 }).toFile(output);
+  const resized = size ? padded.resize(size, size, { fit: 'fill' }) : padded;
+  await resized.webp({ quality: 90 }).toFile(output);
 }
 
-// File listing helper
-async function listFiles(dir: string, filter: (name: string) => boolean): Promise<string[]> {
+// ---------------------------------------------------------------------------
+// Public API — all functions accept a CollectionEntry, no hardcoded paths
+// ---------------------------------------------------------------------------
+
+/** Find raw PNGs in the collection's raw folder that haven't been processed yet. */
+export async function findNewImages(
+  collection: CollectionEntry,
+  existingIds: Set<string>,
+): Promise<string[]> {
+  const rawFiles = await listFiles(collection.raw, n => n.toLowerCase().endsWith('.png'));
+  return rawFiles.filter(filename => !existingIds.has(getBaseName(filename)));
+}
+
+/** Process a single raw PNG → full WebP + thumbnail for the given collection. */
+export async function processImage(
+  collection: CollectionEntry,
+  filename: string,
+): Promise<ProcessResult> {
+  const baseName = getBaseName(filename);
+  const rawPath  = `${collection.raw}${filename}`;
+  const fDir     = fullDir(collection.id);
+  const tDir     = thumbDir(collection.id);
+
+  await ensureDir(fDir);
+  await ensureDir(tDir);
+
+  await Promise.all([
+    createWebPImage(rawPath, `${fDir}${baseName}.webp`),
+    createWebPImage(rawPath, `${tDir}${baseName}.webp`, THUMB_SIZE),
+  ]);
+
+  console.log(`  ✅ Processed: ${baseName} (${collection.label})`);
+  return { filename, baseName, isNew: true };
+}
+
+/** Create a thumbnail from an already-existing full WebP (recovery path). */
+export async function createMissingThumbnail(
+  collection: CollectionEntry,
+  itemId: string,
+): Promise<boolean> {
+  const fullPath  = `${fullDir(collection.id)}${itemId}.webp`;
+  const thumbPath = `${thumbDir(collection.id)}${itemId}.webp`;
+
   try {
-    const files: string[] = [];
-    for await (const entry of Deno.readDir(dir)) {
-      if (entry.isFile && filter(entry.name)) files.push(entry.name);
-    }
-    return files.sort();
+    await ensureDir(thumbDir(collection.id));
+    await sharp(fullPath)
+      .resize(THUMB_SIZE, THUMB_SIZE, { fit: 'fill' })
+      .webp({ quality: 90 })
+      .toFile(thumbPath);
+    return true;
   } catch (err) {
-    if (err instanceof Deno.errors.NotFound) return [];
-    throw err;
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(`  ❌ Failed to create thumbnail for ${itemId} (${collection.label}):`, message);
+    return false;
   }
 }
 
-// New simplified integrity check matching your requirements
-export async function verifyImageIntegrity(birdIds: Set<string>): Promise<{
-  missingFull: string[];
-  missingThumb: string[];
-  orphanedFull: string[];
-  orphanedThumb: string[];
-}> {
-  const fullFiles = await listFiles(DIRS.full, (n) => n.endsWith('.webp'));
-  const thumbFiles = await listFiles(DIRS.thumb, (n) => n.endsWith('.webp'));
+/** Full integrity check for a single collection. */
+export async function verifyIntegrity(
+  collection: CollectionEntry,
+  drawnIds: Set<string>,
+): Promise<IntegrityIssues> {
+  const rawFiles   = await listFiles(collection.raw,          n => n.endsWith('.png'));
+  const fullFiles  = await listFiles(fullDir(collection.id),  n => n.endsWith('.webp'));
+  const thumbFiles = await listFiles(thumbDir(collection.id), n => n.endsWith('.webp'));
 
-  const fullIds = new Set(fullFiles.map(getBaseName));
+  const rawIds   = new Set(rawFiles.map(getBaseName));
+  const fullIds  = new Set(fullFiles.map(getBaseName));
   const thumbIds = new Set(thumbFiles.map(getBaseName));
 
-  const missingFull: string[] = [];
-  const missingThumb: string[] = [];
-
-  // Check birds in JSON have images
-  for (const id of birdIds) {
-    if (!fullIds.has(id)) missingFull.push(id);
-    if (!thumbIds.has(id)) missingThumb.push(id);
-  }
-
-  // Check for orphaned images
-  const orphanedFull = Array.from(fullIds).filter((id) => !birdIds.has(id));
-  const orphanedThumb = Array.from(thumbIds).filter((id) => !birdIds.has(id));
-
-  return { missingFull, missingThumb, orphanedFull, orphanedThumb };
+  return {
+    missingInJson: Array.from(rawIds).filter(id => !drawnIds.has(id)),
+    missingInRaw:  Array.from(drawnIds).filter(id => !rawIds.has(id)),
+    missingFull:   Array.from(drawnIds).filter(id => !fullIds.has(id)),
+    missingThumb:  Array.from(drawnIds).filter(id => !thumbIds.has(id)),
+    orphanedFull:  Array.from(fullIds).filter(id => !drawnIds.has(id)),
+    orphanedThumb: Array.from(thumbIds).filter(id => !drawnIds.has(id)),
+  };
 }

@@ -10,7 +10,7 @@ All versions follow `x.y.z+w` where:
 ---
 
 ## v0.6.0 (Current — Multi-collection Architecture)
-
+"created subfolders for bird pics and updated version manager"
 - **0.6.31+14** - updated TODO with new multi-collection plans (2026-03-06)
 - **0.6.30+14** - added Dhivehi names (2026-02-15)
 - **0.6.29+14** - added illustrator notes (2026-02-07)

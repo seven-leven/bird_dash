@@ -3,19 +3,33 @@
 // === utils.ts - Consolidated file operations ===
 
 // ---------------------------------------------------------------------------
-// Collection registry — THE only place to register a new collection
+// Collection registry — THE only place to register a new collection.
+// Every other file derives paths and labels from this array.
 // ---------------------------------------------------------------------------
 
 export interface CollectionEntry {
-  id: string;
-  json: string; // path to data file
-  emoji: string; // used in changelog entries
-  label: string; // singular label e.g. "Bird", "Shark"
+  id: string;       // e.g. 'birds', 'sharks'
+  json: string;     // path to data file, e.g. './public/birds.json'
+  emoji: string;    // used in changelog + console output
+  label: string;    // singular label, e.g. 'Bird', 'Shark'
+  raw: string;      // folder containing raw PNGs, e.g. './raw_png/birds/'
 }
 
 export const COLLECTIONS: CollectionEntry[] = [
-  { id: 'birds', json: './public/birds.json', emoji: '🐦', label: 'Bird' },
-  { id: 'sharks', json: './public/sharks.json', emoji: '🦈', label: 'Shark' },
+  {
+    id:    'birds',
+    json:  './public/birds.json',
+    emoji: '🐦',
+    label: 'Bird',
+    raw:   './raw_png/birds/',
+  },
+  {
+    id:    'sharks',
+    json:  './public/sharks.json',
+    emoji: '🦈',
+    label: 'Shark',
+    raw:   './raw_png/sharks/',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -23,20 +37,28 @@ export const COLLECTIONS: CollectionEntry[] = [
 // ---------------------------------------------------------------------------
 
 export const DIRS = {
-  raw: './raw_png/',
-  full: './public/full/',
+  // Base output dirs — actual paths are <base>/<collectionId>/
+  full:  './public/full/',
   thumb: './public/thumb/',
 } as const;
 
+/** Resolve the full-size output dir for a collection. */
+export function fullDir(collectionId: string): string {
+  return `${DIRS.full}${collectionId}/`;
+}
+
+/** Resolve the thumbnail output dir for a collection. */
+export function thumbDir(collectionId: string): string {
+  return `${DIRS.thumb}${collectionId}/`;
+}
+
 export const FILES = {
-  version: './src/version.json',
+  version:   './src/version.json',
   changelog: './CHANGELOG.md',
   collections: COLLECTIONS,
 
-  // Legacy direct references — derived from COLLECTIONS so always in sync
-  get birds() {
-    return COLLECTIONS.find((c) => c.id === 'birds')!.json;
-  },
+  // Legacy direct reference — derived from COLLECTIONS, always in sync
+  get birds() { return COLLECTIONS.find(c => c.id === 'birds')!.json; },
 } as const;
 
 export const THUMB_SIZE = 400;
@@ -45,19 +67,19 @@ export const THUMB_SIZE = 400;
 // Types
 // ---------------------------------------------------------------------------
 
-export interface Bird {
+export interface CollectionItem {
   id: string;
   name: string;
   sci: string;
   drawn?: string;
+  [key: string]: unknown;
 }
 
-export interface BirdsData {
-  [category: string]: Bird[];
-}
+// Legacy alias
+export type Bird = CollectionItem;
 
-// Generic alias used by multi-collection code
-export type CollectionData = BirdsData;
+export type CollectionData = Record<string, CollectionItem[]>;
+export type BirdsData = CollectionData;
 
 export interface VersionData {
   major: number;
@@ -77,6 +99,15 @@ export interface IntegrityResult {
   missing: string[];
   orphaned: string[];
   passed: boolean;
+}
+
+export interface IntegrityIssues {
+  missingInJson: string[];   // raw PNGs not in collection JSON
+  missingInRaw: string[];    // items with drawn date but no PNG
+  missingFull: string[];     // items missing full WebP
+  missingThumb: string[];    // items missing thumbnail
+  orphanedFull: string[];    // full WebPs without a JSON entry
+  orphanedThumb: string[];   // thumb WebPs without a JSON entry
 }
 
 // ---------------------------------------------------------------------------
@@ -129,29 +160,27 @@ export function formatVersion(v: VersionData): string {
 }
 
 // ---------------------------------------------------------------------------
-// Integrity check
-// NOTE: with per-collection subfolders (thumb/birds/, thumb/sharks/) you'll
-// want to pass the specific subfolder path rather than DIRS.thumb directly.
+// Integrity check — collection-aware
 // ---------------------------------------------------------------------------
 
 export async function checkIntegrity(
-  birdIds: Set<string>,
-  collectionId = 'birds',
-): Promise<IntegrityResult> {
-  const fullDir = `${DIRS.full}${collectionId}/`;
-  const thumbDir = `${DIRS.thumb}${collectionId}/`;
+  drawnIds: Set<string>,
+  collection: CollectionEntry,
+): Promise<IntegrityIssues> {
+  const rawFiles   = await listFiles(collection.raw,         n => n.endsWith('.png'));
+  const fullFiles  = await listFiles(fullDir(collection.id), n => n.endsWith('.webp'));
+  const thumbFiles = await listFiles(thumbDir(collection.id),n => n.endsWith('.webp'));
 
-  const fullFiles = await listFiles(fullDir, (n) => n.endsWith('.webp'));
-  const thumbFiles = await listFiles(thumbDir, (n) => n.endsWith('.webp'));
-
-  const fullIds = new Set(fullFiles.map(getBaseName));
+  const rawIds   = new Set(rawFiles.map(getBaseName));
+  const fullIds  = new Set(fullFiles.map(getBaseName));
   const thumbIds = new Set(thumbFiles.map(getBaseName));
 
-  const missing = Array.from(birdIds).filter((id) => !fullIds.has(id) || !thumbIds.has(id));
-  const orphaned = [
-    ...Array.from(fullIds).filter((id) => !birdIds.has(id)),
-    ...Array.from(thumbIds).filter((id) => !birdIds.has(id)),
-  ];
-
-  return { missing, orphaned, passed: missing.length === 0 && orphaned.length === 0 };
+  return {
+    missingInJson: Array.from(rawIds).filter(id => !drawnIds.has(id)),
+    missingInRaw:  Array.from(drawnIds).filter(id => !rawIds.has(id)),
+    missingFull:   Array.from(drawnIds).filter(id => !fullIds.has(id)),
+    missingThumb:  Array.from(drawnIds).filter(id => !thumbIds.has(id)),
+    orphanedFull:  Array.from(fullIds).filter(id => !drawnIds.has(id)),
+    orphanedThumb: Array.from(thumbIds).filter(id => !drawnIds.has(id)),
+  };
 }
