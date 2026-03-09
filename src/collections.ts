@@ -115,6 +115,35 @@ export const COLLECTIONS: CollectionConfig[] = [
       },
     ],
   },
+  {
+    id: 'shells',
+    label: 'Shells',
+    emoji: '🐚',
+    ...derive('shells'),
+    groupLabel: 'Group',
+    itemLabel: 'shell',
+    links: [
+      {
+        label: 'iNaturalist',
+        color: 'bg-emerald-600 hover:bg-emerald-500',
+        url: (item) =>
+          `https://www.inaturalist.org/search?q=${encodeURIComponent(item.commonName)}`,
+      },
+      {
+        label: 'WoRMS',
+        color: 'bg-blue-600 hover:bg-blue-500',
+        url: (item) =>
+          `https://www.marinespecies.org/aphia.php?p=taxlist&tname=${encodeURIComponent(item.scientificName)}`,
+      },
+      {
+        label: 'Wiki',
+        color: 'bg-slate-600 hover:bg-slate-500',
+        url: (item) =>
+          `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(item.commonName)}`,
+      },
+    ],
+  },
+];
   // ── Add future collections here ──────────────────────────────────────────
   // {
   //   id:         'butterflies',
@@ -125,7 +154,7 @@ export const COLLECTIONS: CollectionConfig[] = [
   //   itemLabel:  'butterfly',
   //   links: [ ... ],
   // },
-];
+
 
 // Convenience lookup
 export function getCollection(id: string): CollectionConfig {
