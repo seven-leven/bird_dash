@@ -12,25 +12,23 @@
 
 ## 🏗️ Architecture — Multi-Collection Refactor
 
-- [ ] **`collections.ts`**: Create convention-driven config derived from a single `COLLECTIONS`
+- [x] **`collections.ts`**: Create convention-driven config derived from a single `COLLECTIONS`
       string array. Each entry auto-derives `dataUrl`, `imageBase`, `fullImageBase`, and `label` by
       naming convention; supports an `overrides` map for exceptions (e.g. different `groupLabel`).
-- [ ] **Folder structure**: Reorganise `public/thumb/` and `public/full/` into per-collection
+- [x] **Folder structure**: Reorganise `public/thumb/` and `public/full/` into per-collection
       subfolders (`thumb/birds/`, `thumb/sharks/`, etc.).
-- [ ] **`Dashboard.vue`**: Extract current `App.vue` logic into a generic `Dashboard.vue` component
-      that accepts a collection config as a prop. `App.vue` becomes a thin shell.
-- [ ] **Top nav bar**: Add a persistent nav bar in `App.vue` that renders a tab per collection,
+- [x] **Top nav bar**: Add a persistent nav bar in `App.vue` that renders a tab per collection,
       driven by the `collections` array — no hardcoding.
-- [ ] **Generic `Item` type**: Replace the `Bird` interface with a generic `Item` type. Rename
+- [x] **Generic `Item` type**: Replace the `Bird` interface with a generic `Item` type. Rename
       `family` → `group`, `birdId` → `itemId`. Bird-specific fields (`dhiv`, `dhiv_script`) move
       into a `meta?: Record<string, string>` bag.
-- [ ] **`InfoPanel.vue`** _(was `BirdInfoPanel.vue`)_: Make collection-agnostic. Render `meta`
+- [x] **`InfoPanel.vue`** _(was `BirdInfoPanel.vue`)_: Make collection-agnostic. Render `meta`
       fields generically. Accept a `links` prop (array of `{ label, color, url(item) }`) from the
       collection config instead of hardcoding eBird/BirdLife.
-- [ ] **Collection `links` config**: Define per-collection external links in `collections.ts` (e.g.
+- [x] **Collection `links` config**: Define per-collection external links in `collections.ts` (e.g.
       eBird + BirdLife for birds; iNaturalist + FishBase for sharks). Panel renders whatever it
       receives.
-- [ ] **`sharks.json`**: Create initial sharks data file matching the same JSON structure as
+- [x] **`sharks.json`**: Create initial sharks data file matching the same JSON structure as
       `birds.json`.
 
 ## 🛠️ Workflow & Tooling

@@ -7,7 +7,7 @@ import {
   readJson,
   VersionData,
   writeJson,
-} from './utils.ts';
+} from '../lib/index.ts';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -38,7 +38,7 @@ function parseAddedDrawnIds(diff: string): Set<string> {
     if (/^\+\s+"drawn"\s*:/.test(lines[i])) {
       // Scan backward up to 20 lines for the parent "id" field
       for (let j = i - 1; j >= Math.max(0, i - 20); j--) {
-        const idMatch = lines[j].match(/^\s+[+ ]\s+"id"\s*:\s*"([^"]+)"/);
+        const idMatch = lines[j].match(/^\s*[+ ]\s+"id"\s*:\s*"([^"]+)"/);
         if (idMatch) {
           addedIds.add(idMatch[1]);
           break;
@@ -230,7 +230,7 @@ export class VersionManager {
     return found;
   }
 
-  // ── Collection-aware drawn IDs helper ────────────────────────────────────
+  // ── Collection‑aware drawn IDs helper ────────────────────────────────────
 
   /**
    * Returns all drawn IDs across ALL collections.
@@ -255,17 +255,18 @@ export class VersionManager {
     return ids;
   }
 
-  // ── Legacy birds-only helpers (backwards compat) ─────────────────────────
+  // ── Legacy birds‑only helpers (backwards compat) ─────────────────────────
 
   static async markBirdAsDrawn(birdId: string): Promise<string | null> {
-    const data = await readJson<CollectionData>(FILES.birds);
+    const birdsJson = FILES.collections.find((c) => c.id === 'birds')!.json;
+    const data = await readJson<CollectionData>(birdsJson);
     const today = todayStr();
 
     for (const category of Object.keys(data)) {
       const bird = data[category].find((b) => b.id === birdId);
       if (bird && !bird.drawn) {
         bird.drawn = today;
-        await writeJson(FILES.birds, data);
+        await writeJson(birdsJson, data);
         return bird.name;
       }
     }
@@ -281,3 +282,4 @@ export const bumpPatchVersion = VersionManager.bump.bind(VersionManager);
 export const getExistingBirdIds = () => VersionManager.getDrawnIds('birds');
 export const markBirdAsDrawn = VersionManager.markBirdAsDrawn.bind(VersionManager);
 export const getDisplayVersion = VersionManager.format;
+export const getDrawnIds = VersionManager.getDrawnIds.bind(VersionManager);

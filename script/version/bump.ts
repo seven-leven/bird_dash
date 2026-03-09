@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 /**
- * scripts/bump.ts
+ * scripts/version/bump.ts
  *
  * Called automatically by .githooks/post-commit after every git commit.
  *
@@ -12,7 +12,7 @@
  *   5. Stages version.json + CHANGELOG.md and amends the commit silently
  */
 
-import { VersionManager } from './versionManager.ts';
+import { VersionManager } from './manager.ts';
 
 // ---------------------------------------------------------------------------
 // Git helpers
@@ -61,7 +61,7 @@ async function main() {
   //    Using --no-verify so the hook doesn't fire again
   //    The amended commit message is kept identical to the original
   try {
-    const { FILES } = await import('./utils.ts');
+    const { FILES } = await import('../lib/index.ts');
     await git('add', FILES.version, FILES.changelog);
     await git(
       'commit',

@@ -8,9 +8,11 @@ All versions follow `x.y.z+w` where:
 - `w` = total illustrations across all collections at time of commit
 
 ---
+
 ## v0.7.0 (Current — Multi-collection Architecture)
-"MVP for multi collections"
-"created subfolders for bird pics and updated version manager"
+
+"MVP for multi collections" "created subfolders for bird pics and updated version manager"
+
 - **0.7.31+14** - updated TODO with new multi-collection plans (2026-03-06)
 
 ## v0.6.0 (learning build scripts and adding Qol features)
