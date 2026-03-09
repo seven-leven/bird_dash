@@ -11,9 +11,11 @@ All versions follow `x.y.z+w` where:
 
 ## v0.7.0 (Current — Multi-collection Architecture)
 
-"MVP for multi collections" "created subfolders for bird pics and updated version manager"
-
-- **0.7.31+14** - updated TODO with new multi-collection plans (2026-03-06)
+- **0.7.35+14** — add shells collection (2026-03-09)
+- **0.7.34+14** — restructured scripts folder (2026-03-09)
+- **0.7.33+14** — MVP for multi-collection architecture (2026-03-06)
+- **0.7.32+14** — created subfolders for bird pics and updated version manager (2026-03-06)
+- **0.7.31+14** — updated TODO with new multi-collection plans (2026-03-06)
 
 ## v0.6.0 (learning build scripts and adding Qol features)
 

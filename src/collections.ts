@@ -1,10 +1,10 @@
-/// <reference types="vite/client" />
 
 // =============================================================================
 // collections.ts
 // THE single place to register a new collection on the frontend.
 // Everything in App.vue, UI.vue, and beyond derives from this array.
 // =============================================================================
+
 
 export interface CollectionConfig {
   id: string; // e.g. 'birds' — used in URL hash, image paths
@@ -41,13 +41,18 @@ export interface CollectionItem {
 // ---------------------------------------------------------------------------
 // Convention helper — derives standard paths from a collection id
 // ---------------------------------------------------------------------------
-const base = import.meta.env.BASE_URL;
+function getBase(): string {
+  // import.meta.env is undefined in Deno — fall back to '/'
+  return (typeof import.meta.env !== 'undefined' && import.meta.env?.BASE_URL) ?? '/';
+}
 
 function derive(id: string) {
   return {
-    dataUrl: `${base}${id}.json`,
-    imageBase: `${base}thumb/${id}/`,
-    fullImageBase: `${base}full/${id}/`,
+    // Pointing to the new subdirectory
+    dataUrl: `${ getBase()}lists/${id}.json`, 
+    // These paths remain the same as they were
+    imageBase: `${ getBase()}thumb/${id}/`,
+    fullImageBase: `${ getBase()}full/${id}/`,
   };
 }
 
@@ -163,5 +168,5 @@ export function getCollection(id: string): CollectionConfig {
   return col;
 }
 
-// Shared placeholder — same for all collections
-export const PLACEHOLDER = `${base}placeholder.webp`;
+// Seprate placeholder — different for all collections
+export const getPlaceholder = (id: string) => `${ getBase()}placeholder/${id}.webp`;

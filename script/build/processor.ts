@@ -2,17 +2,17 @@
 import sharp from 'sharp';
 
 import {
-  CollectionEntry,
   ensureDir,
+  type ScriptCollectionEntry,
   fullDir,
   getBaseName,
   IntegrityIssues,
   listFiles,
   ProcessResult,
-  THUMB_SIZE,
   thumbDir,
 } from '../lib/index.ts';
 
+const THUMB_SIZE = 400;
 // Use all CPU cores
 sharp.concurrency(0);
 
@@ -46,7 +46,7 @@ function squareResize(
 // --------------------------------------------------
 
 export async function processImage(
-  collection: CollectionEntry,
+  collection: ScriptCollectionEntry,
   filename: string,
 ): Promise<ProcessResult> {
   const baseName = getBaseName(filename);
@@ -85,7 +85,7 @@ export async function processImage(
 // --------------------------------------------------
 
 export async function createMissingThumbnail(
-  collection: CollectionEntry,
+  collection: ScriptCollectionEntry,
   itemId: string,
 ): Promise<boolean> {
   const rawPath = `${collection.raw}${itemId}.png`;
@@ -121,7 +121,7 @@ export async function createMissingThumbnail(
 // --------------------------------------------------
 
 export async function verifyIntegrity(
-  collection: CollectionEntry,
+  collection: ScriptCollectionEntry,
   drawnIds: Set<string>,
 ): Promise<IntegrityIssues> {
   const rawFiles = await listFiles(collection.raw, (n) => n.endsWith('.png'));

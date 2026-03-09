@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import {
   CollectionData,
-  CollectionEntry,
+  type ScriptCollectionEntry,
   IntegrityIssues,
   ProcessResult,
   readJson,
@@ -13,7 +13,7 @@ import { createMissingThumbnail, processImage, verifyIntegrity } from './process
 // Collection data helpers
 // ---------------------------------------------------------------------------
 
-async function getDrawnIds(collection: CollectionEntry): Promise<Set<string>> {
+async function getDrawnIds(collection: ScriptCollectionEntry): Promise<Set<string>> {
   const data = await readJson<CollectionData>(collection.json);
   const ids = new Set<string>();
   for (const group of Object.values(data)) {
@@ -25,7 +25,7 @@ async function getDrawnIds(collection: CollectionEntry): Promise<Set<string>> {
 }
 
 async function markItemAsDrawn(
-  collection: CollectionEntry,
+  collection: ScriptCollectionEntry,
   itemId: string,
   today: string,
 ): Promise<string | null> {
@@ -51,13 +51,13 @@ async function markItemAsDrawn(
 // ---------------------------------------------------------------------------
 
 export interface CollectionBuildResult {
-  collection: CollectionEntry;
+  collection: ScriptCollectionEntry;
   processed: ProcessResult[];
   integrity: IntegrityIssues;
   drawnCount: number;
 }
 
-export async function buildCollection(collection: CollectionEntry): Promise<CollectionBuildResult> {
+export async function buildCollection(collection: ScriptCollectionEntry): Promise<CollectionBuildResult> {
   const today = new Date().toISOString().split('T')[0];
   const processed: ProcessResult[] = [];
 

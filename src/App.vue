@@ -4,7 +4,7 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } 
 import UI from './components/UI.vue';
 import ExpandedImage from './components/ExpandedImage.vue';
 import { useScrollLogic } from './components/useScrollLogic';
-import { COLLECTIONS, PLACEHOLDER, type CollectionConfig, type CollectionItem } from './collections';
+import { COLLECTIONS, getPlaceholder, type CollectionConfig, type CollectionItem } from './collections';
 
 // =============================================================================
 // TYPES
@@ -17,6 +17,10 @@ interface DataState {
   error: string | undefined;
 }
 
+interface UIComponent {
+  scrollContainer: HTMLElement | null;
+  headerRefs: Record<string, HTMLElement>;
+}
 // =============================================================================
 // ACTIVE COLLECTION
 // =============================================================================
@@ -66,7 +70,7 @@ const globalStats = computed(() => {
   for (const col of COLLECTIONS) {
     const items = collectionCache[col.id] ?? [];
     total += items.length;
-    drawn += items.filter(i => i?.imageUrl && i.imageUrl !== PLACEHOLDER).length;
+    drawn += items.filter(i => i?.imageUrl && i.imageUrl !== getPlaceholder(col.id)).length;
   }
   return { drawn, total };
 });
@@ -74,7 +78,7 @@ const globalStats = computed(() => {
 // =============================================================================
 // PER-COLLECTION STATE
 // =============================================================================
-const uiRef = ref(null);
+const uiRef = ref<UIComponent | null>(null);
 
 const data = reactive<DataState>({
   items:   [],
@@ -109,7 +113,7 @@ const allItems = computed(() => {
 });
 
 const drawnItems = computed(() =>
-  data.items.filter(i => i.imageUrl !== PLACEHOLDER)
+  data.items.filter(i => i.imageUrl !== getPlaceholder(activeCollectionId.value))
 );
 
 const searchedDrawnItems = computed(() => {
@@ -135,8 +139,8 @@ const groupData = computed(() => {
 
   Object.keys(grouped).forEach(g => {
     grouped[g].sort((a, b) => {
-      const aDrawn = a.imageUrl !== PLACEHOLDER;
-      const bDrawn = b.imageUrl !== PLACEHOLDER;
+      const aDrawn = a.imageUrl !== getPlaceholder(activeCollectionId.value);;
+      const bDrawn = b.imageUrl !== getPlaceholder(activeCollectionId.value);;
       if (aDrawn !== bDrawn) return bDrawn ? 1 : -1;
       return parseInt(a.itemId) - parseInt(b.itemId);
     });
@@ -146,7 +150,7 @@ const groupData = computed(() => {
     grouped,
     sidebarItems: Object.keys(grouped).map(g => {
       const items      = grouped[g];
-      const drawnCount = items.filter(i => i.imageUrl !== PLACEHOLDER).length;
+      const drawnCount = items.filter(i => i.imageUrl !== getPlaceholder(activeCollectionId.value)).length;
       return { id: g, label: g, count: drawnCount, total: items.length, disabled: false };
     }),
   };
@@ -263,7 +267,7 @@ function parseCollectionJson(
         scientificName:  String(r.sci  ?? ''),
         group:           groupName,
         drawnDate:       String(r.drawn ?? ''),
-        imageUrl:        hasImg ? `${col.imageBase}${r.id}.webp` : PLACEHOLDER,
+        imageUrl:        hasImg ? `${col.imageBase}${r.id}.webp` : getPlaceholder(col.id),
         illustratorNote: String(r.illustratorNote ?? ''),
         meta:            Object.keys(meta).length ? meta : undefined,
       });
@@ -325,7 +329,7 @@ const toggleViewMode = () => {
 };
 
 const openOverlay = (item: CollectionItem) => {
-  if (item.imageUrl === PLACEHOLDER) return;
+  if (item.imageUrl === getPlaceholder(activeCollectionId.value)) return;
   expandedImage.item   = item;
   expandedImage.isOpen = true;
 };
@@ -389,7 +393,7 @@ onBeforeUnmount(() => {
       :active-section="activeSection"
       :view-mode="ui.viewMode"
       :stats="stats"
-      :placeholder-image="PLACEHOLDER"
+      :placeholder-image="getPlaceholder(activeCollectionId)"
       :search-query="search.query"
       @switch-collection="switchCollection"
       @close-sidebar="ui.sidebarOpen = false"
