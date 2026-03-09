@@ -10,7 +10,7 @@ All versions follow `x.y.z+w` where:
 ---
 
 ## v0.7.0 (Current — Multi-collection Architecture)
-
+(2026-03-09) added different thumb to different collections
 - **0.7.35+14** — add shells collection (2026-03-09)
 - **0.7.34+14** — restructured scripts folder (2026-03-09)
 - **0.7.33+14** — MVP for multi-collection architecture (2026-03-06)

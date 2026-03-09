@@ -3,12 +3,12 @@ import sharp from 'sharp';
 
 import {
   ensureDir,
-  type ScriptCollectionEntry,
   fullDir,
   getBaseName,
   IntegrityIssues,
   listFiles,
   ProcessResult,
+  type ScriptCollectionEntry,
   thumbDir,
 } from '../lib/index.ts';
 

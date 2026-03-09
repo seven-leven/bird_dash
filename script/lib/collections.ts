@@ -1,4 +1,4 @@
-import { COLLECTIONS as FE_COLLECTIONS, type CollectionConfig } from "../../src/collections.ts";
+import { type CollectionConfig, COLLECTIONS as FE_COLLECTIONS } from '../../src/collections.ts';
 
 // Define an interface for the BUILD scripts that adds the fields needed by the build
 export interface ScriptCollectionEntry extends CollectionConfig {
@@ -8,11 +8,11 @@ export interface ScriptCollectionEntry extends CollectionConfig {
 }
 
 // Map the FE_COLLECTIONS into the new type
-export const COLLECTIONS: ScriptCollectionEntry[] = FE_COLLECTIONS.map(col => ({
+export const COLLECTIONS: ScriptCollectionEntry[] = FE_COLLECTIONS.map((col) => ({
   ...col,
   // These are the new fields your scripts expect
   json: `./public/lists/${col.id}.json`,
-  placeholder: `./public/placeholder/${col.id}.webp`,
+  placeholder: `./public/placeholders/${col.id}.webp`,
   raw: `./raw_png/${col.id}/`,
 }));
 
@@ -21,11 +21,15 @@ export const DIRS = {
   full: './public/full/',
   thumb: './public/thumb/',
   lists: './public/lists/',
-  placeholder: './public/placeholder/',
+  placeholder: './public/placeholders/',
 } as const;
 
-
-
-export function fullDir(id: string) { return `${DIRS.full}${id}/`; }
-export function thumbDir(id: string) { return `${DIRS.thumb}${id}/`; }
-export function placeholderPath(id: string) { return `${DIRS.placeholder}${id}.webp`; }
+export function fullDir(id: string) {
+  return `${DIRS.full}${id}/`;
+}
+export function thumbDir(id: string) {
+  return `${DIRS.thumb}${id}/`;
+}
+export function placeholderPath(id: string) {
+  return `${DIRS.placeholder}${id}.webp`;
+}

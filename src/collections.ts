@@ -1,10 +1,8 @@
-
 // =============================================================================
 // collections.ts
 // THE single place to register a new collection on the frontend.
 // Everything in App.vue, UI.vue, and beyond derives from this array.
 // =============================================================================
-
 
 export interface CollectionConfig {
   id: string; // e.g. 'birds' — used in URL hash, image paths
@@ -27,17 +25,17 @@ export interface CollectionConfig {
 // Generic item shape — mirrors what comes out of each collection's JSON
 // after loadData() normalises it. Collection-specific extras go in meta.
 export interface CollectionItem {
-  id: string; // Vue :key, unique within collection
-  itemId: string; // original ID from JSON e.g. '047'
+  id: string;
+  itemId: string;
   commonName: string;
   scientificName: string;
-  group: string; // was 'family' — generic group name
+  group: string;
   drawnDate: string;
   imageUrl: string;
+  placeholderUrl: string; // ← add this line
   illustratorNote?: string;
-  meta?: Record<string, string>; // collection-specific extras e.g. dhiv, dhiv_script
+  meta?: Record<string, string>;
 }
-
 // ---------------------------------------------------------------------------
 // Convention helper — derives standard paths from a collection id
 // ---------------------------------------------------------------------------
@@ -49,10 +47,10 @@ function getBase(): string {
 function derive(id: string) {
   return {
     // Pointing to the new subdirectory
-    dataUrl: `${ getBase()}lists/${id}.json`, 
+    dataUrl: `${getBase()}lists/${id}.json`,
     // These paths remain the same as they were
-    imageBase: `${ getBase()}thumb/${id}/`,
-    fullImageBase: `${ getBase()}full/${id}/`,
+    imageBase: `${getBase()}thumb/${id}/`,
+    fullImageBase: `${getBase()}full/${id}/`,
   };
 }
 
@@ -138,28 +136,31 @@ export const COLLECTIONS: CollectionConfig[] = [
         label: 'WoRMS',
         color: 'bg-blue-600 hover:bg-blue-500',
         url: (item) =>
-          `https://www.marinespecies.org/aphia.php?p=taxlist&tname=${encodeURIComponent(item.scientificName)}`,
+          `https://www.marinespecies.org/aphia.php?p=taxlist&tname=${
+            encodeURIComponent(item.scientificName)
+          }`,
       },
       {
         label: 'Wiki',
         color: 'bg-slate-600 hover:bg-slate-500',
         url: (item) =>
-          `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(item.commonName)}`,
+          `https://en.wikipedia.org/wiki/Special:Search?search=${
+            encodeURIComponent(item.commonName)
+          }`,
       },
     ],
   },
 ];
-  // ── Add future collections here ──────────────────────────────────────────
-  // {
-  //   id:         'butterflies',
-  //   label:      'Butterflies',
-  //   emoji:      '🦋',
-  //   ...derive('butterflies'),
-  //   groupLabel: 'Family',
-  //   itemLabel:  'butterfly',
-  //   links: [ ... ],
-  // },
-
+// ── Add future collections here ──────────────────────────────────────────
+// {
+//   id:         'butterflies',
+//   label:      'Butterflies',
+//   emoji:      '🦋',
+//   ...derive('butterflies'),
+//   groupLabel: 'Family',
+//   itemLabel:  'butterfly',
+//   links: [ ... ],
+// },
 
 // Convenience lookup
 export function getCollection(id: string): CollectionConfig {
@@ -169,4 +170,4 @@ export function getCollection(id: string): CollectionConfig {
 }
 
 // Seprate placeholder — different for all collections
-export const getPlaceholder = (id: string) => `${ getBase()}placeholder/${id}.webp`;
+export const getPlaceholder = (id: string) => `${getBase()}placeholders/${id}.webp`;

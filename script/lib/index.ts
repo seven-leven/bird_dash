@@ -14,7 +14,7 @@ import { COLLECTIONS } from '../../src/collections.ts'; // Adjust path to reach 
 
 export interface ScriptCollectionEntry {
   id: string;
-  json: string;      // The actual path on disk for the JSON data
+  json: string; // The actual path on disk for the JSON data
   placeholder: string;
   raw: string;
   emoji: string;
@@ -27,13 +27,13 @@ export const FILES = {
   changelog: './CHANGELOG.md',
   // Helper to get collections with disk paths
   get collections(): ScriptCollectionEntry[] {
-    return COLLECTIONS.map(c => ({
+    return COLLECTIONS.map((c) => ({
       id: c.id,
-      json: `./src/data/${c.id}.json`,       // Path used by script
+      json: `./src/data/${c.id}.json`, // Path used by script
       placeholder: `./src/data/${c.id}_placeholder.json`,
       raw: `./src/data/${c.id}_raw.json`,
       emoji: c.emoji,
-      label: c.label
+      label: c.label,
     }));
-  }
+  },
 } as const;

@@ -21,6 +21,7 @@ interface UIComponent {
   scrollContainer: HTMLElement | null;
   headerRefs: Record<string, HTMLElement>;
 }
+
 // =============================================================================
 // ACTIVE COLLECTION
 // =============================================================================
@@ -64,13 +65,14 @@ function switchCollection(id: string) {
 }
 
 // Global drawn / total across ALL collections
+// Uses item.placeholderUrl — stable per-item, works across all collections
 const globalStats = computed(() => {
   let drawn = 0;
   let total = 0;
   for (const col of COLLECTIONS) {
     const items = collectionCache[col.id] ?? [];
     total += items.length;
-    drawn += items.filter(i => i?.imageUrl && i.imageUrl !== getPlaceholder(col.id)).length;
+    drawn += items.filter(i => i?.imageUrl && i.imageUrl !== i.placeholderUrl).length;
   }
   return { drawn, total };
 });
@@ -113,7 +115,7 @@ const allItems = computed(() => {
 });
 
 const drawnItems = computed(() =>
-  data.items.filter(i => i.imageUrl !== getPlaceholder(activeCollectionId.value))
+  data.items.filter(i => i.imageUrl !== i.placeholderUrl)
 );
 
 const searchedDrawnItems = computed(() => {
@@ -139,8 +141,8 @@ const groupData = computed(() => {
 
   Object.keys(grouped).forEach(g => {
     grouped[g].sort((a, b) => {
-      const aDrawn = a.imageUrl !== getPlaceholder(activeCollectionId.value);;
-      const bDrawn = b.imageUrl !== getPlaceholder(activeCollectionId.value);;
+      const aDrawn = a.imageUrl !== a.placeholderUrl;
+      const bDrawn = b.imageUrl !== b.placeholderUrl;
       if (aDrawn !== bDrawn) return bDrawn ? 1 : -1;
       return parseInt(a.itemId) - parseInt(b.itemId);
     });
@@ -150,7 +152,7 @@ const groupData = computed(() => {
     grouped,
     sidebarItems: Object.keys(grouped).map(g => {
       const items      = grouped[g];
-      const drawnCount = items.filter(i => i.imageUrl !== getPlaceholder(activeCollectionId.value)).length;
+      const drawnCount = items.filter(i => i.imageUrl !== i.placeholderUrl).length;
       return { id: g, label: g, count: drawnCount, total: items.length, disabled: false };
     }),
   };
@@ -231,7 +233,9 @@ const { activeSection, updateActiveSection, goToSection, handleHash } = useScrol
 // =============================================================================
 
 // Shared parser — converts raw JSON groups into CollectionItem[]
-// Guards every field so a malformed or missing JSON never throws
+// Guards every field so a malformed or missing JSON never throws.
+// Captures placeholderUrl once per item at parse time so all downstream
+// comparisons (drawn vs undrawn) are stable regardless of active collection.
 function parseCollectionJson(
   col: CollectionConfig,
   rawGroups: unknown,
@@ -241,6 +245,9 @@ function parseCollectionJson(
   let counter = startCounter;
 
   if (!rawGroups || typeof rawGroups !== 'object' || Array.isArray(rawGroups)) return items;
+
+  // Capture once for this collection — never recomputed per-comparison
+  const placeholder = getPlaceholder(col.id);
 
   const knownKeys = new Set(['id', 'name', 'sci', 'drawn', 'illustratorNote']);
 
@@ -267,7 +274,8 @@ function parseCollectionJson(
         scientificName:  String(r.sci  ?? ''),
         group:           groupName,
         drawnDate:       String(r.drawn ?? ''),
-        imageUrl:        hasImg ? `${col.imageBase}${r.id}.webp` : getPlaceholder(col.id),
+        imageUrl:        hasImg ? `${col.imageBase}${r.id}.webp` : placeholder,
+        placeholderUrl:  placeholder,
         illustratorNote: String(r.illustratorNote ?? ''),
         meta:            Object.keys(meta).length ? meta : undefined,
       });
@@ -305,7 +313,7 @@ async function prefetchOtherCollections() {
     if (col.id === activeCollectionId.value || collectionCache[col.id]) continue;
     try {
       const res = await fetch(col.dataUrl);
-      if (!res.ok) continue;                     // collection may not exist yet
+      if (!res.ok) continue; // collection may not exist yet
       const rawGroups: unknown = await res.json();
       collectionCache[col.id] = parseCollectionJson(col, rawGroups);
     } catch {
@@ -329,7 +337,7 @@ const toggleViewMode = () => {
 };
 
 const openOverlay = (item: CollectionItem) => {
-  if (item.imageUrl === getPlaceholder(activeCollectionId.value)) return;
+  if (item.imageUrl === item.placeholderUrl) return;
   expandedImage.item   = item;
   expandedImage.isOpen = true;
 };

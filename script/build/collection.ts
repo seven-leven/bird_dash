@@ -1,10 +1,10 @@
 /// <reference lib="deno.ns" />
 import {
   CollectionData,
-  type ScriptCollectionEntry,
   IntegrityIssues,
   ProcessResult,
   readJson,
+  type ScriptCollectionEntry,
   writeJson,
 } from '../lib/index.ts';
 import { createMissingThumbnail, processImage, verifyIntegrity } from './processor.ts';
@@ -57,7 +57,9 @@ export interface CollectionBuildResult {
   drawnCount: number;
 }
 
-export async function buildCollection(collection: ScriptCollectionEntry): Promise<CollectionBuildResult> {
+export async function buildCollection(
+  collection: ScriptCollectionEntry,
+): Promise<CollectionBuildResult> {
   const today = new Date().toISOString().split('T')[0];
   const processed: ProcessResult[] = [];
 
