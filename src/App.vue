@@ -2,11 +2,10 @@
 /// <reference types="vite/client" />
 import { ref, reactive, onMounted, watch, nextTick, toRefs } from 'vue';
 import UI from './components/UI.vue';
-import ExpandedImage from './components/ExpandedImage.vue';
 import { useScrollLogic } from './composables/useScrollLogic';
 import { useCollectionData } from './composables/useCollectionData';
-import { useCollection } from './composables/useCollections.ts';
-import { getPlaceholder, type CollectionItem } from './types/collections.ts';
+import { useCollection } from './composables/useCollections';
+import { getPlaceholder, type CollectionItem } from './types/collections';
 
 // =============================================================================
 // STATE
@@ -102,6 +101,7 @@ watch(() => theme.isDark, (val) => document.documentElement.classList.toggle('da
       ref="uiRef"
       :collections="COLLECTIONS"
       :active-collection-id="activeCollectionId"
+      :active-collection="activeCollection"
       :global-stats="globalStats"
       :sidebar-open="ui.sidebarOpen"
       :mobile="ui.mobile"
@@ -116,6 +116,9 @@ watch(() => theme.isDark, (val) => document.documentElement.classList.toggle('da
       :stats="stats"
       :placeholder-image="getPlaceholder(activeCollectionId)"
       :search-query="search.query"
+      :expanded-image="expandedImage"
+      :drawn-items="searchedDrawnItems"
+      :full-image-base-url="activeCollection?.fullImageBase ?? ''"
       @switch-collection="handleSwitchCollection"
       @close-sidebar="ui.sidebarOpen = false"
       @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
@@ -125,17 +128,8 @@ watch(() => theme.isDark, (val) => document.documentElement.classList.toggle('da
       @scroll="updateActiveSection"
       @card-click="openOverlay"
       @update-search="search.query = $event"
-    />
-
-    <ExpandedImage
-      v-if="activeCollection"
-      :is-open="expandedImage.isOpen"
-      :item="expandedImage.item"
-      :drawn-items="searchedDrawnItems"
-      :full-image-base-url="activeCollection.fullImageBase"
-      :collection="activeCollection"
-      @close="expandedImage.isOpen = false"
-      @update:item="expandedImage.item = $event"
+      @close-overlay="expandedImage.isOpen = false"
+      @update-overlay-item="expandedImage.item = $event"
     />
   </div>
   <div v-else class="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">

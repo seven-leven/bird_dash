@@ -11,6 +11,8 @@ All versions follow `x.y.z+w` where:
 
 ## v0.7.0 (Multi-collection Architecture)
 
+2026-03-09 | debloated app.vue
+
 - **0.7.068+019** | 2026-03-09 | 🐚 Shell 029: Sand Dollar
 - **0.7.067+018** | 2026-03-09 | 🐚 added shell collections
 - **0.7.066+018** | 2026-03-09 | added different thumb to different collections
