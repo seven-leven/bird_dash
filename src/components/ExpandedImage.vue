@@ -146,7 +146,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onUnmounted } from 'vue';
 import ItemInfoPanel from './ItemInfoPanel.vue';
-import type { CollectionItem, CollectionConfig } from '../collections';
+import type { CollectionItem, CollectionConfig } from '../types/collections';
 
 const props = defineProps<{
   isOpen:           boolean;

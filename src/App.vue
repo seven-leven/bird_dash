@@ -1,29 +1,30 @@
 <script setup lang="ts">
 /// <reference types="vite/client" />
-import { ref, reactive, onMounted, watch, nextTick, toRefs } from 'vue';
+import { ref, reactive, computed, onMounted, watch, nextTick, toRefs } from 'vue';
 import UI from './components/UI.vue';
 import { useScrollLogic } from './composables/useScrollLogic';
 import { useCollectionData } from './composables/useCollectionData';
-import {  useCollections } from './composables/useCollections';
-import { getPlaceholder, type CollectionItem } from './types/collections';
+import { useCollections } from './composables/useCollections';
+import { type CollectionItem } from './types/collections';
 
 // =============================================================================
 // STATE
 // =============================================================================
 const uiRef = ref<any>(null);
 
+
+  
 const search = reactive({ query: '' });
 const ui = reactive({
   sidebarOpen: false,
-  mobile: false,
-  client: false,
-  viewMode: 'group' as 'group' | 'date',
+  mobile:      false,
+  client:      false,
+  viewMode:    'group' as 'group' | 'date',
 });
-
 const theme = reactive({ isDark: false });
 const expandedImage = reactive({
   isOpen: false,
-  item: undefined as CollectionItem | undefined,
+  item:   undefined as CollectionItem | undefined,
 });
 
 // =============================================================================
@@ -31,7 +32,6 @@ const expandedImage = reactive({
 // =============================================================================
 const {
   isInitialized,
-  activeCollectionId,
   activeCollection,
   globalStats,
   data,
@@ -45,10 +45,11 @@ const { query } = toRefs(search);
 const { viewMode } = toRefs(ui);
 const { activeData, stats, searchedDrawnItems } = useCollectionData(items, query, viewMode);
 
+const activeDataWithStats = computed(() => ({ ...activeData.value, stats: stats.value }));
 const { activeSection, updateActiveSection, goToSection, handleHash } = useScrollLogic(uiRef, ui);
 
 // =============================================================================
-// ACTIONS & METHODS
+// ACTIONS
 // =============================================================================
 async function handleSwitchCollection(id: string) {
   search.query = '';
@@ -77,7 +78,7 @@ const openOverlay = (item: CollectionItem) => {
 onMounted(async () => {
   ui.client = true;
   ui.mobile = window.innerWidth < 1024;
-  window.addEventListener('resize', () => ui.mobile = window.innerWidth < 1024);
+  window.addEventListener('resize', () => { ui.mobile = window.innerWidth < 1024; });
   window.addEventListener('hashchange', handleHash);
 
   await init();
@@ -100,25 +101,16 @@ watch(() => theme.isDark, (val) => document.documentElement.classList.toggle('da
     <UI
       ref="uiRef"
       :collections="COLLECTIONS"
-      :active-collection-id="activeCollectionId"
       :active-collection="activeCollection"
       :global-stats="globalStats"
-      :sidebar-open="ui.sidebarOpen"
-      :mobile="ui.mobile"
-      :client="ui.client"
-      :is-dark="theme.isDark"
-      :loading="data.loading"
-      :error="data.error"
-      :grouped="activeData.grouped"
-      :sidebar-items="activeData.sidebarItems"
+      :ui="ui"
+      :theme="theme"
+      :data="data"
+      :active-data="activeDataWithStats"
       :active-section="activeSection"
-      :view-mode="ui.viewMode"
-      :stats="stats"
-      :placeholder-image="getPlaceholder(activeCollectionId)"
-      :search-query="search.query"
+      :search="search"
       :expanded-image="expandedImage"
       :drawn-items="searchedDrawnItems"
-      :full-image-base-url="activeCollection?.fullImageBase ?? ''"
       @switch-collection="handleSwitchCollection"
       @close-sidebar="ui.sidebarOpen = false"
       @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"

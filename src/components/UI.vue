@@ -4,13 +4,12 @@
     <!-- Header -->
     <AppHeader
       :collections="collections"
-      :active-collection-id="activeCollectionId"
-      :view-mode="viewMode"
+      :active-collection="activeCollection"
+      :ui="ui"
+      :theme="theme"
+      :data="data"
       :global-stats="globalStats"
-      :loading="loading"
-      :is-dark="isDark"
-      :mobile="mobile"
-      :search-query="searchQuery"
+      :search="search"
       @toggle-sidebar="$emit('toggleSidebar')"
       @switch-collection="$emit('switchCollection', $event)"
       @update-search="$emit('updateSearch', $event)"
@@ -23,23 +22,20 @@
 
       <!-- Mobile overlay -->
       <div
-        v-if="client && mobile"
+        v-if="ui.client && ui.mobile"
         class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
-        :class="sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
+        :class="ui.sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
         @click="$emit('closeSidebar')"
         aria-hidden="true"
       />
 
       <!-- Sidebar -->
       <AppSidebar
-        :items="sidebarItems"
-        :active-section="activeSection"
         :active-collection="activeCollection"
-        :view-mode="viewMode"
-        :sidebar-open="sidebarOpen"
-        :loading="loading"
-        :error="error"
-        :stats="stats"
+        :active-section="activeSection"
+        :ui="ui"
+        :data="data"
+        :active-data="activeData"
         @go-to-section="$emit('goToSection', $event)"
       />
 
@@ -48,7 +44,7 @@
 
         <!-- Active section label -->
         <div
-          v-if="!loading && !error && activeSection"
+          v-if="!data.loading && !data.error && activeSection"
           class="shrink-0 px-6 py-2 border-b text-sm font-semibold transition-colors
                  bg-white/95 border-slate-200 text-slate-600
                  dark:bg-slate-900/95 dark:border-slate-800 dark:text-slate-300"
@@ -63,35 +59,35 @@
           @scroll="$emit('scroll')"
         >
           <!-- Loading skeleton -->
-          <div v-if="loading" class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
+          <div v-if="data.loading" class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5">
             <div v-for="n in 10" :key="n"
                  class="aspect-square rounded-2xl animate-pulse bg-slate-200 dark:bg-slate-800" />
           </div>
 
           <!-- Error -->
-          <div v-else-if="error"
+          <div v-else-if="data.error"
                class="mx-auto mt-10 max-w-lg rounded-xl border p-6 text-center
                       bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800">
             <h2 class="mb-2 text-lg font-bold text-red-700 dark:text-red-400">Error Loading Data</h2>
-            <p class="text-red-600 dark:text-red-300">{{ error }}</p>
+            <p class="text-red-600 dark:text-red-300">{{ data.error }}</p>
           </div>
 
           <!-- Empty -->
-          <div v-else-if="Object.keys(grouped).length === 0" class="mt-20 text-center text-slate-500">
+          <div v-else-if="Object.keys(activeData.grouped).length === 0" class="mt-20 text-center text-slate-500">
             <h2 class="text-xl font-semibold">No drawings found</h2>
-            <p class="mt-2">{{ searchQuery ? 'Try a different search term.' : 'Check back later for new illustrations.' }}</p>
+            <p class="mt-2">{{ search.query ? 'Try a different search term.' : 'Check back later for new illustrations.' }}</p>
           </div>
 
           <template v-else>
             <!-- Search info -->
-            <div v-if="searchQuery" class="mb-6 text-sm text-slate-500">
-              Found {{ stats?.filtered ?? 0 }} result{{ (stats?.filtered ?? 0) !== 1 ? 's' : '' }} for "{{ searchQuery }}"
+            <div v-if="search.query" class="mb-6 text-sm text-slate-500">
+              Found {{ activeData.stats?.filtered ?? 0 }} result{{ (activeData.stats?.filtered ?? 0) !== 1 ? 's' : '' }} for "{{ search.query }}"
               <button @click="$emit('updateSearch', '')" class="ml-2 text-blue-600 hover:underline">Clear</button>
             </div>
 
             <!-- Grouped sections -->
             <section
-              v-for="(items, groupName) in grouped"
+              v-for="(items, groupName) in activeData.grouped"
               :key="groupName"
               class="mb-12 scroll-mt-10"
             >
@@ -103,7 +99,7 @@
                 <span>{{ groupName }}</span>
                 <span class="text-sm font-normal text-slate-500">
                   {{ items.filter(i => i.imageUrl !== placeholderImage).length }} drawn
-                  <template v-if="viewMode === 'group'">/ {{ items.length }} total</template>
+                  <template v-if="ui.viewMode === 'group'">/ {{ items.length }} total</template>
                 </span>
               </h2>
 
@@ -134,7 +130,7 @@
       :is-open="expandedImage.isOpen"
       :item="expandedImage.item"
       :drawn-items="drawnItems"
-      :full-image-base-url="fullImageBaseUrl"
+      :full-image-base-url="activeCollection.fullImageBase"
       :collection="activeCollection"
       @close="$emit('closeOverlay')"
       @update:item="$emit('updateOverlayItem', $event)"
@@ -144,13 +140,21 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import AppHeader from './AppHeader.vue';
 import AppSidebar from './AppSidebar.vue';
 import GridItemCard from './GridItemCard.vue';
 import ExpandedImage from './ExpandedImage.vue';
 import { type CollectionConfig, type CollectionItem } from '../types/collections';
-import { type SidebarItem, type Stats, type GlobalStats, type ExpandedImageState } from '../types/ui';
+import {
+  type UIState,
+  type ThemeState,
+  type DataState,
+  type SearchState,
+  type GlobalStats,
+  type ActiveData,
+  type ExpandedImageState,
+} from '../types/ui';
 import versionData from '../version.json';
 
 const displayVersion = `${versionData.major}.${versionData.minor}.${versionData.patch}`;
@@ -159,27 +163,18 @@ const appVersion     = `${displayVersion}+${versionData.count}`;
 // ---------------------------------------------------------------------------
 // PROPS
 // ---------------------------------------------------------------------------
-defineProps<{
-  collections:        CollectionConfig[];
-  activeCollectionId: string;
-  activeCollection:   CollectionConfig | undefined;
-  globalStats:        GlobalStats;
-  sidebarOpen:        boolean;
-  mobile:             boolean;
-  client:             boolean;
-  isDark:             boolean;
-  loading:            boolean;
-  error?:             string;
-  grouped:            Record<string, CollectionItem[]>;
-  sidebarItems:       SidebarItem[];
-  activeSection?:     string;
-  viewMode:           'group' | 'date';
-  stats:              Stats;
-  placeholderImage:   string;
-  searchQuery:        string;
-  expandedImage:      ExpandedImageState<CollectionItem>;
-  drawnItems:         CollectionItem[];
-  fullImageBaseUrl:   string;
+const props = defineProps<{
+  collections:      CollectionConfig[];
+  activeCollection: CollectionConfig | undefined;
+  globalStats:      GlobalStats;
+  ui:               UIState;
+  theme:            ThemeState;
+  data:             DataState;
+  activeData:       ActiveData<CollectionItem>;
+  activeSection?:   string;
+  search:           SearchState;
+  expandedImage:    ExpandedImageState<CollectionItem>;
+  drawnItems:       CollectionItem[];
 }>();
 
 // ---------------------------------------------------------------------------
@@ -198,6 +193,13 @@ defineEmits<{
   closeOverlay:      [];
   updateOverlayItem: [item: CollectionItem];
 }>();
+
+// ---------------------------------------------------------------------------
+// COMPUTED
+// ---------------------------------------------------------------------------
+const placeholderImage = computed(() =>
+  props.activeCollection ? `${props.activeCollection.id}-placeholder` : ''
+);
 
 // ---------------------------------------------------------------------------
 // REFS (exposed for useScrollLogic in App.vue)

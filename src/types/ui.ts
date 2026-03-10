@@ -26,3 +26,29 @@ export interface ExpandedImageState<T = unknown> {
   isOpen: boolean;
   item: T | undefined;
 }
+
+export interface UIState {
+  sidebarOpen: boolean;
+  mobile: boolean;
+  client: boolean;
+  viewMode: 'group' | 'date';
+}
+
+export interface ThemeState {
+  isDark: boolean;
+}
+
+export interface DataState {
+  loading: boolean;
+  error: string | undefined;
+}
+
+export interface SearchState {
+  query: string;
+}
+
+export interface ActiveData<T = unknown> {
+  grouped: Record<string, T[]>;
+  sidebarItems: SidebarItem[];
+  stats: Stats;
+}

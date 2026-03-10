@@ -6,30 +6,30 @@
            lg:static lg:translate-x-0 lg:shadow-none
            bg-white border-slate-200
            dark:bg-slate-900 dark:border-slate-800"
-    :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+    :class="ui.sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
   >
     <!-- Header -->
     <div class="sticky top-0 z-10 p-6 pb-4 bg-white dark:bg-slate-900">
       <h1 class="text-2xl font-extrabold tracking-tight text-slate-800 dark:text-white">
-        {{ viewMode === 'group'
+        {{ ui.viewMode === 'group'
             ? `${activeCollection?.groupLabel ?? ''} Groups`
             : 'Timeline' }}
       </h1>
       <p class="text-sm text-slate-500 mt-1">
-        <template v-if="viewMode === 'group'">
-          {{ stats?.drawn ?? 0 }} drawn / {{ stats?.total ?? 0 }} total
+        <template v-if="ui.viewMode === 'group'">
+          {{ activeData.stats?.drawn ?? 0 }} drawn / {{ activeData.stats?.total ?? 0 }} total
         </template>
         <template v-else>
-          {{ stats?.filtered ?? 0 }} drawings
+          {{ activeData.stats?.filtered ?? 0 }} drawings
         </template>
       </p>
     </div>
 
     <!-- List -->
     <div class="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
-      <ul v-if="items.length" class="space-y-1">
+      <ul v-if="activeData.sidebarItems.length" class="space-y-1">
         <li
-          v-for="item in items"
+          v-for="item in activeData.sidebarItems"
           :key="item.id"
           class="rounded-lg px-4 py-2.5 text-sm font-medium transition-colors flex items-center justify-between"
           :class="getItemClass(item)"
@@ -37,12 +37,12 @@
         >
           <span class="truncate pr-2">{{ item.label }}</span>
           <span class="text-xs shrink-0 opacity-60">
-            <template v-if="viewMode === 'group' && item.total">{{ item.count }}/{{ item.total }}</template>
+            <template v-if="ui.viewMode === 'group' && item.total">{{ item.count }}/{{ item.total }}</template>
             <template v-else>{{ item.count }}</template>
           </span>
         </li>
       </ul>
-      <div v-else-if="!loading && !error" class="p-4 text-center text-sm text-slate-500 italic">
+      <div v-else-if="!data.loading && !data.error" class="p-4 text-center text-sm text-slate-500 italic">
         No items found.
       </div>
     </div>
@@ -51,17 +51,14 @@
 
 <script setup lang="ts">
 import { type CollectionConfig } from '../types/collections';
-import { type SidebarItem, type Stats } from '../types/ui';
+import { type UIState, type DataState, type SidebarItem, type ActiveData } from '../types/ui';
 
 const props = defineProps<{
-  items:             SidebarItem[];
-  activeSection?:    string;
   activeCollection?: CollectionConfig;
-  viewMode:          'group' | 'date';
-  sidebarOpen:       boolean;
-  loading:           boolean;
-  error?:            string;
-  stats:             Stats;
+  activeSection?:    string;
+  ui:                UIState;
+  data:              DataState;
+  activeData:        ActiveData;
 }>();
 
 defineEmits<{
