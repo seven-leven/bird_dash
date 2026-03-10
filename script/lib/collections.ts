@@ -1,14 +1,6 @@
-import {
-  type CollectionConfig,
-  COLLECTIONS as FE_COLLECTIONS,
-} from '../../src/types/collections.ts';
-
+import { COLLECTIONS as FE_COLLECTIONS } from '../../src/types/collections.ts';
+import { ScriptCollectionEntry } from '../../src/types/scripts.ts';
 // Define an interface for the BUILD scripts that adds the fields needed by the build
-export interface ScriptCollectionEntry extends CollectionConfig {
-  json: string;
-  placeholder: string;
-  raw: string;
-}
 
 // Map the FE_COLLECTIONS into the new type
 export const COLLECTIONS: ScriptCollectionEntry[] = FE_COLLECTIONS.map((col) => ({

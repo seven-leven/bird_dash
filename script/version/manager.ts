@@ -4,11 +4,10 @@ import {
   CollectionData,
   FILES,
   readJson,
-  type ScriptCollectionEntry,
   VersionData,
   writeJson,
 } from '../lib/index.ts';
-
+import { NewDrawing, ScriptCollectionEntry } from '../../src/types/scripts.ts';
 // ---------------------------------------------------------------------------
 // Helpers (unchanged)
 // ---------------------------------------------------------------------------
@@ -178,13 +177,6 @@ export class VersionManager {
   }
 }
 
-export interface NewDrawing {
-  id: string;
-  name: string;
-  sci: string;
-  emoji: string;
-  label: string;
-}
 export const loadVersion = VersionManager.load.bind(VersionManager);
 export const bumpPatchVersion = VersionManager.bumpPatch.bind(VersionManager);
 export const getExistingBirdIds = () => VersionManager.getDrawnIds('birds');

@@ -1,14 +1,13 @@
 /// <reference lib="deno.ns" />
 import {
   CollectionData,
-  IntegrityIssues,
   ProcessResult,
   readJson,
   type ScriptCollectionEntry,
   writeJson,
 } from '../lib/index.ts';
 import { createMissingThumbnail, processImage, verifyIntegrity } from './processor.ts';
-
+import { CollectionBuildResult } from '../../src/types/scripts.ts';
 // ---------------------------------------------------------------------------
 // Collection data helpers
 // ---------------------------------------------------------------------------
@@ -49,13 +48,6 @@ async function markItemAsDrawn(
 // ---------------------------------------------------------------------------
 // Build logic for a single collection
 // ---------------------------------------------------------------------------
-
-export interface CollectionBuildResult {
-  collection: ScriptCollectionEntry;
-  processed: ProcessResult[];
-  integrity: IntegrityIssues;
-  drawnCount: number;
-}
 
 export async function buildCollection(
   collection: ScriptCollectionEntry,

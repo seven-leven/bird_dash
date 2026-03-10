@@ -1,22 +1,24 @@
-import { computed, nextTick, reactive, ref } from 'vue';
+import { computed, type ComputedRef, nextTick, reactive, type Ref, ref } from 'vue';
 import {
+  type CollectionConfig,
   type CollectionItem,
   COLLECTIONS as RAW_COLLECTIONS,
   fetchCollectionData,
   getPlaceholder,
   initCollections,
 } from '../types/collections.ts';
+import type { CollectionCache, DataState, GlobalStats } from '../types/composables.ts';
 
-export function useCollection() {
+export function useCollections() {
   // ---------------------------------------------------------------------------
   // STATE
   // ---------------------------------------------------------------------------
-  const collections = ref([...RAW_COLLECTIONS]);
-  const isInitialized = ref(false);
-  const activeCollectionId = ref('');
-  const collectionCache = reactive<Record<string, CollectionItem[]>>({});
+  const collections: Ref<CollectionConfig[]> = ref([...RAW_COLLECTIONS]);
+  const isInitialized: Ref<boolean> = ref(false);
+  const activeCollectionId: Ref<string> = ref('');
+  const collectionCache = reactive<CollectionCache>({});
 
-  const data = reactive({
+  const data = reactive<DataState>({
     items: [] as CollectionItem[],
     loading: true,
     error: undefined as string | undefined,
@@ -25,12 +27,12 @@ export function useCollection() {
   // ---------------------------------------------------------------------------
   // COMPUTED
   // ---------------------------------------------------------------------------
-  const activeCollection = computed(() => {
+  const activeCollection: ComputedRef<CollectionConfig | undefined> = computed(() => {
     if (!isInitialized.value) return undefined;
     return collections.value.find((c) => c.id === activeCollectionId.value) ?? collections.value[0];
   });
 
-  const globalStats = computed(() => {
+  const globalStats: ComputedRef<GlobalStats> = computed(() => {
     let drawn = 0, total = 0;
     if (!isInitialized.value) return { drawn, total };
     for (const col of collections.value) {
@@ -41,12 +43,14 @@ export function useCollection() {
     return { drawn, total };
   });
 
-  const placeholderImage = computed(() => getPlaceholder(activeCollectionId.value));
+  const placeholderImage: ComputedRef<string> = computed(() =>
+    getPlaceholder(activeCollectionId.value)
+  );
 
   // ---------------------------------------------------------------------------
   // ACTIONS
   // ---------------------------------------------------------------------------
-  const loadData = async () => {
+  const loadData = async (): Promise<void> => {
     if (!activeCollection.value) return;
     data.loading = true;
     data.error = undefined;
@@ -64,7 +68,7 @@ export function useCollection() {
   const switchCollection = async (
     id: string,
     onSwitch?: () => void,
-  ) => {
+  ): Promise<void> => {
     if (id === activeCollectionId.value) return;
     activeCollectionId.value = id;
 
@@ -77,7 +81,7 @@ export function useCollection() {
     }
   };
 
-  const prefetchOtherCollections = async () => {
+  const prefetchOtherCollections = async (): Promise<void> => {
     for (const col of collections.value) {
       if (col.id === activeCollectionId.value || collectionCache[col.id]) continue;
       try {
@@ -89,7 +93,7 @@ export function useCollection() {
   // ---------------------------------------------------------------------------
   // LIFECYCLE
   // ---------------------------------------------------------------------------
-  const init = async () => {
+  const init = async (): Promise<void> => {
     await initCollections();
     collections.value = [...RAW_COLLECTIONS]; // re-sync after initCollections populates the array
     if (collections.value.length > 0) {

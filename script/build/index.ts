@@ -9,16 +9,11 @@ import {
 } from '../lib/index.ts';
 import { bumpPatchVersion, getDrawnIds, loadVersion } from '../version/manager.ts';
 import { verifyIntegrity } from './processor.ts';
-import { buildCollection, CollectionBuildResult } from './collection.ts';
-
+import { buildCollection } from './collection.ts';
+import { BuildResult, CollectionBuildResult } from '../../src/types/scripts.ts';
 // ---------------------------------------------------------------------------
 // Full build across all collections
 // ---------------------------------------------------------------------------
-
-export interface BuildResult {
-  version: VersionData;
-  collections: CollectionBuildResult[];
-}
 
 export async function runComprehensiveBuild(): Promise<BuildResult> {
   console.log('\n🚀 Starting comprehensive build...');

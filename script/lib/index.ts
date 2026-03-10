@@ -1,3 +1,6 @@
+// Re-export all TypeScript types FIRST
+export * from '../../src/types/scripts.ts';
+
 // Re-export all collection constants and helpers
 export * from './collections.ts';
 
@@ -7,19 +10,8 @@ export * from './fs.ts';
 // Re-export all string utilities
 export * from './strings.ts';
 
-// Re-export all TypeScript types
-export * from './types.ts';
-
-import { COLLECTIONS } from '../../src/types/collections.ts'; // Adjust path to reach src/collections.ts
-
-export interface ScriptCollectionEntry {
-  id: string;
-  json: string; // The actual path on disk for the JSON data
-  placeholder: string;
-  raw: string;
-  emoji: string;
-  label: string;
-}
+import { COLLECTIONS } from '../../src/types/collections.ts';
+import type { ScriptCollectionEntry } from '../../src/types/scripts.ts';
 
 // Maps frontend config to backend file paths
 export const FILES = {
@@ -29,7 +21,7 @@ export const FILES = {
   get collections(): ScriptCollectionEntry[] {
     return COLLECTIONS.map((c) => ({
       id: c.id,
-      json: `./src/data/${c.id}.json`, // Path used by script
+      json: `./src/data/${c.id}.json`,
       placeholder: `./src/data/${c.id}_placeholder.json`,
       raw: `./src/data/${c.id}_raw.json`,
       emoji: c.emoji,

@@ -1,7 +1,12 @@
-import { computed, type Ref } from 'vue';
+import { computed, type ComputedRef, type Ref } from 'vue';
 import type { CollectionItem } from '../types/collections.ts';
-
-type ViewMode = 'group' | 'date';
+import type {
+  CollectionStats,
+  DateData,
+  GroupedData,
+  SidebarItem,
+  ViewMode,
+} from '../types/composables.ts';
 
 export function useCollectionData(
   items: Ref<CollectionItem[]>,
@@ -36,7 +41,7 @@ export function useCollectionData(
   // =============================================================================
   // GROUP MODE LOGIC
   // =============================================================================
-  const groupData = computed(() => {
+  const groupData: ComputedRef<GroupedData> = computed(() => {
     const grouped: Record<string, CollectionItem[]> = {};
 
     allFilteredItems.value.forEach((item) => {
@@ -55,7 +60,7 @@ export function useCollectionData(
 
     return {
       grouped,
-      sidebarItems: Object.keys(grouped).map((g) => {
+      sidebarItems: Object.keys(grouped).map((g): SidebarItem => {
         const list = grouped[g];
         const drawnCount = list.filter((i) => i.imageUrl !== i.placeholderUrl).length;
         return { id: g, label: g, count: drawnCount, total: list.length, disabled: false };
@@ -87,7 +92,7 @@ export function useCollectionData(
     return months;
   });
 
-  const dateData = computed(() => {
+  const dateData: ComputedRef<DateData> = computed(() => {
     const sorted = [...searchedDrawnItems.value].sort((a, b) => {
       const da = a.drawnDate ? new Date(a.drawnDate).getTime() : 0;
       const db = b.drawnDate ? new Date(b.drawnDate).getTime() : 0;
@@ -106,7 +111,7 @@ export function useCollectionData(
 
     return {
       grouped,
-      sidebarItems: allMonths.value.map((month) => ({
+      sidebarItems: allMonths.value.map((month): SidebarItem => ({
         id: month,
         label: month,
         count: grouped[month]?.length || 0,
@@ -119,9 +124,11 @@ export function useCollectionData(
   // =============================================================================
   // EXPORTED UNIFIED STATE
   // =============================================================================
-  const activeData = computed(() => viewMode.value === 'group' ? groupData.value : dateData.value);
+  const activeData: ComputedRef<GroupedData | DateData> = computed(() =>
+    viewMode.value === 'group' ? groupData.value : dateData.value
+  );
 
-  const stats = computed(() => ({
+  const stats: ComputedRef<CollectionStats> = computed(() => ({
     total: viewMode.value === 'group' ? items.value.length : drawnItems.value.length,
     filtered: viewMode.value === 'group'
       ? allFilteredItems.value.length

@@ -1,30 +1,20 @@
 import { type Ref, ref } from 'vue';
-
-// Define interfaces for better type safety
-interface ScrollUI {
-  scrollContainer: HTMLElement | null;
-  headerRefs: Record<string, HTMLElement | null>;
-}
-
-interface UIState {
-  mobile: boolean;
-  sidebarOpen: boolean;
-}
+import type { ScrollUI, UIState, UseScrollLogicReturn } from '../types/composables.ts';
 
 export function useScrollLogic(
   uiRef: Ref<ScrollUI | null>,
   ui: UIState,
-) {
+): UseScrollLogicReturn {
   const activeSection = ref<string>('');
 
-  const updateActiveSection = () => {
+  const updateActiveSection = (): void => {
     const container = uiRef.value?.scrollContainer;
     if (!container) return;
 
     const scrollPos = container.scrollTop + 100; // offset for header
 
     // Check all section headers
-    const headers = uiRef.value?.headerRefs || {};
+    const headers = uiRef.value?.headerRefs ?? {};
     let current = '';
 
     for (const [name, el] of Object.entries(headers)) {
@@ -38,7 +28,7 @@ export function useScrollLogic(
     }
   };
 
-  const goToSection = (name: string) => {
+  const goToSection = (name: string): void => {
     const el = uiRef.value?.headerRefs?.[name];
     const container = uiRef.value?.scrollContainer;
 
@@ -56,7 +46,7 @@ export function useScrollLogic(
     }
   };
 
-  const handleHash = () => {
+  const handleHash = (): void => {
     // Optional: handle URL hash for direct linking
   };
 

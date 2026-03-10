@@ -1,3 +1,5 @@
+import type { CollectionConfig } from './collections.ts';
+
 // ---------------------------------------------------------------------------
 // Collection data types
 // ---------------------------------------------------------------------------
@@ -55,4 +57,49 @@ export interface IntegrityIssues {
   missingThumb: string[]; // items missing thumbnail
   orphanedFull: string[]; // full WebPs without a JSON entry
   orphanedThumb: string[]; // thumb WebPs without a JSON entry
+}
+
+export interface NewDrawing {
+  id: string;
+  name: string;
+  sci: string;
+  emoji: string;
+  label: string;
+}
+
+// ---------------------------------------------------------------------------
+// Script/Build Types
+// ---------------------------------------------------------------------------
+
+// Minimal version for basic scripts (no frontend config dependency)
+export interface ScriptCollectionEntry {
+  id: string;
+  json: string;
+  placeholder: string;
+  raw: string;
+  emoji: string;
+  label: string;
+}
+
+// Extended version that includes all CollectionConfig fields
+export interface ScriptCollectionEntryExtended extends CollectionConfig {
+  json: string;
+  placeholder: string;
+  raw: string;
+}
+
+// ---------------------------------------------------------------------------
+// Build Results
+// ---------------------------------------------------------------------------
+
+export interface CollectionBuildResult {
+  collection: ScriptCollectionEntry;
+  processed: ProcessResult[];
+  integrity: IntegrityIssues;
+  drawnCount: number;
+}
+
+export interface BuildResult {
+  version: VersionData;
+  collections: CollectionBuildResult[];
 }

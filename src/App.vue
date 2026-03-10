@@ -4,7 +4,7 @@ import { ref, reactive, onMounted, watch, nextTick, toRefs } from 'vue';
 import UI from './components/UI.vue';
 import { useScrollLogic } from './composables/useScrollLogic';
 import { useCollectionData } from './composables/useCollectionData';
-import { useCollection } from './composables/useCollections';
+import {  useCollections } from './composables/useCollections';
 import { getPlaceholder, type CollectionItem } from './types/collections';
 
 // =============================================================================
@@ -38,7 +38,7 @@ const {
   COLLECTIONS,
   init,
   switchCollection,
-} = useCollection();
+} = useCollections();
 
 const { items } = toRefs(data);
 const { query } = toRefs(search);
