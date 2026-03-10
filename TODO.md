@@ -27,3 +27,4 @@
 - [ ] **Docs**: Complete overhaul of `CHANGELOG.md` updates.
 - [ ] proper group name for group though out the collecion
 - [ ] group images by like in storage
+- [ ] extract types

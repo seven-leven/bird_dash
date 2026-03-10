@@ -1,4 +1,7 @@
-import { type CollectionConfig, COLLECTIONS as FE_COLLECTIONS } from '../../src/collections.ts';
+import {
+  type CollectionConfig,
+  COLLECTIONS as FE_COLLECTIONS,
+} from '../../src/types/collections.ts';
 
 // Define an interface for the BUILD scripts that adds the fields needed by the build
 export interface ScriptCollectionEntry extends CollectionConfig {

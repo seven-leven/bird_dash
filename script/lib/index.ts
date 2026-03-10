@@ -10,7 +10,7 @@ export * from './strings.ts';
 // Re-export all TypeScript types
 export * from './types.ts';
 
-import { COLLECTIONS } from '../../src/collections.ts'; // Adjust path to reach src/collections.ts
+import { COLLECTIONS } from '../../src/types/collections.ts'; // Adjust path to reach src/collections.ts
 
 export interface ScriptCollectionEntry {
   id: string;
