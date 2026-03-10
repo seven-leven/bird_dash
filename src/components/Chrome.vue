@@ -117,7 +117,7 @@
 
           <footer class="mt-12 pt-8 pb-6 border-t text-center text-sm transition-colors
                          border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500">
-            <p class="mb-1">Maldives Illustrated © {{ new Date().getFullYear() }}</p>
+            <p class="mb-1">Wildlife Illustrated © {{ new Date().getFullYear() }}</p>
             <p class="opacity-50">v{{ appVersion }}</p>
           </footer>
         </div>
@@ -141,9 +141,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import AppHeader from './AppHeader.vue';
-import AppSidebar from './AppSidebar.vue';
-import GridItemCard from './GridItemCard.vue';
+import AppHeader from './TopBar.vue';
+import AppSidebar from './SideNav.vue';
+import GridItemCard from './ItemTile.vue';
 import ExpandedImage from './ExpandedImage.vue';
 import { type CollectionConfig, type CollectionItem } from '../types/collections';
 import {
