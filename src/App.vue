@@ -3,7 +3,7 @@
 import { ref, reactive, computed, onMounted, watch, nextTick, toRefs } from 'vue';
 
 // Components & Types
-import UI from './components/Chrome.vue';
+import UI from './components/layout/Chrome.vue';
 import { type CollectionItem } from './types/collections';
 
 // Consolidated Composables Import

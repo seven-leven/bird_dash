@@ -50,8 +50,8 @@
 </template>
 
 <script setup lang="ts">
-import { type CollectionConfig } from '../types/collections';
-import { type UIState, type DataState, type SidebarItem, type ActiveData } from '../types/ui';
+import { type CollectionConfig } from '../../types/collections';
+import { type UIState, type DataState, type SidebarItem, type ActiveData } from '../../types/ui';
 
 const props = defineProps<{
   activeCollection?: CollectionConfig;

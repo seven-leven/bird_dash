@@ -128,8 +128,8 @@
 </template>
 
 <script setup lang="ts">
-import { type CollectionConfig } from '../types/collections';
-import { type UIState, type ThemeState, type DataState, type GlobalStats, type SearchState } from '../types/ui';
+import { type CollectionConfig } from '../../types/collections';
+import { type UIState, type ThemeState, type DataState, type GlobalStats, type SearchState } from '../../types/ui';
 
 defineProps<{
   collections:      CollectionConfig[];
