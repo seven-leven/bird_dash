@@ -4,7 +4,8 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, nextTick } 
 import UI from './components/UI.vue';
 import ExpandedImage from './components/ExpandedImage.vue';
 import { useScrollLogic } from './components/useScrollLogic';
-import { COLLECTIONS, getPlaceholder, type CollectionConfig, type CollectionItem } from './collections';
+// Added initCollections
+import { COLLECTIONS, initCollections, getPlaceholder, type CollectionConfig, type CollectionItem } from './collections';
 
 // =============================================================================
 // TYPES
@@ -23,18 +24,23 @@ interface UIComponent {
 }
 
 // =============================================================================
+// INITIALIZATION STATE
+// =============================================================================
+const isInitialized = ref(false);
+
+// =============================================================================
 // ACTIVE COLLECTION
 // =============================================================================
-const activeCollectionId = ref(COLLECTIONS[0].id);
+// Initialize as empty string; will be set in onMounted
+const activeCollectionId = ref('');
 
-const activeCollection = computed<CollectionConfig>(() =>
-  COLLECTIONS.find(c => c.id === activeCollectionId.value) ?? COLLECTIONS[0]
-);
+const activeCollection = computed<CollectionConfig | undefined>(() => {
+  if (!isInitialized.value || COLLECTIONS.length === 0) return undefined;
+  return COLLECTIONS.find(c => c.id === activeCollectionId.value) ?? COLLECTIONS[0];
+});
 
 // =============================================================================
 // CROSS-COLLECTION CACHE
-// Stores loaded items for every collection so globalStats is always accurate.
-// Key = collection id, value = full item array.
 // =============================================================================
 const collectionCache = reactive<Record<string, CollectionItem[]>>({});
 
@@ -43,7 +49,6 @@ function switchCollection(id: string) {
   activeCollectionId.value = id;
   search.query = '';
 
-  // Clear stale section headers from previous collection
   if (uiRef.value?.headerRefs) {
     uiRef.value.headerRefs = {};
   }
@@ -64,11 +69,11 @@ function switchCollection(id: string) {
   }
 }
 
-// Global drawn / total across ALL collections
-// Uses item.placeholderUrl — stable per-item, works across all collections
 const globalStats = computed(() => {
   let drawn = 0;
   let total = 0;
+  if (!isInitialized.value) return { drawn, total };
+  
   for (const col of COLLECTIONS) {
     const items = collectionCache[col.id] ?? [];
     total += items.length;
@@ -232,10 +237,6 @@ const { activeSection, updateActiveSection, goToSection, handleHash } = useScrol
 // DATA FETCHING
 // =============================================================================
 
-// Shared parser — converts raw JSON groups into CollectionItem[]
-// Guards every field so a malformed or missing JSON never throws.
-// Captures placeholderUrl once per item at parse time so all downstream
-// comparisons (drawn vs undrawn) are stable regardless of active collection.
 function parseCollectionJson(
   col: CollectionConfig,
   rawGroups: unknown,
@@ -243,30 +244,23 @@ function parseCollectionJson(
 ): CollectionItem[] {
   const items: CollectionItem[] = [];
   let counter = startCounter;
-
   if (!rawGroups || typeof rawGroups !== 'object' || Array.isArray(rawGroups)) return items;
 
-  // Capture once for this collection — never recomputed per-comparison
   const placeholder = getPlaceholder(col.id);
-
   const knownKeys = new Set(['id', 'name', 'sci', 'drawn', 'illustratorNote']);
 
   for (const [groupName, list] of Object.entries(rawGroups as Record<string, unknown>)) {
     if (!Array.isArray(list)) continue;
-
     for (const raw of list) {
       if (!raw || typeof raw !== 'object') continue;
-
       const r = raw as Record<string, unknown>;
       const hasImg = !!r.drawn;
-
       const meta: Record<string, string> = {};
       for (const key of Object.keys(r)) {
         if (!knownKeys.has(key) && typeof r[key] === 'string') {
           meta[key] = r[key] as string;
         }
       }
-
       items.push({
         id:              `${col.id}-item-${counter++}`,
         itemId:          String(r.id  ?? ''),
@@ -281,23 +275,20 @@ function parseCollectionJson(
       });
     }
   }
-
   return items;
 }
 
 const loadData = async () => {
+  if (!activeCollection.value) return;
   data.loading = true;
   data.error   = undefined;
-
   const col = activeCollection.value;
 
   try {
     const res = await fetch(col.dataUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status} loading ${col.label}`);
-
     const rawGroups: unknown = await res.json();
     const items = parseCollectionJson(col, rawGroups);
-
     data.items = items;
     collectionCache[col.id] = items;
   } catch (e: any) {
@@ -307,18 +298,15 @@ const loadData = async () => {
   }
 };
 
-// Pre-fetch all other collections silently after first load
 async function prefetchOtherCollections() {
   for (const col of COLLECTIONS) {
     if (col.id === activeCollectionId.value || collectionCache[col.id]) continue;
     try {
       const res = await fetch(col.dataUrl);
-      if (!res.ok) continue; // collection may not exist yet
+      if (!res.ok) continue;
       const rawGroups: unknown = await res.json();
       collectionCache[col.id] = parseCollectionJson(col, rawGroups);
-    } catch {
-      // Non-fatal — skip silently
-    }
+    } catch { /* skip */ }
   }
 }
 
@@ -352,13 +340,8 @@ const closeOverlay = () => {
 // =============================================================================
 watch(() => data.items, items => {
   if (items.length > 0) nextTick(() => {
-    // Scroll to top and clear stale headers whenever collection data changes
-    if (uiRef.value?.scrollContainer) {
-      uiRef.value.scrollContainer.scrollTop = 0;
-    }
-    if (uiRef.value?.headerRefs) {
-      uiRef.value.headerRefs = {};
-    }
+    if (uiRef.value?.scrollContainer) uiRef.value.scrollContainer.scrollTop = 0;
+    if (uiRef.value?.headerRefs) uiRef.value.headerRefs = {};
     updateActiveSection();
     handleHash();
   });
@@ -368,12 +351,25 @@ watch(() => theme.isDark, val => {
   document.documentElement.classList.toggle('dark', val);
 }, { immediate: true });
 
-onMounted(() => {
+onMounted(async () => {
   ui.client = true;
   updateMobileState();
   window.addEventListener('resize', updateMobileState);
   window.addEventListener('hashchange', handleHash);
-  loadData().then(() => prefetchOtherCollections());
+  
+  // 1. Load the list of collections first
+  await initCollections();
+  
+  // 2. Now it is safe to set the active ID and mark as initialized
+  if (COLLECTIONS.length > 0) {
+    activeCollectionId.value = COLLECTIONS[0].id;
+    isInitialized.value = true;
+    
+    // 3. Load data for the active collection
+    await loadData();
+    prefetchOtherCollections();
+  }
+  
   theme.isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 });
 
@@ -384,7 +380,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>
+  <div v-if="isInitialized">
     <UI
       ref="uiRef"
       :collections="COLLECTIONS"
@@ -415,6 +411,7 @@ onBeforeUnmount(() => {
     />
 
     <ExpandedImage
+      v-if="activeCollection"
       :is-open="expandedImage.isOpen"
       :item="expandedImage.item"
       :drawn-items="searchedDrawnItems"
@@ -423,5 +420,9 @@ onBeforeUnmount(() => {
       @close="closeOverlay"
       @update:item="expandedImage.item = $event"
     />
+  </div>
+  <div v-else class="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
+     <!-- Simple loading state to prevent crash during init -->
+     <p class="text-slate-500 animate-pulse">Initializing collections...</p>
   </div>
 </template>

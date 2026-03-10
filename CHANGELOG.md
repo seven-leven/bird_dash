@@ -2,101 +2,99 @@
 
 All versions follow `x.y.z+w` where:
 
-- `x` = major version (manual)
-- `y` = minor version (manual, or on `feat:` commits)
-- `z` = patch number, increments by 1 for every commit ever made
-- `w` = total illustrations across all collections at time of commit
+- `x` = major version
+- `y` = minor version
+- `z` = patch number (incrementing global commit count)
+- `w` = total illustrations across all collections
 
 ---
 
-## v0.7.0 (Current — Multi-collection Architecture)
-(2026-03-09) added different thumb to different collections
-- **0.7.35+14** — add shells collection (2026-03-09)
-- **0.7.34+14** — restructured scripts folder (2026-03-09)
-- **0.7.33+14** — MVP for multi-collection architecture (2026-03-06)
-- **0.7.32+14** — created subfolders for bird pics and updated version manager (2026-03-06)
-- **0.7.31+14** — updated TODO with new multi-collection plans (2026-03-06)
+## v0.7.0 (Multi-collection Architecture)
 
-## v0.6.0 (learning build scripts and adding Qol features)
+- **0.7.068+019** | 2026-03-09 | 🐚 Shell 029: Sand Dollar
+- **0.7.067+018** | 2026-03-09 | 🐚 added shell collections
+- **0.7.066+018** | 2026-03-09 | added different thumb to different collections
+- **0.7.065+018** | 2026-03-09 | made provision to add new collections 🦈 added shark collections
+  first
+- **0.7.064+017** | 2026-03-09 | restructured scripts folder
+- **0.7.063+017** | 2026-03-06 | MVP for multi-collection architecture
+- **0.7.062+017** | 2026-03-06 | created subfolders for bird pics and updated version manager
+- **0.7.061+017** | 2026-03-06 | updated TODO with new multi-collection plans
 
-- **0.6.30+14** - added Dhivehi names (2026-02-15)
-- **0.6.29+14** - added illustrator notes (2026-02-07)
-- **0.6.28+14** - added sort by date (2026-02-07)
-- **0.6.27+14** - added info panel to expanded image (2026-02-07)
-- **0.6.26+14** - adjusted search bar (2026-02-06)
-- **0.6.25+14** - added search bar (2026-02-06)
-- **0.6.24+14** - rewrote build process (2026-02-06)
-- **0.6.23+14** - 🐦 Bird 029: Eurasian Moorhen (2026-02-06)
+## v0.6.0 (QoL, Search, and Data)
 
-## v0.6.0 (Dark Mode & Expanded View)
+- **0.6.060+017** | 2026-02-15 | added Dhivehi names
+- **0.6.059+017** | 2026-02-07 | added illustrator notes
+- **0.6.058+017** | 2026-02-07 | added sort by date
+- **0.6.057+017** | 2026-02-07 | added info panel to expanded image
+- **0.6.056+017** | 2026-02-06 | adjusted search bar
+- **0.6.055+017** | 2026-02-06 | added search bar
+- **0.6.054+017** | 2026-02-06 | rewrote build process
+- **0.6.053+017** | 2026-02-06 | 🐦 Bird 029: Eurasian Moorhen
+- **0.6.052+016** | 2026-01-16 | added known issues documentation
+- **0.6.051+016** | 2026-01-16 | ship script now skips existing images
+- **0.6.050+016** | 2026-01-15 | fixed versioning system
+- **0.6.049+016** | 2026-01-15 | added triple check for bird count validation
+- **0.6.048+016** | 2026-01-15 | added expanded image view
+- **0.6.047+016** | 2026-01-15 | 🐦 Bird 030: Eurasian Coot
 
-- **0.6.22+13** - added known issues documentation (2026-01-16)
-- **0.6.21+13** - ship script now skips existing images (2026-01-16)
-- **0.6.20+13** - fixed versioning system (2026-01-15)
-- **0.6.19+13** - added triple check for bird count validation (2026-01-15)
-- **0.6.18+13** - added expanded image view (2026-01-15)
-- **0.6.17+13** - 🐦 Bird 030: Eurasian Coot (2026-01-15)
+## v0.5.0 (Tailwind & Dark Mode)
 
-## v0.5.0 (Tailwind & Dark Mode Update)
-
-- **0.5.16+12** - updated script permissions (2026-01-15)
-- **0.5.15+12** - footer implementation (2026-01-15)
-- **0.5.14+12** - updated Vite dependency (2026-01-15)
-- **0.5.13+12** - added git hooks (2026-01-15)
-- **0.5.12+12** - updated dependencies (2026-01-12)
-- **0.5.11+12** - updated README documentation (2026-01-12)
-- **0.5.10+12** - modified build.yml workflow (2026-01-12)
-- **0.5.9+12** - code cleanup (2026-01-12)
-- **0.5.8+12** - added theme toggle (2026-01-12)
-- **0.5.7+12** - migrated to Tailwind CSS and added dark mode (2026-01-12)
-- **0.5.6+12** - 🐦 Bird 004: Northern Shoveler (2025-12-19)
+- **0.5.046+015** | 2026-01-15 | updated script permissions
+- **0.5.045+015** | 2026-01-15 | footer implementation
+- **0.5.044+015** | 2026-01-15 | updated Vite dependency
+- **0.5.043+015** | 2026-01-15 | added git hooks
+- **0.5.042+015** | 2026-01-12 | updated dependencies
+- **0.5.041+015** | 2026-01-12 | updated README documentation
+- **0.5.040+015** | 2026-01-12 | modified build.yml workflow
+- **0.5.039+015** | 2026-01-12 | code cleanup
+- **0.5.038+015** | 2026-01-12 | added theme toggle
+- **0.5.037+015** | 2026-01-12 | migrated to Tailwind CSS and added dark mode
+- **0.5.036+015** | 2025-12-19 | 🐦 Bird 004: Northern Shoveler
 
 ## v0.4.0 (Vue Rewrite)
 
-- **0.4.5+11** - added bird 031 to data (2025-12-17)
-- **0.4.4+11** - refactored main file (2025-12-05)
-- **0.4.3+11** - migrated from txt to json format (2025-12-05)
-- **0.4.2+11** - fixed mobile bottom scrolling (2025-11-21)
-- **0.4.1+11** - CSS cleanup + renamed variables + added progress tracker (2025-11-21)
-- **0.4.0+11** - 🐦 Bird 032: White-breasted Waterhen (2025-11-09)
-- **0.4.0+10** - code refactor (2025-10-24)
-- **0.4.0+10** - 🐦 Bird 177: House Crow (2025-10-24)
-- **0.4.0+9** - fixed scroll behavior (2025-11-10)
-- **0.4.0+9** - added thumbnail support (2025-10-11)
-- **0.4.0+8** - 🐦 Bird 011: Greater Flamingo (2025-10-07)
-- **0.4.0+8** - 🐦 Bird 039: Greater Sand-Plover (2025-10-07)
-- **0.4.0+8** - 🐦 Bird 099: White-tailed Tropicbird (2025-10-07)
-- **0.4.0+8** - 🐦 Bird 130: Yellow Bittern (2025-10-07)
-- **0.4.0+8** - 🐦 Bird 133: Gray Heron (2025-10-07)
-- **0.4.0+8** - 🐦 Bird 139: Cattle Egret (2025-10-07)
-- **0.4.0+2** - UI revamp (2025-06-24)
-- **0.4.0+2** - converted PNG to WebP format (2025-06-24)
-- **0.4.0+1** - rewrote from scratch using Vue.js (2025-05-30)
+- **0.4.035+014** | 2025-12-17 | added bird 031 to data
+- **0.4.034+014** | 2025-12-05 | refactored main file
+- **0.4.033+014** | 2025-12-05 | migrated from txt to json format
+- **0.4.032+014** | 2025-11-21 | fixed mobile bottom scrolling
+- **0.4.031+014** | 2025-11-21 | CSS cleanup + renamed variables + added progress tracker
+- **0.4.030+014** | 2025-11-09 | 🐦 Bird 032: White-breasted Waterhen
+- **0.4.029+013** | 2025-10-24 | code refactor
+- **0.4.028+013** | 2025-10-24 | 🐦 Bird 177: House Crow
+- **0.4.027+012** | 2025-10-15 | 🐦 Bird 031: Watercock
+- **0.4.026+011** | 2025-11-10 | fixed scroll behavior
+- **0.4.025+011** | 2025-10-11 | added thumbnail support
+- **0.4.024+011** | 2025-10-07 | 🐦 Bird 011, 039, 099, 130, 133, 139 (6 birds)
+- **0.4.023+005** | 2025-07-09 | 🐚 Shell 020: Clam Shell
+- **0.4.022+004** | 2025-07-06 | 🐚 Shell 019: Scallop
+- **0.4.021+003** | 2025-06-24 | UI revamp
+- **0.4.020+003** | 2025-06-24 | converted PNG to WebP format
+- **0.4.019+003** | 2025-05-30 | rewrote from scratch using Vue.js
 
 ## v0.3.0 (Deno & Build Tools)
 
-- **0.3.0+4** - project housekeeping (2025-02-25)
-- **0.3.0+4** - added bundler tests (2025-02-24)
-- **0.3.0+4** - added tests to handler (2025-02-19)
-- **0.3.0+4** - code formatting improvements (2025-02-15)
-- **0.3.0+3** - added license (2025-02-14)
-- **0.3.0+2** - fixed expanded images (2025-02-14)
-- **0.3.0+1** - migrated to Deno and esbuild (2025-02-14)
+- **0.3.018+003** | 2025-02-25 | project housekeeping
+- **0.3.017+003** | 2025-02-24 | added bundler tests
+- **0.3.016+003** | 2025-02-19 | added tests to handler
+- **0.3.015+003** | 2025-02-15 | code formatting improvements
+- **0.3.014+003** | 2025-02-14 | added license
+- **0.2.013+003** | 2025-02-14 | fixed expanded images
+- **0.2.012+003** | 2025-02-14 | migrated to Deno and esbuild
 
 ## v0.2.0 (Deployment Setup)
 
-- **0.2.0+7** - updated dependencies (2025-02-07)
-- **0.2.0+6** - major code refactor (2025-02-02)
-- **0.2.0+5** - added title card (2025-02-01)
-- **0.2.0+4** - fixed animation (2025-01-28)
-- **0.2.0+3** - added favicon (2025-01-27)
-- **0.2.0+2** - fixed local build process (2025-01-27)
-- **0.2.0+1** - 🐦 Bird 003: Garganey (2025-01-11)
-- **0.2.0+1** - removed node_modules from tracking (2025-01-26)
-- **0.2.0+1** - configured GitHub Actions workflow for deployment (2025-01-26)
+- **0.2.011+003** | 2025-02-07 | updated dependencies
+- **0.2.010+003** | 2025-02-02 | major code refactor
+- **0.2.009+003** | 2025-02-01 | added title card
+- **0.2.008+003** | 2025-01-28 | fixed animation
+- **0.2.007+003** | 2025-01-27 | added favicon
+- **0.2.006+003** | 2025-01-27 | fixed local build process
+- **0.2.005+003** | 2025-01-26 | configured GitHub Actions workflow for deployment
+- **0.2.004+003** | 2025-01-26 | removed node_modules from tracking
+- **0.2.003+003** | 2025-01-11 | 🐦 Bird 003: Garganey
 
 ## v0.1.0 (Initial Development)
 
-- **0.1.0+3** - 🐦 Bird 031: Watercock (2024-10-15)
-- **0.1.0+2** - 🐦 Bird 002: Cotton Pygmy-Goose (2024-10-15)
-- **0.1.0+1** - 🐦 Bird 001: Lesser Whistling-Duck (2024-10-10)
+- **0.1.002+002** | 2024-10-15 | 🐦 Bird 002: Cotton Pygmy-Goose
+- **0.1.001+001** | 2024-10-10 | 🐦 Bird 001: Lesser Whistling-Duck
