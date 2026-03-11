@@ -1,5 +1,5 @@
 import { type Ref, ref } from 'vue';
-import type { ScrollUI, UIState, UseScrollLogicReturn } from '../types/composables.ts';
+import type { ScrollUI, UIState, UseScrollLogicReturn } from '../../types/composables.ts';
 
 export function useScrollLogic(
   uiRef: Ref<ScrollUI | null>,

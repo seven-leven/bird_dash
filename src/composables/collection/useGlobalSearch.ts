@@ -1,12 +1,12 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
-import type { CollectionConfig, CollectionItem } from '../types/collections.ts';
-import type { CollectionCache } from '../types/composables.ts';
+import type { CollectionConfig, CollectionItem } from '../../types/collections.ts';
 import {
+  CollectionCache,
   type GlobalSearchCollectionGroup,
   GlobalSearchResult,
   type GlobalSearchState,
   type MatchedField,
-} from '../types/composables.ts';
+} from '../../types/composables.ts';
 
 // ---------------------------------------------------------------------------
 // HELPERS

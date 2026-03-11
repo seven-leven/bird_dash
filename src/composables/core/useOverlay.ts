@@ -1,5 +1,5 @@
 import { reactive } from 'vue';
-import { type CollectionItem } from '../types/collections.ts';
+import { type CollectionItem } from '../../types/collections.ts';
 
 export function useOverlay() {
   const expandedImage = reactive({

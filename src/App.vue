@@ -11,11 +11,12 @@ import {
   useCollections, 
   useCollectionData, 
   useScrollLogic, 
-  useTheme, 
   useBreakpoints, 
-  useOverlay 
+  useOverlay,
+  useGlobalSearch, 
 } from './composables'; 
-import { useGlobalSearch, type GlobalSearchState } from './composables/useGlobalSearch';
+import { type GlobalSearchState  } from './types/composables';
+import   {useTheme} from './composables/core/useTheme.ts'
 
 // =============================================================================
 // STATE & CORE LOGIC

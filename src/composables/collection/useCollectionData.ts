@@ -1,12 +1,12 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
-import type { CollectionItem } from '../types/collections.ts';
+import type { CollectionItem } from '../../types/collections.ts';
 import type {
   CollectionStats,
   DateData,
   GroupedData,
   SidebarItem,
   ViewMode,
-} from '../types/composables.ts';
+} from '../../types/composables.ts';
 
 export function useCollectionData(
   items: Ref<CollectionItem[]>,

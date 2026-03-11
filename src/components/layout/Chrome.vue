@@ -162,7 +162,7 @@ import {
   type ActiveData,
   type ExpandedImageState,
 } from '../../types/ui';
-import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../composables/useGlobalSearch';
+import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../types/composables';
 import versionData from '../../version.json';
 
 const displayVersion = `${versionData.major}.${versionData.minor}.${versionData.patch}`;
