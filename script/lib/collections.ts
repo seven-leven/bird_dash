@@ -1,11 +1,13 @@
-import { COLLECTIONS as FE_COLLECTIONS } from '../../src/types/collections.ts';
+// Import the JSON directly from the public folder
+import FE_COLLECTIONS from '../../public/collections.json' with { type: 'json' };
 import { ScriptCollectionEntry } from '../../src/types/scripts.ts';
-// Define an interface for the BUILD scripts that adds the fields needed by the build
 
-// Map the FE_COLLECTIONS into the new type
+// Map the raw JSON data into the format your scripts expect
 export const COLLECTIONS: ScriptCollectionEntry[] = FE_COLLECTIONS.map((col) => ({
+  // Spread all properties from JSON (id, label, emoji, links, etc.)
   ...col,
-  // These are the new fields your scripts expect
+
+  // Add the filesystem paths used by the build/processing scripts
   json: `./public/lists/${col.id}.json`,
   placeholder: `./public/placeholders/${col.id}.webp`,
   raw: `./raw_png/${col.id}/`,

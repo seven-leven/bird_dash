@@ -10,9 +10,16 @@
       :data="data"
       :global-stats="globalStats"
       :search="search"
+      :global-search-state="globalSearchState"
+      :global-results="globalResults"
+      :global-result-count="globalResultCount"
       @toggle-sidebar="$emit('toggleSidebar')"
       @switch-collection="$emit('switchCollection', $event)"
       @update-search="$emit('updateSearch', $event)"
+      @update-global-search="$emit('updateGlobalSearch', $event)"
+      @open-global-search-dropdown="$emit('openGlobalSearchDropdown')"
+      @close-global-search-dropdown="$emit('closeGlobalSearchDropdown')"
+      @select-global-result="$emit('selectGlobalResult', $event[0], $event[1])"
       @toggle-view-mode="$emit('toggleViewMode')"
       @toggle-theme="$emit('toggleTheme')"
     />
@@ -155,6 +162,7 @@ import {
   type ActiveData,
   type ExpandedImageState,
 } from '../../types/ui';
+import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../composables/useGlobalSearch';
 import versionData from '../../version.json';
 
 const displayVersion = `${versionData.major}.${versionData.minor}.${versionData.patch}`;
@@ -164,34 +172,43 @@ const appVersion     = `${displayVersion}+${versionData.count}`;
 // PROPS
 // ---------------------------------------------------------------------------
 const props = defineProps<{
-  collections:      CollectionConfig[];
-  activeCollection: CollectionConfig | undefined;
-  globalStats:      GlobalStats;
-  ui:               UIState;
-  theme:            ThemeState;
-  data:             DataState;
-  activeData:       ActiveData<CollectionItem>;
-  activeSection?:   string;
-  search:           SearchState;
-  expandedImage:    ExpandedImageState<CollectionItem>;
-  drawnItems:       CollectionItem[];
+  collections:       CollectionConfig[];
+  activeCollection:  CollectionConfig | undefined;
+  globalStats:       GlobalStats;
+  ui:                UIState;
+  theme:             ThemeState;
+  data:              DataState;
+  activeData:        ActiveData<CollectionItem>;
+  activeSection?:    string;
+  search:            SearchState;
+  // Global search
+  globalSearchState: GlobalSearchState;
+  globalResults:     GlobalSearchCollectionGroup[];
+  globalResultCount: number;
+  expandedImage:     ExpandedImageState<CollectionItem>;
+  drawnItems:        CollectionItem[];
 }>();
 
 // ---------------------------------------------------------------------------
 // EMITS
 // ---------------------------------------------------------------------------
 defineEmits<{
-  switchCollection:  [id: string];
-  closeSidebar:      [];
-  toggleSidebar:     [];
-  toggleTheme:       [];
-  toggleViewMode:    [];
-  goToSection:       [id: string];
-  scroll:            [];
-  cardClick:         [item: CollectionItem];
-  updateSearch:      [query: string];
-  closeOverlay:      [];
-  updateOverlayItem: [item: CollectionItem];
+  switchCollection:         [id: string];
+  closeSidebar:             [];
+  toggleSidebar:            [];
+  toggleTheme:              [];
+  toggleViewMode:           [];
+  goToSection:              [id: string];
+  scroll:                   [];
+  cardClick:                [item: CollectionItem];
+  updateSearch:             [query: string];
+  // Global search
+  updateGlobalSearch:       [query: string];
+  openGlobalSearchDropdown: [];
+  closeGlobalSearchDropdown:[];
+  selectGlobalResult:       [collectionId: string, itemId: string];
+  closeOverlay:             [];
+  updateOverlayItem:        [item: CollectionItem];
 }>();
 
 // ---------------------------------------------------------------------------

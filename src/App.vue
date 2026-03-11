@@ -15,6 +15,7 @@ import {
   useBreakpoints, 
   useOverlay 
 } from './composables'; 
+import { useGlobalSearch, type GlobalSearchState } from './composables/useGlobalSearch';
 
 // =============================================================================
 // STATE & CORE LOGIC
@@ -41,6 +42,7 @@ const {
   globalStats,
   data,
   COLLECTIONS,
+  collectionCache,
   init,
   switchCollection,
 } = useCollections();
@@ -53,10 +55,66 @@ const activeDataWithStats = computed(() => ({ ...activeData.value, stats: stats.
 const { activeSection, updateActiveSection, goToSection, handleHash } = useScrollLogic(uiRef, ui);
 
 // =============================================================================
+// GLOBAL SEARCH
+// =============================================================================
+const globalSearchState = ref<GlobalSearchState>({
+  query:  '',
+  isOpen: false,
+});
+
+const {
+  globalResults,
+  globalResultCount,
+} = useGlobalSearch(COLLECTIONS, collectionCache, globalSearchState);
+
+function handleUpdateGlobalSearch(q: string) {
+  globalSearchState.value.query = q;
+  // Also keep the per-collection search in sync so the grid filters too
+  search.query = q;
+  if (q.trim()) {
+    globalSearchState.value.isOpen = true;
+  }
+}
+
+function handleOpenGlobalSearchDropdown() {
+  globalSearchState.value.isOpen = true;
+}
+
+function handleCloseGlobalSearchDropdown() {
+  globalSearchState.value.isOpen = false;
+}
+
+/**
+ * User clicked / keyboard-selected a global search result.
+ * 1. Switch to the correct collection (if needed)
+ * 2. Close the dropdown
+ * 3. Scroll the item into view via its DOM id
+ */
+async function handleSelectGlobalResult(collectionId: string, itemId: string) {
+  globalSearchState.value.isOpen = false;
+
+  // Switch collection first (no-op if already active)
+  if (collectionId !== activeCollection.value?.id) {
+    await handleSwitchCollection(collectionId);
+  }
+
+  // Wait a tick for the grid to render, then scroll to item
+  await nextTick();
+  const el = document.getElementById(`item-${itemId}`);
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Brief highlight flash
+    el.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
+    setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2'), 1800);
+  }
+}
+
+// =============================================================================
 // ACTIONS
 // =============================================================================
 async function handleSwitchCollection(id: string) {
   search.query = '';
+  globalSearchState.value.query = '';
   if (uiRef.value?.headerRefs) uiRef.value.headerRefs = {};
   
   await switchCollection(id, () => {
@@ -102,6 +160,9 @@ watch(() => data.items, () => {
       :active-data="activeDataWithStats"
       :active-section="activeSection"
       :search="search"
+      :global-search-state="globalSearchState"
+      :global-results="globalResults"
+      :global-result-count="globalResultCount"
       :expanded-image="expandedImage"
       :drawn-items="searchedDrawnItems"
       
@@ -114,12 +175,16 @@ watch(() => data.items, () => {
       @scroll="updateActiveSection"
       @card-click="openOverlay"
       @update-search="search.query = $event"
+      @update-global-search="handleUpdateGlobalSearch"
+      @open-global-search-dropdown="handleOpenGlobalSearchDropdown"
+      @close-global-search-dropdown="handleCloseGlobalSearchDropdown"
+      @select-global-result="handleSelectGlobalResult"
       @close-overlay="closeOverlay"
       @update-overlay-item="updateOverlayItem"
     />
   </div>
   
   <div v-else class="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
-    <p class="text-slate-500 animate-pulse font-medium">Loading Experience...</p>
+    <p class="text-slate-500 animate-pulse font-medium">Loading Experience…</p>
   </div>
 </template>

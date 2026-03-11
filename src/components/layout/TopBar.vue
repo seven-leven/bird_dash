@@ -36,35 +36,16 @@
     <div class="w-px h-6 shrink-0 hidden sm:block bg-slate-200 dark:bg-slate-700" />
     <div class="flex-1" />
 
-    <!-- Search -->
-    <div class="relative w-36 sm:w-48 md:w-56 shrink-0">
-      <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-        <svg class="h-3.5 w-3.5 text-slate-400 dark:text-slate-500"
-             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
-        </svg>
-      </div>
-      <input
-        type="text"
-        :value="search.query"
-        @input="$emit('updateSearch', ($event.target as HTMLInputElement).value)"
-        :placeholder="`Search ${activeCollection?.label?.toLowerCase() ?? ''}s...`"
-        class="block w-full pl-7 pr-6 py-1.5 rounded-md text-sm border transition-colors
-               focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-               bg-slate-100 border-slate-200 text-slate-900 placeholder-slate-400
-               dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder-slate-500"
-      />
-      <button
-        v-if="search.query"
-        @click="$emit('updateSearch', '')"
-        class="absolute inset-y-0 right-0 pr-2 flex items-center
-               text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-      >
-        <svg class="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-        </svg>
-      </button>
-    </div>
+    <!-- GLOBAL SEARCH COMPONENT -->
+    <GlobalSearch
+      :search-state="globalSearchState"
+      :results="globalResults"
+      :result-count="globalResultCount"
+      @update="(q) => $emit('updateGlobalSearch', q)"
+      @select="(cId, iId) => $emit('selectGlobalResult', cId, iId)"
+      @open="$emit('openGlobalSearchDropdown')"
+      @close="$emit('closeGlobalSearchDropdown')"
+    />
 
     <!-- View mode toggle -->
     <button
@@ -128,24 +109,31 @@
 </template>
 
 <script setup lang="ts">
+import GlobalSearch from './GlobalSearch.vue';
 import { type CollectionConfig } from '../../types/collections';
-import { type UIState, type ThemeState, type DataState, type GlobalStats, type SearchState } from '../../types/ui';
+import { type UIState, type ThemeState, type DataState, type GlobalStats } from '../../types/ui';
+import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../types/composables';
 
 defineProps<{
-  collections:      CollectionConfig[];
-  activeCollection: CollectionConfig | undefined;
-  ui:               UIState;
-  theme:            ThemeState;
-  data:             DataState;
-  globalStats:      GlobalStats;
-  search:           SearchState;
+  collections:       CollectionConfig[];
+  activeCollection:  CollectionConfig | undefined;
+  ui:                UIState;
+  theme:             ThemeState;
+  data:              DataState;
+  globalStats:       GlobalStats;
+  globalSearchState: GlobalSearchState;
+  globalResults:     GlobalSearchCollectionGroup[];
+  globalResultCount: number;
 }>();
 
 defineEmits<{
-  toggleSidebar:    [];
-  switchCollection: [id: string];
-  updateSearch:     [query: string];
-  toggleViewMode:   [];
-  toggleTheme:      [];
+  toggleSidebar:        [];
+  switchCollection:     [id: string];
+  toggleViewMode:       [];
+  toggleTheme:          [];
+  updateGlobalSearch:   [query: string];
+  selectGlobalResult:   [collectionId: string, itemId: string];
+  openGlobalSearchDropdown: [];
+  closeGlobalSearchDropdown: [];
 }>();
 </script>

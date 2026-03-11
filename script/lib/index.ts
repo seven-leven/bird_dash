@@ -10,7 +10,7 @@ export * from './fs.ts';
 // Re-export all string utilities
 export * from './strings.ts';
 
-import { COLLECTIONS } from '../../src/types/collections.ts';
+import { COLLECTIONS } from './collections.ts';
 import type { ScriptCollectionEntry } from '../../src/types/scripts.ts';
 
 // Maps frontend config to backend file paths

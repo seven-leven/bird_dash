@@ -1,55 +1,91 @@
-import { computed, type ComputedRef, nextTick, reactive, type Ref, ref } from 'vue';
-import {
-  type CollectionConfig,
-  type CollectionItem,
-  COLLECTIONS as RAW_COLLECTIONS,
-  fetchCollectionData,
-  getPlaceholder,
-  initCollections,
+import { computed, type ComputedRef, nextTick, reactive, ref } from 'vue';
+// Added .ts extension and fixed path based on your error log
+import type {
+  CollectionCache,
+  CollectionConfig,
+  CollectionItem,
+  DataState,
+  GlobalStats,
+  RawCollectionConfig,
 } from '../types/collections.ts';
-import type { CollectionCache, DataState, GlobalStats } from '../types/composables.ts';
+
+const getBase = () => (import.meta.env?.BASE_URL as string) || '/';
+
+const resolveUrl = (template: string, item: CollectionItem): string => {
+  return template
+    .replace(/{{common}}/g, encodeURIComponent(item.commonName))
+    .replace(/{{sci}}/g, encodeURIComponent(item.scientificName));
+};
 
 export function useCollections() {
-  // ---------------------------------------------------------------------------
-  // STATE
-  // ---------------------------------------------------------------------------
-  const collections: Ref<CollectionConfig[]> = ref([...RAW_COLLECTIONS]);
-  const isInitialized: Ref<boolean> = ref(false);
-  const activeCollectionId: Ref<string> = ref('');
+  const collections = ref<CollectionConfig[]>([]);
+  const isInitialized = ref(false);
+  const activeCollectionId = ref('');
   const collectionCache = reactive<CollectionCache>({});
 
   const data = reactive<DataState>({
-    items: [] as CollectionItem[],
+    items: [],
     loading: true,
-    error: undefined as string | undefined,
+    error: undefined,
   });
 
-  // ---------------------------------------------------------------------------
-  // COMPUTED
-  // ---------------------------------------------------------------------------
   const activeCollection: ComputedRef<CollectionConfig | undefined> = computed(() => {
     if (!isInitialized.value) return undefined;
-    return collections.value.find((c) => c.id === activeCollectionId.value) ?? collections.value[0];
+    return collections.value.find((c: CollectionConfig) => c.id === activeCollectionId.value) ??
+      collections.value[0];
   });
 
   const globalStats: ComputedRef<GlobalStats> = computed(() => {
     let drawn = 0, total = 0;
-    if (!isInitialized.value) return { drawn, total };
-    for (const col of collections.value) {
+    collections.value.forEach((col: CollectionConfig) => {
       const cached = collectionCache[col.id] ?? [];
       total += cached.length;
-      drawn += cached.filter((i) => i.imageUrl !== i.placeholderUrl).length;
-    }
+      drawn += cached.filter((i: CollectionItem) => i.imageUrl !== i.placeholderUrl).length;
+    });
     return { drawn, total };
   });
 
-  const placeholderImage: ComputedRef<string> = computed(() =>
-    getPlaceholder(activeCollectionId.value)
+  const placeholderImage = computed(() =>
+    `${getBase()}placeholders/${activeCollectionId.value}.webp`
   );
 
-  // ---------------------------------------------------------------------------
-  // ACTIONS
-  // ---------------------------------------------------------------------------
+  const fetchCollectionData = async (col: CollectionConfig): Promise<CollectionItem[]> => {
+    const res = await fetch(col.dataUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status} loading ${col.label}`);
+
+    const rawGroups: Record<string, Record<string, unknown>[]> = await res.json();
+    const items: CollectionItem[] = [];
+    const placeholder = `${getBase()}placeholders/${col.id}.webp`;
+    const knownKeys = new Set(['id', 'name', 'sci', 'drawn', 'illustratorNote']);
+
+    let counter = 1;
+    for (const [groupName, list] of Object.entries(rawGroups)) {
+      list.forEach((r: Record<string, unknown>) => {
+        const hasImg = !!r.drawn;
+        const meta: Record<string, string> = {};
+        Object.keys(r).forEach((k: string) => {
+          if (!knownKeys.has(k) && typeof r[k] === 'string') {
+            meta[k] = r[k] as string;
+          }
+        });
+
+        items.push({
+          id: `${col.id}-item-${counter++}`,
+          itemId: String(r.id ?? ''),
+          commonName: String(r.name ?? ''),
+          scientificName: String(r.sci ?? ''),
+          group: groupName,
+          drawnDate: String(r.drawn ?? ''),
+          imageUrl: hasImg ? `${col.imageBase}${r.id}.webp` : placeholder,
+          placeholderUrl: placeholder,
+          illustratorNote: String(r.illustratorNote ?? ''),
+          meta: Object.keys(meta).length ? meta : undefined,
+        });
+      });
+    }
+    return items;
+  };
+
   const loadData = async (): Promise<void> => {
     if (!activeCollection.value) return;
     data.loading = true;
@@ -65,10 +101,7 @@ export function useCollections() {
     }
   };
 
-  const switchCollection = async (
-    id: string,
-    onSwitch?: () => void,
-  ): Promise<void> => {
+  const switchCollection = async (id: string, onSwitch?: () => void): Promise<void> => {
     if (id === activeCollectionId.value) return;
     activeCollectionId.value = id;
 
@@ -81,21 +114,36 @@ export function useCollections() {
     }
   };
 
-  const prefetchOtherCollections = async (): Promise<void> => {
+  const prefetchOtherCollections = (): void => {
     for (const col of collections.value) {
       if (col.id === activeCollectionId.value || collectionCache[col.id]) continue;
-      try {
-        collectionCache[col.id] = await fetchCollectionData(col);
-      } catch { /* silent fail */ }
+
+      // Fire and forget: results are stored in cache when they resolve
+      fetchCollectionData(col).then((items) => {
+        collectionCache[col.id] = items;
+      }).catch(() => {
+        /* silent fail for background prefetch */
+      });
     }
   };
 
-  // ---------------------------------------------------------------------------
-  // LIFECYCLE
-  // ---------------------------------------------------------------------------
   const init = async (): Promise<void> => {
-    await initCollections();
-    collections.value = [...RAW_COLLECTIONS]; // re-sync after initCollections populates the array
+    const response = await fetch(`${getBase()}collections.json`);
+    const rawData: RawCollectionConfig[] = await response.json();
+
+    collections.value = rawData.map((c: RawCollectionConfig) => ({
+      ...c,
+      dataUrl: `${getBase()}lists/${c.id}.json`,
+      imageBase: `${getBase()}thumb/${c.id}/`,
+      fullImageBase: `${getBase()}full/${c.id}/`,
+      links: c.links.map((l) => ({
+        label: l.label,
+        color: l.color,
+        urlTemplate: l.url,
+        getUrl: (item: CollectionItem) => resolveUrl(l.url, item),
+      })),
+    }));
+
     if (collections.value.length > 0) {
       activeCollectionId.value = collections.value[0].id;
       isInitialized.value = true;
@@ -105,21 +153,17 @@ export function useCollections() {
   };
 
   return {
-    // state
     isInitialized,
     activeCollectionId,
     collectionCache,
     data,
-    // computed
     activeCollection,
     globalStats,
     placeholderImage,
-    // actions
     loadData,
     switchCollection,
     prefetchOtherCollections,
     init,
-    // pass-through for template (reactive ref)
     COLLECTIONS: collections,
   };
 }

@@ -12,12 +12,6 @@ export interface CollectionItem {
   [key: string]: unknown;
 }
 
-// Legacy alias
-export type Bird = CollectionItem;
-
-export type CollectionData = Record<string, CollectionItem[]>;
-export type BirdsData = CollectionData;
-
 // ---------------------------------------------------------------------------
 // Versioning
 // ---------------------------------------------------------------------------

@@ -96,3 +96,25 @@ export interface UseScrollLogicReturn {
   goToSection: (name: string) => void;
   handleHash: () => void;
 }
+
+// ---------------------------------------------------------------------------
+// TYPES
+// ---------------------------------------------------------------------------
+export interface GlobalSearchResult {
+  item: CollectionItem;
+  collection: CollectionConfig;
+  matchedFields: MatchedField[];
+}
+
+export type MatchedField = 'id' | 'commonName' | 'scientificName';
+
+export interface GlobalSearchCollectionGroup {
+  collection: CollectionConfig;
+  results: GlobalSearchResult[];
+  count: number;
+}
+
+export interface GlobalSearchState {
+  query: string;
+  isOpen: boolean;
+}
