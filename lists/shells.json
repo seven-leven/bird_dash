@@ -1,0 +1,280 @@
+{
+  "Sea Snails": [
+    {
+      "id": "001",
+      "name": "Limpet",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Patellidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "002",
+      "name": "Periwinkle",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Littorinidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "003",
+      "name": "Moon Snail",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Naticidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "004",
+      "name": "Conch Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Aliger gigas",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "005",
+      "name": "Cowrie Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Cypraeidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "006",
+      "name": "Olive Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Olividae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "007",
+      "name": "Whelk",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Buccinidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "008",
+      "name": "Turritella",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Turritellidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "009",
+      "name": "Auger Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Terebridae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "010",
+      "name": "Abalone",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Haliotis",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "011",
+      "name": "Sundial Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Architectonicidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "012",
+      "name": "Murex Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Muricidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "013",
+      "name": "Triton's Trumpet",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Charonia tritonis",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "014",
+      "name": "Wentletrap",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Epitoniidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "015",
+      "name": "Spindle Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Fasciolariidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "016",
+      "name": "Helmet Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Cassidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "017",
+      "name": "Volute Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Volutidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "018",
+      "name": "Spider Conch",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Lambis",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Clams and Scallops": [
+    {
+      "id": "019",
+      "name": "Scallop Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Pectinidae",
+      "drawn": "2025-07-06",
+      "illustratorNote": "first shell in the series but its really showing lack of expreance with marker, expaclly with how flat its"
+    },
+    {
+      "id": "020",
+      "name": "Clam Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Venerida",
+      "drawn": "2025-07-09",
+      "illustratorNote": "tried to make it not flat feel like achived goal in that regard"
+    },
+    {
+      "id": "021",
+      "name": "Jingle Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Anomia simplex",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "022",
+      "name": "Cockle Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Cardiidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "023",
+      "name": "Oyster Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Ostreidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "024",
+      "name": "Mussel Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Mytilidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "025",
+      "name": "Ark Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Arcidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "026",
+      "name": "Pen Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Pinnidae",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "027",
+      "name": "Angel Wing",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Cyrtopleura costata",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Nautilus": [
+    {
+      "id": "028",
+      "name": "Nautilus Shell",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Nautilus pompilius",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Sea Urchins and Sand Dollars": [
+    {
+      "id": "029",
+      "name": "Sand Dollar",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Clypeasteroida",
+      "drawn": "2026-03-09",
+      "illustratorNote": "rembered about this seies after a long time getting back it"
+    },
+    {
+      "id": "030",
+      "name": "Sea Urchin",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Echinoidea",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ]
+}
