@@ -21,6 +21,7 @@ export interface CollectionConfig {
   groupLabel: string;
   itemLabel: string;
   links: {
+    url(item: CollectionItem): string | undefined;
     label: string;
     color: string;
     urlTemplate: string;

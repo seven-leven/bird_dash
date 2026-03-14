@@ -71,7 +71,7 @@
         <a
           v-for="link in links"
           :key="link.label"
-          :href="link.url(item)"
+          :href="resolveUrl(link, item)"
           target="_blank"
           rel="noopener noreferrer"
           :class="`inline-flex items-center justify-center gap-1 px-3 py-2 ${link.color} text-white text-xs font-medium rounded-lg transition-colors`"
@@ -83,7 +83,6 @@
 
   </div>
 </template>
-
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { CollectionItem, CollectionConfig } from '../../types/collections';
@@ -93,8 +92,8 @@ const props = defineProps<{
   collection: CollectionConfig;
 }>();
 
-// Links come straight from the collection config — no hardcoding here
-const links = computed(() => props.collection.links);
+// Links come straight from the collection config
+const links = computed(() => props.collection.links || []);
 
 // All meta keys except the ones we render specially
 const SPECIAL_META_KEYS = new Set(['dhiv', 'dhiv_script']);
@@ -105,6 +104,14 @@ const otherMeta = computed(() => {
     Object.entries(props.item.meta).filter(([k]) => !SPECIAL_META_KEYS.has(k))
   );
 });
+
+// Helper to resolve dynamic or static URLs
+function resolveUrl(link: any, item: CollectionItem): string | undefined {
+  if (typeof link.url === 'function') {
+    return link.url(item);
+  }
+  return link.url;
+}
 
 // Convert snake_case / camelCase keys to readable labels
 function formatMetaKey(key: string): string {
