@@ -1,10 +1,15 @@
-import type { CollectionConfig } from './collections.ts';
+import type { CollectionConfig, CollectionItem } from './collections.ts';
+
+// Re-export CollectionItem for consumers who only import from scripts
+export type { CollectionItem };
 
 // ---------------------------------------------------------------------------
-// Collection data types
+// Script-specific CollectionItem shape (raw CSV/JSON fields, looser than UI type)
+// If your scripts truly need different fields (e.g. `name`/`sci` vs `commonName`/
+// `scientificName`), define a separate type with a distinct name to avoid clashes.
 // ---------------------------------------------------------------------------
 
-export interface CollectionItem {
+export interface RawScriptItem {
   id: string;
   name: string;
   sci: string;
@@ -65,7 +70,6 @@ export interface NewDrawing {
 // Script/Build Types
 // ---------------------------------------------------------------------------
 
-// Minimal version for basic scripts (no frontend config dependency)
 export interface ScriptCollectionEntry {
   id: string;
   json: string;
@@ -75,7 +79,6 @@ export interface ScriptCollectionEntry {
   label: string;
 }
 
-// Extended version that includes all CollectionConfig fields
 export interface ScriptCollectionEntryExtended extends CollectionConfig {
   json: string;
   placeholder: string;
@@ -97,3 +100,13 @@ export interface BuildResult {
   version: VersionData;
   collections: CollectionBuildResult[];
 }
+
+export type CollectionData = Record<
+  string,
+  Array<{
+    id: string;
+    name: string;
+    sci?: string;
+    drawn?: string;
+  }>
+>;

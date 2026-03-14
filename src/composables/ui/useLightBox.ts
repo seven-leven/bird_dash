@@ -1,6 +1,6 @@
 // useLightbox.ts
 import { computed, onUnmounted, ref, watch } from 'vue';
-import type { CollectionConfig, CollectionItem } from '../types/collections.ts';
+import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 interface LightboxOptions {
   props: {

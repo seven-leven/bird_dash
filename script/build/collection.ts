@@ -1,13 +1,7 @@
 /// <reference lib="deno.ns" />
-import {
-  CollectionData,
-  ProcessResult,
-  readJson,
-  type ScriptCollectionEntry,
-  writeJson,
-} from '../lib/index.ts';
+import { CollectionData, ProcessResult, readJson, writeJson } from '../lib/index.ts';
 import { createMissingThumbnail, processImage, verifyIntegrity } from './processor.ts';
-import { CollectionBuildResult } from '../../src/types/scripts.ts';
+import { CollectionBuildResult, type ScriptCollectionEntry } from '../../src/types/index.ts';
 // ---------------------------------------------------------------------------
 // Collection data helpers
 // ---------------------------------------------------------------------------
@@ -15,7 +9,7 @@ import { CollectionBuildResult } from '../../src/types/scripts.ts';
 async function getDrawnIds(collection: ScriptCollectionEntry): Promise<Set<string>> {
   const data = await readJson<CollectionData>(collection.json);
   const ids = new Set<string>();
-  for (const group of Object.values(data)) {
+  for (const group of Object.values(data) as Array<Array<{ id: string; drawn?: string }>>) {
     for (const item of group) {
       if (item.drawn) ids.add(item.id);
     }
@@ -31,7 +25,7 @@ async function markItemAsDrawn(
   const data = await readJson<CollectionData>(collection.json);
 
   for (const group of Object.values(data)) {
-    const item = group.find((i) => i.id === itemId);
+    const item = group.find((i: { id: string }) => i.id === itemId);
     if (item) {
       if (!item.drawn) {
         item.drawn = today;

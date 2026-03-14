@@ -1,4 +1,4 @@
-import { VersionData } from '../../src/types/scripts.ts';
+import { VersionData } from '../../src/types/index.ts';
 
 /**
  * Extract the base name from a filename by stripping .png or .webp extension.

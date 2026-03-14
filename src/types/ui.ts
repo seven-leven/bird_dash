@@ -17,7 +17,7 @@ export interface Stats {
   mode: string;
 }
 
-export interface GlobalStats {
+export interface Stats {
   drawn: number;
   total: number;
 }
@@ -38,7 +38,7 @@ export interface ThemeState {
   isDark: boolean;
 }
 
-export interface DataState {
+export interface loadingState {
   loading: boolean;
   error: string | undefined;
 }

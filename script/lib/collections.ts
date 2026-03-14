@@ -1,6 +1,6 @@
 // Import the JSON directly from the public folder
 import FE_COLLECTIONS from '../../public/collections.json' with { type: 'json' };
-import { ScriptCollectionEntry } from '../../src/types/scripts.ts';
+import { ScriptCollectionEntry } from '../../src/types/index.ts';
 
 // Map the raw JSON data into the format your scripts expect
 export const COLLECTIONS: ScriptCollectionEntry[] = FE_COLLECTIONS.map((col) => ({

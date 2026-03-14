@@ -152,8 +152,9 @@ import AppHeader from './TopBar.vue';
 import AppSidebar from './SideNav.vue';
 import GridItemCard from '../gallery/ItemTile.vue';
 import ExpandedImage from '../gallery/LightBox.vue';
-import { type CollectionConfig, type CollectionItem } from '../../types/collections';
 import {
+  type CollectionConfig, 
+  type CollectionItem,
   type UIState,
   type ThemeState,
   type DataState,
@@ -161,8 +162,8 @@ import {
   type GlobalStats,
   type ActiveData,
   type ExpandedImageState,
-} from '../../types/ui';
-import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../types/composables';
+  type GlobalSearchCollectionGroup, 
+  type GlobalSearchState } from '../../types';
 import versionData from '../../version.json';
 
 const displayVersion = `${versionData.major}.${versionData.minor}.${versionData.patch}`;

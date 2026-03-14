@@ -1,8 +1,15 @@
-import { type Ref, ref } from 'vue';
-import type { ScrollUI, UIState, UseScrollLogicReturn } from '../../types/composables.ts';
+import { ref } from 'vue';
+import type { ScrollUI, UIState, UseScrollLogicReturn } from '../../types/index.ts';
+
+// Plain accessor interface instead of Vue's branded Ref<T>, which avoids
+// [RefSymbol] incompatibilities when multiple @vue/reactivity versions are
+// present in node_modules (e.g. 3.5.26 vs 3.5.30).
+interface ScrollUIRef {
+  readonly value: ScrollUI | null;
+}
 
 export function useScrollLogic(
-  uiRef: Ref<ScrollUI | null>,
+  uiRef: ScrollUIRef,
   ui: UIState,
 ): UseScrollLogicReturn {
   const activeSection = ref<string>('');

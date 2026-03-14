@@ -85,7 +85,7 @@
 </template>
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { CollectionItem, CollectionConfig } from '../../types/collections';
+import type { CollectionItem, CollectionConfig } from '../../types/';
 
 const props = defineProps<{
   item:       CollectionItem;

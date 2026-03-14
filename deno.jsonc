@@ -50,7 +50,12 @@
     "tailwindcss": "npm:tailwindcss@^4.2.1",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.2.1",
     "vite": "npm:vite@^8.0.0",
-    "vue": "npm:vue@^3.5.30"
+    "vue": "npm:vue@^3.5.30",
+    "@vue/reactivity": "npm:@vue/reactivity@3.5.30",
+    "@vue/runtime-core": "npm:@vue/runtime-core@3.5.30",
+    "@vue/runtime-dom": "npm:@vue/runtime-dom@3.5.30",
+    "@vue/compiler-dom": "npm:@vue/compiler-dom@3.5.30",
+    "@vue/shared": "npm:@vue/shared@3.5.30"
   },
 
   "nodeModulesDir": "auto",

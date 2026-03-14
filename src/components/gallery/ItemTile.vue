@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import type { CollectionItem } from '../../types/collections';
+import type { CollectionItem } from '../../types/';
 
 const props = defineProps<{
   item:             CollectionItem;

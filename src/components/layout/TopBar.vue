@@ -110,9 +110,8 @@
 
 <script setup lang="ts">
 import GlobalSearch from './GlobalSearch.vue';
-import { type CollectionConfig } from '../../types/collections';
-import { type UIState, type ThemeState, type DataState, type GlobalStats } from '../../types/ui';
-import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../types/composables';
+import { type CollectionConfig } from '../../types';
+import { type UIState, type ThemeState, type DataState, type GlobalStats, type GlobalSearchCollectionGroup,type GlobalSearchState} from '../../types/index.ts';
 
 defineProps<{
   collections:       CollectionConfig[];

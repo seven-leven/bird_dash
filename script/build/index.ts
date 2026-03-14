@@ -10,7 +10,7 @@ import {
 import { bumpPatchVersion, getDrawnIds, loadVersion } from '../version/manager.ts';
 import { verifyIntegrity } from './processor.ts';
 import { buildCollection } from './collection.ts';
-import { BuildResult, CollectionBuildResult } from '../../src/types/scripts.ts';
+import { BuildResult, CollectionBuildResult } from '../../src/types/index.ts';
 // ---------------------------------------------------------------------------
 // Full build across all collections
 // ---------------------------------------------------------------------------

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 /// <reference types="vite/client" />
-import { ref, reactive, computed, onMounted, watch, nextTick, toRefs } from 'vue';
+import { ref, reactive, computed, onMounted, watch, nextTick, toRefs, useTemplateRef } from 'vue';
 
 // Components & Types
 import UI from './components/layout/Chrome.vue';
-import { type CollectionItem } from './types/collections';
+import { type CollectionItem } from './types/';
 
 // Consolidated Composables Import
 import { 
@@ -15,13 +15,13 @@ import {
   useOverlay,
   useGlobalSearch, 
 } from './composables'; 
-import { type GlobalSearchState  } from './types/composables';
+import { type GlobalSearchState } from './types/';
 import   {useTheme} from './composables/core/useTheme.ts'
 
 // =============================================================================
 // STATE & CORE LOGIC
 // =============================================================================
-const uiRef = ref<any>(null);
+const uiRef = useTemplateRef<{ scrollContainer: HTMLElement | null; headerRefs: Record<string, HTMLElement | null> }>('uiRef');
 const search = reactive({ query: '' });
 const { query } = toRefs(search);
 
@@ -159,7 +159,7 @@ watch(() => data.items, () => {
       :theme="theme"
       :data="data"
       :active-data="activeDataWithStats"
-      :active-section="activeSection"
+      :active-section="activeSection.value"
       :search="search"
       :global-search-state="globalSearchState"
       :global-results="globalResults"

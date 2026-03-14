@@ -93,7 +93,7 @@
 
 <script setup lang="ts">
 import ItemInfoPanel from './ItemSheet.vue';
-import type { CollectionItem, CollectionConfig } from '../../types/collections';
+import type { CollectionItem, CollectionConfig } from '../../types/';
 import { useLightbox } from '../../composables/index'; // Adjust path
 
 const props = defineProps<{

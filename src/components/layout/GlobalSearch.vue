@@ -117,7 +117,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../types/composables';
+import type { GlobalSearchCollectionGroup, GlobalSearchState } from '../../types/index.ts';
 
 const props = defineProps<{
   searchState: GlobalSearchState;

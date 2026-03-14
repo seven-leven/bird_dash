@@ -7,7 +7,7 @@ import type {
   DataState,
   GlobalStats,
   RawCollectionConfig,
-} from '../types/collections.ts';
+} from '../../types/index.ts';
 
 const getBase = () => (import.meta.env?.BASE_URL as string) || '/';
 
@@ -141,6 +141,7 @@ export function useCollections() {
         color: l.color,
         urlTemplate: l.url,
         getUrl: (item: CollectionItem) => resolveUrl(l.url, item),
+        url: (item: CollectionItem) => resolveUrl(l.url, item),
       })),
     }));
 

@@ -3,7 +3,17 @@
 // =============================================================================
 
 import type { ComputedRef, Ref } from 'vue';
-import type { CollectionConfig, CollectionItem } from './collections.ts';
+import type {
+  CollectionCache,
+  CollectionConfig,
+  CollectionItem,
+  DataState,
+  GlobalStats,
+} from './collections.ts';
+import type { SidebarItem, UIState } from './ui.ts';
+
+// Re-export for consumers who import composable types only
+export type { CollectionCache, DataState, GlobalStats, SidebarItem, UIState };
 
 // -----------------------------------------------------------------------------
 // useCollectionData Types
@@ -19,14 +29,6 @@ export interface GroupedData {
 export interface DateData {
   grouped: Record<string, CollectionItem[]>;
   sidebarItems: SidebarItem[];
-}
-
-export interface SidebarItem {
-  id: string;
-  label: string;
-  count: number;
-  total: number;
-  disabled: boolean;
 }
 
 export interface CollectionStats {
@@ -45,21 +47,6 @@ export interface UseCollectionDataReturn {
 // -----------------------------------------------------------------------------
 // useCollections Types
 // -----------------------------------------------------------------------------
-
-export interface CollectionCache {
-  [collectionId: string]: CollectionItem[];
-}
-
-export interface DataState {
-  items: CollectionItem[];
-  loading: boolean;
-  error: string | undefined;
-}
-
-export interface GlobalStats {
-  drawn: number;
-  total: number;
-}
 
 export interface UseCollectionsReturn {
   isInitialized: Ref<boolean>;
@@ -85,11 +72,6 @@ export interface ScrollUI {
   headerRefs: Record<string, HTMLElement | null>;
 }
 
-export interface UIState {
-  mobile: boolean;
-  sidebarOpen: boolean;
-}
-
 export interface UseScrollLogicReturn {
   activeSection: Ref<string>;
   updateActiveSection: () => void;
@@ -97,16 +79,17 @@ export interface UseScrollLogicReturn {
   handleHash: () => void;
 }
 
-// ---------------------------------------------------------------------------
-// TYPES
-// ---------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// Global Search Types
+// -----------------------------------------------------------------------------
+
+export type MatchedField = 'id' | 'commonName' | 'scientificName';
+
 export interface GlobalSearchResult {
   item: CollectionItem;
   collection: CollectionConfig;
   matchedFields: MatchedField[];
 }
-
-export type MatchedField = 'id' | 'commonName' | 'scientificName';
 
 export interface GlobalSearchCollectionGroup {
   collection: CollectionConfig;

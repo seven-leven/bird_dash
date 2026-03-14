@@ -11,7 +11,7 @@ export * from './fs.ts';
 export * from './strings.ts';
 
 import { COLLECTIONS } from './collections.ts';
-import type { ScriptCollectionEntry } from '../../src/types/scripts.ts';
+import type { ScriptCollectionEntry } from '../../src/types/index.ts';
 
 // Maps frontend config to backend file paths
 export const FILES = {

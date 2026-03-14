@@ -7,7 +7,7 @@ import {
   VersionData,
   writeJson,
 } from '../lib/index.ts';
-import { NewDrawing, ScriptCollectionEntry } from '../../src/types/scripts.ts';
+import { NewDrawing, ScriptCollectionEntry } from '../../src/types/index.ts';
 // ---------------------------------------------------------------------------
 // Helpers (unchanged)
 // ---------------------------------------------------------------------------
@@ -129,7 +129,9 @@ export class VersionManager {
     }
 
     const found: NewDrawing[] = [];
-    for (const group of Object.values(data)) {
+    for (
+      const group of Object.values(data) as Array<Array<{ id: string; name: string; sci?: string }>>
+    ) {
       for (const item of group) {
         if (addedIds.has(item.id)) {
           found.push({
@@ -154,7 +156,9 @@ export class VersionManager {
     for (const collection of targets) {
       try {
         const data = await readJson<CollectionData>(collection.json);
-        Object.values(data).flat().forEach((item) => item.drawn && ids.add(item.id));
+        Object.values(data).flat().forEach((item: { drawn?: string; id: string }) => {
+          item.drawn && ids.add(item.id);
+        });
       } catch { /* ignored */ }
     }
     return ids;
