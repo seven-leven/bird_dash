@@ -11,15 +11,14 @@ All versions follow `x.y.z+w` where:
 
 ## v0.7.0 (Multi-collection Architecture)
 
-
-- **0.7.072+022** | 2026-03-12 | barrel import types, updated modules |
-- **0.7.071+021** | 2026-03-10 | renamed components v2, cleaned up theme usage in ui |
-- **0.7.070+020** | 2026-03-10 | isolated and moved all types to its own folder |
-- **0.7.069+019** | 2026-03-09 | debloated app.vue |
-- **0.7.068+019** | 2026-03-09 | 🐚 Shell 029: Sand Dollar |
-- **0.7.067+018** | 2026-03-09 | added shell collections |
-- **0.7.066+018** | 2026-03-09 | added different thumb to different collections |
-- **0.7.065+018** | 2026-03-09 | made provision to add new collections; 🦈 added shark collections |
+- **0.7.072+018** | 2026-03-12 | barrel import types, updated modules |
+- **0.7.071+018** | 2026-03-10 | renamed components v2, cleaned up theme usage in ui |
+- **0.7.070+018** | 2026-03-10 | isolated and moved all types to its own folder |
+- **0.7.069+018** | 2026-03-09 | debloated app.vue |
+- **0.7.068+018** | 2026-03-09 | 🐚 Shell 029: Sand Dollar |
+- **0.7.067+017** | 2026-03-09 | added shell collections |
+- **0.7.066+017** | 2026-03-09 | added different thumb to different collections |
+- **0.7.065+017** | 2026-03-09 | made provision to add new collections; 🦈 added shark collections |
 - **0.7.064+017** | 2026-03-09 | restructured scripts folder
 - **0.7.063+017** | 2026-03-06 | MVP for multi-collection architecture
 - **0.7.062+017** | 2026-03-06 | created subfolders for bird pics and updated version manager

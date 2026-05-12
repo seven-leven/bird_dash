@@ -1,72 +1,58 @@
 <template>
-  <div class="bg-slate-800/90 backdrop-blur-md rounded-xl p-6 w-full max-w-md border border-slate-700 shadow-2xl">
+  <div class="bg-slate-900/95 backdrop-blur-xl rounded-2xl p-6 w-full max-w-sm
+              border border-white/8 shadow-2xl flex flex-col gap-5">
 
-    <!-- Header: ID badge + group -->
-    <div class="mb-6">
-      <div class="flex items-center gap-3 mb-2">
-        <span class="px-2 py-1 bg-blue-600 text-white text-xs font-bold rounded-md">
+    <!-- Header: ID badge + group + names -->
+    <div>
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2 py-0.5 bg-white/10 text-white/70 text-[10px] font-semibold font-mono rounded">
           #{{ item.itemId }}
         </span>
-        <span class="text-slate-400 text-sm">{{ item.group }}</span>
+        <span class="text-white/40 text-xs">{{ item.group }}</span>
       </div>
 
-      <h2 class="text-2xl font-bold text-white mb-1 leading-tight">
+      <h2 class="text-xl font-semibold text-white leading-tight tracking-tight">
         {{ item.commonName }}
       </h2>
-
-      <p class="text-slate-400 italic text-sm">
+      <p class="text-white/45 italic text-sm mt-0.5">
         {{ item.scientificName }}
       </p>
     </div>
 
-    <!-- Meta fields — rendered generically.
-         Special case: dhiv_script rendered RTL with Dhivehi font.
-         All other meta keys rendered as plain labelled rows. -->
-    <div v-if="item.meta && Object.keys(item.meta).length" class="mb-6 space-y-3">
+    <!-- Meta fields -->
+    <div v-if="item.meta && Object.keys(item.meta).length" class="space-y-4">
 
-      <!-- Dhivehi block (birds-specific, but panel doesn't hardcode it — just checks meta) -->
+      <!-- Dhivehi block -->
       <div v-if="item.meta.dhiv_script || item.meta.dhiv">
-        <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-          Dhivehi Name
-        </h3>
+        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1.5">Dhivehi Name</p>
         <p v-if="item.meta.dhiv_script" class="font-dhivehi text-xl text-white leading-tight" dir="rtl">
           {{ item.meta.dhiv_script }}
         </p>
-        <p v-if="item.meta.dhiv" class="text-sm text-slate-400 mt-0.5">
+        <p v-if="item.meta.dhiv" class="text-sm text-white/50 mt-0.5">
           {{ item.meta.dhiv }}
         </p>
       </div>
 
-      <!-- Any other meta fields rendered as generic key/value rows -->
-      <div
-        v-for="(value, key) in otherMeta"
-        :key="key"
-      >
-        <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+      <!-- Other meta -->
+      <div v-for="(value, key) in otherMeta" :key="key">
+        <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-1">
           {{ formatMetaKey(key) }}
-        </h3>
-        <p class="text-sm text-slate-300">{{ value }}</p>
+        </p>
+        <p class="text-sm text-white/70">{{ value }}</p>
       </div>
     </div>
 
     <!-- Illustrator note -->
-    <div v-if="item.illustratorNote" class="mb-6">
-      <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
-        From the Illustrator
-      </h3>
-      <blockquote class="relative pl-4 border-l-2 border-blue-500">
-        <span class="absolute -left-1 -top-2 text-3xl text-blue-500/30 font-serif">"</span>
-        <p class="text-slate-300 text-sm leading-relaxed italic">
-          {{ item.illustratorNote }}
-        </p>
+    <div v-if="item.illustratorNote">
+      <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-2">From the Illustrator</p>
+      <blockquote class="pl-3 border-l border-white/20">
+        <p class="text-white/60 text-sm leading-relaxed italic">{{ item.illustratorNote }}</p>
       </blockquote>
     </div>
 
-    <!-- External links — driven entirely by collection.links config -->
+    <!-- External links -->
     <div v-if="links.length">
-      <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-        Learn More
-      </h3>
+      <p class="text-[10px] font-semibold text-white/30 uppercase tracking-widest mb-2.5">Learn More</p>
       <div class="flex flex-wrap gap-2">
         <a
           v-for="link in links"
@@ -74,7 +60,7 @@
           :href="resolveUrl(link, item)"
           target="_blank"
           rel="noopener noreferrer"
-          :class="`inline-flex items-center justify-center gap-1 px-3 py-2 ${link.color} text-white text-xs font-medium rounded-lg transition-colors`"
+          :class="`inline-flex items-center justify-center gap-1 px-3 py-1.5 ${link.color} text-white text-xs font-medium rounded-lg transition-opacity hover:opacity-80`"
         >
           {{ link.label }}
         </a>

@@ -52,9 +52,9 @@
         <!-- Active section label -->
         <div
           v-if="!data.loading && !data.error && activeSection"
-          class="shrink-0 px-6 py-2 border-b text-sm font-semibold transition-colors
-                 bg-white/95 border-slate-200 text-slate-600
-                 dark:bg-slate-900/95 dark:border-slate-800 dark:text-slate-300"
+          class="shrink-0 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
+                 bg-white/95 border-slate-100 text-slate-400
+                 dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-500"
         >
           {{ activeSection }}
         </div>
@@ -87,9 +87,10 @@
 
           <template v-else>
             <!-- Search info -->
-            <div v-if="search.query" class="mb-6 text-sm text-slate-500">
-              Found {{ activeData.stats?.filtered ?? 0 }} result{{ (activeData.stats?.filtered ?? 0) !== 1 ? 's' : '' }} for "{{ search.query }}"
-              <button @click="$emit('updateSearch', '')" class="ml-2 text-blue-600 hover:underline">Clear</button>
+            <div v-if="search.query" class="mb-6 text-xs text-slate-400 dark:text-slate-500">
+              {{ activeData.stats?.filtered ?? 0 }} result{{ (activeData.stats?.filtered ?? 0) !== 1 ? 's' : '' }} for
+              <span class="font-medium text-slate-600 dark:text-slate-300">"{{ search.query }}"</span>
+              <button @click="$emit('updateSearch', '')" class="ml-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 underline underline-offset-2">Clear</button>
             </div>
 
             <!-- Grouped sections -->
@@ -100,13 +101,13 @@
             >
               <h2
                 :ref="el => { if (el) headerRefs[String(groupName)] = el as HTMLElement }"
-                class="mb-6 border-b pb-2 text-2xl font-bold flex items-center justify-between transition-colors
-                       text-slate-800 border-slate-200 dark:text-slate-100 dark:border-slate-800"
+                class="mb-5 pb-2 text-base font-semibold flex items-center justify-between transition-colors border-b
+                       text-slate-800 border-slate-200/70 dark:text-slate-100 dark:border-slate-800/70"
               >
                 <span>{{ groupName }}</span>
-                <span class="text-sm font-normal text-slate-500">
+                <span class="text-xs font-normal tabular-nums text-slate-400 dark:text-slate-500">
                   {{ items.filter(i => i.imageUrl !== placeholderImage).length }} drawn
-                  <template v-if="ui.viewMode === 'group'">/ {{ items.length }} total</template>
+                  <template v-if="ui.viewMode === 'group'"> / {{ items.length }}</template>
                 </span>
               </h2>
 
@@ -122,10 +123,9 @@
             </section>
           </template>
 
-          <footer class="mt-12 pt-8 pb-6 border-t text-center text-sm transition-colors
-                         border-slate-200 text-slate-400 dark:border-slate-800 dark:text-slate-500">
-            <p class="mb-1">Wildlife Illustrated © {{ new Date().getFullYear() }}</p>
-            <p class="opacity-50">v{{ appVersion }}</p>
+          <footer class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
+                         border-slate-100 text-slate-300 dark:border-slate-800/50 dark:text-slate-600">
+            <p>Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}</p>
           </footer>
         </div>
       </main>
@@ -152,18 +152,18 @@ import AppHeader from './TopBar.vue';
 import AppSidebar from './SideNav.vue';
 import GridItemCard from '../gallery/ItemTile.vue';
 import ExpandedImage from '../gallery/LightBox.vue';
-import {
-  type CollectionConfig, 
-  type CollectionItem,
-  type UIState,
-  type ThemeState,
-  type DataState,
-  type SearchState,
-  type GlobalStats,
-  type ActiveData,
-  type ExpandedImageState,
-  type GlobalSearchCollectionGroup, 
-  type GlobalSearchState } from '../../types';
+import type {
+  CollectionConfig, 
+  CollectionItem,
+  UIState,
+  ThemeState,
+  DataState,
+  SearchState,
+  GlobalStats,
+  ActiveData,
+  ExpandedImageState,
+  GlobalSearchCollectionGroup, 
+  GlobalSearchState } from '../../types';
 import versionData from '../../version.json';
 
 const displayVersion = `${versionData.major}.${versionData.minor}.${versionData.patch}`;

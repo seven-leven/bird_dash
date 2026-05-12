@@ -4,7 +4,7 @@ import { ref, reactive, computed, onMounted, watch, nextTick, toRefs, useTemplat
 
 // Components & Types
 import UI from './components/layout/Chrome.vue';
-import { type CollectionItem } from './types/';
+import type { CollectionItem, GlobalSearchState } from './types/';
 
 // Consolidated Composables Import
 import { 
@@ -13,10 +13,9 @@ import {
   useScrollLogic, 
   useBreakpoints, 
   useOverlay,
-  useGlobalSearch, 
+  useGlobalSearch,
+  useTheme, 
 } from './composables'; 
-import { type GlobalSearchState } from './types/';
-import   {useTheme} from './composables/core/useTheme.ts'
 
 // =============================================================================
 // STATE & CORE LOGIC
@@ -159,7 +158,7 @@ watch(() => data.items, () => {
       :theme="theme"
       :data="data"
       :active-data="activeDataWithStats"
-      :active-section="activeSection.value"
+      :active-section="activeSection"
       :search="search"
       :global-search-state="globalSearchState"
       :global-results="globalResults"

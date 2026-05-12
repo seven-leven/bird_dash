@@ -1,7 +1,7 @@
 <template>
-  <header class="flex items-center gap-3 h-14 px-3 shrink-0 z-50 transition-colors duration-300
-                 bg-white border-b border-slate-200 shadow-sm
-                 dark:bg-slate-900 dark:border-slate-800 dark:shadow-md">
+  <header class="flex items-center gap-2 h-12 px-4 shrink-0 z-50 transition-colors duration-300
+                 bg-white border-b border-slate-200/80
+                 dark:bg-slate-950 dark:border-slate-800/80">
 
     <!-- Mobile sidebar toggle -->
     <button
@@ -18,17 +18,18 @@
     </button>
 
     <!-- Collection tabs -->
-    <nav class="flex items-center gap-1 shrink-0">
+    <nav class="flex items-center gap-0.5 shrink-0" aria-label="Collections">
       <button
         v-for="col in collections"
         :key="col.id"
         @click="$emit('switchCollection', col.id)"
-        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors"
+        class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all duration-150"
         :class="col.id === activeCollection?.id
-          ? 'bg-blue-600 text-white'
+          ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
           : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
+        :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
       >
-        <span>{{ col.emoji }}</span>
+        <span class="text-base leading-none">{{ col.emoji }}</span>
         <span class="hidden sm:inline">{{ col.label }}</span>
       </button>
     </nav>
@@ -47,13 +48,14 @@
       @close="$emit('closeGlobalSearchDropdown')"
     />
 
-    <!-- View mode toggle -->
+    <!-- View mode toggle  -->
     <button
       @click="$emit('toggleViewMode')"
-      class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-sm font-medium transition-colors shrink-0"
+      class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-all duration-150 shrink-0"
       :class="ui.viewMode === 'date'
-        ? 'bg-blue-600/20 text-blue-500 border border-blue-500/30'
+        ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
+      :aria-label="`Switch to ${ui.viewMode === 'group' ? 'date' : 'group'} view`"
     >
       <svg v-if="ui.viewMode === 'group'" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
@@ -71,17 +73,17 @@
     <!-- Global progress tracker -->
     <div
       v-if="!data.loading"
-      class="flex flex-col items-end shrink-0 gap-0.5"
+      class="flex flex-col items-end shrink-0 gap-1"
       :title="`${globalStats.drawn} drawn out of ${globalStats.total} total`"
     >
       <div class="flex items-baseline gap-1">
         <span class="text-sm font-bold tabular-nums text-slate-800 dark:text-slate-100">{{ globalStats.drawn }}</span>
-        <span class="text-xs text-slate-400 dark:text-slate-500">/</span>
-        <span class="text-xs tabular-nums text-slate-500 dark:text-slate-400">{{ globalStats.total }}</span>
+        <span class="text-xs text-slate-300 dark:text-slate-600">/</span>
+        <span class="text-xs tabular-nums text-slate-400 dark:text-slate-500">{{ globalStats.total }}</span>
       </div>
-      <div class="w-16 h-1 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
+      <div class="w-20 h-0.5 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
         <div
-          class="h-full rounded-full bg-blue-500 transition-all duration-500"
+          class="h-full rounded-full bg-slate-800 dark:bg-slate-300 transition-all duration-700 ease-out"
           :style="{ width: globalStats.total > 0 ? `${(globalStats.drawn / globalStats.total) * 100}%` : '0%' }"
         />
       </div>
@@ -90,10 +92,10 @@
     <!-- Theme toggle -->
     <button
       @click="$emit('toggleTheme')"
-      class="flex items-center justify-center w-8 h-8 rounded-full transition-colors shrink-0
-             bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-yellow-500
-             dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-yellow-400"
-      aria-label="Toggle Dark Mode"
+      class="flex items-center justify-center w-8 h-8 rounded-md transition-all duration-150 shrink-0
+             text-slate-500 hover:bg-slate-100 hover:text-slate-800
+             dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+      :aria-label="theme.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
     >
       <svg v-if="theme.isDark" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
