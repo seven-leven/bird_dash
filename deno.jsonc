@@ -1,9 +1,11 @@
 {
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
-    "build": "deno run -A ./script/build.ts",
+    "build": "deno run -A ./scripts/build.ts",
+    "build:assets": "deno run -A ./script/buildAssets.ts",
+    "build:vite": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
-    "serve:www": "deno run --allow-net --allow-read jsr:@std/http/file-server www/",
+    "serve:dist": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
     "check": "deno run -A ./script/BuildAssets.ts check",
     "check:verbose": "deno run -A ./script/BuildAssets.ts check",
     "clean": "rm -rf dist node_modules",

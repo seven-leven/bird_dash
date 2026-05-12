@@ -2,74 +2,72 @@ name: Deploy Vue App to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [main]
+  workflow_dispatch:  # allow manual trigger
 
-# Modern permissions required for official Pages deployment
+# Required permissions for GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Only one concurrent deployment
 concurrency:
   group: 'pages'
   cancel-in-progress: true
 
 jobs:
+  # -------------------------------
+  # Build job – compiles assets + frontend
+  # -------------------------------
   build:
-    name: Build Project
+    name: 🏗️ Build Assets & Frontend
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6  # Updated from v4 to v6
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Deno
-        uses: denoland/setup-deno@v2  # Updated from v1 to v2
+      - name: 🦕 Setup Deno
+        uses: denoland/setup-deno@v2
         with:
-          deno-version: 'v2.x'
-          cache: true # Built-in caching (replaces manual actions/cache step)
+          deno-version: v2.x
+          cache: true
 
-      - name: Install Dependencies
-        run: |
-          deno install --allow-scripts
-          ls -F node_modules/ || echo "WARNING: node_modules folder missing!"
+      - name: 📦 Install dependencies
+        run: deno install --allow-scripts
 
-      - name: Build project (Verbose)
+      - name: 🔨 Run full build (assets + Vite)
+        run: deno task build
         env:
           CI: true
-          DEBUG: 'vite:*,rollup:*'
-        run: |
-          deno task build:vite -- --debug || {
-            echo "❌ BUILD FAILED. Listing files for debugging:";
-            ls -R;
-            exit 1;
-          }
 
-      - name: Verify Build Artifact
+      - name: ✅ Verify build output
         run: |
-          if [ -f "./dist/index.html" ]; then
-            echo "✅ Build successful."
+          echo "Checking dist folder contents:"
+          ls -la dist/
+          if [ -f "dist/index.html" ]; then
+            echo "✅ Build successful – index.html found."
           else
-            echo "❌ Error: dist/index.html is missing."
+            echo "❌ Build failed – dist/index.html missing."
             exit 1
           fi
 
-      # Official Page Upload Action
-      - name: Upload Pages Artifact
+      - name: 📤 Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
+  # -------------------------------
+  # Deploy job – only if build succeeds
+  # -------------------------------
   deploy:
-    name: Deploy
+    name: 🚀 Deploy to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # Official Page Deployment Action (No branch needed)
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
