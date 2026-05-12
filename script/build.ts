@@ -58,19 +58,15 @@ export async function buildAssets(): Promise<void> {
 export async function buildVite(): Promise<void> {
   console.log('\n  vite\n');
 
-  const configPath = new URL('../../vite.config.ts', import.meta.url).pathname;
+  const root = Deno.cwd();
 
   const { code } = await new Deno.Command('deno', {
     args: [
-      'run',
-      '-A',
-      '--node-modules-dir',
-      'npm:vite',
+      'run', '-A', '--node-modules-dir', 'npm:vite',
       'build',
-      '--config',
-      configPath,
+      '--config', `${root}/vite.config.ts`,
     ],
-    cwd: new URL('../../', import.meta.url).pathname,
+    cwd: root,
     stdout: 'inherit',
     stderr: 'inherit',
   }).output();
