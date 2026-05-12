@@ -36,7 +36,7 @@ export async function readJson<T>(path: string): Promise<T> {
 }
 
 /**
- * Write data as JSON to a file (with newline at end).
+ * Write data as JSON to a file (2-space indent, trailing newline).
  */
 export async function writeJson(path: string, data: unknown): Promise<void> {
   await Deno.writeTextFile(path, JSON.stringify(data, null, 2) + '\n');
