@@ -6,14 +6,14 @@
 
     // ── Build ─────────────────────────────────────────────────────────────────
     // Full build: transcode images → bump version → build frontend
-    "build": "deno run -A ./scripts/build.ts",
+    "build": "deno run -A ./script/build.ts",
 
     // Individual stages (also callable from CI separately)
-    "build:assets": "deno run -A ./scripts/build.ts --assets-only",
-    "build:vite": "deno run -A ./scripts/build.ts --vite-only",
+    "build:assets": "deno run -A ./script/build.ts --assets-only",
+    "build:vite": "deno run -A ./script/build.ts --vite-only",
 
     // ── Integrity ─────────────────────────────────────────────────────────────
-    "check": "deno run -A ./scripts/build.ts --check",
+    "check": "deno run -A ./script/build.ts --check",
 
     // ── Utilities ─────────────────────────────────────────────────────────────
     "serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
