@@ -47,19 +47,19 @@
   },
 
   "imports": {
-    "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.6",
+    "@deno/vite-plugin": "npm:@deno/vite-plugin@^2.0.2",
     "sharp": "npm:sharp@0.34.5",
     "@std/path": "jsr:@std/path@^1.1.4",
-    "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.5",
-    "tailwindcss": "npm:tailwindcss@^4.2.2",
-    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.2.2",
-    "vite": "npm:vite@^8.0.3",
-    "vue": "npm:vue@^3.5.31",
-    "@vue/reactivity": "npm:@vue/reactivity@3.5.31",
-    "@vue/runtime-core": "npm:@vue/runtime-core@3.5.31",
-    "@vue/runtime-dom": "npm:@vue/runtime-dom@3.5.31",
-    "@vue/compiler-dom": "npm:@vue/compiler-dom@3.5.31",
-    "@vue/shared": "npm:@vue/shared@3.5.31"
+    "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.6",
+    "tailwindcss": "npm:tailwindcss@^4.3.0",
+    "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.3.0",
+    "vite": "npm:vite@^8.0.12",
+    "vue": "npm:vue@^3.5.34",
+    "@vue/reactivity": "npm:@vue/reactivity@3.5.34",
+    "@vue/runtime-core": "npm:@vue/runtime-core@3.5.34",
+    "@vue/runtime-dom": "npm:@vue/runtime-dom@3.5.34",
+    "@vue/compiler-dom": "npm:@vue/compiler-dom@3.5.34",
+    "@vue/shared": "npm:@vue/shared@3.5.34"
   },
 
   "nodeModulesDir": "auto",
