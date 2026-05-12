@@ -41,8 +41,12 @@ export const log = {
 
 export function reportWarnings(col: Collection, plan: WorkPlan): void {
   for (const id of plan.missingRaw) {
-    log.warn(col.id, `drawn in JSON but raw PNG missing  ${id}`);
+    // In CI, raw PNGs are intentionally absent — only warn if we'd need them
+    if (plan.toTranscode.includes(id)) {
+      log.warn(col.id, `drawn in JSON but raw PNG missing — cannot transcode  ${id}`);
+    }
   }
+  // orphan warnings unchanged
   for (const id of plan.orphanedFull) {
     log.warn(col.id, `orphaned full WebP (not in JSON)  ${id}`);
   }

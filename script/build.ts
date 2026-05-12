@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 /**
- * scripts/build.ts — unified build entry point
+ * script/build.ts — unified build entry point
  *
  * Modes (pass as CLI flag):
  *   (none)           full build: assets → vite
@@ -60,6 +60,7 @@ export async function buildVite(): Promise<void> {
 
   const { code } = await new Deno.Command('deno', {
     args: ['run', '-A', '--node-modules-dir', 'npm:vite', 'build'],
+    cwd: Deno.cwd(), // explicit project root
     stdout: 'inherit',
     stderr: 'inherit',
   }).output();

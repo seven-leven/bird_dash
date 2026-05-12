@@ -32,7 +32,7 @@ jobs:
 
       - name: Build (assets + vite)
         run: deno task build
-        
+
       - name: Show build log on failure
         if: failure()
         run: |

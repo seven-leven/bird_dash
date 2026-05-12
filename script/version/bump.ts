@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 /**
- * scripts/version/bump.ts
+ * script/version/bump.ts
  *
  * Called automatically by .githooks/post-commit after every git commit.
  *
