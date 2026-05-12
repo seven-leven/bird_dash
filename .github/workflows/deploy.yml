@@ -16,10 +16,10 @@ concurrency:
 
 jobs:
   build:
-    name: Build Assets & Frontend
+    name: Build Frontend (Vite)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -28,16 +28,10 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: |
-          deno install --allow-scripts
-          # Verify sharp is present
-          deno eval "import 'npm:sharp'; console.log('sharp OK')"
+        run: deno install --allow-scripts
 
-      - name: Run asset check (dry run)
-        run: deno task build:assets check || true
-
-      - name: Run full build
-        run: deno task build
+      - name: Build with Vite
+        run: deno task build:vite
 
       - name: Verify dist folder
         run: |
@@ -46,6 +40,8 @@ jobs:
             ls -la dist/
             exit 1
           fi
+          # Optional: check that WebP files were copied
+          ls -la dist/full/ dist/thumb/ || true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
