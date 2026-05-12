@@ -19,10 +19,10 @@ jobs:
     name: Build Assets & Frontend
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Deno
-        uses: denoland/setup-deno@v2
+        uses: denoland/setup-deno@v3
         with:
           deno-version: v2.x
           cache: true
