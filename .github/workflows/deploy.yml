@@ -32,6 +32,16 @@ jobs:
 
       - name: Build (assets + vite)
         run: deno task build
+        
+      - name: Show build log on failure
+        if: failure()
+        run: |
+          echo "=== deno info ==="
+          deno --version
+          echo "=== directory state ==="
+          ls -la scripts/ || true
+          ls -la scripts/collection/ || true
+          ls -la scripts/pipeline/ || true
 
       - name: Verify output
         run: |
