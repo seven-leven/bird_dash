@@ -1,7 +1,7 @@
 {
   "tasks": {
     "dev": "deno run -A --node-modules-dir npm:vite",
-    "build": "deno run -A ./scripts/build.ts",
+    "build": "deno run -A ./script/build.ts",
     "build:assets": "deno run -A ./script/buildAssets.ts",
     "build:vite": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
