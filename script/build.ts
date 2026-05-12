@@ -62,9 +62,13 @@ export async function buildVite(): Promise<void> {
 
   const { code } = await new Deno.Command('deno', {
     args: [
-      'run', '-A', '--node-modules-dir', 'npm:vite',
+      'run',
+      '-A',
+      '--node-modules-dir',
+      'npm:vite',
       'build',
-      '--config', `${root}/vite.config.ts`,
+      '--config',
+      `${root}/vite.config.ts`,
     ],
     cwd: root,
     stdout: 'inherit',
