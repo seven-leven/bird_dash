@@ -11,15 +11,15 @@ permissions:
   id-token: write
 
 concurrency:
-  group: 'pages'
+  group: pages
   cancel-in-progress: true
 
 jobs:
   build:
-    name: Build Frontend (Vite)
+    name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -30,18 +30,12 @@ jobs:
       - name: Install dependencies
         run: deno install --allow-scripts
 
-      - name: Build with Vite
-        run: deno task build:vite
+      - name: Build (assets + vite)
+        run: deno task build
 
-      - name: Verify dist folder
+      - name: Verify output
         run: |
-          if [ ! -f dist/index.html ]; then
-            echo "Missing index.html"
-            ls -la dist/
-            exit 1
-          fi
-          # Optional: check that WebP files were copied
-          ls -la dist/full/ dist/thumb/ || true
+          test -f dist/index.html || { echo "Missing dist/index.html"; exit 1; }
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -49,6 +43,7 @@ jobs:
           path: ./dist
 
   deploy:
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
     environment: github-pages

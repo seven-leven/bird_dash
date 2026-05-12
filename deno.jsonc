@@ -1,16 +1,23 @@
 {
   "tasks": {
+    // ── Development ──────────────────────────────────────────────────────────
     "dev": "deno run -A --node-modules-dir npm:vite",
-    "build": "deno run -A ./script/build.ts",
-    "build:assets": "deno run -A ./script/buildAssets.ts",
-    "build:vite": "deno run -A --node-modules-dir npm:vite build",
     "preview": "deno run -A --node-modules-dir npm:vite preview",
-    "serve:dist": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
-    "check": "deno run -A ./script/BuildAssets.ts check",
-    "check:verbose": "deno run -A ./script/BuildAssets.ts check",
+
+    // ── Build ─────────────────────────────────────────────────────────────────
+    // Full build: transcode images → bump version → build frontend
+    "build": "deno run -A ./scripts/build.ts",
+
+    // Individual stages (also callable from CI separately)
+    "build:assets": "deno run -A ./scripts/build.ts --assets-only",
+    "build:vite": "deno run -A ./scripts/build.ts --vite-only",
+
+    // ── Integrity ─────────────────────────────────────────────────────────────
+    "check": "deno run -A ./scripts/build.ts --check",
+
+    // ── Utilities ─────────────────────────────────────────────────────────────
+    "serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
     "clean": "rm -rf dist node_modules",
-    "fix": "deno fmt",
-    "update": "deno outdated --update",
     "lint": "deno lint",
     "format": "deno fmt"
   },
@@ -58,7 +65,7 @@
   "nodeModulesDir": "auto",
 
   "allowScripts": {
-    "allow": ["npm:sharp@0.33.5"],
-    "deny": ["npm:esbuild@0.27.2", "npm:sharp@0.34.5"]
+    // sharp requires a native binary install step
+    "allow": ["npm:sharp@0.34.5"]
   }
 }
