@@ -1,73 +1,60 @@
-name: Deploy Vue App to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
-  workflow_dispatch:  # allow manual trigger
+  workflow_dispatch:
 
-# Required permissions for GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# Only one concurrent deployment
 concurrency:
   group: 'pages'
   cancel-in-progress: true
 
 jobs:
-  # -------------------------------
-  # Build job – compiles assets + frontend
-  # -------------------------------
   build:
-    name: 🏗️ Build Assets & Frontend
+    name: Build Assets & Frontend
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: 🦕 Setup Deno
+      - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
           cache: true
 
-      - name: 📦 Install dependencies
-        run: deno install --allow-scripts
-
-      - name: 🔨 Run full build (assets + Vite)
-        run: deno task build
-        env:
-          CI: true
-
-      - name: ✅ Verify build output
+      - name: Install dependencies
         run: |
-          echo "Checking dist folder contents:"
-          ls -la dist/
-          if [ -f "dist/index.html" ]; then
-            echo "✅ Build successful – index.html found."
-          else
-            echo "❌ Build failed – dist/index.html missing."
+          deno install --allow-scripts
+          # Verify sharp is present
+          deno eval "import 'npm:sharp'; console.log('sharp OK')"
+
+      - name: Run asset check (dry run)
+        run: deno task build:assets check || true
+
+      - name: Run full build
+        run: deno task build
+
+      - name: Verify dist folder
+        run: |
+          if [ ! -f dist/index.html ]; then
+            echo "Missing index.html"
+            ls -la dist/
             exit 1
           fi
 
-      - name: 📤 Upload Pages artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
-  # -------------------------------
-  # Deploy job – only if build succeeds
-  # -------------------------------
   deploy:
-    name: 🚀 Deploy to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    environment: github-pages
     steps:
-      - name: Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v4
