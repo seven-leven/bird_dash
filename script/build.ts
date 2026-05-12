@@ -43,8 +43,11 @@ export async function buildAssets(): Promise<void> {
 
   printSummary(summaries, VersionManager.format(version), Date.now() - start);
 
-  if (summaries.some((s) => s.result.failed.length > 0)) {
-    throw new Error('asset build completed with errors — see above');
+  const failed = summaries.flatMap((s) =>
+    s.result.failed.map((f) => `${s.col.id}/${f.id}: ${f.reason}`)
+  );
+  if (failed.length > 0) {
+    throw new Error(`asset build failed:\n${failed.map((f) => `  ${f}`).join('\n')}`);
   }
 }
 
@@ -110,8 +113,9 @@ if (import.meta.main) {
     await buildVite();
   };
 
-  run().catch((err: Error) => {
-    console.error(`\n  error  ${err.message}\n`);
+  run().catch((err) => {
+    console.error('\n  build failed:', err instanceof Error ? err.message : String(err));
+    if (err instanceof Error && err.stack) console.error(err.stack);
     Deno.exit(1);
   });
 }
