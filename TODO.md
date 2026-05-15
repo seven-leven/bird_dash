@@ -5,7 +5,7 @@
 - [ ] **Fixes**:
   - [ ] Version numbering logic.
   - [ ] Date sorting (cycle by date, not ID).
-  - [ ] Thumbnail sizing inconsistencies.
+  - [x] Thumbnail sizing inconsistencies.
 - [ ] **Technical Debt**:
   - [ ] Standardize URL/routing logic for collections and items.
 

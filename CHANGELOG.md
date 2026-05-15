@@ -11,7 +11,8 @@ All versions follow `x.y.z+w` where:
 
 ## v0.7.0 (Multi-collection Architecture)
 
-| 2026-05-12 | "refactored search"
+| 2026-05-12 | "refactored search",reafacted andsegmented build procee, updated dependcies, "re
+transcoded all the images"
 
 - **0.7.072+018** | 2026-03-12 | barrel import types, updated modules |
 - **0.7.071+018** | 2026-03-10 | renamed components v2, cleaned up theme usage in ui |

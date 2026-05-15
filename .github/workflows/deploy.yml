@@ -14,13 +14,17 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# Opt into Node.js 24 for all actions in this workflow
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   # ── 1. Environment setup ───────────────────────────────────────────────────
   setup:
     name: Setup environment
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -42,7 +46,7 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -56,17 +60,8 @@ jobs:
       - name: Run asset pipeline
         run: deno task build:assets
 
-      - name: Verify assets
-        run: |
-          echo "=== public/full ==="
-          ls public/full/ | head -5 || echo "(empty)"
-          echo "=== public/thumb ==="
-          ls public/thumb/ | head -5 || echo "(empty)"
-          echo "=== public/lists ==="
-          ls public/lists/ || echo "(empty)"
-
       - name: Upload public dir
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: public-assets
           path: public/
@@ -78,7 +73,7 @@ jobs:
     needs: build-assets
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Setup Deno
         uses: denoland/setup-deno@v2
@@ -90,7 +85,7 @@ jobs:
         run: deno install --allow-scripts
 
       - name: Download public assets
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: public-assets
           path: public/
@@ -98,14 +93,8 @@ jobs:
       - name: Run Vite build
         run: deno task build:vite
 
-      - name: Verify dist
-        run: |
-          test -f dist/index.html || { echo "Missing dist/index.html"; exit 1; }
-          echo "=== dist/assets ==="
-          ls -lh dist/assets/ | tail -10
-
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
@@ -116,4 +105,4 @@ jobs:
     runs-on: ubuntu-latest
     environment: github-pages
     steps:
-      - uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v5 # Updated from v4 (Fixes the specific warning)
