@@ -22,7 +22,7 @@ export interface CollectionItem {
 // ---------------------------------------------------------------------------
 
 export async function loadCollectionData(col: Collection): Promise<CollectionData> {
-  return readJson<CollectionData>(col.paths.json);
+  return await readJson<CollectionData>(col.paths.json);
 }
 
 export async function loadDrawnIds(col: Collection): Promise<Set<string>> {
