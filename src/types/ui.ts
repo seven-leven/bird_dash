@@ -17,11 +17,6 @@ export interface Stats {
   mode: string;
 }
 
-export interface Stats {
-  drawn: number;
-  total: number;
-}
-
 export interface ExpandedImageState<T = unknown> {
   isOpen: boolean;
   item: T | undefined;
