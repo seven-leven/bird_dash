@@ -76,7 +76,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-const getBase = () => (import.meta.env?.BASE_URL as string) || '/';
+const getBase = () => ((import.meta as Record<string, unknown>).env as { BASE_URL?: string })?.BASE_URL ?? '/';
 import GridItemCard from '../gallery/ItemTile.vue'
 import type {
   ActiveData,
