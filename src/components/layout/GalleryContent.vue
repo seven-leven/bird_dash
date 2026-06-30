@@ -75,6 +75,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+
+const getBase = () => (import.meta.env?.BASE_URL as string) || '/';
 import GridItemCard from '../gallery/ItemTile.vue'
 import type {
   ActiveData,
@@ -109,7 +111,7 @@ const emit = defineEmits<{
 // COMPUTED
 // ---------------------------------------------------------------------------
 const placeholderImage = computed(() =>
-  props.activeCollection ? `${props.activeCollection.id}-placeholder` : ''
+  props.activeCollection ? `${getBase()}placeholders/${props.activeCollection.id}.webp` : ''
 )
 
 const isEmpty = computed(() =>
