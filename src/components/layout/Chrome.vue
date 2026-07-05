@@ -8,9 +8,6 @@
       :active-collection="activeCollection"
       :ui="ui"
       :theme="theme"
-      :data="data"
-      :global-stats="globalStats"
-      :search="search"
       :global-search-state="globalSearchState"
       :global-results="globalResults"
       :global-result-count="globalResultCount"
@@ -44,20 +41,34 @@
         :ui="ui"
         :data="data"
         :active-data="activeData"
+        :global-stats="globalStats"
         @go-to-section="$emit('goToSection', $event)"
       />
 
       <!-- Main content -->
       <main class="relative flex flex-1 flex-col overflow-hidden">
 
-        <!-- Active section label -->
+        <!-- Active section label + active filter chip -->
         <div
-          v-if="!data.loading && !data.error && activeSection"
-          class="shrink-0 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
+          v-if="!data.loading && !data.error && (activeSection || search.query)"
+          class="shrink-0 flex items-center gap-3 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
                  bg-white/95 border-slate-100 text-slate-400
                  dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-500"
         >
-          {{ activeSection }}
+          <span class="truncate">{{ activeSection }}</span>
+          <button
+            v-if="search.query"
+            @click="$emit('updateSearch', '')"
+            class="focus-ring ml-auto flex items-center gap-1.5 rounded-full py-0.5 pl-2.5 pr-1.5 text-[11px] font-medium
+                   bg-accent-50 text-accent-700 hover:bg-accent-100
+                   dark:bg-accent-950/60 dark:text-accent-300 dark:hover:bg-accent-900/60
+                   transition-colors duration-150"
+            :aria-label="`Clear filter ${search.query}`"
+          >
+            <span class="tabular-nums">{{ activeData.stats?.filtered ?? 0 }}</span>
+            <span class="max-w-40 truncate">result{{ (activeData.stats?.filtered ?? 0) !== 1 ? 's' : '' }} for &ldquo;{{ search.query }}&rdquo;</span>
+            <IconClose class="w-3 h-3" />
+          </button>
         </div>
 
         <!-- Scrollable grid -->
@@ -74,7 +85,6 @@
             :active-collection="activeCollection"
             :ui="{ viewMode: ui.viewMode }"
             :app-version="appVersion"
-            @update-search="$emit('updateSearch', $event)"
             @card-click="$emit('cardClick', $event)"
           />
         </div>
@@ -101,6 +111,7 @@
 import { ref, computed } from 'vue';
 import AppHeader from './TopBar.vue';
 import AppSidebar from './SideNav.vue';
+import IconClose from '../icons/IconClose.vue';
 import GalleryContent from './GalleryContent.vue';
 import ExpandedImage from '../gallery/LightBox.vue';
 import type {

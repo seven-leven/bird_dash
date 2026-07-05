@@ -1,7 +1,7 @@
 <!-- components/search/GlobalSearch.vue -->
 <template>
   <div class="relative shrink-0" ref="searchWrapperRef">
-    
+
     <!-- ==================== INPUT FIELD ==================== -->
     <div
       class="relative w-44 sm:w-56 md:w-72 transition-all duration-200"
@@ -25,12 +25,21 @@
         @keydown.enter.prevent="selectFocused"
         placeholder="Search all collections…"
         autocomplete="off"
-        class="block w-full pl-7 pr-6 py-1.5 rounded-md text-sm border transition-all duration-150
-               focus:outline-none focus:ring-1 focus:ring-slate-400 focus:border-slate-400
+        class="block w-full pl-7 pr-12 py-1.5 rounded-md text-sm border transition-colors duration-150
+               focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500
                bg-slate-100/80 border-transparent text-slate-900 placeholder-slate-400
                dark:bg-slate-800/80 dark:border-transparent dark:text-slate-100 dark:placeholder-slate-500
-               dark:focus:ring-slate-600 dark:focus:border-slate-600"
+               dark:focus:ring-accent-500 dark:focus:border-accent-500"
       />
+
+      <!-- Shortcut hint (shown when empty) -->
+      <div
+        v-if="!hasQuery"
+        class="absolute inset-y-0 right-0 pr-2 hidden sm:flex items-center pointer-events-none"
+        aria-hidden="true"
+      >
+        <kbd class="kbd-hint">{{ shortcutLabel }}</kbd>
+      </div>
 
       <!-- Clear Button -->
       <button
@@ -49,8 +58,8 @@
       <div
         v-if="shouldShowDropdown"
         class="absolute right-0 top-full mt-1.5 w-full min-w-90 max-w-130
-               rounded-xl border shadow-xl z-200 overflow-hidden
-               bg-white border-slate-200/80 dark:bg-slate-900 dark:border-slate-700/80"
+               rounded-xl border shadow-xl z-50 overflow-hidden
+               bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
         role="listbox"
         aria-label="Search results"
       >
@@ -58,18 +67,19 @@
         <SearchDropdownHeader :count="resultCount" />
 
         <!-- States -->
-        <div v-if="resultCount === 0" class="flex flex-col items-center justify-center py-10 gap-1.5 text-slate-300 dark:text-slate-600">
-          <IconNoResults class="w-6 h-6" />
-          <p class="text-xs">No matches found</p>
-        </div>
+        <EmptyState v-if="resultCount === 0" title="No matches found" class="py-6">
+          <template #icon>
+            <IconNoResults class="w-6 h-6" />
+          </template>
+        </EmptyState>
 
-        <div v-else class="overflow-y-auto max-h-105 divide-y divide-slate-100 dark:divide-slate-800">
+        <div v-else class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
           <SearchResultsList
             :results="results"
             :query="searchState.query"
             :focused-index="focusedIndex"
             :get-flat-index="getFlatIndex"
-            :highlight="highlightText"
+            :highlight="highlight"
             @mouseenter="focusedIndex = $event"
             @select="onSelectResult"
           />
@@ -83,11 +93,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import type { 
-  GlobalSearchCollectionGroup, 
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import type {
+  GlobalSearchCollectionGroup,
   GlobalSearchState,
-  CollectionItem 
+  CollectionItem
 } from '../../types/index.ts';
 
 // Composables
@@ -95,10 +105,11 @@ import { useSearchNavigation } from '../../composables/search/useSearchNavigatio
 import { useSearchHighlight } from '../../composables/search/useSearchHighlight.ts';
 import { useClickOutside } from '../../composables/search/useClickOutside.ts';
 
-// Inline sub-components (kept in same file)
-import IconSearch from './icons/IconSearch.vue';
-import IconClose from './icons/IconClose.vue';
-import IconNoResults from './icons/IconNoResults.vue';
+// Shared UI
+import IconSearch from '../icons/IconSearch.vue';
+import IconClose from '../icons/IconClose.vue';
+import IconNoResults from '../icons/IconNoResults.vue';
+import EmptyState from '../ui/EmptyState.vue';
 import SearchDropdownHeader from './SearchDropdownHeader.vue';
 import SearchResultsList from './SearchResultsList.vue';
 import SearchKeyboardHints from './SearchKeyboardHints.vue';
@@ -132,7 +143,24 @@ const { focusedIndex, getFlatIndex, moveFocus, resetFocus, getFocusedResult } =
   useSearchNavigation(() => props.results, () => searchWrapperRef.value);
 
 const { highlightText } = useSearchHighlight();
+const highlight = (text: string) => highlightText(text, props.searchState.query);
 useClickOutside(() => searchWrapperRef.value, closeDropdown);
+
+// ---------------------------------------------------------------------------
+// KEYBOARD SHORTCUT (Ctrl/Cmd + K)
+// ---------------------------------------------------------------------------
+const isMac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
+const shortcutLabel = isMac ? '⌘K' : 'Ctrl K';
+
+function onGlobalKeydown(e: KeyboardEvent) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    searchInputRef.value?.focus();
+  }
+}
+
+onMounted(() => window.addEventListener('keydown', onGlobalKeydown));
+onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown));
 
 // ---------------------------------------------------------------------------
 // COMPUTED
@@ -146,7 +174,7 @@ const dropdownTransition = {
   enterActiveClass: 'transition duration-150 ease-out',
   enterFromClass: 'opacity-0 translate-y-1 scale-95',
   enterToClass: 'opacity-100 translate-y-0 scale-100',
-  leaveActiveClass: 'transition duration-100 ease-in',
+  leaveActiveClass: 'transition duration-150 ease-in',
   leaveFromClass: 'opacity-100 translate-y-0 scale-100',
   leaveToClass: 'opacity-0 translate-y-1 scale-95'
 } as const;
@@ -177,7 +205,13 @@ function clearSearch() {
 
 function selectFocused() {
   const result = getFocusedResult();
-  if (result) onSelectResult(result);
+  if (result) {
+    onSelectResult(result);
+  } else {
+    // No result focused: Enter applies the current query as the grid filter
+    // (already live-synced) and dismisses the dropdown.
+    closeDropdown();
+  }
 }
 
 function onSelectResult(result: { collection: { id: string }; item: Pick<CollectionItem, 'itemId'> }) {
