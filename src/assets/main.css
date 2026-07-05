@@ -44,15 +44,15 @@
   /* Neutral icon/text button used across the chrome (header, sidebar, lightbox excluded) */
   .btn-ghost {
     @apply rounded-md text-slate-500 transition-colors duration-150
-           hover:bg-slate-100 hover:text-slate-800
-           dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
+      hover:bg-slate-100 hover:text-slate-800
+      dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
   }
 
   /* Shared keyboard focus treatment */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500
-           focus-visible:ring-offset-2 focus-visible:ring-offset-white
-           dark:focus-visible:ring-offset-slate-950;
+      focus-visible:ring-offset-2 focus-visible:ring-offset-white
+      dark:focus-visible:ring-offset-slate-950;
   }
 
   /* Micro label: uppercase section/meta headings. Color set at point of use. */
@@ -63,8 +63,8 @@
   /* Keyboard hint chip */
   .kbd-hint {
     @apply rounded border px-1.5 py-0.5 font-mono text-[10px]
-           bg-slate-50 border-slate-200 text-slate-400
-           dark:bg-slate-800 dark:border-slate-700 dark:text-slate-500;
+      bg-slate-50 border-slate-200 text-slate-400
+      dark:bg-slate-800 dark:border-slate-700 dark:text-slate-500;
   }
 }
 

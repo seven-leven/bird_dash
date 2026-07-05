@@ -3,7 +3,7 @@
 ## 🚀 High Priority (Fixes & Cleanup)
 
 - [ ] **Fixes**:
-  - [ ] Version numbering logic.
+  - [ ] Version numbering logic (version.json patch counter has drifted from actual commit count).
   - [ ] Date sorting (cycle by date, not ID).
   - [x] Thumbnail sizing inconsistencies.
 - [ ] **Technical Debt**:
@@ -11,7 +11,7 @@
 
 ## 🏗️ Architecture & Features
 
-- [ ] **Search**: Implement global search (ID, Dhivehi name, Script) with cross-collection results
+- [x] **Search**: Implement global search (ID, Dhivehi name, Script) with cross-collection results
       and result counters.
 - [ ] **Data**:
   - [ ] Add Conservation status (IUCN / Maldives Red List).
@@ -23,7 +23,7 @@
 
 - [ ] **Ship Script**: Create interface to auto-update `CHANGELOG.md` during deployment.
 - [ ] **Docs**: Complete overhaul of `CHANGELOG.md` updates.
-- [ ] proper group name for group though out the collecion
-- [ ] group images by like in storage
-- [x] extract types
-- [ ] give standaredized names for all types
+- [ ] Proper group names throughout each collection.
+- [ ] Group images by collection, matching the storage layout.
+- [x] Extract types.
+- [ ] Standardize names for all types.

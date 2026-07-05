@@ -9,11 +9,19 @@ All versions follow `x.y.z+w` where:
 
 ---
 
+## Unreleased
+
+- 2026-07-05 | repo hygiene: PR CI (lint/format/build), LF line-ending policy, Pages config moved to
+  workflow builds, removed dead gh-pages branch
+- 2026-07-05 | UI cohesion pass: design tokens + accent color, shared icon/UI components, matching
+  skeletons, Ctrl+K search shortcut, filter chip, a11y fixes
+- 2026-06-30 | completed global search refactor: cross-collection results, counters, keyboard
+  navigation
+
 ## v0.7.0 (Multi-collection Architecture)
 
-| 2026-05-12 | "refactored search",reafacted andsegmented build procee, updated dependcies, "re
-transcoded all the images"
-
+- **0.7.084+018** | 2026-05-12 | refactored search, segmented build process, updated dependencies,
+  re-transcoded all images
 - **0.7.072+018** | 2026-03-12 | barrel import types, updated modules |
 - **0.7.071+018** | 2026-03-10 | renamed components v2, cleaned up theme usage in ui |
 - **0.7.070+018** | 2026-03-10 | isolated and moved all types to its own folder |
