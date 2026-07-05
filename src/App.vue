@@ -104,8 +104,8 @@ async function handleSelectGlobalResult(collectionId: string, itemId: string) {
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     // Brief highlight flash
-    el.classList.add('ring-2', 'ring-blue-500', 'ring-offset-2');
-    setTimeout(() => el.classList.remove('ring-2', 'ring-blue-500', 'ring-offset-2'), 1800);
+    el.classList.add('ring-2', 'ring-accent-500', 'ring-offset-2');
+    setTimeout(() => el.classList.remove('ring-2', 'ring-accent-500', 'ring-offset-2'), 1800);
   }
 }
 
@@ -184,7 +184,8 @@ watch(() => data.items, () => {
     />
   </div>
   
-  <div v-else class="flex items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950">
-    <p class="text-slate-500 animate-pulse font-medium">Loading Experience…</p>
+  <div v-else class="flex flex-col items-center justify-center gap-3 min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div class="w-8 h-8 border-2 border-slate-200 border-t-accent-500 rounded-full animate-spin dark:border-slate-800 dark:border-t-accent-500" />
+    <p class="text-xs font-medium text-slate-400 dark:text-slate-500">Loading collections…</p>
   </div>
 </template>

@@ -5,7 +5,7 @@
                 bg-slate-50 border-b border-slate-100 dark:bg-slate-800/70 dark:border-slate-800">
       <div class="flex items-center gap-2">
         <span class="text-sm leading-none">{{ group.collection.emoji }}</span>
-        <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{{ group.collection.label }}</span>
+        <span class="caps-label text-slate-500 dark:text-slate-400">{{ group.collection.label }}</span>
       </div>
       <span class="text-[10px] font-semibold tabular-nums px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400">{{ group.count }}</span>
     </div>
@@ -17,7 +17,7 @@
       :data-result-idx="getFlatIndex(group.collection.id, idx)"
       @mouseenter="$emit('mouseenter', getFlatIndex(group.collection.id, idx))"
       @click="$emit('select', result)"
-      class="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-100
+      class="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150
              hover:bg-slate-50 dark:hover:bg-slate-800/60"
       :class="{ 'bg-slate-50 dark:bg-slate-800/60': focusedIndex === getFlatIndex(group.collection.id, idx) }"
     >
@@ -26,16 +26,15 @@
         <p class="text-sm font-medium truncate text-slate-800 dark:text-slate-100" v-html="highlight(result.item.commonName)" />
         <p class="text-xs text-slate-400 dark:text-slate-500 italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
       </div>
-      <span
-        class="text-[10px] tabular-nums font-mono px-1.5 py-0.5 rounded shrink-0
-               bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500"
-        v-html="highlight(`#${result.item.itemId}`)"
-      />
+      <IdBadge variant="surface" class="shrink-0">
+        <span v-html="highlight(`#${result.item.itemId}`)" />
+      </IdBadge>
     </button>
   </div>
 </template>
 
 <script setup lang="ts">
+import IdBadge from '../ui/IdBadge.vue';
 import type { GlobalSearchCollectionGroup, CollectionItem } from '../../types';
 
 defineProps<{

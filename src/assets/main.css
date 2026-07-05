@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-/* 
+/*
   FORCE DARK MODE TO USE CLASS STRATEGY
   This tells Tailwind: "Apply dark mode only when the .dark class is present"
   instead of looking at the system/OS preference.
@@ -8,7 +8,6 @@
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* Your existing theme config... */
   --animate-shimmer: shimmer 1.5s infinite linear;
 
   @keyframes shimmer {
@@ -18,6 +17,54 @@
     100% {
       background-position: 200% 0;
     }
+  }
+}
+
+/*
+  ACCENT COLOR
+  Single accent used app-wide: active states, focus rings, progress,
+  search highlighting, and the scroll-to-item flash.
+  Aliased to the teal palette so it can be swapped in one place.
+*/
+@theme inline {
+  --color-accent-50: var(--color-teal-50);
+  --color-accent-100: var(--color-teal-100);
+  --color-accent-200: var(--color-teal-200);
+  --color-accent-300: var(--color-teal-300);
+  --color-accent-400: var(--color-teal-400);
+  --color-accent-500: var(--color-teal-500);
+  --color-accent-600: var(--color-teal-600);
+  --color-accent-700: var(--color-teal-700);
+  --color-accent-800: var(--color-teal-800);
+  --color-accent-900: var(--color-teal-900);
+  --color-accent-950: var(--color-teal-950);
+}
+
+@layer components {
+  /* Neutral icon/text button used across the chrome (header, sidebar, lightbox excluded) */
+  .btn-ghost {
+    @apply rounded-md text-slate-500 transition-colors duration-150
+           hover:bg-slate-100 hover:text-slate-800
+           dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
+  }
+
+  /* Shared keyboard focus treatment */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500
+           focus-visible:ring-offset-2 focus-visible:ring-offset-white
+           dark:focus-visible:ring-offset-slate-950;
+  }
+
+  /* Micro label: uppercase section/meta headings. Color set at point of use. */
+  .caps-label {
+    @apply text-[10px] font-semibold uppercase tracking-widest;
+  }
+
+  /* Keyboard hint chip */
+  .kbd-hint {
+    @apply rounded border px-1.5 py-0.5 font-mono text-[10px]
+           bg-slate-50 border-slate-200 text-slate-400
+           dark:bg-slate-800 dark:border-slate-700 dark:text-slate-500;
   }
 }
 

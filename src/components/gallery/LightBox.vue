@@ -1,8 +1,8 @@
 <template>
   <Teleport to="body">
     <Transition
-      enter-active-class="transition-opacity duration-250 ease-out"
-      leave-active-class="transition-opacity duration-200 ease-in"
+      enter-active-class="transition-opacity duration-200 ease-out"
+      leave-active-class="transition-opacity duration-150 ease-in"
       enter-from-class="opacity-0"
       leave-to-class="opacity-0"
     >
@@ -17,29 +17,21 @@
 
           <!-- Zoom controls -->
           <div class="flex items-center gap-1 pointer-events-auto">
-            <button @click="zoomIn"    class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-150" aria-label="Zoom in">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-              </svg>
+            <button @click="zoomIn"    class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40" aria-label="Zoom in">
+              <IconZoomIn class="w-4 h-4" />
             </button>
-            <button @click="zoomOut"   class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-150" aria-label="Zoom out">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
-              </svg>
+            <button @click="zoomOut"   class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40" aria-label="Zoom out">
+              <IconZoomOut class="w-4 h-4" />
             </button>
-            <button @click="resetZoom" class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-150" aria-label="Reset zoom">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/>
-              </svg>
+            <button @click="resetZoom" class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40" aria-label="Reset zoom">
+              <IconReset class="w-4 h-4" />
             </button>
             <span class="ml-2 text-[11px] font-mono text-white/35 tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
           <!-- Close -->
-          <button @click="close" class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-all duration-150 pointer-events-auto" aria-label="Close">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
+          <button @click="close" class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 pointer-events-auto" aria-label="Close">
+            <IconClose class="w-4.5 h-4.5" />
           </button>
         </div>
 
@@ -47,19 +39,19 @@
         <button
           v-if="hasPrevious"
           @click.stop="goToPrevious"
-          class="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-xl bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-all duration-150"
+          class="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-lg bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           aria-label="Previous"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15,18 9,12 15,6"/></svg>
+          <IconChevronLeft class="w-5 h-5" />
         </button>
 
         <button
           v-if="hasNext"
           @click.stop="goToNext"
-          class="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-xl bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-all duration-150"
+          class="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-lg bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           aria-label="Next"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"/></svg>
+          <IconChevronRight class="w-5 h-5" />
         </button>
 
         <!-- Main layout: image left, info panel right -->
@@ -123,6 +115,12 @@
 
 <script setup lang="ts">
 import ItemInfoPanel from './ItemSheet.vue';
+import IconZoomIn from '../icons/IconZoomIn.vue';
+import IconZoomOut from '../icons/IconZoomOut.vue';
+import IconReset from '../icons/IconReset.vue';
+import IconClose from '../icons/IconClose.vue';
+import IconChevronLeft from '../icons/IconChevronLeft.vue';
+import IconChevronRight from '../icons/IconChevronRight.vue';
 import type { CollectionItem, CollectionConfig } from '../../types/';
 import { useLightbox } from '../../composables/index';
 

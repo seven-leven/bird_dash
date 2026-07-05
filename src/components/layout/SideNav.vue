@@ -4,8 +4,8 @@
     class="fixed inset-y-0 left-0 z-50 w-64 shrink-0 flex flex-col
            border-r transition-transform duration-300 ease-out
            lg:static lg:translate-x-0
-           bg-white border-slate-200/80
-           dark:bg-slate-950 dark:border-slate-800/80"
+           bg-white border-slate-200
+           dark:bg-slate-950 dark:border-slate-800"
     :class="ui.sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'"
   >
     <!-- Header -->
@@ -28,34 +28,59 @@
     <!-- List -->
     <div class="flex-1 overflow-y-auto px-3 py-3 custom-scrollbar">
       <ul v-if="activeData.sidebarItems.length" class="space-y-0.5">
-        <li
-          v-for="item in activeData.sidebarItems"
-          :key="item.id"
-          class="relative rounded-md px-3 py-2 text-sm transition-all duration-100 flex items-center justify-between"
-          :class="getItemClass(item)"
-          @click="!item.disabled && $emit('goToSection', item.id)"
-        >
-          <!-- Active accent bar -->
-          <span
-            v-if="item.id === activeSection && !item.disabled"
-            class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-r-full bg-slate-800 dark:bg-slate-200"
-          />
-          <span class="truncate pr-2 font-medium">{{ item.label }}</span>
-          <span class="text-xs shrink-0 tabular-nums font-normal opacity-50">
-            <template v-if="ui.viewMode === 'group' && item.total">{{ item.count }}/{{ item.total }}</template>
-            <template v-else>{{ item.count }}</template>
-          </span>
+        <li v-for="item in activeData.sidebarItems" :key="item.id">
+          <button
+            class="focus-ring relative w-full rounded-md px-3 py-2 text-sm text-left transition-colors duration-150 flex items-center justify-between"
+            :class="getItemClass(item)"
+            :disabled="item.disabled"
+            @click="$emit('goToSection', item.id)"
+          >
+            <!-- Active accent bar -->
+            <span
+              v-if="item.id === activeSection && !item.disabled"
+              class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 rounded-r-full bg-accent-500"
+            />
+            <span class="truncate pr-2 font-medium">{{ item.label }}</span>
+            <span class="text-xs shrink-0 tabular-nums font-normal opacity-50">
+              <template v-if="ui.viewMode === 'group' && item.total">{{ item.count }}/{{ item.total }}</template>
+              <template v-else>{{ item.count }}</template>
+            </span>
+          </button>
         </li>
       </ul>
-      <div v-else-if="!data.loading && !data.error" class="p-4 text-center text-xs text-slate-400 italic">
-        No items found.
+      <EmptyState
+        v-else-if="!data.loading && !data.error"
+        title="No items found"
+        hint="Nothing matches in this view."
+      />
+    </div>
+
+    <!-- Global progress -->
+    <div
+      v-if="!data.loading"
+      class="shrink-0 px-5 py-4 border-t border-slate-100 dark:border-slate-800/60"
+      :title="`${globalStats.drawn} drawn out of ${globalStats.total} total`"
+    >
+      <div class="flex items-baseline justify-between mb-1.5">
+        <span class="caps-label text-slate-400 dark:text-slate-500">Overall progress</span>
+        <span class="text-xs tabular-nums text-slate-400 dark:text-slate-500">
+          <span class="font-semibold text-slate-700 dark:text-slate-200">{{ globalStats.drawn }}</span>
+          / {{ globalStats.total }}
+        </span>
+      </div>
+      <div class="h-1 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800">
+        <div
+          class="h-full rounded-full bg-accent-600 dark:bg-accent-500 transition-all duration-700 ease-out"
+          :style="{ width: globalStats.total > 0 ? `${(globalStats.drawn / globalStats.total) * 100}%` : '0%' }"
+        />
       </div>
     </div>
   </aside>
 </template>
 
 <script setup lang="ts">
-import { type CollectionConfig, type UIState, type DataState, type SidebarItem, type ActiveData } from '../../types/index.ts';
+import EmptyState from '../ui/EmptyState.vue';
+import { type CollectionConfig, type UIState, type DataState, type SidebarItem, type ActiveData, type GlobalStats } from '../../types/index.ts';
 
 const props = defineProps<{
   activeCollection?: CollectionConfig;
@@ -63,6 +88,7 @@ const props = defineProps<{
   ui:                UIState;
   data:              DataState;
   activeData:        ActiveData;
+  globalStats:       GlobalStats;
 }>();
 
 defineEmits<{

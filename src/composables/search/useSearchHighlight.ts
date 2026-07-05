@@ -1,5 +1,5 @@
 const MARK_OPEN =
-  '<mark class="bg-yellow-200 dark:bg-yellow-700/60 text-inherit rounded-[2px] px-[1px]">';
+  '<mark class="bg-accent-200/80 dark:bg-accent-500/30 text-inherit rounded-[2px] px-[1px]">';
 const MARK_CLOSE = '</mark>';
 
 function escapeHtml(str: string): string {
