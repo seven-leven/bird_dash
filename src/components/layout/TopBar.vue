@@ -17,7 +17,7 @@
     <!-- Wordmark -->
     <a v-once href="#" class="hidden md:flex items-baseline gap-1 shrink-0 pr-1 select-none focus-ring rounded-md">
       <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
-      <span class="text-sm font-light tracking-tight text-slate-400 dark:text-slate-500">Illustrated</span>
+      <span class="text-sm font-light tracking-tight text-slate-500 dark:text-slate-400">Illustrated</span>
     </a>
 
     <div class="w-px h-6 shrink-0 hidden md:block bg-slate-200 dark:bg-slate-700" />
@@ -30,7 +30,7 @@
         @click="switchCollection(col.id)"
         class="focus-ring flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150"
         :class="col.id === activeCollection?.id
-          ? 'bg-accent-600 text-white'
+          ? 'bg-accent-700 text-white'
           : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
         :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
       >

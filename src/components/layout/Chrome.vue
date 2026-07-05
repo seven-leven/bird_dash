@@ -27,8 +27,8 @@
         <div
           v-if="!app.data.loading && !app.data.error && (app.activeSection.value || app.search.query)"
           class="shrink-0 flex items-center gap-3 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
-                 bg-white/95 border-slate-100 text-slate-400
-                 dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-500"
+                 bg-white/95 border-slate-100 text-slate-500
+                 dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-400"
         >
           <span class="truncate">{{ app.activeSection.value }}</span>
           <button

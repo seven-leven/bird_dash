@@ -41,7 +41,7 @@
     <template v-else>
       <!-- Grouped Sections -->
       <section
-        v-for="(items, groupName) in activeData.grouped"
+        v-for="(items, groupName, groupIndex) in activeData.grouped"
         :key="groupName"
         class="mb-12 scroll-mt-10 cv-auto"
       >
@@ -51,7 +51,7 @@
                  text-slate-800 border-slate-200 dark:text-slate-100 dark:border-slate-800"
         >
           <span>{{ groupName }}</span>
-          <span class="text-xs font-normal tabular-nums text-slate-400 dark:text-slate-500">
+          <span class="text-xs font-normal tabular-nums text-slate-500 dark:text-slate-400">
             {{ drawnCounts[String(groupName)] ?? 0 }} drawn
             <template v-if="ui.viewMode === 'group'"> / {{ items.length }}</template>
           </span>
@@ -59,11 +59,12 @@
 
         <div class="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
           <ItemTile
-            v-for="item in items"
+            v-for="(item, itemIndex) in items"
             :key="item.id"
             v-memo="[item.isDrawn, item.imageUrl]"
             :item="item"
             :placeholder-image="placeholderImage"
+            :eager="groupIndex === 0 && itemIndex < 6"
             @card-click="openItem($event)"
           />
         </div>
@@ -74,7 +75,7 @@
         <footer
           v-once
           class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
-                 border-slate-100 text-slate-300 dark:border-slate-800/50 dark:text-slate-600"
+                 border-slate-100 text-slate-500 dark:border-slate-800/50 dark:text-slate-400"
         >
           <p>Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}</p>
         </footer>
