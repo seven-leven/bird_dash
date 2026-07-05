@@ -13,6 +13,11 @@ export interface CollectionItem {
   sortKey: number;
   /** `drawnDate` as an epoch ms timestamp (0 if undrawn/invalid), for date sorting/grouping. */
   drawnTime: number;
+  /**
+   * Lowercased haystack for search — common/scientific/group/id plus all meta
+   * values (Dhivehi name + Thaana script included). Built once at load.
+   */
+  searchText: string;
   illustratorNote?: string;
   meta?: Record<string, string>;
 }

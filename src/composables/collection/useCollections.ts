@@ -74,21 +74,30 @@ export function useCollections() {
 
         const drawnDate = String(r.drawn ?? '');
         const drawnTime = hasImg ? (new Date(drawnDate).getTime() || 0) : 0;
+        const itemId = String(r.id ?? '');
+        const commonName = String(r.name ?? '');
+        const scientificName = String(r.sci ?? '');
+
+        // Search haystack — includes Dhivehi name + Thaana script (any meta value).
+        const searchText = [commonName, scientificName, groupName, itemId, ...Object.values(meta)]
+          .join(' ')
+          .toLowerCase();
 
         // Frozen: items never mutate after load, so freezing documents that and
         // lets the shallowReactive store skip proxying them.
         items.push(Object.freeze({
           id: `${col.id}-item-${counter++}`,
-          itemId: String(r.id ?? ''),
-          commonName: String(r.name ?? ''),
-          scientificName: String(r.sci ?? ''),
+          itemId,
+          commonName,
+          scientificName,
           group: groupName,
           drawnDate,
           imageUrl: hasImg ? `${col.imageBase}${r.id}.webp` : placeholder,
           placeholderUrl: placeholder,
           isDrawn: hasImg,
-          sortKey: Number.parseInt(String(r.id ?? ''), 10) || 0,
+          sortKey: Number.parseInt(itemId, 10) || 0,
           drawnTime,
+          searchText,
           illustratorNote: String(r.illustratorNote ?? ''),
           meta: Object.keys(meta).length ? meta : undefined,
         }));

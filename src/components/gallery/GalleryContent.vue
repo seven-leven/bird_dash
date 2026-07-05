@@ -4,7 +4,7 @@
     <!-- Loading State: mirrors the real grid so the swap doesn't jump -->
     <div
       v-if="data.loading"
-      class="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]"
+      class="tile-grid"
     >
       <div
         v-for="n in 10"
@@ -43,7 +43,7 @@
       <section
         v-for="(items, groupName, groupIndex) in activeData.grouped"
         :key="groupName"
-        class="mb-12 scroll-mt-10 cv-auto"
+        class="mb-12 scroll-mt-10"
       >
         <h2
           :ref="el => { if (el) headerRefs[String(groupName)] = el as HTMLElement }"
@@ -51,13 +51,13 @@
                  text-slate-800 border-slate-200 dark:text-slate-100 dark:border-slate-800"
         >
           <span>{{ groupName }}</span>
-          <span class="text-xs font-normal tabular-nums text-slate-500 dark:text-slate-400">
+          <span class="text-xs font-normal tabular-nums text-muted">
             {{ drawnCounts[String(groupName)] ?? 0 }} drawn
             <template v-if="ui.viewMode === 'group'"> / {{ items.length }}</template>
           </span>
         </h2>
 
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
+        <div class="tile-grid">
           <ItemTile
             v-for="(item, itemIndex) in items"
             :key="item.id"
@@ -75,7 +75,7 @@
         <footer
           v-once
           class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
-                 border-slate-100 text-slate-500 dark:border-slate-800/50 dark:text-slate-400"
+                 border-slate-100 text-muted dark:border-slate-800/50"
         >
           <p>Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}</p>
         </footer>

@@ -1,10 +1,6 @@
 @import 'tailwindcss';
 
-/*
-  FORCE DARK MODE TO USE CLASS STRATEGY
-  This tells Tailwind: "Apply dark mode only when the .dark class is present"
-  instead of looking at the system/OS preference.
-*/
+/* Dark mode is class-based (.dark on <html>), driven by useTheme — not the OS. */
 @variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -21,10 +17,8 @@
 }
 
 /*
-  ACCENT COLOR
-  Single accent used app-wide: active states, focus rings, progress,
-  search highlighting, and the scroll-to-item flash.
-  Aliased to the teal palette so it can be swapped in one place.
+  Single app-wide accent (active states, focus rings, progress, search
+  highlight, scroll-to flash). Aliased to teal so it swaps in one place.
 */
 @theme inline {
   --color-accent-50: var(--color-teal-50);
@@ -41,18 +35,31 @@
 }
 
 @layer components {
-  /* Neutral icon/text button used across the chrome (header, sidebar, lightbox excluded) */
+  /* Neutral icon/text button used across the chrome (header, sidebar). */
   .btn-ghost {
     @apply rounded-md text-slate-500 transition-colors duration-150
       hover:bg-slate-100 hover:text-slate-800
       dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
   }
 
-  /* Shared keyboard focus treatment */
+  /* Icon button layered over imagery (lightbox controls). */
+  .icon-btn-overlay {
+    @apply flex items-center justify-center w-8 h-8 rounded-lg
+      text-white/40 transition-colors duration-150
+      hover:text-white/90 hover:bg-white/10
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40;
+  }
+
+  /* Shared keyboard focus treatment. */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500
       focus-visible:ring-offset-2 focus-visible:ring-offset-white
       dark:focus-visible:ring-offset-slate-950;
+  }
+
+  /* Secondary/muted body text — WCAG-AA in both themes. */
+  .text-muted {
+    @apply text-slate-500 dark:text-slate-400;
   }
 
   /* Micro label: uppercase section/meta headings. Color set at point of use. */
@@ -60,20 +67,25 @@
     @apply text-[10px] font-semibold uppercase tracking-widest;
   }
 
-  /* Keyboard hint chip */
+  /* Keyboard hint chip. */
   .kbd-hint {
     @apply rounded border px-1.5 py-0.5 font-mono text-[10px]
       bg-slate-50 border-slate-200 text-slate-600
       dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300;
   }
+
+  /* Vertical divider in the header. */
+  .divider-v {
+    @apply w-px h-6 shrink-0 bg-slate-200 dark:bg-slate-700;
+  }
 }
 
 @layer utilities {
-  /* Let the browser skip layout/paint for offscreen group sections.
-     The intrinsic size is an estimate that keeps the scrollbar stable. */
-  .cv-auto {
-    content-visibility: auto;
-    contain-intrinsic-size: 0 480px;
+  /* Responsive illustration grid — shared by the skeleton and the real grid. */
+  .tile-grid {
+    @apply grid gap-6
+      grid-cols-[repeat(auto-fill,minmax(160px,1fr))]
+      sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))];
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -93,9 +105,9 @@
   src: url('./Faruma.woff') format('woff');
   font-weight: normal;
   font-style: normal;
-  font-display: swap; /* optional, improves perceived performance */
+  font-display: swap;
 }
+
 .font-dhivehi {
   font-family: 'Faruma', 'Arial Unicode MS', 'FreeSerif', sans-serif;
-  /* optional: you may set direction if not handled elsewhere */
 }

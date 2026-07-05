@@ -14,9 +14,7 @@ export function useScrollLogic(
 ): UseScrollLogicReturn {
   const activeSection = ref<string>('');
 
-  // Coalesce scroll events to one layout-reading pass per animation frame.
-  let rafId = 0;
-  const computeActiveSection = (): void => {
+  const updateActiveSection = (): void => {
     const container = uiRef.value?.scrollContainer;
     if (!container) return;
 
@@ -34,14 +32,6 @@ export function useScrollLogic(
     if (current && current !== activeSection.value) {
       activeSection.value = current;
     }
-  };
-
-  const updateActiveSection = (): void => {
-    if (rafId) return;
-    rafId = requestAnimationFrame(() => {
-      rafId = 0;
-      computeActiveSection();
-    });
   };
 
   const goToSection = (name: string): void => {

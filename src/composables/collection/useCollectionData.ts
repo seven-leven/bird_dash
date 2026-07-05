@@ -19,11 +19,9 @@ export function useCollectionData(
   const allFilteredItems = computed(() => {
     const q = searchQuery.value.toLowerCase().trim();
     if (!q) return items.value;
-    return items.value.filter((i) =>
-      i.commonName.toLowerCase().includes(q) ||
-      i.group.toLowerCase().includes(q) ||
-      i.scientificName.toLowerCase().includes(q)
-    );
+    // searchText already includes name, scientific name, group, id, and the
+    // Dhivehi name/script — so one substring test covers them all.
+    return items.value.filter((i) => i.searchText.includes(q));
   });
 
   const drawnItems = computed(() => items.value.filter((i) => i.isDrawn));
@@ -31,11 +29,7 @@ export function useCollectionData(
   const searchedDrawnItems = computed(() => {
     const q = searchQuery.value.toLowerCase().trim();
     if (!q) return drawnItems.value;
-    return drawnItems.value.filter((i) =>
-      i.commonName.toLowerCase().includes(q) ||
-      i.group.toLowerCase().includes(q) ||
-      i.scientificName.toLowerCase().includes(q)
-    );
+    return drawnItems.value.filter((i) => i.searchText.includes(q));
   });
 
   // =============================================================================

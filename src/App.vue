@@ -192,6 +192,6 @@ watch(() => data.items, () => {
     class="flex flex-col items-center justify-center gap-3 min-h-screen bg-slate-50 dark:bg-slate-950"
   >
     <div class="w-8 h-8 border-2 border-slate-200 border-t-accent-500 rounded-full animate-spin dark:border-slate-800 dark:border-t-accent-500" />
-    <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Loading collections…</p>
+    <p class="text-xs font-medium text-muted">Loading collections…</p>
   </div>
 </template>
