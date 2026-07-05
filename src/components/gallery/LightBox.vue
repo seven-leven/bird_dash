@@ -17,20 +17,20 @@
 
           <!-- Zoom controls -->
           <div class="flex items-center gap-1 pointer-events-auto">
-            <button @click="zoomIn"    class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40" aria-label="Zoom in">
+            <button @click="zoomIn"    class="icon-btn-overlay" aria-label="Zoom in">
               <IconZoomIn class="w-4 h-4" />
             </button>
-            <button @click="zoomOut"   class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40" aria-label="Zoom out">
+            <button @click="zoomOut"   class="icon-btn-overlay" aria-label="Zoom out">
               <IconZoomOut class="w-4 h-4" />
             </button>
-            <button @click="resetZoom" class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40" aria-label="Reset zoom">
+            <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
               <IconReset class="w-4 h-4" />
             </button>
             <span class="ml-2 text-[11px] font-mono text-white/35 tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
           <!-- Close -->
-          <button @click="close" class="flex items-center justify-center w-8 h-8 rounded-lg text-white/40 hover:text-white/90 hover:bg-white/10 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40 pointer-events-auto" aria-label="Close">
+          <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
             <IconClose class="w-4.5 h-4.5" />
           </button>
         </div>

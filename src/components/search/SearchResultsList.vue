@@ -5,7 +5,7 @@
                 bg-slate-50 border-b border-slate-100 dark:bg-slate-800/70 dark:border-slate-800">
       <div class="flex items-center gap-2">
         <span class="text-sm leading-none">{{ group.collection.emoji }}</span>
-        <span class="caps-label text-slate-500 dark:text-slate-400">{{ group.collection.label }}</span>
+        <span class="caps-label text-muted">{{ group.collection.label }}</span>
       </div>
       <span class="text-[10px] font-semibold tabular-nums px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400">{{ group.count }}</span>
     </div>
@@ -24,7 +24,12 @@
       <img :src="result.item.imageUrl" class="w-8 h-8 rounded-md object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium truncate text-slate-800 dark:text-slate-100" v-html="highlight(result.item.commonName)" />
-        <p class="text-xs text-slate-500 dark:text-slate-400 italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
+        <p class="text-xs text-muted italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
+        <p
+          v-if="result.item.meta?.dhiv_script"
+          class="font-dhivehi text-xs text-muted truncate mt-0.5"
+          dir="rtl"
+        >{{ result.item.meta.dhiv_script }}</p>
       </div>
       <IdBadge variant="surface" class="shrink-0">
         <span v-html="highlight(`#${result.item.itemId}`)" />

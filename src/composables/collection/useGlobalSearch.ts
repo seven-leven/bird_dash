@@ -41,8 +41,10 @@ export function useGlobalSearch(
       const cached: CollectionItem[] = collectionCache[col.id] ?? [];
       const results: GlobalSearchResult[] = [];
       for (const item of cached) {
-        const fields = matchedFields(item, ql);
-        if (fields.length > 0) results.push({ item, collection: col, matchedFields: fields });
+        // Match against the full haystack (name, sci, id, Dhivehi, …); compute
+        // matchedFields only for the display fields we highlight.
+        if (!item.searchText.includes(ql)) continue;
+        results.push({ item, collection: col, matchedFields: matchedFields(item, ql) });
       }
       if (results.length > 0) groups.push({ collection: col, results, count: results.length });
     }

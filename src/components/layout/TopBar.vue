@@ -17,10 +17,10 @@
     <!-- Wordmark -->
     <a v-once href="#" class="hidden md:flex items-baseline gap-1 shrink-0 pr-1 select-none focus-ring rounded-md">
       <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
-      <span class="text-sm font-light tracking-tight text-slate-500 dark:text-slate-400">Illustrated</span>
+      <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>
     </a>
 
-    <div class="w-px h-6 shrink-0 hidden md:block bg-slate-200 dark:bg-slate-700" />
+    <div class="divider-v hidden md:block" />
 
     <!-- Collection tabs -->
     <nav class="flex items-center gap-0.5 shrink-0" aria-label="Collections">
@@ -59,7 +59,7 @@
       </span>
     </button>
 
-    <div class="w-px h-6 shrink-0 bg-slate-200 dark:bg-slate-700" />
+    <div class="divider-v" />
 
     <!-- Theme toggle -->
     <button

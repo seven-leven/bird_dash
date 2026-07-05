@@ -8,7 +8,7 @@
     >
       <!-- Search Icon -->
       <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-        <IconSearch class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+        <IconSearch class="h-3.5 w-3.5 text-muted" />
       </div>
 
       <!-- Input -->
