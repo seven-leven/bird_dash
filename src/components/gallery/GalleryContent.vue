@@ -2,9 +2,15 @@
 <template>
   <div class="space-y-12">
     <!-- Loading State: mirrors the real grid so the swap doesn't jump -->
-    <div v-if="data.loading" class="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
-      <div v-for="n in 10" :key="n"
-           class="aspect-square rounded-xl animate-pulse bg-slate-200 dark:bg-slate-800" />
+    <div
+      v-if="data.loading"
+      class="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]"
+    >
+      <div
+        v-for="n in 10"
+        :key="n"
+        class="aspect-square rounded-xl animate-pulse bg-slate-200 dark:bg-slate-800"
+      />
     </div>
 
     <!-- Error State -->
@@ -52,12 +58,12 @@
         </h2>
 
         <div class="grid grid-cols-[repeat(auto-fill,minmax(160px,1fr))] gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))]">
-          <GridItemCard
+          <ItemTile
             v-for="item in items"
             :key="item.id"
             :item="item"
             :placeholder-image="placeholderImage"
-            @card-click="$emit('cardClick', $event)"
+            @card-click="openItem($event)"
           />
         </div>
       </section>
@@ -74,61 +80,40 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue';
+import ItemTile from './ItemTile.vue';
+import EmptyState from '../ui/EmptyState.vue';
+import IconNoResults from '../icons/IconNoResults.vue';
+import { useAppContext } from '../../composables';
+import type { CollectionItem } from '../../types';
 
-const getBase = () => ((import.meta as Record<string, unknown>).env as { BASE_URL?: string })?.BASE_URL ?? '/';
-import GridItemCard from '../gallery/ItemTile.vue'
-import EmptyState from '../ui/EmptyState.vue'
-import IconNoResults from '../icons/IconNoResults.vue'
-import type {
-  ActiveData,
-  CollectionConfig,
-  CollectionItem,
-  DataState,
-  SearchState,
-  UIState
-} from '../../types'
+const { data, activeData, search, activeCollection, ui, openItem } = useAppContext();
 
-// ---------------------------------------------------------------------------
-// PROPS
-// ---------------------------------------------------------------------------
-const props = defineProps<{
-  data: DataState
-  activeData: ActiveData<CollectionItem>
-  search: SearchState
-  activeCollection?: CollectionConfig
-  ui: Pick<UIState, 'viewMode'>
-  appVersion: string
-}>()
+/** Derived version string, injected at build time by vite.config.ts */
+const appVersion = __APP_VERSION__;
 
-// ---------------------------------------------------------------------------
-// EMITS
-// ---------------------------------------------------------------------------
-defineEmits<{
-  cardClick: [item: CollectionItem]
-}>()
+const getBase = () =>
+  ((import.meta as Record<string, unknown>).env as { BASE_URL?: string })?.BASE_URL ?? '/';
 
 // ---------------------------------------------------------------------------
 // COMPUTED
 // ---------------------------------------------------------------------------
 const placeholderImage = computed(() =>
-  props.activeCollection ? `${getBase()}placeholders/${props.activeCollection.id}.webp` : ''
-)
+  activeCollection.value ? `${getBase()}placeholders/${activeCollection.value.id}.webp` : ''
+);
 
-const isEmpty = computed(() =>
-  Object.keys(props.activeData.grouped).length === 0
-)
+const isEmpty = computed(() => Object.keys(activeData.value.grouped).length === 0);
 
 // ---------------------------------------------------------------------------
 // METHODS
 // ---------------------------------------------------------------------------
 /** Count items that have been drawn (imageUrl !== placeholder) */
 const getDrawnCount = (items: CollectionItem[]): number =>
-  items.filter(item => item.imageUrl !== placeholderImage.value).length
+  items.filter((item) => item.imageUrl !== placeholderImage.value).length;
 
 // ---------------------------------------------------------------------------
 // REFS (exposed for parent scroll-spy)
 // ---------------------------------------------------------------------------
-const headerRefs = ref<Record<string, HTMLElement>>({})
-defineExpose({ headerRefs })
+const headerRefs = ref<Record<string, HTMLElement>>({});
+defineExpose({ headerRefs });
 </script>

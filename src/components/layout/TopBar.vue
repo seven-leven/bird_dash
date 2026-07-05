@@ -1,3 +1,4 @@
+<!-- components/layout/TopBar.vue -->
 <template>
   <header class="flex items-center gap-2 h-12 px-4 shrink-0 z-50 transition-colors duration-300
                  bg-white border-b border-slate-200
@@ -6,7 +7,7 @@
     <!-- Mobile sidebar toggle -->
     <button
       v-if="ui.mobile"
-      @click="$emit('toggleSidebar')"
+      @click="toggleSidebar()"
       class="btn-ghost focus-ring lg:hidden p-2 rounded-lg shrink-0"
       aria-label="Toggle Sidebar"
     >
@@ -26,7 +27,7 @@
       <button
         v-for="col in collections"
         :key="col.id"
-        @click="$emit('switchCollection', col.id)"
+        @click="switchCollection(col.id)"
         class="focus-ring flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150"
         :class="col.id === activeCollection?.id
           ? 'bg-accent-600 text-white'
@@ -40,20 +41,11 @@
 
     <div class="flex-1" />
 
-    <!-- GLOBAL SEARCH COMPONENT -->
-    <GlobalSearch
-      :search-state="globalSearchState"
-      :results="globalResults"
-      :result-count="globalResultCount"
-      @update="(q) => $emit('updateGlobalSearch', q)"
-      @select="(cId, iId) => $emit('selectGlobalResult', cId, iId)"
-      @open="$emit('openGlobalSearchDropdown')"
-      @close="$emit('closeGlobalSearchDropdown')"
-    />
+    <GlobalSearch />
 
     <!-- View mode toggle  -->
     <button
-      @click="$emit('toggleViewMode')"
+      @click="toggleViewMode()"
       class="focus-ring flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors duration-150 shrink-0"
       :class="ui.viewMode === 'date'
         ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
@@ -71,7 +63,7 @@
 
     <!-- Theme toggle -->
     <button
-      @click="$emit('toggleTheme')"
+      @click="toggleTheme()"
       class="btn-ghost focus-ring flex items-center justify-center w-8 h-8 shrink-0"
       :aria-label="theme.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
     >
@@ -82,33 +74,22 @@
 </template>
 
 <script setup lang="ts">
-import GlobalSearch from './GlobalSearch.vue';
+import GlobalSearch from '../search/GlobalSearch.vue';
 import IconMenu from '../icons/IconMenu.vue';
 import IconCalendar from '../icons/IconCalendar.vue';
 import IconBox from '../icons/IconBox.vue';
 import IconSun from '../icons/IconSun.vue';
 import IconMoon from '../icons/IconMoon.vue';
-import { type CollectionConfig } from '../../types';
-import { type UIState, type ThemeState, type GlobalSearchCollectionGroup, type GlobalSearchState } from '../../types/index.ts';
+import { useAppContext } from '../../composables';
 
-defineProps<{
-  collections:       CollectionConfig[];
-  activeCollection:  CollectionConfig | undefined;
-  ui:                UIState;
-  theme:             ThemeState;
-  globalSearchState: GlobalSearchState;
-  globalResults:     GlobalSearchCollectionGroup[];
-  globalResultCount: number;
-}>();
-
-defineEmits<{
-  toggleSidebar:        [];
-  switchCollection:     [id: string];
-  toggleViewMode:       [];
-  toggleTheme:          [];
-  updateGlobalSearch:   [query: string];
-  selectGlobalResult:   [collectionId: string, itemId: string];
-  openGlobalSearchDropdown: [];
-  closeGlobalSearchDropdown: [];
-}>();
+const {
+  collections,
+  activeCollection,
+  ui,
+  theme,
+  toggleSidebar,
+  switchCollection,
+  toggleViewMode,
+  toggleTheme,
+} = useAppContext();
 </script>

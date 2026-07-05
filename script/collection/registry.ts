@@ -38,7 +38,7 @@ export const COLLECTIONS: Collection[] = RAW_COLLECTIONS.map((c) => ({
   },
 }));
 
-export const VERSION_FILE = './src/version.json';
+export const VERSION_FILE = './version.json';
 export const CHANGELOG_FILE = './CHANGELOG.md';
 
 export function findCollection(id: string): Collection | undefined {

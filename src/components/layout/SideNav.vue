@@ -1,3 +1,4 @@
+<!-- components/layout/SideNav.vue -->
 <template>
   <aside
     id="appSidebar"
@@ -33,7 +34,7 @@
             class="focus-ring relative w-full rounded-md px-3 py-2 text-sm text-left transition-colors duration-150 flex items-center justify-between"
             :class="getItemClass(item)"
             :disabled="item.disabled"
-            @click="$emit('goToSection', item.id)"
+            @click="goToSection(item.id)"
           >
             <!-- Active accent bar -->
             <span
@@ -80,26 +81,24 @@
 
 <script setup lang="ts">
 import EmptyState from '../ui/EmptyState.vue';
-import { type CollectionConfig, type UIState, type DataState, type SidebarItem, type ActiveData, type GlobalStats } from '../../types/index.ts';
+import { useAppContext } from '../../composables';
+import type { SidebarItem } from '../../types/index.ts';
 
-const props = defineProps<{
-  activeCollection?: CollectionConfig;
-  activeSection?:    string;
-  ui:                UIState;
-  data:              DataState;
-  activeData:        ActiveData;
-  globalStats:       GlobalStats;
-}>();
-
-defineEmits<{
-  goToSection: [id: string];
-}>();
+const {
+  activeCollection,
+  activeSection,
+  ui,
+  data,
+  activeData,
+  globalStats,
+  goToSection,
+} = useAppContext();
 
 function getItemClass(item: SidebarItem): string {
   if (item.disabled) {
     return 'text-slate-300 dark:text-slate-700 cursor-not-allowed';
   }
-  if (item.id === props.activeSection) {
+  if (item.id === activeSection.value) {
     return 'cursor-pointer text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800/80';
   }
   return 'cursor-pointer text-slate-500 hover:text-slate-800 hover:bg-slate-50 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/50';

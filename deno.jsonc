@@ -15,6 +15,13 @@
     // ── Integrity ─────────────────────────────────────────────────────────────
     "check": "deno run -A ./script/build.ts --check",
 
+    // ── Versioning & changelog ────────────────────────────────────────────────
+    // Version is derived (major/minor from version.json, patch = commit count,
+    // +count = drawn illustrations) — nothing to bump, nothing to drift.
+    "version": "deno run -A ./script/version/compute.ts",
+    // Insert commits made since CHANGELOG.md was last touched under Unreleased
+    "changelog": "deno run -A ./script/changelog.ts",
+
     // ── Utilities ─────────────────────────────────────────────────────────────
     "serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
     "clean": "rm -rf dist node_modules",
