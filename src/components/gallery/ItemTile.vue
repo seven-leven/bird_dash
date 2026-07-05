@@ -15,11 +15,12 @@
     @keydown.enter="$emit('cardClick', props.item)"
     @keydown.space.prevent="$emit('cardClick', props.item)"
   >
-    <!-- Illustration — native lazy loading, placeholder fallback on error -->
+    <!-- Illustration — above-the-fold tiles load eagerly (LCP), rest are lazy -->
     <img
       :src="src"
       :alt="props.item.commonName"
-      loading="lazy"
+      :loading="eager ? 'eager' : 'lazy'"
+      :fetchpriority="eager ? 'high' : 'auto'"
       decoding="async"
       class="absolute inset-0 w-full h-full object-contain object-center select-none"
       draggable="false"
@@ -69,10 +70,15 @@ import { computed, ref } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import type { CollectionItem } from '../../types/';
 
-const props = defineProps<{
-  item: CollectionItem;
-  placeholderImage: string;
-}>();
+const props = withDefaults(
+  defineProps<{
+    item: CollectionItem;
+    placeholderImage: string;
+    /** Above-the-fold tiles load eagerly with high priority (helps LCP). */
+    eager?: boolean;
+  }>(),
+  { eager: false },
+);
 
 defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
 

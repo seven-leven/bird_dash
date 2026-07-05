@@ -24,7 +24,7 @@
       <img :src="result.item.imageUrl" class="w-8 h-8 rounded-md object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium truncate text-slate-800 dark:text-slate-100" v-html="highlight(result.item.commonName)" />
-        <p class="text-xs text-slate-400 dark:text-slate-500 italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
+        <p class="text-xs text-slate-500 dark:text-slate-400 italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
       </div>
       <IdBadge variant="surface" class="shrink-0">
         <span v-html="highlight(`#${result.item.itemId}`)" />

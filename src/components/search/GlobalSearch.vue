@@ -8,7 +8,7 @@
     >
       <!-- Search Icon -->
       <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-        <IconSearch class="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
+        <IconSearch class="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
       </div>
 
       <!-- Input -->
@@ -44,7 +44,7 @@
       <button
         v-if="hasQuery"
         @click="clearSearch"
-        class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+        class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
         tabindex="-1"
         aria-label="Clear search"
       >

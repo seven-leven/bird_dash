@@ -16,7 +16,7 @@
             ? `${activeCollection?.groupLabel ?? ''} Groups`
             : 'Timeline' }}
       </h1>
-      <p class="text-xs text-slate-400 dark:text-slate-500 mt-0.5 tabular-nums">
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 tabular-nums">
         <template v-if="ui.viewMode === 'group'">
           {{ activeData.stats?.drawn ?? 0 }} drawn &middot; {{ activeData.stats?.total ?? 0 }} total
         </template>
@@ -63,8 +63,8 @@
       :title="`${globalStats.drawn} drawn out of ${globalStats.total} total`"
     >
       <div class="flex items-baseline justify-between mb-1.5">
-        <span class="caps-label text-slate-400 dark:text-slate-500">Overall progress</span>
-        <span class="text-xs tabular-nums text-slate-400 dark:text-slate-500">
+        <span class="caps-label text-slate-500 dark:text-slate-400">Overall progress</span>
+        <span class="text-xs tabular-nums text-slate-500 dark:text-slate-400">
           <span class="font-semibold text-slate-700 dark:text-slate-200">{{ globalStats.drawn }}</span>
           / {{ globalStats.total }}
         </span>
