@@ -1,14 +1,13 @@
 <template>
   <div
+    :id="`item-${props.item.itemId}`"
     class="group focus-ring relative aspect-square w-full overflow-hidden rounded-xl cursor-pointer
            bg-slate-100 dark:bg-slate-900
-           bg-contain bg-center bg-no-repeat
            ring-1 ring-black/5 dark:ring-white/5
            transition-all duration-200 ease-out
            hover:ring-black/15 dark:hover:ring-white/10
            hover:shadow-lg hover:-translate-y-0.5
            active:scale-[0.98] active:shadow-sm"
-    :style="backgroundImageStyle"
     @click="$emit('cardClick', props.item)"
     tabindex="0"
     role="button"
@@ -16,6 +15,17 @@
     @keydown.enter="$emit('cardClick', props.item)"
     @keydown.space.prevent="$emit('cardClick', props.item)"
   >
+    <!-- Illustration — native lazy loading, placeholder fallback on error -->
+    <img
+      :src="src"
+      :alt="props.item.commonName"
+      loading="lazy"
+      decoding="async"
+      class="absolute inset-0 w-full h-full object-contain object-center select-none"
+      draggable="false"
+      @error="onError"
+    />
+
     <!-- Item ID badge -->
     <IdBadge
       :id="props.item.itemId"
@@ -55,39 +65,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { computed, ref } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import type { CollectionItem } from '../../types/';
 
 const props = defineProps<{
-  item:             CollectionItem;
+  item: CollectionItem;
   placeholderImage: string;
 }>();
 
 defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
 
-const imageToDisplay = ref('');
-
-const loadImage = () => {
-  const targetUrl = props.item.imageUrl;
-
-  if (!targetUrl || targetUrl === props.placeholderImage) {
-    imageToDisplay.value = props.placeholderImage;
-    return;
-  }
-
-  const img = new Image();
-  img.onload  = () => { imageToDisplay.value = targetUrl; };
-  img.onerror = () => {
-    console.warn(`[ItemTile] Failed to load: ${targetUrl}`);
-    imageToDisplay.value = props.placeholderImage;
-  };
-  img.src = targetUrl;
-};
-
-watch(() => props.item.imageUrl, loadImage, { immediate: true });
-
-const backgroundImageStyle = computed(() =>
-  imageToDisplay.value ? { backgroundImage: `url('${imageToDisplay.value}')` } : {}
+// The tile is keyed by item.id in the grid, so a new item => a fresh component;
+// no watcher needed. Undrawn items and load failures fall back to the placeholder.
+const failed = ref(false);
+const src = computed(() =>
+  props.item.isDrawn && !failed.value ? props.item.imageUrl : props.placeholderImage
 );
+
+function onError() {
+  failed.value = true;
+}
 </script>

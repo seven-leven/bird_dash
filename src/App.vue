@@ -9,6 +9,7 @@ import {
   useBreakpoints,
   useCollectionData,
   useCollections,
+  useDebouncedRef,
   useGlobalSearch,
   useOverlay,
   useScrollLogic,
@@ -48,7 +49,11 @@ const {
 
 const { items } = toRefs(data);
 const { viewMode } = toRefs(ui);
-const { activeData, stats, searchedDrawnItems } = useCollectionData(items, query, viewMode);
+// Debounce the query feeding the heavy filter → group → sort pipeline so a burst
+// of keystrokes recomputes once, not once per character. The input stays
+// instant because it binds to the raw query.
+const debouncedQuery = useDebouncedRef(query, 120);
+const { activeData, stats, searchedDrawnItems } = useCollectionData(items, debouncedQuery, viewMode);
 
 const activeDataWithStats = computed(() => ({ ...activeData.value, stats: stats.value }));
 const { activeSection, updateActiveSection, goToSection, handleHash } = useScrollLogic(uiRef, ui);
@@ -61,10 +66,11 @@ const globalSearchState = ref<GlobalSearchState>({
   isOpen: false,
 });
 
+const globalQuery = computed(() => globalSearchState.value.query);
 const { globalResults, globalResultCount } = useGlobalSearch(
   COLLECTIONS,
   collectionCache,
-  globalSearchState,
+  useDebouncedRef(globalQuery, 120),
 );
 
 function handleUpdateGlobalSearch(q: string) {

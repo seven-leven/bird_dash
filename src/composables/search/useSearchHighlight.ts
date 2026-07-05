@@ -11,14 +11,22 @@ function escapeHtml(str: string): string {
 }
 
 export function useSearchHighlight() {
+  // Compile the match regex once per distinct query instead of per field per
+  // render (highlightText is called for name, sci-name, and id of every result).
+  let cachedQuery = '';
+  let cachedRegex: RegExp | null = null;
+
   function highlightText(text: string, query: string): string {
-    if (!query.trim()) return escapeHtml(text);
-    const escaped = escapeHtml(text);
-    const escapedQuery = escapeHtml(query.trim()).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    return escaped.replace(
-      new RegExp(`(${escapedQuery})`, 'gi'),
-      `${MARK_OPEN}$1${MARK_CLOSE}`,
-    );
+    const q = query.trim();
+    if (!q) return escapeHtml(text);
+
+    if (q !== cachedQuery) {
+      cachedQuery = q;
+      const escapedQuery = escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      cachedRegex = new RegExp(`(${escapedQuery})`, 'gi');
+    }
+
+    return escapeHtml(text).replace(cachedRegex!, `${MARK_OPEN}$1${MARK_CLOSE}`);
   }
 
   return { highlightText };

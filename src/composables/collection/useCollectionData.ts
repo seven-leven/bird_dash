@@ -26,7 +26,7 @@ export function useCollectionData(
     );
   });
 
-  const drawnItems = computed(() => items.value.filter((i) => i.imageUrl !== i.placeholderUrl));
+  const drawnItems = computed(() => items.value.filter((i) => i.isDrawn));
 
   const searchedDrawnItems = computed(() => {
     const q = searchQuery.value.toLowerCase().trim();
@@ -51,10 +51,8 @@ export function useCollectionData(
 
     Object.keys(grouped).forEach((g) => {
       grouped[g].sort((a, b) => {
-        const aDrawn = a.imageUrl !== a.placeholderUrl;
-        const bDrawn = b.imageUrl !== b.placeholderUrl;
-        if (aDrawn !== bDrawn) return bDrawn ? 1 : -1;
-        return parseInt(a.itemId) - parseInt(b.itemId);
+        if (a.isDrawn !== b.isDrawn) return a.isDrawn ? -1 : 1;
+        return a.sortKey - b.sortKey;
       });
     });
 
@@ -62,7 +60,8 @@ export function useCollectionData(
       grouped,
       sidebarItems: Object.keys(grouped).map((g): SidebarItem => {
         const list = grouped[g];
-        const drawnCount = list.filter((i) => i.imageUrl !== i.placeholderUrl).length;
+        let drawnCount = 0;
+        for (const i of list) if (i.isDrawn) drawnCount++;
         return { id: g, label: g, count: drawnCount, total: list.length, disabled: false };
       }),
     };
@@ -73,13 +72,15 @@ export function useCollectionData(
   // =============================================================================
   const allMonths = computed(() => {
     const months: string[] = [];
-    const dates = drawnItems.value
-      .map((i) => i.drawnDate ? new Date(i.drawnDate) : null)
-      .filter((d): d is Date => d !== null && !isNaN(d.getTime()));
 
-    if (dates.length === 0) return months;
+    // Single pass for the earliest drawn timestamp (avoids spreading into Math.min).
+    let minTime = Infinity;
+    for (const i of drawnItems.value) {
+      if (i.drawnTime && i.drawnTime < minTime) minTime = i.drawnTime;
+    }
+    if (minTime === Infinity) return months;
 
-    const minDate = new Date(Math.min(...dates.map((d) => d.getTime())));
+    const minDate = new Date(minTime);
     const current = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
     const end = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
@@ -94,16 +95,14 @@ export function useCollectionData(
 
   const dateData: ComputedRef<DateData> = computed(() => {
     const sorted = [...searchedDrawnItems.value].sort((a, b) => {
-      const da = a.drawnDate ? new Date(a.drawnDate).getTime() : 0;
-      const db = b.drawnDate ? new Date(b.drawnDate).getTime() : 0;
-      if (da !== db) return da - db;
-      return parseInt(a.itemId) - parseInt(b.itemId);
+      if (a.drawnTime !== b.drawnTime) return a.drawnTime - b.drawnTime;
+      return a.sortKey - b.sortKey;
     });
 
     const grouped: Record<string, CollectionItem[]> = {};
     sorted.forEach((i) => {
-      if (!i.drawnDate) return;
-      const d = new Date(i.drawnDate);
+      if (!i.drawnTime) return;
+      const d = new Date(i.drawnTime);
       const key = `${d.toLocaleString('default', { month: 'long' })} ${d.getFullYear()}`;
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(i);

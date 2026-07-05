@@ -7,6 +7,12 @@ export interface CollectionItem {
   drawnDate: string;
   imageUrl: string;
   placeholderUrl: string;
+  /** Precomputed once at load — avoids repeated `imageUrl !== placeholderUrl` checks. */
+  isDrawn: boolean;
+  /** Numeric form of `itemId`, precomputed for sort comparators. */
+  sortKey: number;
+  /** `drawnDate` as an epoch ms timestamp (0 if undrawn/invalid), for date sorting/grouping. */
+  drawnTime: number;
   illustratorNote?: string;
   meta?: Record<string, string>;
 }

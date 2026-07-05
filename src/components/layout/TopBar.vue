@@ -15,7 +15,7 @@
     </button>
 
     <!-- Wordmark -->
-    <a href="#" class="hidden md:flex items-baseline gap-1 shrink-0 pr-1 select-none focus-ring rounded-md">
+    <a v-once href="#" class="hidden md:flex items-baseline gap-1 shrink-0 pr-1 select-none focus-ring rounded-md">
       <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
       <span class="text-sm font-light tracking-tight text-slate-400 dark:text-slate-500">Illustrated</span>
     </a>

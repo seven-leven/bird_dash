@@ -97,14 +97,29 @@ export function useLightbox({ props, emit }: LightboxOptions) {
     dragStartTranslateY.value = translateY.value;
   };
 
+  // Coalesce pointer moves to one reactive write (and thus one re-render) per
+  // frame instead of one per mousemove event.
+  let moveRaf = 0;
+  let pendingX = 0;
+  let pendingY = 0;
   const handleMouseMove = (e: MouseEvent) => {
     if (!isDragging.value) return;
-    translateX.value = dragStartTranslateX.value + (e.clientX - dragStartX.value) / scale.value;
-    translateY.value = dragStartTranslateY.value + (e.clientY - dragStartY.value) / scale.value;
+    pendingX = dragStartTranslateX.value + (e.clientX - dragStartX.value) / scale.value;
+    pendingY = dragStartTranslateY.value + (e.clientY - dragStartY.value) / scale.value;
+    if (moveRaf) return;
+    moveRaf = requestAnimationFrame(() => {
+      moveRaf = 0;
+      translateX.value = pendingX;
+      translateY.value = pendingY;
+    });
   };
 
   const handleMouseUp = () => {
     isDragging.value = false;
+    if (moveRaf) {
+      cancelAnimationFrame(moveRaf);
+      moveRaf = 0;
+    }
   };
 
   // ── Actions ──

@@ -50,5 +50,20 @@ export default defineConfig({
   base: './',
   define: {
     __APP_VERSION__: JSON.stringify(computeAppVersion()),
+    // We use only the Composition API — drop the Options-API compat layer and
+    // dev-only tooling from the production runtime.
+    __VUE_OPTIONS_API__: false,
+    __VUE_PROD_DEVTOOLS__: false,
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Keep the Vue runtime in its own chunk so it caches across app deploys.
+        manualChunks(id: string) {
+          if (id.includes('/vue@') || id.includes('/@vue/')) return 'vue';
+        },
+      },
+    },
   },
 });

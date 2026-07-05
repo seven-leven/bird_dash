@@ -50,7 +50,7 @@
         <div
           ref="scrollContainer"
           class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar"
-          @scroll="app.onScroll()"
+          @scroll.passive="app.onScroll()"
         >
           <GalleryContent ref="galleryContentRef" />
         </div>
@@ -74,13 +74,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, defineAsyncComponent, ref } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
-import LightBox from '../gallery/LightBox.vue';
 import IconClose from '../icons/IconClose.vue';
 import { useAppContext } from '../../composables';
+
+// Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)
+// are only needed after the first tile click, so keep them out of first paint.
+const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 
 const app = useAppContext();
 

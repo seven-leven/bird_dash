@@ -9,3 +9,4 @@ export * from './core/useTheme.ts';
 export * from './core/useBreakpoints.ts';
 export * from './core/useOverlay.ts';
 export * from './core/useAppContext.ts';
+export * from './core/useDebounce.ts';
