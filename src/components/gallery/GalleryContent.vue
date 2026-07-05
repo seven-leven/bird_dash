@@ -43,7 +43,7 @@
       <section
         v-for="(items, groupName) in activeData.grouped"
         :key="groupName"
-        class="mb-12 scroll-mt-10"
+        class="mb-12 scroll-mt-10 cv-auto"
       >
         <h2
           :ref="el => { if (el) headerRefs[String(groupName)] = el as HTMLElement }"
@@ -52,7 +52,7 @@
         >
           <span>{{ groupName }}</span>
           <span class="text-xs font-normal tabular-nums text-slate-400 dark:text-slate-500">
-            {{ getDrawnCount(items) }} drawn
+            {{ drawnCounts[String(groupName)] ?? 0 }} drawn
             <template v-if="ui.viewMode === 'group'"> / {{ items.length }}</template>
           </span>
         </h2>
@@ -61,6 +61,7 @@
           <ItemTile
             v-for="item in items"
             :key="item.id"
+            v-memo="[item.isDrawn, item.imageUrl]"
             :item="item"
             :placeholder-image="placeholderImage"
             @card-click="openItem($event)"
@@ -68,10 +69,13 @@
         </div>
       </section>
 
-      <!-- Footer (override via slot if needed) -->
+      <!-- Footer (override via slot if needed) — static per session -->
       <slot name="footer">
-        <footer class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
-                       border-slate-100 text-slate-300 dark:border-slate-800/50 dark:text-slate-600">
+        <footer
+          v-once
+          class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
+                 border-slate-100 text-slate-300 dark:border-slate-800/50 dark:text-slate-600"
+        >
           <p>Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}</p>
         </footer>
       </slot>
@@ -104,12 +108,17 @@ const placeholderImage = computed(() =>
 
 const isEmpty = computed(() => Object.keys(activeData.value.grouped).length === 0);
 
-// ---------------------------------------------------------------------------
-// METHODS
-// ---------------------------------------------------------------------------
-/** Count items that have been drawn (imageUrl !== placeholder) */
-const getDrawnCount = (items: CollectionItem[]): number =>
-  items.filter((item) => item.imageUrl !== placeholderImage.value).length;
+// Drawn count per group, computed once per data change instead of per group
+// header per render (a plain method in the template would re-run every render).
+const drawnCounts = computed(() => {
+  const counts: Record<string, number> = {};
+  for (const [group, items] of Object.entries(activeData.value.grouped)) {
+    let n = 0;
+    for (const item of items) if (item.isDrawn) n++;
+    counts[group] = n;
+  }
+  return counts;
+});
 
 // ---------------------------------------------------------------------------
 // REFS (exposed for parent scroll-spy)

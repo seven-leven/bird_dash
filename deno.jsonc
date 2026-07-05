@@ -37,7 +37,8 @@
     "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
+    "verbatimModuleSyntax": true
   },
 
   "lint": {

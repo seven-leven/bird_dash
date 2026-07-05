@@ -14,13 +14,14 @@ export function useScrollLogic(
 ): UseScrollLogicReturn {
   const activeSection = ref<string>('');
 
-  const updateActiveSection = (): void => {
+  // Coalesce scroll events to one layout-reading pass per animation frame.
+  let rafId = 0;
+  const computeActiveSection = (): void => {
     const container = uiRef.value?.scrollContainer;
     if (!container) return;
 
     const scrollPos = container.scrollTop + 100; // offset for header
 
-    // Check all section headers
     const headers = uiRef.value?.headerRefs ?? {};
     let current = '';
 
@@ -33,6 +34,14 @@ export function useScrollLogic(
     if (current && current !== activeSection.value) {
       activeSection.value = current;
     }
+  };
+
+  const updateActiveSection = (): void => {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
+      computeActiveSection();
+    });
   };
 
   const goToSection = (name: string): void => {

@@ -69,6 +69,13 @@
 }
 
 @layer utilities {
+  /* Let the browser skip layout/paint for offscreen group sections.
+     The intrinsic size is an estimate that keeps the scrollbar stable. */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 480px;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
     height: 8px;

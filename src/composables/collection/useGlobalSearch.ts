@@ -1,26 +1,22 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
-import {
+import type {
   CollectionCache,
-  type CollectionConfig,
-  type CollectionItem,
-  type GlobalSearchCollectionGroup,
+  CollectionConfig,
+  CollectionItem,
+  GlobalSearchCollectionGroup,
   GlobalSearchResult,
-  type GlobalSearchState,
-  type MatchedField,
+  MatchedField,
 } from '../../types/index.ts';
 
 // ---------------------------------------------------------------------------
 // HELPERS
 // ---------------------------------------------------------------------------
-function highlight(text: string, query: string): boolean {
-  return text.toLowerCase().includes(query.toLowerCase().trim());
-}
-
-function matchedFields(item: CollectionItem, q: string): MatchedField[] {
+/** Which fields match — `ql` is expected already lowercased/trimmed by the caller. */
+function matchedFields(item: CollectionItem, ql: string): MatchedField[] {
   const fields: MatchedField[] = [];
-  if (highlight(item.itemId, q)) fields.push('id');
-  if (highlight(item.commonName, q)) fields.push('commonName');
-  if (highlight(item.scientificName, q)) fields.push('scientificName');
+  if (item.itemId.toLowerCase().includes(ql)) fields.push('id');
+  if (item.commonName.toLowerCase().includes(ql)) fields.push('commonName');
+  if (item.scientificName.toLowerCase().includes(ql)) fields.push('scientificName');
   return fields;
 }
 
@@ -30,30 +26,27 @@ function matchedFields(item: CollectionItem, q: string): MatchedField[] {
 export function useGlobalSearch(
   collections: Ref<CollectionConfig[]>,
   collectionCache: CollectionCache,
-  globalSearchState: Ref<GlobalSearchState>,
+  query: Ref<string>,
 ) {
   /**
    * All cross-collection results, grouped by collection.
-   * Only runs when there is a non-empty query.
+   * Single pass per item (match once, reuse the fields), query normalized once.
    */
   const globalResults: ComputedRef<GlobalSearchCollectionGroup[]> = computed(() => {
-    const q = globalSearchState.value.query.trim();
-    if (!q) return [];
+    const ql = query.value.trim().toLowerCase();
+    if (!ql) return [];
 
-    return collections.value
-      .map((col) => {
-        const cached: CollectionItem[] = collectionCache[col.id] ?? [];
-        const results: GlobalSearchResult[] = cached
-          .filter((item) => matchedFields(item, q).length > 0)
-          .map((item) => ({
-            item,
-            collection: col,
-            matchedFields: matchedFields(item, q),
-          }));
-
-        return { collection: col, results, count: results.length };
-      })
-      .filter((g) => g.count > 0);
+    const groups: GlobalSearchCollectionGroup[] = [];
+    for (const col of collections.value) {
+      const cached: CollectionItem[] = collectionCache[col.id] ?? [];
+      const results: GlobalSearchResult[] = [];
+      for (const item of cached) {
+        const fields = matchedFields(item, ql);
+        if (fields.length > 0) results.push({ item, collection: col, matchedFields: fields });
+      }
+      if (results.length > 0) groups.push({ collection: col, results, count: results.length });
+    }
+    return groups;
   });
 
   /** Flat list of all matched results across every collection. */
@@ -65,9 +58,7 @@ export function useGlobalSearch(
   const globalResultCount: ComputedRef<number> = computed(() => allGlobalResults.value.length);
 
   /** True when the query is non-empty. */
-  const isGlobalSearchActive: ComputedRef<boolean> = computed(() =>
-    globalSearchState.value.query.trim().length > 0
-  );
+  const isGlobalSearchActive: ComputedRef<boolean> = computed(() => query.value.trim().length > 0);
 
   return {
     globalResults,

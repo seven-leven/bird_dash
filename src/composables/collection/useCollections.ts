@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, nextTick, reactive, ref } from 'vue';
+import { computed, type ComputedRef, nextTick, ref, shallowReactive } from 'vue';
 // Added .ts extension and fixed path based on your error log
 import type {
   CollectionCache,
@@ -9,7 +9,8 @@ import type {
   RawCollectionConfig,
 } from '../../types/index.ts';
 
-const getBase = () => (import.meta.env?.BASE_URL as string) || '/';
+const getBase = () =>
+  (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 
 const resolveUrl = (template: string, item: CollectionItem): string => {
   return template
@@ -21,9 +22,11 @@ export function useCollections() {
   const collections = ref<CollectionConfig[]>([]);
   const isInitialized = ref(false);
   const activeCollectionId = ref('');
-  const collectionCache = reactive<CollectionCache>({});
+  // shallowReactive: track the per-collection array references, but don't deeply
+  // proxy the (frozen, immutable) items inside them.
+  const collectionCache = shallowReactive<CollectionCache>({});
 
-  const data = reactive<DataState>({
+  const data = shallowReactive<DataState>({
     items: [],
     loading: true,
     error: undefined,
@@ -40,7 +43,7 @@ export function useCollections() {
     collections.value.forEach((col: CollectionConfig) => {
       const cached = collectionCache[col.id] ?? [];
       total += cached.length;
-      drawn += cached.filter((i: CollectionItem) => i.imageUrl !== i.placeholderUrl).length;
+      for (const i of cached) if (i.isDrawn) drawn++;
     });
     return { drawn, total };
   });
@@ -69,18 +72,26 @@ export function useCollections() {
           }
         });
 
-        items.push({
+        const drawnDate = String(r.drawn ?? '');
+        const drawnTime = hasImg ? (new Date(drawnDate).getTime() || 0) : 0;
+
+        // Frozen: items never mutate after load, so freezing documents that and
+        // lets the shallowReactive store skip proxying them.
+        items.push(Object.freeze({
           id: `${col.id}-item-${counter++}`,
           itemId: String(r.id ?? ''),
           commonName: String(r.name ?? ''),
           scientificName: String(r.sci ?? ''),
           group: groupName,
-          drawnDate: String(r.drawn ?? ''),
+          drawnDate,
           imageUrl: hasImg ? `${col.imageBase}${r.id}.webp` : placeholder,
           placeholderUrl: placeholder,
+          isDrawn: hasImg,
+          sortKey: Number.parseInt(String(r.id ?? ''), 10) || 0,
+          drawnTime,
           illustratorNote: String(r.illustratorNote ?? ''),
           meta: Object.keys(meta).length ? meta : undefined,
-        });
+        }));
       });
     }
     return items;
