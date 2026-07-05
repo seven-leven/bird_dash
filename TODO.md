@@ -3,7 +3,8 @@
 ## 🚀 High Priority (Fixes & Cleanup)
 
 - [ ] **Fixes**:
-  - [ ] Version numbering logic (version.json patch counter has drifted from actual commit count).
+  - [x] Version numbering logic — version is now derived at build time (patch = commit count, count
+        = drawn illustrations), so it can no longer drift.
   - [ ] Date sorting (cycle by date, not ID).
   - [x] Thumbnail sizing inconsistencies.
 - [ ] **Technical Debt**:
@@ -21,8 +22,8 @@
 
 ## 🛠️ Workflow & Tooling
 
-- [ ] **Ship Script**: Create interface to auto-update `CHANGELOG.md` during deployment.
-- [ ] **Docs**: Complete overhaul of `CHANGELOG.md` updates.
+- [x] **Ship Script**: `deno task changelog` inserts unlogged commits under _Unreleased_.
+- [x] **Docs**: `CHANGELOG.md` scheme documented; entries curated via the changelog task.
 - [ ] Proper group names throughout each collection.
 - [ ] Group images by collection, matching the storage layout.
 - [x] Extract types.

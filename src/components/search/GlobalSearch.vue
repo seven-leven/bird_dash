@@ -1,11 +1,10 @@
 <!-- components/search/GlobalSearch.vue -->
 <template>
   <div class="relative shrink-0" ref="searchWrapperRef">
-
     <!-- ==================== INPUT FIELD ==================== -->
     <div
       class="relative w-44 sm:w-56 md:w-72 transition-all duration-200"
-      :class="{ 'md:w-96': searchState.isOpen }"
+      :class="{ 'md:w-96': globalSearch.isOpen }"
     >
       <!-- Search Icon -->
       <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
@@ -16,7 +15,7 @@
       <input
         ref="searchInputRef"
         type="text"
-        :value="searchState.query"
+        :value="globalSearch.query"
         @input="onInput(($event.target as HTMLInputElement).value)"
         @focus="openDropdown"
         @keydown.escape="closeDropdown"
@@ -64,19 +63,22 @@
         aria-label="Search results"
       >
         <!-- Header -->
-        <SearchDropdownHeader :count="resultCount" />
+        <SearchDropdownHeader :count="globalResultCount" />
 
         <!-- States -->
-        <EmptyState v-if="resultCount === 0" title="No matches found" class="py-6">
+        <EmptyState v-if="globalResultCount === 0" title="No matches found" class="py-6">
           <template #icon>
             <IconNoResults class="w-6 h-6" />
           </template>
         </EmptyState>
 
-        <div v-else class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800">
+        <div
+          v-else
+          class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800"
+        >
           <SearchResultsList
-            :results="results"
-            :query="searchState.query"
+            :results="globalResults"
+            :query="globalSearch.query"
             :focused-index="focusedIndex"
             :get-flat-index="getFlatIndex"
             :highlight="highlight"
@@ -93,14 +95,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import type {
-  GlobalSearchCollectionGroup,
-  GlobalSearchState,
-  CollectionItem
-} from '../../types/index.ts';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
+import type { CollectionItem } from '../../types/index.ts';
 
 // Composables
+import { useAppContext } from '../../composables';
 import { useSearchNavigation } from '../../composables/search/useSearchNavigation.ts';
 import { useSearchHighlight } from '../../composables/search/useSearchHighlight.ts';
 import { useClickOutside } from '../../composables/search/useClickOutside.ts';
@@ -115,20 +114,17 @@ import SearchResultsList from './SearchResultsList.vue';
 import SearchKeyboardHints from './SearchKeyboardHints.vue';
 
 // ---------------------------------------------------------------------------
-// PROPS & EMITS
+// APP CONTEXT
 // ---------------------------------------------------------------------------
-const props = defineProps<{
-  searchState: GlobalSearchState;
-  results: GlobalSearchCollectionGroup[];
-  resultCount: number;
-}>();
-
-const emit = defineEmits<{
-  update: [query: string];
-  select: [collectionId: string, itemId: string];
-  open: [];
-  close: [];
-}>();
+const {
+  globalSearch,
+  globalResults,
+  globalResultCount,
+  updateGlobalSearch,
+  selectGlobalResult,
+  openGlobalSearchDropdown,
+  closeGlobalSearchDropdown,
+} = useAppContext();
 
 // ---------------------------------------------------------------------------
 // REFS
@@ -140,10 +136,10 @@ const searchWrapperRef = ref<HTMLElement | null>(null);
 // COMPOSABLES
 // ---------------------------------------------------------------------------
 const { focusedIndex, getFlatIndex, moveFocus, resetFocus, getFocusedResult } =
-  useSearchNavigation(() => props.results, () => searchWrapperRef.value);
+  useSearchNavigation(() => globalResults.value, () => searchWrapperRef.value);
 
 const { highlightText } = useSearchHighlight();
-const highlight = (text: string) => highlightText(text, props.searchState.query);
+const highlight = (text: string) => highlightText(text, globalSearch.value.query);
 useClickOutside(() => searchWrapperRef.value, closeDropdown);
 
 // ---------------------------------------------------------------------------
@@ -165,9 +161,9 @@ onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown));
 // ---------------------------------------------------------------------------
 // COMPUTED
 // ---------------------------------------------------------------------------
-const hasQuery = computed(() => props.searchState.query.length > 0);
+const hasQuery = computed(() => globalSearch.value.query.length > 0);
 const shouldShowDropdown = computed(() =>
-  props.searchState.isOpen && props.searchState.query.trim()
+  globalSearch.value.isOpen && globalSearch.value.query.trim()
 );
 
 const dropdownTransition = {
@@ -176,7 +172,7 @@ const dropdownTransition = {
   enterToClass: 'opacity-100 translate-y-0 scale-100',
   leaveActiveClass: 'transition duration-150 ease-in',
   leaveFromClass: 'opacity-100 translate-y-0 scale-100',
-  leaveToClass: 'opacity-0 translate-y-1 scale-95'
+  leaveToClass: 'opacity-0 translate-y-1 scale-95',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -184,22 +180,22 @@ const dropdownTransition = {
 // ---------------------------------------------------------------------------
 function onInput(value: string) {
   resetFocus();
-  emit('update', value);
-  if (value.trim()) emit('open');
+  updateGlobalSearch(value);
+  if (value.trim()) openGlobalSearchDropdown();
 }
 
 function openDropdown() {
-  if (props.searchState.query.trim()) emit('open');
+  if (globalSearch.value.query.trim()) openGlobalSearchDropdown();
 }
 
 function closeDropdown() {
   resetFocus();
-  emit('close');
+  closeGlobalSearchDropdown();
 }
 
 function clearSearch() {
-  emit('update', '');
-  emit('close');
+  updateGlobalSearch('');
+  closeGlobalSearchDropdown();
   searchInputRef.value?.focus();
 }
 
@@ -214,8 +210,10 @@ function selectFocused() {
   }
 }
 
-function onSelectResult(result: { collection: { id: string }; item: Pick<CollectionItem, 'itemId'> }) {
-  emit('select', result.collection.id, result.item.itemId);
+function onSelectResult(
+  result: { collection: { id: string }; item: Pick<CollectionItem, 'itemId'> },
+) {
+  selectGlobalResult(result.collection.id, result.item.itemId);
   closeDropdown();
 }
 </script>

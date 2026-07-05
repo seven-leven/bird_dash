@@ -79,7 +79,7 @@ const loadImage = () => {
   const img = new Image();
   img.onload  = () => { imageToDisplay.value = targetUrl; };
   img.onerror = () => {
-    console.warn(`[GridItemCard] Failed to load: ${targetUrl}`);
+    console.warn(`[ItemTile] Failed to load: ${targetUrl}`);
     imageToDisplay.value = props.placeholderImage;
   };
   img.src = targetUrl;

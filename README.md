@@ -42,10 +42,23 @@ deno task build
 
 ## Structure
 
-- `src/`: Vue components and application logic.
-- `public/`: Static assets (images, `birds.json`).
+- `src/components/`: Vue components, grouped by feature — `layout/` (Chrome, TopBar, SideNav),
+  `gallery/` (grid, tiles, lightbox), `search/` (global search), `icons/`, `ui/` (shared bits).
+- `src/composables/`: App logic; `useAppContext` wires state and actions into the chrome.
+- `public/`: Static assets — `collections.json` defines the collections, `lists/*.json` the items.
+- `script/`: Deno build pipeline (image transcoding, integrity checks, versioning, changelog).
 - `deno.jsonc`: Project configuration and task definitions.
-- `vite.config.ts`: Build configuration.
+- `vite.config.ts`: Build configuration; injects the derived app version.
+
+## Versioning
+
+Versions follow `x.y.z+w`. Only `x.y` (major/minor) is stored, in `version.json`; the patch (`z` =
+commit count) and illustration count (`w`) are computed from the repo at build time, so the version
+can never drift and needs no bump commits.
+
+- `deno task version` — print the current version
+- `deno task changelog` — insert commits made since `CHANGELOG.md` was last touched under
+  _Unreleased_ (use `--dry-run` to preview)
 
 ## License
 

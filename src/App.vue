@@ -1,39 +1,38 @@
 <script setup lang="ts">
-/// <reference types="vite/client" />
-import { ref, reactive, computed, onMounted, watch, nextTick, toRefs, useTemplateRef } from 'vue';
+import { computed, nextTick, onMounted, reactive, ref, toRefs, useTemplateRef, watch } from 'vue';
 
-// Components & Types
-import UI from './components/layout/Chrome.vue';
-import type { CollectionItem, GlobalSearchState } from './types/';
+import Chrome from './components/layout/Chrome.vue';
+import type { GlobalSearchState } from './types/';
 
-// Consolidated Composables Import
-import { 
-  useCollections, 
-  useCollectionData, 
-  useScrollLogic, 
-  useBreakpoints, 
-  useOverlay,
+import {
+  provideAppContext,
+  useBreakpoints,
+  useCollectionData,
+  useCollections,
   useGlobalSearch,
-  useTheme, 
-} from './composables'; 
+  useOverlay,
+  useScrollLogic,
+  useTheme,
+} from './composables';
 
 // =============================================================================
 // STATE & CORE LOGIC
 // =============================================================================
-const uiRef = useTemplateRef<{ scrollContainer: HTMLElement | null; headerRefs: Record<string, HTMLElement | null> }>('uiRef');
+const uiRef = useTemplateRef<
+  { scrollContainer: HTMLElement | null; headerRefs: Record<string, HTMLElement | null> }
+>('uiRef');
 const search = reactive({ query: '' });
 const { query } = toRefs(search);
 
-// Initialize Logic
 const { theme, toggleTheme } = useTheme();
 const { isMobile } = useBreakpoints(1024);
 const { expandedImage, openOverlay, closeOverlay, updateOverlayItem } = useOverlay();
 
 const ui = reactive({
   sidebarOpen: false,
-  mobile:      isMobile,
-  client:      false,
-  viewMode:    'group' as 'group' | 'date',
+  mobile: isMobile,
+  client: false,
+  viewMode: 'group' as 'group' | 'date',
 });
 
 const {
@@ -58,14 +57,15 @@ const { activeSection, updateActiveSection, goToSection, handleHash } = useScrol
 // GLOBAL SEARCH
 // =============================================================================
 const globalSearchState = ref<GlobalSearchState>({
-  query:  '',
+  query: '',
   isOpen: false,
 });
 
-const {
-  globalResults,
-  globalResultCount,
-} = useGlobalSearch(COLLECTIONS, collectionCache, globalSearchState);
+const { globalResults, globalResultCount } = useGlobalSearch(
+  COLLECTIONS,
+  collectionCache,
+  globalSearchState,
+);
 
 function handleUpdateGlobalSearch(q: string) {
   globalSearchState.value.query = q;
@@ -74,14 +74,6 @@ function handleUpdateGlobalSearch(q: string) {
   if (q.trim()) {
     globalSearchState.value.isOpen = true;
   }
-}
-
-function handleOpenGlobalSearchDropdown() {
-  globalSearchState.value.isOpen = true;
-}
-
-function handleCloseGlobalSearchDropdown() {
-  globalSearchState.value.isOpen = false;
 }
 
 /**
@@ -116,7 +108,7 @@ async function handleSwitchCollection(id: string) {
   search.query = '';
   globalSearchState.value.query = '';
   if (uiRef.value?.headerRefs) uiRef.value.headerRefs = {};
-  
+
   await switchCollection(id, () => {
     if (uiRef.value?.scrollContainer) uiRef.value.scrollContainer.scrollTop = 0;
     updateActiveSection();
@@ -128,6 +120,45 @@ const toggleViewMode = () => {
   ui.viewMode = ui.viewMode === 'group' ? 'date' : 'group';
   nextTick(updateActiveSection);
 };
+
+// =============================================================================
+// APP CONTEXT — everything the chrome components need, in one place
+// =============================================================================
+provideAppContext({
+  collections: COLLECTIONS,
+  activeCollection,
+  globalStats,
+  data,
+  activeData: activeDataWithStats,
+
+  ui,
+  theme,
+  activeSection,
+  search,
+
+  globalSearch: globalSearchState,
+  globalResults,
+  globalResultCount,
+
+  expandedImage,
+  drawnItems: searchedDrawnItems,
+
+  switchCollection: handleSwitchCollection,
+  toggleSidebar: () => ui.sidebarOpen = !ui.sidebarOpen,
+  closeSidebar: () => ui.sidebarOpen = false,
+  toggleTheme,
+  toggleViewMode,
+  goToSection,
+  onScroll: updateActiveSection,
+  openItem: openOverlay,
+  closeOverlay,
+  updateOverlayItem,
+  updateSearch: (q: string) => search.query = q,
+  updateGlobalSearch: handleUpdateGlobalSearch,
+  openGlobalSearchDropdown: () => globalSearchState.value.isOpen = true,
+  closeGlobalSearchDropdown: () => globalSearchState.value.isOpen = false,
+  selectGlobalResult: handleSelectGlobalResult,
+});
 
 // =============================================================================
 // LIFECYCLE
@@ -148,43 +179,12 @@ watch(() => data.items, () => {
 </script>
 
 <template>
-  <div v-if="isInitialized">
-    <UI
-      ref="uiRef"
-      :collections="COLLECTIONS"
-      :active-collection="activeCollection"
-      :global-stats="globalStats"
-      :ui="ui"
-      :theme="theme"
-      :data="data"
-      :active-data="activeDataWithStats"
-      :active-section="activeSection"
-      :search="search"
-      :global-search-state="globalSearchState"
-      :global-results="globalResults"
-      :global-result-count="globalResultCount"
-      :expanded-image="expandedImage"
-      :drawn-items="searchedDrawnItems"
-      
-      @switch-collection="handleSwitchCollection"
-      @close-sidebar="ui.sidebarOpen = false"
-      @toggle-sidebar="ui.sidebarOpen = !ui.sidebarOpen"
-      @toggle-theme="toggleTheme"
-      @toggle-view-mode="toggleViewMode"
-      @go-to-section="goToSection"
-      @scroll="updateActiveSection"
-      @card-click="openOverlay"
-      @update-search="search.query = $event"
-      @update-global-search="handleUpdateGlobalSearch"
-      @open-global-search-dropdown="handleOpenGlobalSearchDropdown"
-      @close-global-search-dropdown="handleCloseGlobalSearchDropdown"
-      @select-global-result="handleSelectGlobalResult"
-      @close-overlay="closeOverlay"
-      @update-overlay-item="updateOverlayItem"
-    />
-  </div>
-  
-  <div v-else class="flex flex-col items-center justify-center gap-3 min-h-screen bg-slate-50 dark:bg-slate-950">
+  <Chrome v-if="isInitialized" ref="uiRef" />
+
+  <div
+    v-else
+    class="flex flex-col items-center justify-center gap-3 min-h-screen bg-slate-50 dark:bg-slate-950"
+  >
     <div class="w-8 h-8 border-2 border-slate-200 border-t-accent-500 rounded-full animate-spin dark:border-slate-800 dark:border-t-accent-500" />
     <p class="text-xs font-medium text-slate-400 dark:text-slate-500">Loading collections…</p>
   </div>

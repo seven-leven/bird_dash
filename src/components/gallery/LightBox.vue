@@ -104,7 +104,7 @@
 
           <!-- Info panel -->
           <div v-if="currentItem" class="w-full lg:w-auto lg:max-w-xs xl:max-w-sm shrink-0 lg:self-center">
-            <ItemInfoPanel :item="currentItem" :collection="collection" />
+            <ItemSheet :item="currentItem" :collection="collection" />
           </div>
         </div>
 
@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import ItemInfoPanel from './ItemSheet.vue';
+import ItemSheet from './ItemSheet.vue';
 import IconZoomIn from '../icons/IconZoomIn.vue';
 import IconZoomOut from '../icons/IconZoomOut.vue';
 import IconReset from '../icons/IconReset.vue';

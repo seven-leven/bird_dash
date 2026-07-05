@@ -14,7 +14,7 @@ import { scanCollection } from './pipeline/scan.ts';
 import { planWork } from './pipeline/plan.ts';
 import { executeWork } from './pipeline/execute.ts';
 import { printCheckReport, printSummary, reportWarnings } from './pipeline/report.ts';
-import { VersionManager } from './version/manager.ts';
+import { computeVersion, formatVersion } from './version/compute.ts';
 import type { CollectionSummary } from './pipeline/report.ts';
 
 // ---------------------------------------------------------------------------
@@ -38,10 +38,9 @@ export async function buildAssets(): Promise<void> {
     summaries.push({ col, plan, result, drawnCount });
   }
 
-  const totalDrawn = summaries.reduce((n, s) => n + s.drawnCount, 0);
-  const version = await VersionManager.bumpPatch(totalDrawn);
+  const version = await computeVersion();
 
-  printSummary(summaries, VersionManager.format(version), Date.now() - start);
+  printSummary(summaries, formatVersion(version), Date.now() - start);
 
   const failed = summaries.flatMap((s) =>
     s.result.failed.map((f) => `${s.col.id}/${f.id}: ${f.reason}`)
@@ -83,7 +82,7 @@ export async function buildVite(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 export async function checkIntegrity(): Promise<void> {
-  const version = await VersionManager.load();
+  const version = await computeVersion();
   const rows: Array<{
     col: typeof COLLECTIONS[0];
     state: Awaited<ReturnType<typeof scanCollection>>;
@@ -96,7 +95,7 @@ export async function checkIntegrity(): Promise<void> {
     rows.push({ col, state, plan });
   }
 
-  printCheckReport(rows, VersionManager.format(version));
+  printCheckReport(rows, formatVersion(version));
 }
 
 // ---------------------------------------------------------------------------
