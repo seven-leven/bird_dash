@@ -13,19 +13,29 @@ _Unreleased_, ready to edit and commit.
 
 ---
 
-## Unreleased
+## v0.8.0 (Redesign, Performance & Tooling)
 
-- 2026-07-05 | repo hygiene: PR CI (lint/format/build), LF line-ending policy, Pages config moved to
-  workflow builds, removed dead gh-pages branch
-- 2026-07-05 | UI cohesion pass: design tokens + accent color, shared icon/UI components, matching
-  skeletons, Ctrl+K search shortcut, filter chip, a11y fixes
-- 2026-06-30 | completed global search refactor: cross-collection results, counters, keyboard
-  navigation
+- 2026-07-05 | scroll-spy fix (content-visibility regression), Dhivehi name + Thaana script search,
+  CSS de-duplication (`.text-muted`, `.tile-grid`, `.icon-btn-overlay`)
+- 2026-07-05 | Lighthouse Accessibility + SEO to 100 — contrast pass, meta description, favicon path
+  fix, eager above-the-fold images
+- 2026-07-05 | performance: precomputed item fields (isDrawn / sortKey / searchText), native lazy
+  images, debounced search, shallowReactive immutable data, code-split lightbox, Vue prod flags and
+  a vendor chunk
+- 2026-07-05 | derived versioning (patch = commit count, +count = illustrations) and
+  `deno task changelog`; feature-based component structure with `useAppContext` provide/inject
+- 2026-07-05 | docs: README rewritten for the new architecture
+- 2026-07-05 | repo hygiene: PR CI (lint/format/build), LF line-ending policy, Pages moved to
+  workflow builds, dead gh-pages branch removed
+- 2026-07-05 | UI cohesion pass: accent design token, shared icon/UI components, matching skeletons,
+  Ctrl/⌘K search, dismissible filter chip, unified component naming
+- 2026-06-30 | global search: cross-collection results with counters and keyboard navigation
+- 2026-05-15 | added new component; bumped deploy script
+- 2026-05-12 | refactored search, segmented the build pipeline, overhauled the GitHub deploy
+  workflow, re-transcoded all images
 
 ## v0.7.0 (Multi-collection Architecture)
 
-- **0.7.084+018** | 2026-05-12 | refactored search, segmented build process, updated dependencies,
-  re-transcoded all images
 - **0.7.072+018** | 2026-03-12 | barrel import types, updated modules |
 - **0.7.071+018** | 2026-03-10 | renamed components v2, cleaned up theme usage in ui |
 - **0.7.070+018** | 2026-03-10 | isolated and moved all types to its own folder |
