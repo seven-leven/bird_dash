@@ -2,7 +2,7 @@
 import { computed, nextTick, onMounted, reactive, ref, toRefs, useTemplateRef, watch } from 'vue';
 
 import Chrome from './components/layout/Chrome.vue';
-import type { GlobalSearchState } from './types/';
+import type { CollectionItem, GlobalSearchState } from './types/';
 
 import {
   provideAppContext,
@@ -56,7 +56,7 @@ const debouncedQuery = useDebouncedRef(query, 120);
 const { activeData, stats, searchedDrawnItems } = useCollectionData(items, debouncedQuery, viewMode);
 
 const activeDataWithStats = computed(() => ({ ...activeData.value, stats: stats.value }));
-const { activeSection, updateActiveSection, goToSection, handleHash } = useScrollLogic(uiRef, ui);
+const { activeSection, updateActiveSection, goToSection } = useScrollLogic(uiRef, ui);
 
 // =============================================================================
 // GLOBAL SEARCH
@@ -82,33 +82,70 @@ function handleUpdateGlobalSearch(q: string) {
   }
 }
 
+/** Scroll a tile into view and flash a highlight ring around it. */
+function flashItem(itemId: string) {
+  const el = document.getElementById(`item-${itemId}`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.classList.add('ring-2', 'ring-accent-500', 'ring-offset-2');
+  setTimeout(() => el.classList.remove('ring-2', 'ring-accent-500', 'ring-offset-2'), 1800);
+}
+
 /**
- * User clicked / keyboard-selected a global search result.
- * 1. Switch to the correct collection (if needed)
- * 2. Close the dropdown
- * 3. Scroll the item into view via its DOM id
+ * User clicked / keyboard-selected a global search result: switch collection,
+ * close the dropdown, and scroll+flash the item.
  */
 async function handleSelectGlobalResult(collectionId: string, itemId: string) {
   globalSearchState.value.isOpen = false;
-
-  // Switch collection first (no-op if already active)
   if (collectionId !== activeCollection.value?.id) {
     await handleSwitchCollection(collectionId);
   }
-
-  // Wait a tick for the grid to render, then scroll to item
   await nextTick();
-  const el = document.getElementById(`item-${itemId}`);
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    // Brief highlight flash
-    el.classList.add('ring-2', 'ring-accent-500', 'ring-offset-2');
-    setTimeout(() => el.classList.remove('ring-2', 'ring-accent-500', 'ring-offset-2'), 1800);
-  }
+  flashItem(itemId);
 }
 
 // =============================================================================
-// ACTIONS
+// URL ROUTING — hash reflects what you're looking at:
+//   #<collectionId>            → a collection
+//   #<collectionId>/<itemId>   → that item's image (lightbox open)
+// so any tile/image can be linked and shared.
+// =============================================================================
+let lastHash = '';
+
+function setHash(hash: string) {
+  const next = hash ? `#${hash}` : '';
+  lastHash = next;
+  if (location.hash === next) return;
+  if (next) location.hash = next;
+  else history.replaceState(null, '', location.pathname + location.search);
+}
+
+function collectionHash(): string {
+  return activeCollection.value?.id ?? '';
+}
+
+async function applyHash() {
+  // Ignore hash changes we made ourselves.
+  if (location.hash === lastHash) return;
+  lastHash = location.hash;
+
+  const raw = location.hash.replace(/^#\/?/, '');
+  const [collectionId = '', itemId = ''] = raw.split('/');
+  if (!collectionId) return;
+
+  if (collectionId !== activeCollection.value?.id) {
+    await handleSwitchCollection(collectionId);
+  }
+  if (!itemId) return;
+
+  await nextTick();
+  const item = collectionCache[collectionId]?.find((i) => i.itemId === itemId);
+  if (item?.isDrawn) openOverlay(item); // drawn → open the image
+  else flashItem(itemId); // undrawn → just highlight the tile
+}
+
+// =============================================================================
+// ACTIONS (routed wrappers keep the URL in sync)
 // =============================================================================
 async function handleSwitchCollection(id: string) {
   search.query = '';
@@ -118,8 +155,27 @@ async function handleSwitchCollection(id: string) {
   await switchCollection(id, () => {
     if (uiRef.value?.scrollContainer) uiRef.value.scrollContainer.scrollTop = 0;
     updateActiveSection();
-    handleHash();
   });
+}
+
+async function selectCollection(id: string) {
+  await handleSwitchCollection(id);
+  setHash(id);
+}
+
+function openItem(item: CollectionItem) {
+  openOverlay(item);
+  if (item.imageUrl !== item.placeholderUrl) setHash(`${collectionHash()}/${item.itemId}`);
+}
+
+function closeItem() {
+  closeOverlay();
+  setHash(collectionHash());
+}
+
+function navigateItem(item: CollectionItem) {
+  updateOverlayItem(item);
+  setHash(`${collectionHash()}/${item.itemId}`);
 }
 
 const toggleViewMode = () => {
@@ -149,16 +205,15 @@ provideAppContext({
   expandedImage,
   drawnItems: searchedDrawnItems,
 
-  switchCollection: handleSwitchCollection,
+  switchCollection: selectCollection,
   toggleSidebar: () => ui.sidebarOpen = !ui.sidebarOpen,
   closeSidebar: () => ui.sidebarOpen = false,
   toggleTheme,
   toggleViewMode,
   goToSection,
-  onScroll: updateActiveSection,
-  openItem: openOverlay,
-  closeOverlay,
-  updateOverlayItem,
+  openItem,
+  closeOverlay: closeItem,
+  updateOverlayItem: navigateItem,
   updateSearch: (q: string) => search.query = q,
   updateGlobalSearch: handleUpdateGlobalSearch,
   openGlobalSearchDropdown: () => globalSearchState.value.isOpen = true,
@@ -171,15 +226,15 @@ provideAppContext({
 // =============================================================================
 onMounted(async () => {
   ui.client = true;
-  window.addEventListener('hashchange', handleHash);
+  window.addEventListener('hashchange', applyHash);
   await init();
 });
 
-// Sync UI markers when data updates
+// When data (re)loads: rebuild the scroll-spy observer and apply any deep link.
 watch(() => data.items, () => {
   nextTick(() => {
     updateActiveSection();
-    handleHash();
+    applyHash();
   });
 });
 </script>

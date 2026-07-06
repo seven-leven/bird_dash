@@ -49,7 +49,6 @@ export interface AppContext {
   toggleTheme: () => void;
   toggleViewMode: () => void;
   goToSection: (id: string) => void;
-  onScroll: () => void;
   openItem: (item: CollectionItem) => void;
   closeOverlay: () => void;
   updateOverlayItem: (item: CollectionItem) => void;

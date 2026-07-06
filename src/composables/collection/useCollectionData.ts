@@ -26,10 +26,12 @@ export function useCollectionData(
 
   const drawnItems = computed(() => items.value.filter((i) => i.isDrawn));
 
+  // Drawn items in chronological order (drawn date, then id) — this is what the
+  // lightbox pages through, so prev/next follows the timeline, not item ids.
   const searchedDrawnItems = computed(() => {
     const q = searchQuery.value.toLowerCase().trim();
-    if (!q) return drawnItems.value;
-    return drawnItems.value.filter((i) => i.searchText.includes(q));
+    const base = q ? drawnItems.value.filter((i) => i.searchText.includes(q)) : drawnItems.value;
+    return [...base].sort((a, b) => a.drawnTime - b.drawnTime || a.sortKey - b.sortKey);
   });
 
   // =============================================================================
