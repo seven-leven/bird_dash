@@ -76,7 +76,6 @@ export interface UseScrollLogicReturn {
   activeSection: Ref<string>;
   updateActiveSection: () => void;
   goToSection: (name: string) => void;
-  handleHash: () => void;
 }
 
 // -----------------------------------------------------------------------------

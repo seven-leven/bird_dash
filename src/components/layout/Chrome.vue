@@ -46,11 +46,10 @@
           </button>
         </div>
 
-        <!-- Scrollable grid -->
+        <!-- Scrollable grid (scroll-spy is driven by an IntersectionObserver) -->
         <div
           ref="scrollContainer"
           class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar"
-          @scroll.passive="app.onScroll()"
         >
           <GalleryContent ref="galleryContentRef" />
         </div>

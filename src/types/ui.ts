@@ -33,11 +33,6 @@ export interface ThemeState {
   isDark: boolean;
 }
 
-export interface loadingState {
-  loading: boolean;
-  error: string | undefined;
-}
-
 export interface SearchState {
   query: string;
 }

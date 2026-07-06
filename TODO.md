@@ -5,12 +5,15 @@
 - [ ] **Fixes**:
   - [x] Version numbering logic — version is now derived at build time (patch = commit count, count
         = drawn illustrations), so it can no longer drift.
-  - [ ] Date sorting (cycle by date, not ID).
+  - [x] Date sorting — the lightbox now pages drawn items chronologically (by drawn date), not by
+        id.
   - [x] Thumbnail sizing inconsistencies.
 - [ ] **Technical Debt**:
-  - [ ] Standardize URL/routing logic for collections and items.
-  - [ ] Scroll-spy via `IntersectionObserver` — required before re-introducing `content-visibility`
-        virtualization for large collections (offset-based tracking is incompatible with it).
+  - [x] URL/routing — hash routing (`#<collection>` / `#<collection>/<item>`) deep-links a
+        collection or an item; deep-linking an item scrolls/opens it, and tiles/images are
+        shareable.
+  - [x] Scroll-spy via `IntersectionObserver` (with a throttled scroll fallback) — no per-event
+        layout reads, and `content-visibility` virtualization can now be re-introduced safely.
 
 ## 🏗️ Architecture & Features
 
@@ -28,8 +31,10 @@
 - [x] **Docs**: `CHANGELOG.md` scheme documented; entries curated via the changelog task.
 - [x] **CI**: lint / format / build run on every pull request.
 - [x] **Accessibility & SEO**: Lighthouse to 100 (contrast, meta description, favicon).
-- [ ] Proper group names throughout each collection.
-- [ ] Group images by collection, matching the storage layout.
+- [ ] Proper group names throughout each collection. _(data task — needs correct taxonomy per item
+      in `public/lists/*.json`)_
+- [ ] Group images by collection, matching the storage layout. _(data/tooling task — needs a spec)_
 - [x] Extract types.
-- [ ] Standardize names for all types.
+- [x] Standardize names for all types (PascalCase interfaces per domain in `src/types/`; removed the
+      stray `loadingState`).
 - [ ] Responsive / higher-compression thumbnails (Lighthouse image-delivery, currently unscored).
