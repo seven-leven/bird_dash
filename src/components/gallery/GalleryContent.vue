@@ -84,14 +84,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
 import IconNoResults from '../icons/IconNoResults.vue';
 import { useAppContext } from '../../composables';
 import type { CollectionItem } from '../../types';
 
-const { data, activeData, search, ui, openItem } = useAppContext();
+// headerRefs is the context ref App's scroll-spy reads; the template registers
+// each section header into it.
+const { data, activeData, search, ui, openItem, headerRefs } = useAppContext();
 
 /** Derived version string, injected at build time by vite.config.ts */
 const appVersion = __APP_VERSION__;
@@ -108,10 +110,4 @@ const drawnCounts = computed(() => {
   for (const s of activeData.value.sidebarItems) counts[s.id] = s.count;
   return counts;
 });
-
-// ---------------------------------------------------------------------------
-// REFS (exposed for parent scroll-spy)
-// ---------------------------------------------------------------------------
-const headerRefs = ref<Record<string, HTMLElement>>({});
-defineExpose({ headerRefs });
 </script>

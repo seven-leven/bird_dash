@@ -28,11 +28,6 @@ export interface CollectionStats {
 // useScrollLogic Types
 // -----------------------------------------------------------------------------
 
-export interface ScrollUI {
-  scrollContainer: HTMLElement | null;
-  headerRefs: Record<string, HTMLElement | null>;
-}
-
 export interface UseScrollLogicReturn {
   activeSection: Ref<string>;
   updateActiveSection: () => void;

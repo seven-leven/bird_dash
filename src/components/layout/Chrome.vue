@@ -51,7 +51,7 @@
           ref="scrollContainer"
           class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar"
         >
-          <GalleryContent ref="galleryContentRef" />
+          <GalleryContent />
         </div>
 
       </main>
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref } from 'vue';
+import { defineAsyncComponent } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
@@ -86,17 +86,6 @@ const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 
 const app = useAppContext();
 
-// ---------------------------------------------------------------------------
-// REFS — exposed for App.vue scroll-spy logic
-// ---------------------------------------------------------------------------
-const scrollContainer = ref<HTMLElement | null>(null);
-const galleryContentRef = ref<InstanceType<typeof GalleryContent> | null>(null);
-
-defineExpose({
-  scrollContainer,
-  // Proxy headerRefs from child component with explicit typing
-  headerRefs: computed((): Record<string, HTMLElement> =>
-    galleryContentRef.value?.headerRefs ?? {}
-  ),
-});
+// Template ref target — the context ref App's scroll-spy reads.
+const { scrollContainer } = app;
 </script>

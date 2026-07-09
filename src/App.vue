@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, reactive, toRefs, useTemplateRef, watch } from 'vue';
+import { nextTick, onMounted, reactive, ref, toRefs, watch } from 'vue';
 
 import Chrome from './components/layout/Chrome.vue';
 import type { CollectionItem } from './types/';
@@ -19,9 +19,10 @@ import {
 // =============================================================================
 // STATE & CORE LOGIC
 // =============================================================================
-const uiRef = useTemplateRef<
-  { scrollContainer: HTMLElement | null; headerRefs: Record<string, HTMLElement | null> }
->('uiRef');
+// Scroll-spy targets, shared through the app context: Chrome binds the scroll
+// container, GalleryContent registers the section headers.
+const scrollContainer = ref<HTMLElement | null>(null);
+const headerRefs = ref<Record<string, HTMLElement | null>>({});
 // One search state drives both the grid filter and the global dropdown, so the
 // input, the results, and the filter chip can never drift apart.
 const search = reactive({ query: '', dropdownOpen: false });
@@ -56,7 +57,11 @@ const { viewMode } = toRefs(ui);
 const debouncedQuery = useDebouncedRef(query, 120);
 const { activeData, stats, searchedDrawnItems } = useCollectionData(items, debouncedQuery, viewMode);
 
-const { activeSection, updateActiveSection, goToSection } = useScrollLogic(uiRef, ui);
+const { activeSection, updateActiveSection, goToSection } = useScrollLogic(
+  scrollContainer,
+  headerRefs,
+  ui,
+);
 
 // =============================================================================
 // GLOBAL SEARCH — same debounced query feeds the grid filter and the
@@ -140,10 +145,10 @@ async function applyHash() {
 // =============================================================================
 async function handleSwitchCollection(id: string) {
   search.query = '';
-  if (uiRef.value?.headerRefs) uiRef.value.headerRefs = {};
+  headerRefs.value = {};
 
   await switchCollection(id, () => {
-    if (uiRef.value?.scrollContainer) uiRef.value.scrollContainer.scrollTop = 0;
+    if (scrollContainer.value) scrollContainer.value.scrollTop = 0;
     updateActiveSection();
   });
 }
@@ -188,6 +193,8 @@ provideAppContext({
   theme,
   activeSection,
   search,
+  scrollContainer,
+  headerRefs,
 
   globalResults,
   globalResultCount,
@@ -227,7 +234,7 @@ watch(() => data.items, () => {
 </script>
 
 <template>
-  <Chrome v-if="isInitialized" ref="uiRef" />
+  <Chrome v-if="isInitialized" />
 
   <div
     v-else

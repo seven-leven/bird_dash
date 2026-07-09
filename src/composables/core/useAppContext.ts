@@ -34,6 +34,11 @@ export interface AppContext {
   activeSection: Ref<string>;
   search: SearchState;
 
+  // Scroll-spy targets — App owns these refs; Chrome binds the scroll
+  // container and GalleryContent registers the section headers.
+  scrollContainer: Ref<HTMLElement | null>;
+  headerRefs: Ref<Record<string, HTMLElement | null>>;
+
   // Global search
   globalResults: ComputedRef<GlobalSearchCollectionGroup[]>;
   globalResultCount: ComputedRef<number>;

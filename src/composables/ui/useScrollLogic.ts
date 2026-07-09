@@ -1,15 +1,9 @@
-import { onScopeDispose, ref } from 'vue';
-import type { ScrollUI, UIState, UseScrollLogicReturn } from '../../types/index.ts';
-
-// Plain accessor interface instead of Vue's branded Ref<T>, which avoids
-// [RefSymbol] incompatibilities when multiple @vue/reactivity versions are
-// present in node_modules (e.g. 3.5.26 vs 3.5.30).
-interface ScrollUIRef {
-  readonly value: ScrollUI | null;
-}
+import { onScopeDispose, type Ref, ref } from 'vue';
+import type { UIState, UseScrollLogicReturn } from '../../types/index.ts';
 
 export function useScrollLogic(
-  uiRef: ScrollUIRef,
+  scrollContainer: Ref<HTMLElement | null>,
+  headerRefs: Ref<Record<string, HTMLElement | null>>,
   ui: UIState,
 ): UseScrollLogicReturn {
   const activeSection = ref<string>('');
@@ -17,15 +11,14 @@ export function useScrollLogic(
   // The active section is the last group header that has scrolled above a line
   // ~100px below the top of the scroll container.
   const computeActive = (): void => {
-    const container = uiRef.value?.scrollContainer;
+    const container = scrollContainer.value;
     if (!container) return;
 
     const line = container.getBoundingClientRect().top + 100;
-    const headers = uiRef.value?.headerRefs ?? {};
 
     let current = '';
     let bestTop = -Infinity;
-    for (const [name, el] of Object.entries(headers)) {
+    for (const [name, el] of Object.entries(headerRefs.value)) {
       if (!el) continue;
       const top = el.getBoundingClientRect().top;
       if (top <= line && top > bestTop) {
@@ -67,7 +60,7 @@ export function useScrollLogic(
   // Called by App.vue after the header set changes (collection switch, data
   // load, view toggle): re-observe the new headers and recompute immediately.
   const updateActiveSection = (): void => {
-    const el = uiRef.value?.scrollContainer;
+    const el = scrollContainer.value;
     if (!el) return;
 
     teardown();
@@ -83,8 +76,7 @@ export function useScrollLogic(
       threshold: 0,
     });
 
-    const headers = uiRef.value?.headerRefs ?? {};
-    for (const hEl of Object.values(headers)) {
+    for (const hEl of Object.values(headerRefs.value)) {
       if (hEl) observer.observe(hEl);
     }
 
@@ -93,8 +85,8 @@ export function useScrollLogic(
   };
 
   const goToSection = (name: string): void => {
-    const el = uiRef.value?.headerRefs?.[name];
-    const scroller = uiRef.value?.scrollContainer;
+    const el = headerRefs.value[name];
+    const scroller = scrollContainer.value;
 
     if (el && scroller) {
       scroller.scrollTo({
