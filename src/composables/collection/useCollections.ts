@@ -1,5 +1,4 @@
 import { computed, type ComputedRef, nextTick, ref, shallowReactive } from 'vue';
-// Added .ts extension and fixed path based on your error log
 import type {
   CollectionCache,
   CollectionConfig,
@@ -48,10 +47,6 @@ export function useCollections() {
     return { drawn, total };
   });
 
-  const placeholderImage = computed(() =>
-    `${getBase()}placeholders/${activeCollectionId.value}.webp`
-  );
-
   const fetchCollectionData = async (col: CollectionConfig): Promise<CollectionItem[]> => {
     const res = await fetch(col.dataUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status} loading ${col.label}`);
@@ -72,8 +67,7 @@ export function useCollections() {
           }
         });
 
-        const drawnDate = String(r.drawn ?? '');
-        const drawnTime = hasImg ? (new Date(drawnDate).getTime() || 0) : 0;
+        const drawnTime = hasImg ? (new Date(String(r.drawn)).getTime() || 0) : 0;
         const itemId = String(r.id ?? '');
         const commonName = String(r.name ?? '');
         const scientificName = String(r.sci ?? '');
@@ -91,7 +85,6 @@ export function useCollections() {
           commonName,
           scientificName,
           group: groupName,
-          drawnDate,
           imageUrl: hasImg ? `${col.imageBase}${r.id}.webp` : placeholder,
           placeholderUrl: placeholder,
           isDrawn: hasImg,
@@ -159,8 +152,6 @@ export function useCollections() {
       links: c.links.map((l) => ({
         label: l.label,
         color: l.color,
-        urlTemplate: l.url,
-        getUrl: (item: CollectionItem) => resolveUrl(l.url, item),
         url: (item: CollectionItem) => resolveUrl(l.url, item),
       })),
     }));
@@ -175,15 +166,11 @@ export function useCollections() {
 
   return {
     isInitialized,
-    activeCollectionId,
     collectionCache,
     data,
     activeCollection,
     globalStats,
-    placeholderImage,
-    loadData,
     switchCollection,
-    prefetchOtherCollections,
     init,
     COLLECTIONS: collections,
   };

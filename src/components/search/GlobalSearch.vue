@@ -78,7 +78,6 @@
         >
           <SearchResultsList
             :results="globalResults"
-            :query="globalSearch.query"
             :focused-index="focusedIndex"
             :get-flat-index="getFlatIndex"
             :highlight="highlight"

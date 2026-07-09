@@ -40,5 +40,5 @@ export function useSearchNavigation(
     return null;
   }
 
-  return { focusedIndex, flatResults, getFlatIndex, moveFocus, resetFocus, getFocusedResult };
+  return { focusedIndex, getFlatIndex, moveFocus, resetFocus, getFocusedResult };
 }

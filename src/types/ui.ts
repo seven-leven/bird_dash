@@ -14,7 +14,6 @@ export interface Stats {
   total: number;
   filtered: number;
   drawn: number;
-  mode: string;
 }
 
 export interface ExpandedImageState<T = unknown> {

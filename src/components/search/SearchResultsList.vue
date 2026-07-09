@@ -40,11 +40,10 @@
 
 <script setup lang="ts">
 import IdBadge from '../ui/IdBadge.vue';
-import type { GlobalSearchCollectionGroup, CollectionItem } from '../../types';
+import type { GlobalSearchCollectionGroup, GlobalSearchResult } from '../../types';
 
 defineProps<{
   results: GlobalSearchCollectionGroup[];
-  query: string;
   focusedIndex: number;
   getFlatIndex: (collectionId: string, idx: number) => number;
   highlight: (text: string) => string;
@@ -52,6 +51,6 @@ defineProps<{
 
 defineEmits<{
   mouseenter: [index: number];
-  select: [result: { collection: { id: string }; item: Pick<CollectionItem, 'itemId' | 'imageUrl' | 'commonName' | 'scientificName'> }];
+  select: [result: GlobalSearchResult];
 }>();
 </script>

@@ -165,7 +165,7 @@ async function selectCollection(id: string) {
 
 function openItem(item: CollectionItem) {
   openOverlay(item);
-  if (item.imageUrl !== item.placeholderUrl) setHash(`${collectionHash()}/${item.itemId}`);
+  if (item.isDrawn) setHash(`${collectionHash()}/${item.itemId}`);
 }
 
 function closeItem() {

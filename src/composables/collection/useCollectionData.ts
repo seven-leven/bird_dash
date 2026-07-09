@@ -2,11 +2,13 @@ import { computed, type ComputedRef, type Ref } from 'vue';
 import type {
   CollectionItem,
   CollectionStats,
-  DateData,
   GroupedData,
   SidebarItem,
   ViewMode,
 } from '../../types/index.ts';
+
+const monthKey = (d: Date) =>
+  `${d.toLocaleString('default', { month: 'long' })} ${d.getFullYear()}`;
 
 export function useCollectionData(
   items: Ref<CollectionItem[]>,
@@ -81,25 +83,18 @@ export function useCollectionData(
     const end = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
 
     while (current <= end) {
-      months.push(
-        `${current.toLocaleString('default', { month: 'long' })} ${current.getFullYear()}`,
-      );
+      months.push(monthKey(current));
       current.setMonth(current.getMonth() + 1);
     }
     return months;
   });
 
-  const dateData: ComputedRef<DateData> = computed(() => {
-    const sorted = [...searchedDrawnItems.value].sort((a, b) => {
-      if (a.drawnTime !== b.drawnTime) return a.drawnTime - b.drawnTime;
-      return a.sortKey - b.sortKey;
-    });
-
+  const dateData: ComputedRef<GroupedData> = computed(() => {
+    // searchedDrawnItems is already in (drawnTime, sortKey) order.
     const grouped: Record<string, CollectionItem[]> = {};
-    sorted.forEach((i) => {
+    searchedDrawnItems.value.forEach((i) => {
       if (!i.drawnTime) return;
-      const d = new Date(i.drawnTime);
-      const key = `${d.toLocaleString('default', { month: 'long' })} ${d.getFullYear()}`;
+      const key = monthKey(new Date(i.drawnTime));
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(i);
     });
@@ -119,7 +114,7 @@ export function useCollectionData(
   // =============================================================================
   // EXPORTED UNIFIED STATE
   // =============================================================================
-  const activeData: ComputedRef<GroupedData | DateData> = computed(() =>
+  const activeData: ComputedRef<GroupedData> = computed(() =>
     viewMode.value === 'group' ? groupData.value : dateData.value
   );
 
@@ -129,7 +124,6 @@ export function useCollectionData(
       ? allFilteredItems.value.length
       : searchedDrawnItems.value.length,
     drawn: drawnItems.value.length,
-    mode: viewMode.value,
   }));
 
   return {

@@ -51,21 +51,10 @@ export function useGlobalSearch(
     return groups;
   });
 
-  /** Flat list of all matched results across every collection. */
-  const allGlobalResults: ComputedRef<GlobalSearchResult[]> = computed(() =>
-    globalResults.value.flatMap((g) => g.results)
+  /** Total number of matched items across all collections. */
+  const globalResultCount: ComputedRef<number> = computed(() =>
+    globalResults.value.reduce((n, g) => n + g.count, 0)
   );
 
-  /** Total number of matched items across all collections. */
-  const globalResultCount: ComputedRef<number> = computed(() => allGlobalResults.value.length);
-
-  /** True when the query is non-empty. */
-  const isGlobalSearchActive: ComputedRef<boolean> = computed(() => query.value.trim().length > 0);
-
-  return {
-    globalResults,
-    allGlobalResults,
-    globalResultCount,
-    isGlobalSearchActive,
-  };
+  return { globalResults, globalResultCount };
 }
