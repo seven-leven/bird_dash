@@ -18,10 +18,10 @@
       </h1>
       <p class="text-xs text-muted mt-0.5 tabular-nums">
         <template v-if="ui.viewMode === 'group'">
-          {{ activeData.stats?.drawn ?? 0 }} drawn &middot; {{ activeData.stats?.total ?? 0 }} total
+          {{ stats.drawn }} drawn &middot; {{ stats.total }} total
         </template>
         <template v-else>
-          {{ activeData.stats?.filtered ?? 0 }} drawings
+          {{ stats.filtered }} drawings
         </template>
       </p>
     </div>
@@ -90,6 +90,7 @@ const {
   ui,
   data,
   activeData,
+  stats,
   globalStats,
   goToSection,
 } = useAppContext();

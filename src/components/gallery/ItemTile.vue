@@ -73,7 +73,6 @@ import type { CollectionItem } from '../../types/';
 const props = withDefaults(
   defineProps<{
     item: CollectionItem;
-    placeholderImage: string;
     /** Above-the-fold tiles load eagerly with high priority (helps LCP). */
     eager?: boolean;
   }>(),
@@ -86,7 +85,7 @@ defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
 // no watcher needed. Undrawn items and load failures fall back to the placeholder.
 const failed = ref(false);
 const src = computed(() =>
-  props.item.isDrawn && !failed.value ? props.item.imageUrl : props.placeholderImage
+  props.item.isDrawn && !failed.value ? props.item.imageUrl : props.item.placeholderUrl
 );
 
 function onError() {

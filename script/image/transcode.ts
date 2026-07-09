@@ -27,14 +27,12 @@ export type TranscodeResult =
 // Internal helpers
 // ---------------------------------------------------------------------------
 
-function fitSquare(
-  pipeline: sharp.Sharp,
-  size: number,
-): sharp.Sharp {
-  return pipeline.resize(size, size, {
-    fit: 'contain',
-    background: WHITE_BG,
-  });
+/** Derive the thumbnail from a normalized square full image (path or buffer). */
+function writeThumb(input: string | Uint8Array, thumb: string): Promise<sharp.OutputInfo> {
+  return sharp(input)
+    .resize(THUMB_SIZE, THUMB_SIZE, { fit: 'fill' })
+    .webp(WEBP_OPTS)
+    .toFile(thumb);
 }
 
 function toMessage(err: unknown): string {
@@ -60,23 +58,17 @@ export async function transcode(
     ]);
 
     // First create normalized square full image
-    const fullBuffer = await fitSquare(
-      sharp(raw).rotate(),
-      FULL_SIZE,
-    )
+    const fullBuffer = await sharp(raw)
+      .rotate()
+      .resize(FULL_SIZE, FULL_SIZE, { fit: 'contain', background: WHITE_BG })
       .webp(WEBP_OPTS)
       .toBuffer();
 
-    // Save full
-    await sharp(fullBuffer).toFile(full);
+    // Already WebP-encoded — write as-is (a sharp round-trip would re-encode).
+    await Deno.writeFile(full, fullBuffer);
 
     // Derive thumbnail FROM normalized full image
-    await sharp(fullBuffer)
-      .resize(THUMB_SIZE, THUMB_SIZE, {
-        fit: 'fill',
-      })
-      .webp(WEBP_OPTS)
-      .toFile(thumb);
+    await writeThumb(fullBuffer, thumb);
 
     return { ok: true };
   } catch (err) {
@@ -96,14 +88,7 @@ export async function transcodeThumb(
 
   try {
     await ensureDir(col.paths.thumb);
-
-    await sharp(full)
-      .resize(THUMB_SIZE, THUMB_SIZE, {
-        fit: 'fill',
-      })
-      .webp(WEBP_OPTS)
-      .toFile(thumb);
-
+    await writeThumb(full, thumb);
     return { ok: true };
   } catch (err) {
     return { ok: false, error: toMessage(err) };

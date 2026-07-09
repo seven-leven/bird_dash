@@ -8,7 +8,7 @@ export function useOverlay() {
   });
 
   const openOverlay = (item: CollectionItem) => {
-    if (item.imageUrl === item.placeholderUrl) return;
+    if (!item.isDrawn) return;
     expandedImage.item = item;
     expandedImage.isOpen = true;
   };
@@ -17,15 +17,9 @@ export function useOverlay() {
     expandedImage.isOpen = false;
   };
 
-  // Add this function here
   const updateOverlayItem = (item: CollectionItem) => {
     expandedImage.item = item;
   };
 
-  return {
-    expandedImage,
-    openOverlay,
-    closeOverlay,
-    updateOverlayItem, // Make sure to return it
-  };
+  return { expandedImage, openOverlay, closeOverlay, updateOverlayItem };
 }

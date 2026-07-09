@@ -63,7 +63,6 @@
             :key="item.id"
             v-memo="[item.isDrawn, item.imageUrl]"
             :item="item"
-            :placeholder-image="placeholderImage"
             :eager="groupIndex === 0 && itemIndex < 6"
             @card-click="openItem($event)"
           />
@@ -85,45 +84,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
 import IconNoResults from '../icons/IconNoResults.vue';
 import { useAppContext } from '../../composables';
 import type { CollectionItem } from '../../types';
 
-const { data, activeData, search, activeCollection, ui, openItem } = useAppContext();
+// headerRefs is the context ref App's scroll-spy reads; the template registers
+// each section header into it.
+const { data, activeData, search, ui, openItem, headerRefs } = useAppContext();
 
 /** Derived version string, injected at build time by vite.config.ts */
 const appVersion = __APP_VERSION__;
 
-const getBase = () =>
-  ((import.meta as Record<string, unknown>).env as { BASE_URL?: string })?.BASE_URL ?? '/';
-
 // ---------------------------------------------------------------------------
 // COMPUTED
 // ---------------------------------------------------------------------------
-const placeholderImage = computed(() =>
-  activeCollection.value ? `${getBase()}placeholders/${activeCollection.value.id}.webp` : ''
-);
-
 const isEmpty = computed(() => Object.keys(activeData.value.grouped).length === 0);
 
-// Drawn count per group, computed once per data change instead of per group
-// header per render (a plain method in the template would re-run every render).
+// Drawn count per section — the sidebar computation already produced these
+// numbers (group mode: drawn per group; date mode: items per month, all drawn).
 const drawnCounts = computed(() => {
   const counts: Record<string, number> = {};
-  for (const [group, items] of Object.entries(activeData.value.grouped)) {
-    let n = 0;
-    for (const item of items) if (item.isDrawn) n++;
-    counts[group] = n;
-  }
+  for (const s of activeData.value.sidebarItems) counts[s.id] = s.count;
   return counts;
 });
-
-// ---------------------------------------------------------------------------
-// REFS (exposed for parent scroll-spy)
-// ---------------------------------------------------------------------------
-const headerRefs = ref<Record<string, HTMLElement>>({});
-defineExpose({ headerRefs });
 </script>

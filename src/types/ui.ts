@@ -10,13 +10,6 @@ export interface SidebarItem {
   disabled: boolean;
 }
 
-export interface Stats {
-  total: number;
-  filtered: number;
-  drawn: number;
-  mode: string;
-}
-
 export interface ExpandedImageState<T = unknown> {
   isOpen: boolean;
   item: T | undefined;
@@ -25,7 +18,6 @@ export interface ExpandedImageState<T = unknown> {
 export interface UIState {
   sidebarOpen: boolean;
   mobile: boolean;
-  client: boolean;
   viewMode: 'group' | 'date';
 }
 
@@ -33,12 +25,8 @@ export interface ThemeState {
   isDark: boolean;
 }
 
+/** One search state — drives the grid filter and the global search dropdown. */
 export interface SearchState {
   query: string;
-}
-
-export interface ActiveData<T = unknown> {
-  grouped: Record<string, T[]>;
-  sidebarItems: SidebarItem[];
-  stats: Stats;
+  dropdownOpen: boolean;
 }

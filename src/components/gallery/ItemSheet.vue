@@ -55,7 +55,7 @@
         <a
           v-for="link in links"
           :key="link.label"
-          :href="resolveUrl(link, item)"
+          :href="link.url(item)"
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg
@@ -94,14 +94,6 @@ const otherMeta = computed(() => {
     Object.entries(props.item.meta).filter(([k]) => !SPECIAL_META_KEYS.has(k))
   );
 });
-
-// Helper to resolve dynamic or static URLs
-function resolveUrl(link: any, item: CollectionItem): string | undefined {
-  if (typeof link.url === 'function') {
-    return link.url(item);
-  }
-  return link.url;
-}
 
 // Convert snake_case / camelCase keys to readable labels
 function formatMetaKey(key: string): string {

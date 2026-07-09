@@ -16,7 +16,6 @@ export interface FailedItem {
 
 export interface ExecutionResult {
   registered: string[];
-  transcoded: string[];
   failed: FailedItem[];
 }
 
@@ -30,7 +29,6 @@ export async function executeWork(
   date: string,
 ): Promise<ExecutionResult> {
   const registered: string[] = [];
-  const transcoded: string[] = [];
   const failed: FailedItem[] = [];
 
   // 1. Register new raw PNGs into JSON
@@ -48,9 +46,7 @@ export async function executeWork(
   for (const id of plan.toTranscode) {
     log.step(col.id, 'transcoding', id);
     const result = await transcode(col, id);
-    if (result.ok) {
-      transcoded.push(id);
-    } else {
+    if (!result.ok) {
       failed.push({ id, reason: result.error });
       log.error(col.id, `transcode failed  ${id}  ${result.error}`);
     }
@@ -66,5 +62,5 @@ export async function executeWork(
     }
   }
 
-  return { registered, transcoded, failed };
+  return { registered, failed };
 }

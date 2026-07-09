@@ -1,13 +1,13 @@
 import { type ComputedRef, inject, type InjectionKey, provide, type Ref } from 'vue';
 import type {
-  ActiveData,
   CollectionConfig,
   CollectionItem,
+  CollectionStats,
   DataState,
   ExpandedImageState,
   GlobalSearchCollectionGroup,
-  GlobalSearchState,
   GlobalStats,
+  GroupedData,
   SearchState,
   ThemeState,
   UIState,
@@ -25,7 +25,8 @@ export interface AppContext {
   activeCollection: ComputedRef<CollectionConfig | undefined>;
   globalStats: ComputedRef<GlobalStats>;
   data: DataState;
-  activeData: ComputedRef<ActiveData<CollectionItem>>;
+  activeData: ComputedRef<GroupedData>;
+  stats: ComputedRef<CollectionStats>;
 
   // UI state
   ui: UIState;
@@ -33,8 +34,12 @@ export interface AppContext {
   activeSection: Ref<string>;
   search: SearchState;
 
+  // Scroll-spy targets — App owns these refs; Chrome binds the scroll
+  // container and GalleryContent registers the section headers.
+  scrollContainer: Ref<HTMLElement | null>;
+  headerRefs: Ref<Record<string, HTMLElement | null>>;
+
   // Global search
-  globalSearch: Ref<GlobalSearchState>;
   globalResults: ComputedRef<GlobalSearchCollectionGroup[]>;
   globalResultCount: ComputedRef<number>;
 
@@ -53,9 +58,7 @@ export interface AppContext {
   closeOverlay: () => void;
   updateOverlayItem: (item: CollectionItem) => void;
   updateSearch: (query: string) => void;
-  updateGlobalSearch: (query: string) => void;
-  openGlobalSearchDropdown: () => void;
-  closeGlobalSearchDropdown: () => void;
+  setSearchDropdown: (open: boolean) => void;
   selectGlobalResult: (collectionId: string, itemId: string) => Promise<void>;
 }
 

@@ -11,7 +11,7 @@
 
       <!-- Mobile overlay -->
       <div
-        v-if="app.ui.client && app.ui.mobile"
+        v-if="app.ui.mobile"
         class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
         :class="app.ui.sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
         @click="app.closeSidebar()"
@@ -40,8 +40,8 @@
                    transition-colors duration-150"
             :aria-label="`Clear filter ${app.search.query}`"
           >
-            <span class="tabular-nums">{{ app.activeData.value.stats?.filtered ?? 0 }}</span>
-            <span class="max-w-40 truncate">result{{ (app.activeData.value.stats?.filtered ?? 0) !== 1 ? 's' : '' }} for &ldquo;{{ app.search.query }}&rdquo;</span>
+            <span class="tabular-nums">{{ app.stats.value.filtered }}</span>
+            <span class="max-w-40 truncate">result{{ app.stats.value.filtered !== 1 ? 's' : '' }} for &ldquo;{{ app.search.query }}&rdquo;</span>
             <IconClose class="w-3 h-3" />
           </button>
         </div>
@@ -51,7 +51,7 @@
           ref="scrollContainer"
           class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar"
         >
-          <GalleryContent ref="galleryContentRef" />
+          <GalleryContent />
         </div>
 
       </main>
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref } from 'vue';
+import { defineAsyncComponent } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
@@ -86,17 +86,6 @@ const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 
 const app = useAppContext();
 
-// ---------------------------------------------------------------------------
-// REFS — exposed for App.vue scroll-spy logic
-// ---------------------------------------------------------------------------
-const scrollContainer = ref<HTMLElement | null>(null);
-const galleryContentRef = ref<InstanceType<typeof GalleryContent> | null>(null);
-
-defineExpose({
-  scrollContainer,
-  // Proxy headerRefs from child component with explicit typing
-  headerRefs: computed((): Record<string, HTMLElement> =>
-    galleryContentRef.value?.headerRefs ?? {}
-  ),
-});
+// Template ref target — the context ref App's scroll-spy reads.
+const { scrollContainer } = app;
 </script>

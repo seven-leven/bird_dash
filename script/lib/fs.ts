@@ -41,10 +41,3 @@ export async function readJson<T>(path: string): Promise<T> {
 export async function writeJson(path: string, data: unknown): Promise<void> {
   await Deno.writeTextFile(path, JSON.stringify(data, null, 2) + '\n');
 }
-
-/**
- * Append text to a file.
- */
-export async function appendText(path: string, text: string): Promise<void> {
-  await Deno.writeTextFile(path, text, { append: true });
-}
