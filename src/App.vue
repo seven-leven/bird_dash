@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, reactive, ref, toRefs, useTemplateRef, watch } from 'vue';
+import { nextTick, onMounted, reactive, toRefs, useTemplateRef, watch } from 'vue';
 
 import Chrome from './components/layout/Chrome.vue';
-import type { CollectionItem, GlobalSearchState } from './types/';
+import type { CollectionItem } from './types/';
 
 import {
   provideAppContext,
@@ -22,7 +22,9 @@ import {
 const uiRef = useTemplateRef<
   { scrollContainer: HTMLElement | null; headerRefs: Record<string, HTMLElement | null> }
 >('uiRef');
-const search = reactive({ query: '' });
+// One search state drives both the grid filter and the global dropdown, so the
+// input, the results, and the filter chip can never drift apart.
+const search = reactive({ query: '', dropdownOpen: false });
 const { query } = toRefs(search);
 
 const { theme, toggleTheme } = useTheme();
@@ -32,7 +34,6 @@ const { expandedImage, openOverlay, closeOverlay, updateOverlayItem } = useOverl
 const ui = reactive({
   sidebarOpen: false,
   mobile: isMobile,
-  client: false,
   viewMode: 'group' as 'group' | 'date',
 });
 
@@ -55,31 +56,21 @@ const { viewMode } = toRefs(ui);
 const debouncedQuery = useDebouncedRef(query, 120);
 const { activeData, stats, searchedDrawnItems } = useCollectionData(items, debouncedQuery, viewMode);
 
-const activeDataWithStats = computed(() => ({ ...activeData.value, stats: stats.value }));
 const { activeSection, updateActiveSection, goToSection } = useScrollLogic(uiRef, ui);
 
 // =============================================================================
-// GLOBAL SEARCH
+// GLOBAL SEARCH — same debounced query feeds the grid filter and the
+// cross-collection dropdown results.
 // =============================================================================
-const globalSearchState = ref<GlobalSearchState>({
-  query: '',
-  isOpen: false,
-});
-
-const globalQuery = computed(() => globalSearchState.value.query);
 const { globalResults, globalResultCount } = useGlobalSearch(
   COLLECTIONS,
   collectionCache,
-  useDebouncedRef(globalQuery, 120),
+  debouncedQuery,
 );
 
-function handleUpdateGlobalSearch(q: string) {
-  globalSearchState.value.query = q;
-  // Also keep the per-collection search in sync so the grid filters too
+function updateSearch(q: string) {
   search.query = q;
-  if (q.trim()) {
-    globalSearchState.value.isOpen = true;
-  }
+  if (q.trim()) search.dropdownOpen = true;
 }
 
 /** Scroll a tile into view and flash a highlight ring around it. */
@@ -96,7 +87,7 @@ function flashItem(itemId: string) {
  * close the dropdown, and scroll+flash the item.
  */
 async function handleSelectGlobalResult(collectionId: string, itemId: string) {
-  globalSearchState.value.isOpen = false;
+  search.dropdownOpen = false;
   if (collectionId !== activeCollection.value?.id) {
     await handleSwitchCollection(collectionId);
   }
@@ -149,7 +140,6 @@ async function applyHash() {
 // =============================================================================
 async function handleSwitchCollection(id: string) {
   search.query = '';
-  globalSearchState.value.query = '';
   if (uiRef.value?.headerRefs) uiRef.value.headerRefs = {};
 
   await switchCollection(id, () => {
@@ -191,14 +181,14 @@ provideAppContext({
   activeCollection,
   globalStats,
   data,
-  activeData: activeDataWithStats,
+  activeData,
+  stats,
 
   ui,
   theme,
   activeSection,
   search,
 
-  globalSearch: globalSearchState,
   globalResults,
   globalResultCount,
 
@@ -214,10 +204,8 @@ provideAppContext({
   openItem,
   closeOverlay: closeItem,
   updateOverlayItem: navigateItem,
-  updateSearch: (q: string) => search.query = q,
-  updateGlobalSearch: handleUpdateGlobalSearch,
-  openGlobalSearchDropdown: () => globalSearchState.value.isOpen = true,
-  closeGlobalSearchDropdown: () => globalSearchState.value.isOpen = false,
+  updateSearch,
+  setSearchDropdown: (open: boolean) => search.dropdownOpen = open,
   selectGlobalResult: handleSelectGlobalResult,
 });
 
@@ -225,7 +213,6 @@ provideAppContext({
 // LIFECYCLE
 // =============================================================================
 onMounted(async () => {
-  ui.client = true;
   window.addEventListener('hashchange', applyHash);
   await init();
 });

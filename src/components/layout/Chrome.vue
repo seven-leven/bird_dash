@@ -11,7 +11,7 @@
 
       <!-- Mobile overlay -->
       <div
-        v-if="app.ui.client && app.ui.mobile"
+        v-if="app.ui.mobile"
         class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
         :class="app.ui.sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
         @click="app.closeSidebar()"
@@ -40,8 +40,8 @@
                    transition-colors duration-150"
             :aria-label="`Clear filter ${app.search.query}`"
           >
-            <span class="tabular-nums">{{ app.activeData.value.stats?.filtered ?? 0 }}</span>
-            <span class="max-w-40 truncate">result{{ (app.activeData.value.stats?.filtered ?? 0) !== 1 ? 's' : '' }} for &ldquo;{{ app.search.query }}&rdquo;</span>
+            <span class="tabular-nums">{{ app.stats.value.filtered }}</span>
+            <span class="max-w-40 truncate">result{{ app.stats.value.filtered !== 1 ? 's' : '' }} for &ldquo;{{ app.search.query }}&rdquo;</span>
             <IconClose class="w-3 h-3" />
           </button>
         </div>

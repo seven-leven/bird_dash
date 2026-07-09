@@ -56,8 +56,3 @@ export interface GlobalSearchCollectionGroup {
   results: GlobalSearchResult[];
   count: number;
 }
-
-export interface GlobalSearchState {
-  query: string;
-  isOpen: boolean;
-}

@@ -17,8 +17,9 @@ interface LightboxOptions {
 }
 
 export function useLightbox({ props, emit }: LightboxOptions) {
-  // ── Navigation ──
-  const currentItem = ref<CollectionItem | undefined>(props.item);
+  // ── Navigation — props.item is the single source of truth: navigation emits
+  // update:item and the parent feeds the new item back down. ──
+  const currentItem = computed(() => props.item);
 
   const currentIndex = computed(() => {
     if (!currentItem.value) return -1;
@@ -31,20 +32,19 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   );
 
   // ── Image State ──
-  const imageUrl = ref('');
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  const fullImageUrl = computed(() => {
-    if (!currentItem.value?.itemId) return '';
-    return `${props.fullImageBaseUrl}${currentItem.value.itemId}.webp`;
-  });
+  // Empty while closed so the image drops out immediately during the fade-out.
+  const imageUrl = computed(() =>
+    props.isOpen && currentItem.value
+      ? `${props.fullImageBaseUrl}${currentItem.value.itemId}.webp`
+      : ''
+  );
 
-  const loadImage = () => {
-    if (!currentItem.value) return;
-    loading.value = true;
+  const startLoad = () => {
+    loading.value = !!currentItem.value;
     error.value = null;
-    imageUrl.value = fullImageUrl.value;
   };
 
   const handleImageLoad = () => {
@@ -67,19 +67,16 @@ export function useLightbox({ props, emit }: LightboxOptions) {
     translateY.value = 0;
   };
 
-  const zoomIn = () => {
-    scale.value = Math.min(scale.value + 0.25, 5);
-  };
-  const zoomOut = () => {
-    scale.value = Math.max(scale.value - 0.25, 0.5);
-    if (scale.value <= 1) resetZoom();
+  // Single clamp: 0.5–5×, snapping back to a centered 1× at or below 1.
+  const setScale = (next: number) => {
+    const clamped = Math.min(5, Math.max(0.5, next));
+    if (clamped <= 1) resetZoom();
+    else scale.value = clamped;
   };
 
-  const handleWheel = (e: WheelEvent) => {
-    const newScale = Math.max(0.5, Math.min(5, scale.value + (e.deltaY > 0 ? -0.1 : 0.1)));
-    scale.value = newScale;
-    if (scale.value <= 1) resetZoom();
-  };
+  const zoomIn = () => setScale(scale.value + 0.25);
+  const zoomOut = () => setScale(scale.value - 0.25);
+  const handleWheel = (e: WheelEvent) => setScale(scale.value + (e.deltaY > 0 ? -0.1 : 0.1));
 
   // ── Dragging ──
   const isDragging = ref(false);
@@ -125,20 +122,13 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   // ── Actions ──
   const navigateToItem = (index: number) => {
     const target = props.drawnItems[index];
-    if (!target) return;
-    resetZoom();
-    currentItem.value = target;
-    emit('update:item', target);
-    loadImage();
+    if (target) emit('update:item', target); // the item watcher resets zoom + load state
   };
 
   const goToPrevious = () => hasPrevious.value && navigateToItem(currentIndex.value - 1);
   const goToNext = () => hasNext.value && navigateToItem(currentIndex.value + 1);
 
-  const close = () => {
-    emit('close');
-    resetZoom();
-  };
+  const close = () => emit('close'); // the isOpen watcher handles cleanup
 
   const handleBackdropClick = (e: MouseEvent) => {
     if (e.target === e.currentTarget) close();
@@ -175,27 +165,24 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   };
 
   // ── Lifecycle & Watchers ──
-  watch(() => props.isOpen, (newVal) => {
-    if (newVal) {
-      currentItem.value = props.item;
-      loadImage();
+  watch(() => props.isOpen, (open) => {
+    if (open) {
+      startLoad();
       document.body.style.overflow = 'hidden';
       globalThis.addEventListener('keydown', handleKeydown);
     } else {
-      imageUrl.value = '';
+      resetZoom();
       loading.value = false;
       error.value = null;
-      resetZoom();
       document.body.style.overflow = '';
       globalThis.removeEventListener('keydown', handleKeydown);
     }
   });
 
-  watch(() => props.item, (newItem) => {
-    if (props.isOpen && newItem && newItem.itemId !== currentItem.value?.itemId) {
-      currentItem.value = newItem;
+  watch(() => props.item, () => {
+    if (props.isOpen) {
       resetZoom();
-      loadImage();
+      startLoad();
     }
   });
 
@@ -206,7 +193,6 @@ export function useLightbox({ props, emit }: LightboxOptions) {
 
   return {
     currentItem,
-    currentIndex,
     hasPrevious,
     hasNext,
     imageUrl,

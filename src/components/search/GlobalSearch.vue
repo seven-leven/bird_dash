@@ -4,7 +4,7 @@
     <!-- ==================== INPUT FIELD ==================== -->
     <div
       class="relative w-44 sm:w-56 md:w-72 transition-all duration-200"
-      :class="{ 'md:w-96': globalSearch.isOpen }"
+      :class="{ 'md:w-96': search.dropdownOpen }"
     >
       <!-- Search Icon -->
       <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
@@ -15,7 +15,7 @@
       <input
         ref="searchInputRef"
         type="text"
-        :value="globalSearch.query"
+        :value="search.query"
         @input="onInput(($event.target as HTMLInputElement).value)"
         @focus="openDropdown"
         @keydown.escape="closeDropdown"
@@ -95,7 +95,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
-import type { CollectionItem } from '../../types/index.ts';
+import type { GlobalSearchResult } from '../../types/index.ts';
 
 // Composables
 import { useAppContext } from '../../composables';
@@ -116,13 +116,12 @@ import SearchKeyboardHints from './SearchKeyboardHints.vue';
 // APP CONTEXT
 // ---------------------------------------------------------------------------
 const {
-  globalSearch,
+  search,
   globalResults,
   globalResultCount,
-  updateGlobalSearch,
+  updateSearch,
+  setSearchDropdown,
   selectGlobalResult,
-  openGlobalSearchDropdown,
-  closeGlobalSearchDropdown,
 } = useAppContext();
 
 // ---------------------------------------------------------------------------
@@ -138,7 +137,7 @@ const { focusedIndex, getFlatIndex, moveFocus, resetFocus, getFocusedResult } =
   useSearchNavigation(() => globalResults.value, () => searchWrapperRef.value);
 
 const { highlightText } = useSearchHighlight();
-const highlight = (text: string) => highlightText(text, globalSearch.value.query);
+const highlight = (text: string) => highlightText(text, search.query);
 useClickOutside(() => searchWrapperRef.value, closeDropdown);
 
 // ---------------------------------------------------------------------------
@@ -160,10 +159,8 @@ onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown));
 // ---------------------------------------------------------------------------
 // COMPUTED
 // ---------------------------------------------------------------------------
-const hasQuery = computed(() => globalSearch.value.query.length > 0);
-const shouldShowDropdown = computed(() =>
-  globalSearch.value.isOpen && globalSearch.value.query.trim()
-);
+const hasQuery = computed(() => search.query.length > 0);
+const shouldShowDropdown = computed(() => search.dropdownOpen && search.query.trim());
 
 const dropdownTransition = {
   enterActiveClass: 'transition duration-150 ease-out',
@@ -179,22 +176,21 @@ const dropdownTransition = {
 // ---------------------------------------------------------------------------
 function onInput(value: string) {
   resetFocus();
-  updateGlobalSearch(value);
-  if (value.trim()) openGlobalSearchDropdown();
+  updateSearch(value); // opens the dropdown when the query is non-empty
 }
 
 function openDropdown() {
-  if (globalSearch.value.query.trim()) openGlobalSearchDropdown();
+  if (search.query.trim()) setSearchDropdown(true);
 }
 
 function closeDropdown() {
   resetFocus();
-  closeGlobalSearchDropdown();
+  setSearchDropdown(false);
 }
 
 function clearSearch() {
-  updateGlobalSearch('');
-  closeGlobalSearchDropdown();
+  updateSearch('');
+  setSearchDropdown(false);
   searchInputRef.value?.focus();
 }
 
@@ -209,9 +205,7 @@ function selectFocused() {
   }
 }
 
-function onSelectResult(
-  result: { collection: { id: string }; item: Pick<CollectionItem, 'itemId'> },
-) {
+function onSelectResult(result: GlobalSearchResult) {
   selectGlobalResult(result.collection.id, result.item.itemId);
   closeDropdown();
 }
