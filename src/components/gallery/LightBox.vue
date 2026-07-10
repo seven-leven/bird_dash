@@ -18,20 +18,20 @@
           <!-- Zoom controls -->
           <div class="flex items-center gap-1 pointer-events-auto">
             <button @click="zoomIn"    class="icon-btn-overlay" aria-label="Zoom in">
-              <IconZoomIn class="w-4 h-4" />
+              <Icon name="zoomIn" class="w-4 h-4" />
             </button>
             <button @click="zoomOut"   class="icon-btn-overlay" aria-label="Zoom out">
-              <IconZoomOut class="w-4 h-4" />
+              <Icon name="zoomOut" class="w-4 h-4" />
             </button>
             <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
-              <IconReset class="w-4 h-4" />
+              <Icon name="reset" class="w-4 h-4" />
             </button>
             <span class="ml-2 text-[11px] font-mono text-white/35 tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
           <!-- Close -->
           <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
-            <IconClose class="w-4.5 h-4.5" />
+            <Icon name="close" class="w-4.5 h-4.5" />
           </button>
         </div>
 
@@ -42,7 +42,7 @@
           class="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-lg bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           aria-label="Previous"
         >
-          <IconChevronLeft class="w-5 h-5" />
+          <Icon name="chevronLeft" class="w-5 h-5" />
         </button>
 
         <button
@@ -51,7 +51,7 @@
           class="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-lg bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
           aria-label="Next"
         >
-          <IconChevronRight class="w-5 h-5" />
+          <Icon name="chevronRight" class="w-5 h-5" />
         </button>
 
         <!-- Main layout: image left, info panel right -->
@@ -115,12 +115,7 @@
 
 <script setup lang="ts">
 import ItemSheet from './ItemSheet.vue';
-import IconZoomIn from '../icons/IconZoomIn.vue';
-import IconZoomOut from '../icons/IconZoomOut.vue';
-import IconReset from '../icons/IconReset.vue';
-import IconClose from '../icons/IconClose.vue';
-import IconChevronLeft from '../icons/IconChevronLeft.vue';
-import IconChevronRight from '../icons/IconChevronRight.vue';
+import Icon from '../icons/Icon.vue';
 import type { CollectionItem, CollectionConfig } from '../../types/';
 import { useLightbox } from '../../composables/index';
 

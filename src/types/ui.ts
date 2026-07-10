@@ -15,10 +15,12 @@ export interface ExpandedImageState<T = unknown> {
   item: T | undefined;
 }
 
+export type ViewMode = 'group' | 'date';
+
 export interface UIState {
   sidebarOpen: boolean;
   mobile: boolean;
-  viewMode: 'group' | 'date';
+  viewMode: ViewMode;
 }
 
 export interface ThemeState {

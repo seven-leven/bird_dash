@@ -29,5 +29,8 @@ jobs:
       - name: Format check
         run: deno fmt --check
 
+      - name: Type check
+        run: deno task typecheck
+
       - name: Build frontend
         run: deno task build:vite

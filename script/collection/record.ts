@@ -25,14 +25,19 @@ export async function loadCollectionData(col: Collection): Promise<CollectionDat
   return await readJson<CollectionData>(col.paths.json);
 }
 
+/** Invoke `cb` for every item marked drawn, across all groups in the collection. */
+export function forEachDrawn(data: CollectionData, cb: (item: CollectionItem) => void): void {
+  for (const group of Object.values(data)) {
+    for (const item of group) {
+      if (item.drawn) cb(item);
+    }
+  }
+}
+
 export async function loadDrawnIds(col: Collection): Promise<Set<string>> {
   const data = await loadCollectionData(col);
   const ids = new Set<string>();
-  for (const group of Object.values(data)) {
-    for (const item of group) {
-      if (item.drawn) ids.add(item.id);
-    }
-  }
+  forEachDrawn(data, (item) => ids.add(item.id));
   return ids;
 }
 

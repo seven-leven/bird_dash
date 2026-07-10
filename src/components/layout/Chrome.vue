@@ -42,7 +42,7 @@
           >
             <span class="tabular-nums">{{ app.stats.value.filtered }}</span>
             <span class="max-w-40 truncate">result{{ app.stats.value.filtered !== 1 ? 's' : '' }} for &ldquo;{{ app.search.query }}&rdquo;</span>
-            <IconClose class="w-3 h-3" />
+            <Icon name="close" class="w-3 h-3" />
           </button>
         </div>
 
@@ -77,7 +77,7 @@ import { defineAsyncComponent } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
-import IconClose from '../icons/IconClose.vue';
+import Icon from '../icons/Icon.vue';
 import { useAppContext } from '../../composables';
 
 // Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)
