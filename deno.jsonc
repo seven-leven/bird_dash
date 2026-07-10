@@ -12,6 +12,12 @@
     "build:assets": "deno run -A ./script/build.ts --assets-only",
     "build:vite": "deno run -A ./script/build.ts --vite-only",
 
+    // ── Type check ────────────────────────────────────────────────────────────
+    // Deno type-checks the .ts surface (scripts, composables, types, entrypoint).
+    // .vue SFCs are not covered — Volar/vue-tsc doesn't engage under Deno's npm
+    // compat, so template + <script setup> checking would be a false green.
+    "typecheck": "deno check script/**/*.ts src/**/*.ts",
+
     // ── Integrity ─────────────────────────────────────────────────────────────
     "check": "deno run -A ./script/build.ts --check",
 

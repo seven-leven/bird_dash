@@ -8,7 +8,7 @@
     >
       <!-- Search Icon -->
       <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-        <IconSearch class="h-3.5 w-3.5 text-muted" />
+        <Icon name="search" class="h-3.5 w-3.5 text-muted" />
       </div>
 
       <!-- Input -->
@@ -48,7 +48,7 @@
         tabindex="-1"
         aria-label="Clear search"
       >
-        <IconClose class="h-3.5 w-3.5" />
+        <Icon name="close" class="h-3.5 w-3.5" />
       </button>
     </div>
 
@@ -68,7 +68,7 @@
         <!-- States -->
         <EmptyState v-if="globalResultCount === 0" title="No matches found" class="py-6">
           <template #icon>
-            <IconNoResults class="w-6 h-6" />
+            <Icon name="noResults" class="w-6 h-6" />
           </template>
         </EmptyState>
 
@@ -104,9 +104,7 @@ import { useSearchHighlight } from '../../composables/search/useSearchHighlight.
 import { useClickOutside } from '../../composables/search/useClickOutside.ts';
 
 // Shared UI
-import IconSearch from '../icons/IconSearch.vue';
-import IconClose from '../icons/IconClose.vue';
-import IconNoResults from '../icons/IconNoResults.vue';
+import Icon from '../icons/Icon.vue';
 import EmptyState from '../ui/EmptyState.vue';
 import SearchDropdownHeader from './SearchDropdownHeader.vue';
 import SearchResultsList from './SearchResultsList.vue';

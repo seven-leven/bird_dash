@@ -2,7 +2,7 @@
 import { nextTick, onMounted, reactive, ref, toRefs, watch } from 'vue';
 
 import Chrome from './components/layout/Chrome.vue';
-import type { CollectionItem } from './types/';
+import type { CollectionItem, ViewMode } from './types/';
 
 import {
   provideAppContext,
@@ -35,7 +35,7 @@ const { expandedImage, openOverlay, closeOverlay, updateOverlayItem } = useOverl
 const ui = reactive({
   sidebarOpen: false,
   mobile: isMobile,
-  viewMode: 'group' as 'group' | 'date',
+  viewMode: 'group' as ViewMode,
 });
 
 const {
