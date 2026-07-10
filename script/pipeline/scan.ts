@@ -18,9 +18,12 @@ export interface CollectionState {
 // Scan — single filesystem read per collection
 // ---------------------------------------------------------------------------
 
-export async function scanCollection(col: Collection): Promise<CollectionState> {
-  const toIds = (files: string[]) => new Set(files.map((f) => f.replace(/\.(png|webp)$/i, '')));
+/** Strip image extensions from filenames to their bare ids. */
+export function toIds(files: string[]): Set<string> {
+  return new Set(files.map((f) => f.replace(/\.(png|webp)$/i, '')));
+}
 
+export async function scanCollection(col: Collection): Promise<CollectionState> {
   const [drawnIds, rawFiles, fullFiles, thumbFiles] = await Promise.all([
     loadDrawnIds(col),
     listFiles(col.paths.raw, (n) => n.endsWith('.png')),

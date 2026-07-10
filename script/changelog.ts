@@ -36,7 +36,7 @@ async function unloggedCommits(): Promise<Array<{ date: string; subject: string 
   });
 }
 
-function insertEntries(changelog: string, lines: string[]): string {
+export function insertEntries(changelog: string, lines: string[]): string {
   const idx = changelog.indexOf(UNRELEASED_HEADER);
   if (idx === -1) {
     // No Unreleased section yet — create one after the first "---" divider.
@@ -73,7 +73,9 @@ async function main() {
   console.log(`[changelog] inserted under "${UNRELEASED_HEADER}" — review, edit, and commit`);
 }
 
-main().catch((e) => {
-  console.error('[changelog] error:', e);
-  Deno.exit(1);
-});
+if (import.meta.main) {
+  main().catch((e) => {
+    console.error('[changelog] error:', e);
+    Deno.exit(1);
+  });
+}
