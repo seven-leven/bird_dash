@@ -30,7 +30,7 @@
       v-else-if="isEmpty"
       class="mt-10"
       title="No drawings found"
-      :hint="search.query ? 'Try a different search term.' : 'Check back later for new illustrations.'"
+      :hint="query ? 'Try a different search term.' : 'Check back later for new illustrations.'"
     >
       <template #icon>
         <Icon name="noResults" class="w-6 h-6" />
@@ -53,7 +53,7 @@
           <span>{{ groupName }}</span>
           <span class="text-xs font-normal tabular-nums text-muted">
             {{ drawnCounts[String(groupName)] ?? 0 }} drawn
-            <template v-if="ui.viewMode === 'group'"> / {{ items.length }}</template>
+            <template v-if="viewMode === 'group'"> / {{ items.length }}</template>
           </span>
         </h2>
 
@@ -88,12 +88,17 @@ import { computed } from 'vue';
 import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
 import Icon from '../icons/Icon.vue';
-import { useAppContext } from '../../composables';
-import type { CollectionItem } from '../../types';
+import { useCollectionsStore } from '../../stores/collections.ts';
+import { useSearch } from '../../stores/search.ts';
+import { useUi } from '../../stores/ui.ts';
+import { useOverlayStore } from '../../stores/overlay.ts';
 
-// headerRefs is the context ref App's scroll-spy reads; the template registers
+const { data, activeData } = useCollectionsStore();
+const { query } = useSearch();
+// headerRefs is the ui store's ref that scroll-spy reads; the template registers
 // each section header into it.
-const { data, activeData, search, ui, openItem, headerRefs } = useAppContext();
+const { viewMode, headerRefs } = useUi();
+const { open: openItem } = useOverlayStore();
 
 /** Derived version string, injected at build time by vite.config.ts */
 const appVersion = __APP_VERSION__;
