@@ -6,7 +6,7 @@
 
     <!-- Mobile sidebar toggle -->
     <button
-      v-if="ui.mobile"
+      v-if="isMobile"
       @click="toggleSidebar()"
       class="btn-ghost focus-ring lg:hidden p-2 rounded-lg shrink-0"
       aria-label="Toggle Sidebar"
@@ -47,15 +47,15 @@
     <button
       @click="toggleViewMode()"
       class="focus-ring flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors duration-150 shrink-0"
-      :class="ui.viewMode === 'date'
+      :class="viewMode === 'date'
         ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
-      :aria-label="`Switch to ${ui.viewMode === 'group' ? 'date' : 'group'} view`"
+      :aria-label="`Switch to ${viewMode === 'group' ? 'date' : 'group'} view`"
     >
-      <Icon v-if="ui.viewMode === 'group'" name="calendar" class="w-4 h-4" />
+      <Icon v-if="viewMode === 'group'" name="calendar" class="w-4 h-4" />
       <Icon v-else name="box" class="w-4 h-4" />
       <span class="hidden lg:inline">
-        {{ ui.viewMode === 'group' ? `By ${activeCollection?.groupLabel ?? ''}` : 'By Date' }}
+        {{ viewMode === 'group' ? `By ${activeCollection?.groupLabel ?? ''}` : 'By Date' }}
       </span>
     </button>
 
@@ -76,16 +76,11 @@
 <script setup lang="ts">
 import GlobalSearch from '../search/GlobalSearch.vue';
 import Icon from '../icons/Icon.vue';
-import { useAppContext } from '../../composables';
+import { useCollectionsStore } from '../../stores/collections.ts';
+import { useUi } from '../../stores/ui.ts';
+import { useActions } from '../../stores/actions.ts';
 
-const {
-  collections,
-  activeCollection,
-  ui,
-  theme,
-  toggleSidebar,
-  switchCollection,
-  toggleViewMode,
-  toggleTheme,
-} = useAppContext();
+const { list: collections, activeCollection } = useCollectionsStore();
+const { isMobile, viewMode, theme, toggleSidebar, toggleViewMode, toggleTheme } = useUi();
+const { switchCollection } = useActions();
 </script>

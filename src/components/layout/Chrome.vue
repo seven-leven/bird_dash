@@ -1,6 +1,6 @@
 <!-- components/layout/Chrome.vue — top-level layout shell.
-     All state comes from the injected app context; the only wiring left here
-     is the LightBox overlay (props-based so it stays reusable). -->
+     State comes from the domain stores; the only wiring left here is the
+     LightBox overlay (props-based so it stays reusable). -->
 <template>
   <div class="flex flex-col h-screen w-full overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
 
@@ -11,10 +11,10 @@
 
       <!-- Mobile overlay -->
       <div
-        v-if="app.ui.mobile"
+        v-if="isMobile"
         class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
-        :class="app.ui.sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
-        @click="app.closeSidebar()"
+        :class="sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
+        @click="closeSidebar()"
         aria-hidden="true"
       />
 
@@ -25,23 +25,23 @@
 
         <!-- Active section label + active filter chip -->
         <div
-          v-if="!app.data.loading && !app.data.error && (app.activeSection.value || app.search.query)"
+          v-if="!data.loading && !data.error && (activeSection || query)"
           class="shrink-0 flex items-center gap-3 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
                  bg-white/95 border-slate-100 text-slate-500
                  dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-400"
         >
-          <span class="truncate">{{ app.activeSection.value }}</span>
+          <span class="truncate">{{ activeSection }}</span>
           <button
-            v-if="app.search.query"
-            @click="app.updateSearch('')"
+            v-if="query"
+            @click="clear()"
             class="focus-ring ml-auto flex items-center gap-1.5 rounded-full py-0.5 pl-2.5 pr-1.5 text-[11px] font-medium
                    bg-accent-50 text-accent-700 hover:bg-accent-100
                    dark:bg-accent-950/60 dark:text-accent-300 dark:hover:bg-accent-900/60
                    transition-colors duration-150"
-            :aria-label="`Clear filter ${app.search.query}`"
+            :aria-label="`Clear filter ${query}`"
           >
-            <span class="tabular-nums">{{ app.stats.value.filtered }}</span>
-            <span class="max-w-40 truncate">result{{ app.stats.value.filtered !== 1 ? 's' : '' }} for &ldquo;{{ app.search.query }}&rdquo;</span>
+            <span class="tabular-nums">{{ stats.filtered }}</span>
+            <span class="max-w-40 truncate">result{{ stats.filtered !== 1 ? 's' : '' }} for &ldquo;{{ query }}&rdquo;</span>
             <Icon name="close" class="w-3 h-3" />
           </button>
         </div>
@@ -59,14 +59,14 @@
 
     <!-- Expanded image overlay -->
     <LightBox
-      v-if="app.activeCollection.value"
-      :is-open="app.expandedImage.isOpen"
-      :item="app.expandedImage.item"
-      :drawn-items="app.drawnItems.value"
-      :full-image-base-url="app.activeCollection.value.fullImageBase"
-      :collection="app.activeCollection.value"
-      @close="app.closeOverlay()"
-      @update:item="app.updateOverlayItem($event)"
+      v-if="activeCollection"
+      :is-open="expandedImage.isOpen"
+      :item="expandedImage.item"
+      :drawn-items="drawnItems"
+      :full-image-base-url="activeCollection.fullImageBase"
+      :collection="activeCollection"
+      @close="close()"
+      @update:item="update($event)"
     />
 
   </div>
@@ -78,14 +78,18 @@ import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
 import Icon from '../icons/Icon.vue';
-import { useAppContext } from '../../composables';
+import { useCollectionsStore } from '../../stores/collections.ts';
+import { useSearch } from '../../stores/search.ts';
+import { useUi } from '../../stores/ui.ts';
+import { useOverlayStore } from '../../stores/overlay.ts';
 
 // Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)
 // are only needed after the first tile click, so keep them out of first paint.
 const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 
-const app = useAppContext();
-
-// Template ref target — the context ref App's scroll-spy reads.
-const { scrollContainer } = app;
+const { data, stats, activeCollection } = useCollectionsStore();
+const { query, clear } = useSearch();
+// scrollContainer is bound as a template ref below (the ui store's writable ref).
+const { isMobile, sidebarOpen, activeSection, scrollContainer, closeSidebar } = useUi();
+const { expandedImage, drawnItems, close, update } = useOverlayStore();
 </script>

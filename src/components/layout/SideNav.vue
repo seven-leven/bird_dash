@@ -7,17 +7,17 @@
            lg:static lg:translate-x-0
            bg-white border-slate-200
            dark:bg-slate-950 dark:border-slate-800"
-    :class="ui.sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'"
+    :class="sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'"
   >
     <!-- Header -->
     <div class="sticky top-0 z-10 px-5 pt-5 pb-4 border-b border-slate-100 dark:border-slate-800/60">
       <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
-        {{ ui.viewMode === 'group'
+        {{ viewMode === 'group'
             ? `${activeCollection?.groupLabel ?? ''} Groups`
             : 'Timeline' }}
       </h1>
       <p class="text-xs text-muted mt-0.5 tabular-nums">
-        <template v-if="ui.viewMode === 'group'">
+        <template v-if="viewMode === 'group'">
           {{ stats.drawn }} drawn &middot; {{ stats.total }} total
         </template>
         <template v-else>
@@ -43,7 +43,7 @@
             />
             <span class="truncate pr-2 font-medium">{{ item.label }}</span>
             <span class="text-xs shrink-0 tabular-nums font-normal opacity-50">
-              <template v-if="ui.viewMode === 'group' && item.total">{{ item.count }}/{{ item.total }}</template>
+              <template v-if="viewMode === 'group' && item.total">{{ item.count }}/{{ item.total }}</template>
               <template v-else>{{ item.count }}</template>
             </span>
           </button>
@@ -81,19 +81,12 @@
 
 <script setup lang="ts">
 import EmptyState from '../ui/EmptyState.vue';
-import { useAppContext } from '../../composables';
+import { useCollectionsStore } from '../../stores/collections.ts';
+import { useUi } from '../../stores/ui.ts';
 import type { SidebarItem } from '../../types/index.ts';
 
-const {
-  activeCollection,
-  activeSection,
-  ui,
-  data,
-  activeData,
-  stats,
-  globalStats,
-  goToSection,
-} = useAppContext();
+const { activeCollection, data, activeData, stats, globalStats } = useCollectionsStore();
+const { sidebarOpen, viewMode, activeSection, goToSection } = useUi();
 
 function getItemClass(item: SidebarItem): string {
   if (item.disabled) {

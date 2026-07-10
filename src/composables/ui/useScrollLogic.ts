@@ -1,10 +1,12 @@
 import { onScopeDispose, type Ref, ref } from 'vue';
-import type { UIState, UseScrollLogicReturn } from '../../types/index.ts';
+import type { UseScrollLogicReturn } from '../../types/index.ts';
 
 export function useScrollLogic(
   scrollContainer: Ref<HTMLElement | null>,
   headerRefs: Ref<Record<string, HTMLElement | null>>,
-  ui: UIState,
+  // On mobile, jumping to a section closes the sidebar. Passed as explicit deps
+  // so this stays decoupled from the ui store's shape.
+  opts: { isMobile: Ref<boolean>; closeSidebar: () => void },
 ): UseScrollLogicReturn {
   const activeSection = ref<string>('');
 
@@ -95,9 +97,7 @@ export function useScrollLogic(
       });
       activeSection.value = name;
 
-      if (ui.mobile) {
-        ui.sidebarOpen = false;
-      }
+      if (opts.isMobile.value) opts.closeSidebar();
     }
   };
 
