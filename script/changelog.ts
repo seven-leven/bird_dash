@@ -13,17 +13,9 @@
  */
 
 import { CHANGELOG_FILE } from './collection/registry.ts';
+import { git } from './lib/git.ts';
 
 const UNRELEASED_HEADER = '## Unreleased';
-
-async function git(...args: string[]): Promise<string> {
-  const cmd = new Deno.Command('git', { args, stdout: 'piped', stderr: 'piped' });
-  const { code, stdout, stderr } = await cmd.output();
-  if (code !== 0) {
-    throw new Error(`git ${args.join(' ')} failed: ${new TextDecoder().decode(stderr)}`);
-  }
-  return new TextDecoder().decode(stdout).trim();
-}
 
 /** Commits since CHANGELOG.md was last modified, oldest first. */
 async function unloggedCommits(): Promise<Array<{ date: string; subject: string }>> {

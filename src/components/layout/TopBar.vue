@@ -11,7 +11,7 @@
       class="btn-ghost focus-ring lg:hidden p-2 rounded-lg shrink-0"
       aria-label="Toggle Sidebar"
     >
-      <IconMenu class="w-4.5 h-4.5" />
+      <Icon name="menu" class="w-4.5 h-4.5" />
     </button>
 
     <!-- Wordmark -->
@@ -52,8 +52,8 @@
         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
       :aria-label="`Switch to ${ui.viewMode === 'group' ? 'date' : 'group'} view`"
     >
-      <IconCalendar v-if="ui.viewMode === 'group'" class="w-4 h-4" />
-      <IconBox v-else class="w-4 h-4" />
+      <Icon v-if="ui.viewMode === 'group'" name="calendar" class="w-4 h-4" />
+      <Icon v-else name="box" class="w-4 h-4" />
       <span class="hidden lg:inline">
         {{ ui.viewMode === 'group' ? `By ${activeCollection?.groupLabel ?? ''}` : 'By Date' }}
       </span>
@@ -67,19 +67,15 @@
       class="btn-ghost focus-ring flex items-center justify-center w-8 h-8 shrink-0"
       :aria-label="theme.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
     >
-      <IconSun v-if="theme.isDark" class="w-4 h-4" />
-      <IconMoon v-else class="w-4 h-4" />
+      <Icon v-if="theme.isDark" name="sun" class="w-4 h-4" />
+      <Icon v-else name="moon" class="w-4 h-4" />
     </button>
   </header>
 </template>
 
 <script setup lang="ts">
 import GlobalSearch from '../search/GlobalSearch.vue';
-import IconMenu from '../icons/IconMenu.vue';
-import IconCalendar from '../icons/IconCalendar.vue';
-import IconBox from '../icons/IconBox.vue';
-import IconSun from '../icons/IconSun.vue';
-import IconMoon from '../icons/IconMoon.vue';
+import Icon from '../icons/Icon.vue';
 import { useAppContext } from '../../composables';
 
 const {

@@ -15,6 +15,7 @@ import { planWork } from './pipeline/plan.ts';
 import { executeWork } from './pipeline/execute.ts';
 import { printCheckReport, printSummary, reportWarnings } from './pipeline/report.ts';
 import { computeVersion, formatVersion } from './version/compute.ts';
+import { errorMessage } from './lib/error.ts';
 import type { CollectionSummary } from './pipeline/report.ts';
 
 // ---------------------------------------------------------------------------
@@ -124,7 +125,7 @@ if (import.meta.main) {
   };
 
   run().catch((err) => {
-    console.error('\n  build failed:', err instanceof Error ? err.message : String(err));
+    console.error('\n  build failed:', errorMessage(err));
     if (err instanceof Error && err.stack) console.error(err.stack);
     Deno.exit(1);
   });

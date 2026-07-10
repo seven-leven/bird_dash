@@ -21,7 +21,7 @@
       :hint="data.error"
     >
       <template #icon>
-        <IconNoResults class="w-6 h-6" />
+        <Icon name="noResults" class="w-6 h-6" />
       </template>
     </EmptyState>
 
@@ -33,7 +33,7 @@
       :hint="search.query ? 'Try a different search term.' : 'Check back later for new illustrations.'"
     >
       <template #icon>
-        <IconNoResults class="w-6 h-6" />
+        <Icon name="noResults" class="w-6 h-6" />
       </template>
     </EmptyState>
 
@@ -87,7 +87,7 @@
 import { computed } from 'vue';
 import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
-import IconNoResults from '../icons/IconNoResults.vue';
+import Icon from '../icons/Icon.vue';
 import { useAppContext } from '../../composables';
 import type { CollectionItem } from '../../types';
 

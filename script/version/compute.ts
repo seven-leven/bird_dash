@@ -16,8 +16,9 @@
  */
 
 import { readJson } from '../lib/fs.ts';
+import { git } from '../lib/git.ts';
 import { COLLECTIONS, VERSION_FILE } from '../collection/registry.ts';
-import { loadCollectionData } from '../collection/record.ts';
+import { forEachDrawn, loadCollectionData } from '../collection/record.ts';
 
 export interface VersionData {
   major: number;
@@ -26,17 +27,8 @@ export interface VersionData {
   count: number;
 }
 
-async function runGit(...args: string[]): Promise<string> {
-  const cmd = new Deno.Command('git', { args, stdout: 'piped', stderr: 'piped' });
-  const { code, stdout, stderr } = await cmd.output();
-  if (code !== 0) {
-    throw new Error(`git ${args.join(' ')} failed: ${new TextDecoder().decode(stderr)}`);
-  }
-  return new TextDecoder().decode(stdout).trim();
-}
-
 export async function getCommitCount(): Promise<number> {
-  return Number(await runGit('rev-list', '--count', 'HEAD'));
+  return Number(await git('rev-list', '--count', 'HEAD'));
 }
 
 export async function getDrawnIds(collectionId?: string): Promise<Set<string>> {
@@ -46,11 +38,7 @@ export async function getDrawnIds(collectionId?: string): Promise<Set<string>> {
   for (const col of targets) {
     try {
       const data = await loadCollectionData(col);
-      for (const group of Object.values(data)) {
-        for (const item of group) {
-          if (item.drawn) ids.add(`${col.id}/${item.id}`);
-        }
-      }
+      forEachDrawn(data, (item) => ids.add(`${col.id}/${item.id}`));
     } catch { /* collection JSON may not exist yet */ }
   }
   return ids;

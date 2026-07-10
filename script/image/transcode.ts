@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 import sharp from 'sharp';
 import { ensureDir } from '../lib/fs.ts';
+import { errorMessage } from '../lib/error.ts';
 import type { Collection } from '../collection/registry.ts';
 
 // ---------------------------------------------------------------------------
@@ -33,10 +34,6 @@ function writeThumb(input: string | Uint8Array, thumb: string): Promise<sharp.Ou
     .resize(THUMB_SIZE, THUMB_SIZE, { fit: 'fill' })
     .webp(WEBP_OPTS)
     .toFile(thumb);
-}
-
-function toMessage(err: unknown): string {
-  return err instanceof Error ? err.message : String(err);
 }
 
 // ---------------------------------------------------------------------------
@@ -72,7 +69,7 @@ export async function transcode(
 
     return { ok: true };
   } catch (err) {
-    return { ok: false, error: toMessage(err) };
+    return { ok: false, error: errorMessage(err) };
   }
 }
 
@@ -91,6 +88,6 @@ export async function transcodeThumb(
     await writeThumb(full, thumb);
     return { ok: true };
   } catch (err) {
-    return { ok: false, error: toMessage(err) };
+    return { ok: false, error: errorMessage(err) };
   }
 }

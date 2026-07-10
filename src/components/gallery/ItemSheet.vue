@@ -64,7 +64,7 @@
                  hover:text-white hover:border-white/30 hover:bg-white/5"
         >
           {{ link.label }}
-          <IconExternalLink class="w-3 h-3 opacity-60" />
+          <Icon name="externalLink" class="w-3 h-3 opacity-60" />
         </a>
       </div>
     </div>
@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
-import IconExternalLink from '../icons/IconExternalLink.vue';
+import Icon from '../icons/Icon.vue';
 import type { CollectionItem, CollectionConfig } from '../../types/';
 
 const props = defineProps<{
