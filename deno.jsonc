@@ -12,6 +12,10 @@
     "build:assets": "deno run -A ./script/build.ts --assets-only",
     "build:vite": "deno run -A ./script/build.ts --vite-only",
 
+    // ── Tests ─────────────────────────────────────────────────────────────────
+    // Tier 1 unit tests over the pure logic (composables, stores, script pipeline).
+    "test": "deno test -A --node-modules-dir src/ script/",
+
     // ── Type check ────────────────────────────────────────────────────────────
     // Deno type-checks the .ts surface (scripts, composables, types, entrypoint).
     // .vue SFCs are not covered — Volar/vue-tsc doesn't engage under Deno's npm
@@ -63,6 +67,8 @@
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^2.0.2",
     "sharp": "npm:sharp@0.34.5",
+    "@std/assert": "jsr:@std/assert@^1",
+    "@std/testing": "jsr:@std/testing@^1",
     "@std/path": "jsr:@std/path@^1.1.4",
     "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.6",
     "tailwindcss": "npm:tailwindcss@^4.3.0",

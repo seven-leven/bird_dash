@@ -2,6 +2,12 @@
 import { computed, onUnmounted, ref, watch } from 'vue';
 import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
+/** Clamp a zoom scale to [0.5, 5]; anything ≤1 snaps back to a neutral 1×. */
+export function clampScale(value: number): number {
+  const clamped = Math.min(5, Math.max(0.5, value));
+  return clamped <= 1 ? 1 : clamped;
+}
+
 interface LightboxOptions {
   props: {
     isOpen: boolean;
@@ -67,9 +73,9 @@ export function useLightbox({ props, emit }: LightboxOptions) {
     translateY.value = 0;
   };
 
-  // Single clamp: 0.5–5×, snapping back to a centered 1× at or below 1.
+  // Snap back to a centered 1× at or below 1, else apply the clamped scale.
   const setScale = (next: number) => {
-    const clamped = Math.min(5, Math.max(0.5, next));
+    const clamped = clampScale(next);
     if (clamped <= 1) resetZoom();
     else scale.value = clamped;
   };

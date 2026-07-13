@@ -2,6 +2,17 @@ import { nextTick, onMounted, onUnmounted, type Ref, watch } from 'vue';
 import { flashItem } from '../lib/flashItem.ts';
 import type { CollectionCache, CollectionConfig, CollectionItem } from '../types/index.ts';
 
+/** Parse the hash grammar `#<collectionId>[/<itemId>]` (leading `#`/`/` optional). */
+export function parseHash(hash: string): { collectionId: string; itemId: string } {
+  const [collectionId = '', itemId = ''] = hash.replace(/^#\/?/, '').split('/');
+  return { collectionId, itemId };
+}
+
+/** Build the hash body: `col` or `col/item` (empty item → collection only). */
+export function buildHash(collectionId: string, itemId: string): string {
+  return itemId ? `${collectionId}/${itemId}` : collectionId;
+}
+
 /**
  * The single owner of URL ⇄ state sync. Hash grammar:
  *   #<collectionId>            → a collection
@@ -40,7 +51,7 @@ export function useHashRoute(deps: {
     () => {
       const col = deps.activeCollection.value?.id ?? '';
       const item = deps.expandedImage.isOpen ? deps.expandedImage.item?.itemId ?? '' : '';
-      return item ? `${col}/${item}` : col;
+      return buildHash(col, item);
     },
     (target) => {
       if (!primed) {
@@ -56,7 +67,7 @@ export function useHashRoute(deps: {
     if (location.hash === last) return;
     last = location.hash;
 
-    const [collectionId = '', itemId = ''] = location.hash.replace(/^#\/?/, '').split('/');
+    const { collectionId, itemId } = parseHash(location.hash);
     if (!collectionId) return;
 
     applying = true;
