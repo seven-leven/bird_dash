@@ -14,7 +14,7 @@ import { scanCollection } from './pipeline/scan.ts';
 import { blockingIssues, planWork } from './pipeline/plan.ts';
 import { executeWork } from './pipeline/execute.ts';
 import { printCheckReport, printSummary, reportWarnings } from './pipeline/report.ts';
-import { computeVersion, formatVersion } from './version/compute.ts';
+import { computeVersion, describeVersion } from './version/compute.ts';
 import { errorMessage } from './lib/error.ts';
 import type { CollectionSummary } from './pipeline/report.ts';
 
@@ -41,7 +41,7 @@ export async function buildAssets(): Promise<void> {
 
   const version = await computeVersion();
 
-  printSummary(summaries, formatVersion(version), Date.now() - start);
+  printSummary(summaries, describeVersion(version), Date.now() - start);
 
   const failed = summaries.flatMap((s) =>
     s.result.failed.map((f) => `${s.col.id}/${f.id}: ${f.reason}`)
@@ -97,7 +97,7 @@ export async function checkIntegrity(): Promise<number> {
     rows.push({ col, state, plan });
   }
 
-  printCheckReport(rows, formatVersion(version));
+  printCheckReport(rows, describeVersion(version));
   return rows.reduce((n, r) => n + blockingIssues(r.plan), 0);
 }
 

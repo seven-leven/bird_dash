@@ -5,7 +5,7 @@
     "preview": "deno run -A --node-modules-dir npm:vite preview",
 
     // ── Build ─────────────────────────────────────────────────────────────────
-    // Full build: transcode images → bump version → build frontend
+    // Full build: transcode images → build frontend (the version is derived, not bumped)
     "build": "deno run -A ./script/build.ts",
 
     // Individual stages (also callable from CI separately)
@@ -31,8 +31,8 @@
     "check": "deno run -A ./script/build.ts --check",
 
     // ── Versioning & changelog ────────────────────────────────────────────────
-    // Version is derived (major/minor from version.json, patch = commit count,
-    // +count = drawn illustrations) — nothing to bump, nothing to drift.
+    // The version is derived from version.json + git + the data (script/version/compute.ts);
+    // see the README, "Versioning". `--long` also prints the drawing count and commit.
     "version": "deno run -A ./script/version/compute.ts",
     // Insert commits made since CHANGELOG.md was last touched under Unreleased
     "changelog": "deno run -A ./script/changelog.ts",

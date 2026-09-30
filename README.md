@@ -68,7 +68,7 @@ src/
 script/                 Deno build pipeline (transcode, integrity, version, changelog)
 test/                   Shared test helpers (fixtures, fake-DOM setup); tests sit next to the code
                         as *_test.ts (examples), *_dom_test.ts (fake browser), *_prop_test.ts (properties)
-version.json            Stored major/minor only — patch and count are derived
+version.json            Stored major/minor only — the rest of the version is derived
 ```
 
 State flows one way: `App.vue` creates the stores in dependency order (search and ui → collections →
@@ -153,18 +153,28 @@ rendered specially; any other string fields appear in the info panel.
 
 ## Versioning
 
-Versions follow `x.y.z+w`:
+The footer of the site reads `v0.8.157 · 18 drawings · 4f0f400`. Nothing here is stored except
+`major.minor`; the rest is worked out from the repo when the site is built, so it cannot drift.
 
-- **`x.y`** — major/minor, the only part stored (in `version.json`); bump by hand for releases.
-- **`z`** — patch, the commit count.
-- **`w`** — total drawn illustrations across all collections.
+| Part          | Where it comes from                                                                 |
+| ------------- | ----------------------------------------------------------------------------------- |
+| `0.8`         | `version.json` — edit by hand when a new line of work starts (e.g. `0.8` → `0.9`)   |
+| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below |
+| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                      |
+| `4f0f400`     | the commit the build was made from                                                  |
 
-`z` and `w` are **derived at build time** (from git history and `public/lists/*.json`) and injected
-into the bundle by `vite.config.ts`, so the displayed version always reflects reality and can never
-drift. Print it any time with `deno task version`.
+- **The patch is a build counter, not a count of fixes.** On `main` it includes merge commits, so it
+  rises by a few with every merged PR, and a local branch shows a different number from the deployed
+  site (which is why the commit is shown too).
+- **One implementation.** [`script/version/compute.ts`](script/version/compute.ts) computes all of
+  it. `deno task version` prints it (`--long` for the whole line), the build and check summaries
+  print it, and `vite.config.ts` calls the same function to inject it into the footer.
+- **Without git** (e.g. a zip download) a local build warns and shows patch `0` / commit `unknown`;
+  `deno task version` and any build with `CI` set fail instead of inventing a number.
 
-Changelog entries are curated with `deno task changelog`, which lists every commit made since
-`CHANGELOG.md` was last touched and inserts them under an _Unreleased_ heading to edit and commit.
+There are no git hooks, tags or releases: CI and the deploy are the only gates. Changelog entries
+are curated with `deno task changelog`, which lists every commit made since `CHANGELOG.md` was last
+touched and inserts them under an _Unreleased_ heading to edit and commit.
 
 ## Deployment
 
