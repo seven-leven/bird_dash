@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
+import { assertProperty } from '../../../test/prop.ts';
 import { ref } from 'vue';
 import { monthKey, useCollectionData } from './useCollectionData.ts';
 import { at, makeItem } from '../../../test/fixtures.ts';
@@ -35,7 +36,7 @@ const run = (specs: Parameters<typeof items>[0], q: string, mode: ViewMode) => {
 const norm = (q: string) => q.trim().toLowerCase();
 
 Deno.test('property: group mode keeps exactly the items that match, each once', () => {
-  fc.assert(
+  assertProperty(
     fc.property(collection, query, (specs, q) => {
       const { list, data } = run(specs, q, 'group');
       const expected = list.filter((i) => i.searchText.includes(norm(q))).map((i) => i.id).sort();
@@ -48,7 +49,7 @@ Deno.test('property: group mode keeps exactly the items that match, each once', 
 });
 
 Deno.test('property: within a group, drawn items come first and ids ascend', () => {
-  fc.assert(
+  assertProperty(
     fc.property(collection, (specs) => {
       const { data } = run(specs, '', 'group');
       for (const group of Object.values(data.activeData.value.grouped)) {
@@ -64,7 +65,7 @@ Deno.test('property: within a group, drawn items come first and ids ascend', () 
 });
 
 Deno.test('property: sidebar counts add up to the drawn items in every view', () => {
-  fc.assert(
+  assertProperty(
     fc.property(collection, query, fc.constantFrom<ViewMode>('group', 'date'), (specs, q, mode) => {
       const { list, data } = run(specs, q, mode);
       const matching = list.filter((i) => i.searchText.includes(norm(q)));
@@ -77,7 +78,7 @@ Deno.test('property: sidebar counts add up to the drawn items in every view', ()
 });
 
 Deno.test('property: date mode puts each drawn item in its UTC month, in time order', () => {
-  fc.assert(
+  assertProperty(
     fc.property(collection, query, (specs, q) => {
       const { list, data } = run(specs, q, 'date');
       const grouped = data.activeData.value.grouped;
@@ -97,7 +98,7 @@ Deno.test('property: date mode puts each drawn item in its UTC month, in time or
 });
 
 Deno.test('property: a month is disabled in the sidebar exactly when it is empty', () => {
-  fc.assert(
+  assertProperty(
     fc.property(collection, query, (specs, q) => {
       const { data } = run(specs, q, 'date');
       const { grouped, sidebarItems } = data.activeData.value;
@@ -111,7 +112,7 @@ Deno.test('property: a month is disabled in the sidebar exactly when it is empty
 });
 
 Deno.test('property: the lightbox order is drawn-only and never goes back in time', () => {
-  fc.assert(
+  assertProperty(
     fc.property(collection, query, (specs, q) => {
       const { data } = run(specs, q, 'group');
       const seq = data.searchedDrawnItems.value;

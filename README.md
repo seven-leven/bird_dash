@@ -66,9 +66,9 @@ src/
   lib/                  Small framework-free helpers
   types/                Shared TypeScript types
 script/                 Deno build pipeline (transcode, integrity, version, changelog)
-test/                   Shared test helpers (fixtures, fake-DOM setup); tests sit next to the code
-                        as *_test.ts (examples), *_dom_test.ts (fake browser), *_prop_test.ts (properties)
-version.json            Stored major/minor only — the rest of the version is derived
+test/                   Shared test helpers (fixtures, fake-DOM setup, property-test depth)
+                        — the tests themselves sit next to the code they cover (see Testing)
+version.json            Stored major/minor only — patch and count are derived
 ```
 
 State flows one way: `App.vue` creates the stores in dependency order (search and ui → collections →
@@ -135,21 +135,47 @@ rendered specially; any other string fields appear in the info panel.
 
 ## Tasks
 
-| Task                        | Description                                                          |
-| --------------------------- | -------------------------------------------------------------------- |
-| `deno task dev`             | Start the Vite dev server                                            |
-| `deno task build`           | Full build: transcode assets, then bundle the frontend               |
-| `deno task build:assets`    | Transcode images and register new items only                         |
-| `deno task build:vite`      | Bundle the frontend only (assumes assets are built)                  |
-| `deno task check`           | Integrity check (missing/orphaned images); exits 1 on problems       |
-| `deno task test`            | Unit tests, including the `public/*.json` data-contract tests        |
-| `deno task test:watch`      | Re-run the unit tests on every save                                  |
-| `deno task test:coverage`   | Tests + per-file coverage table; fails below the line-coverage floor |
-| `deno task typecheck`       | Type-check the `.ts` sources (`.vue` templates are not covered)      |
-| `deno task version`         | Print the current derived version                                    |
-| `deno task changelog`       | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview)  |
-| `deno task preview`         | Preview the production build locally                                 |
-| `deno task lint` / `format` | Lint and format                                                      |
+| Task                                              | Description                                                          |
+| ------------------------------------------------- | -------------------------------------------------------------------- |
+| `deno task dev`                                   | Start the Vite dev server                                            |
+| `deno task build`                                 | Full build: transcode assets, then bundle the frontend               |
+| `deno task build:assets`                          | Transcode images and register new items only                         |
+| `deno task build:vite`                            | Bundle the frontend only (assumes assets are built)                  |
+| `deno task check`                                 | Integrity check (missing/orphaned images); exits 1 on problems       |
+| `deno task test`                                  | Every test tier, one summary row per tier (`test unit dom` for some) |
+| `deno task test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                       |
+| `deno task test:watch`                            | Re-run the tests on every save                                       |
+| `deno task test:coverage`                         | Every tier + coverage table; fails below the line-coverage floor     |
+| `deno task typecheck`                             | Type-check the `.ts` sources (`.vue` templates are not covered)      |
+| `deno task version`                               | Print the current derived version                                    |
+| `deno task changelog`                             | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview)  |
+| `deno task preview`                               | Preview the production build locally                                 |
+| `deno task lint` / `format`                       | Lint and format                                                      |
+
+## Testing
+
+Tests sit next to the code they cover, and the **file name decides the tier**
+([`script/test/tiers.ts`](script/test/tiers.ts) is the one place that maps names to tiers):
+
+| Tier       | File name            | Use it for                                                                            |
+| ---------- | -------------------- | ------------------------------------------------------------------------------------- |
+| `unit`     | `x_test.ts`          | pure logic — start here                                                               |
+| `dom`      | `x_dom_test.ts`      | code that needs `document`, `location`, focus or storage (fake DOM via `test/dom.ts`) |
+| `prop`     | `x_prop_test.ts`     | an invariant that should hold for _any_ input (fast-check)                            |
+| `contract` | `x_contract_test.ts` | checks the real files in the repo (`public/*.json`, layout)                           |
+
+`deno task test` prints one row per tier instead of a line per test. When something fails it lists
+the failing tests first (file, line, message) and then Deno's full output — the diff, or the type
+error that stopped the run. `-v` adds a per-file list. In CI the same run writes a summary table to
+the job page, annotates failures on the changed files, and keeps the JUnit file.
+
+- **Property depth.** `FC_RUNS_MULTIPLIER=10 deno task test:prop` runs ten times as many generated
+  inputs; a weekly scheduled workflow ([`nightly.yml`](.github/workflows/nightly.yml)) runs them at
+  25×. A failing property prints its seed — pass `{ seed, path }` to reproduce it.
+- **A test in the wrong place fails the suite.** The runner only looks in `src/` and `script/`, and
+  a contract test checks that no `*_test.ts` file lives anywhere it would be skipped.
+- Coverage covers `.ts` only (Deno cannot import `.vue` files), so component behaviour needs browser
+  tests, which are not set up yet.
 
 ## Versioning
 
@@ -179,10 +205,10 @@ touched and inserts them under an _Unreleased_ heading to edit and commit.
 ## Deployment
 
 Pull requests and deploys run the same checks, defined once in
-[`verify.yml`](.github/workflows/verify.yml): lint, format, type-check, unit tests with a coverage
-floor (in a timezone west of UTC, so accidental local-time date logic fails), the asset integrity
-check, and the production build. The unit tests also run in three more timezones (UTC, India, and
-UTC+14) in parallel. [`ci.yml`](.github/workflows/ci.yml) runs it on every pull request;
+[`verify.yml`](.github/workflows/verify.yml): lint, format, type-check, every test tier with a
+coverage floor (in a timezone west of UTC, so accidental local-time date logic fails), the asset
+integrity check, and the production build. The tests also run in three more timezones (UTC, India,
+and UTC+14) in parallel. [`ci.yml`](.github/workflows/ci.yml) runs it on every pull request;
 [`deploy.yml`](.github/workflows/deploy.yml) runs it on every push to `main` and publishes the built
 site to GitHub Pages only if everything passed. The workflows check out full git history
 (`fetch-depth: 0`) so the derived version is accurate.
