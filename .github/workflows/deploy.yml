@@ -19,104 +19,16 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  # ── 0. Gate: lint, types, tests must pass before anything builds/deploys ────
+  # Same checks as pull requests, then the built site becomes the Pages
+  # artifact. Nothing deploys unless every check is green.
   verify:
-    name: Verify (lint, types, tests)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+    uses: ./.github/workflows/verify.yml
+    with:
+      upload-pages: true
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-          cache: true
-
-      - name: Install dependencies
-        run: deno install --allow-scripts
-
-      - name: Lint
-        run: deno lint
-
-      - name: Format check
-        run: deno fmt --check
-
-      - name: Type check
-        run: deno task typecheck
-
-      - name: Unit tests
-        run: deno task test
-
-  # ── 1. Asset pipeline ──────────────────────────────────────────────────────
-  build-assets:
-    name: Build assets
-    needs: verify
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          # Full history: the app version derives patch from the commit count
-          fetch-depth: 0
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-          cache: true
-
-      - name: Install dependencies
-        run: deno install --allow-scripts
-
-      - name: Run asset pipeline
-        run: deno task build:assets
-
-      - name: Upload public dir
-        uses: actions/upload-artifact@v7
-        with:
-          name: public-assets
-          path: public/
-          retention-days: 1
-
-  # ── 2. Frontend bundle ─────────────────────────────────────────────────────
-  build-vite:
-    name: Build frontend
-    needs: build-assets
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          # Full history: the app version derives patch from the commit count
-          fetch-depth: 0
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-          cache: true
-
-      - name: Install dependencies
-        run: deno install --allow-scripts
-
-      - name: Download public assets
-        uses: actions/download-artifact@v8
-        with:
-          name: public-assets
-          path: public/
-
-      - name: Run Vite build
-        run: deno task build:vite
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
-        with:
-          path: ./dist
-
-  # ── 3. Deploy ──────────────────────────────────────────────────────────────
   deploy:
     name: Deploy to Pages
-    needs: build-vite
+    needs: verify
     runs-on: ubuntu-latest
     environment: github-pages
     steps:

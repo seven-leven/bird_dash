@@ -113,8 +113,9 @@ export function printCheckReport(
   console.log(`  ${divider}`);
 
   for (const { col, state, plan } of rows) {
+    // Blocking issues only (see blockingIssues in plan.ts); missing raw PNGs are
+    // expected wherever raw_png/ is absent, so they get a summary note below.
     const issues = [
-      ...plan.missingRaw.map((id) => `missing raw PNG       ${id}`),
       ...plan.toRegister.map((id) => `unregistered PNG      ${id}`),
       ...plan.toTranscode.map((id) => `missing full WebP     ${id}`),
       ...plan.toTranscodeThumb.map((id) => `missing thumb         ${id}`),
@@ -133,6 +134,11 @@ export function printCheckReport(
 
     for (const msg of issues) {
       console.log(`      ${msg}`);
+    }
+    if (plan.missingRaw.length > 0) {
+      console.log(
+        `      note: ${plan.missingRaw.length} drawn without a raw PNG (fine if raw_png/ is absent)`,
+      );
     }
   }
 

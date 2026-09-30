@@ -4,36 +4,11 @@ on:
   pull_request:
   workflow_dispatch:
 
+# A newer push to the same PR supersedes the run in flight.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  check:
-    name: Lint, format, test, and build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          # Full history: the app version derives patch from the commit count
-          fetch-depth: 0
-
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
-        with:
-          deno-version: v2.x
-          cache: true
-
-      - name: Install dependencies
-        run: deno install --allow-scripts
-
-      - name: Lint
-        run: deno lint
-
-      - name: Format check
-        run: deno fmt --check
-
-      - name: Type check
-        run: deno task typecheck
-
-      - name: Unit tests
-        run: deno task test
-
-      - name: Build frontend
-        run: deno task build:vite
+  verify:
+    uses: ./.github/workflows/verify.yml
