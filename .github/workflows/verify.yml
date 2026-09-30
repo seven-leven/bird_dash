@@ -42,10 +42,12 @@ jobs:
       - name: Type check
         run: deno task typecheck
 
-      # A timezone west of UTC (the dev machine is UTC+5) so date-bucketing code
-      # that accidentally uses local time fails here instead of for some viewers.
-      - name: Unit tests
-        run: deno task test
+      # Runs the unit tests and enforces the coverage floor set in deno.jsonc; the
+      # per-file table lands in the job summary. Pinned to a timezone west of UTC
+      # (the dev machine is UTC+5) so date code that accidentally uses local time
+      # fails here instead of for some viewers. The other zones run in `timezones`.
+      - name: Unit tests with coverage
+        run: deno task test:coverage
         env:
           TZ: America/Los_Angeles
 
@@ -60,3 +62,30 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
+
+  # Date logic has bitten us before (a month bucketed wrongly for viewers west of
+  # UTC), so repeat the unit tests across zones that straddle the date line and
+  # use half-hour offsets. Runs in parallel with `verify`.
+  timezones:
+    name: Unit tests (${{ matrix.tz }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tz: [UTC, Asia/Kolkata, Pacific/Kiritimati]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+          cache: true
+
+      - name: Install dependencies
+        run: deno install --allow-scripts
+
+      - name: Unit tests
+        run: deno task test
+        env:
+          TZ: ${{ matrix.tz }}

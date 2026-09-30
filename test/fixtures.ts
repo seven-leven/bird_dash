@@ -69,7 +69,17 @@ export function at(year: number, month1to12: number, day = 1): number {
  * (useDebouncedRef, the stores) don't warn, and can be torn down after.
  */
 export function runInScope<T>(fn: () => T): { value: T; stop: () => void } {
-  const scope = effectScope();
-  const value = scope.run(fn) as T;
-  return { value, stop: () => scope.stop() };
+  // Composables register onMounted/onUnmounted; with no component around them Vue
+  // warns on every call. That is expected in a test, so drop only that warning.
+  const warn = console.warn;
+  console.warn = (...args: unknown[]) => {
+    if (!String(args[0]).includes('no active component instance')) warn(...args);
+  };
+  try {
+    const scope = effectScope();
+    const value = scope.run(fn) as T;
+    return { value, stop: () => scope.stop() };
+  } finally {
+    console.warn = warn;
+  }
 }

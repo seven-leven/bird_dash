@@ -22,11 +22,17 @@ export function useSearchHighlight() {
 
     if (q !== cachedQuery) {
       cachedQuery = q;
-      const escapedQuery = escapeHtml(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      cachedRegex = new RegExp(`(${escapedQuery})`, 'gi');
+      cachedRegex = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
     }
 
-    return escapeHtml(text).replace(cachedRegex!, `${MARK_OPEN}$1${MARK_CLOSE}`);
+    // Match against the RAW text and escape each piece afterwards. Matching the
+    // already-escaped text would let a query like "g" land inside "&gt;" and
+    // split the entity, which a browser then shows literally. With one capture
+    // group, split() puts the matches at the odd indices.
+    return text
+      .split(cachedRegex!)
+      .map((part, i) => i % 2 ? `${MARK_OPEN}${escapeHtml(part)}${MARK_CLOSE}` : escapeHtml(part))
+      .join('');
   }
 
   return { highlightText };
