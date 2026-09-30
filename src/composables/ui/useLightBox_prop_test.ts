@@ -1,13 +1,14 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
+import { assertProperty } from '../../../test/prop.ts';
 import { clampScale, pinchScale, swipeDirection } from './useLightBox.ts';
 
 // Any number a gesture could plausibly feed in — including the awkward ones.
 const anyNumber = fc.double({ noNaN: false });
 
 Deno.test('property: clampScale always returns a usable scale in [1, 5]', () => {
-  fc.assert(
+  assertProperty(
     fc.property(anyNumber, (x) => {
       const y = clampScale(x);
       assert(y >= 1 && y <= 5, `clampScale(${x}) = ${y}`);
@@ -17,7 +18,7 @@ Deno.test('property: clampScale always returns a usable scale in [1, 5]', () => 
 });
 
 Deno.test('property: clampScale is idempotent and monotonic', () => {
-  fc.assert(
+  assertProperty(
     fc.property(fc.double({ noNaN: true }), fc.double({ noNaN: true }), (a, b) => {
       assertEquals(clampScale(clampScale(a)), clampScale(a));
       const [lo, hi] = a <= b ? [a, b] : [b, a];
@@ -29,7 +30,7 @@ Deno.test('property: clampScale is idempotent and monotonic', () => {
 
 Deno.test('property: pinchScale is the identity for unchanged spread and scales linearly', () => {
   const pos = fc.double({ min: 0.01, max: 1e4, noNaN: true });
-  fc.assert(
+  assertProperty(
     fc.property(pos, pos, (scale, dist) => {
       assertEquals(pinchScale(scale, dist, dist), scale);
       const doubled = pinchScale(scale, dist, dist * 2);
@@ -40,7 +41,7 @@ Deno.test('property: pinchScale is the identity for unchanged spread and scales 
 
 Deno.test('property: swiping right is the mirror image of swiping left', () => {
   const d = fc.double({ min: -1e4, max: 1e4, noNaN: true });
-  fc.assert(
+  assertProperty(
     fc.property(d, d, (dx, dy) => {
       const flip = { next: 'prev', prev: 'next' } as const;
       const fwd = swipeDirection(dx, dy);
@@ -53,7 +54,7 @@ Deno.test('property: swiping right is the mirror image of swiping left', () => {
 
 Deno.test('property: a mostly-vertical drag is never a swipe', () => {
   const d = fc.double({ min: -1e4, max: 1e4, noNaN: true });
-  fc.assert(
+  assertProperty(
     fc.property(d, d, (dx, dy) => {
       if (Math.abs(dx) < Math.abs(dy) * 2) assertEquals(swipeDirection(dx, dy), null);
     }),

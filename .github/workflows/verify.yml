@@ -42,14 +42,24 @@ jobs:
       - name: Type check
         run: deno task typecheck
 
-      # Runs the unit tests and enforces the coverage floor set in deno.jsonc; the
-      # per-file table lands in the job summary. Pinned to a timezone west of UTC
-      # (the dev machine is UTC+5) so date code that accidentally uses local time
-      # fails here instead of for some viewers. The other zones run in `timezones`.
-      - name: Unit tests with coverage
+      # Every test tier (script/test/tiers.ts) plus the coverage floor from deno.jsonc.
+      # The runner writes a per-tier table and the coverage table to the job summary,
+      # annotates failures on the changed files, and keeps the JUnit file. Pinned to a
+      # timezone west of UTC (the dev machine is UTC+5) so date code that accidentally
+      # uses local time fails here instead of for some viewers; the other zones run
+      # in `timezones` below.
+      - name: Tests (all tiers) with coverage
         run: deno task test:coverage
         env:
           TZ: America/Los_Angeles
+
+      - name: Keep test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: test-results/
+          retention-days: 14
 
       - name: Asset integrity
         run: deno task check
@@ -67,7 +77,7 @@ jobs:
   # UTC), so repeat the unit tests across zones that straddle the date line and
   # use half-hour offsets. Runs in parallel with `verify`.
   timezones:
-    name: Unit tests (${{ matrix.tz }})
+    name: Tests (${{ matrix.tz }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -85,7 +95,7 @@ jobs:
       - name: Install dependencies
         run: deno install --allow-scripts
 
-      - name: Unit tests
+      - name: Tests (all tiers)
         run: deno task test
         env:
           TZ: ${{ matrix.tz }}

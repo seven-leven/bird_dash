@@ -1,0 +1,39 @@
+name: Nightly
+
+# A slow, deep run that would be wasteful on every pull request: the property-based
+# tests at 25x their normal number of generated inputs, in a few timezones. Random
+# inputs mean a bug can hide from a shallow run; if this ever fails, the seed and the
+# shrunk counterexample are in the log (and the job summary).
+on:
+  schedule:
+    - cron: '0 3 * * 1' # Mondays 03:00 UTC
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deep-properties:
+    name: Deep property tests (${{ matrix.tz }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tz: [UTC, America/Los_Angeles, Pacific/Kiritimati]
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+          cache: true
+
+      - name: Install dependencies
+        run: deno install --allow-scripts
+
+      - name: Property tests at 25x depth
+        run: deno task test:prop
+        env:
+          TZ: ${{ matrix.tz }}
+          FC_RUNS_MULTIPLIER: '25'
