@@ -15,6 +15,12 @@
       <input
         ref="searchInputRef"
         type="text"
+        role="combobox"
+        aria-label="Search all collections"
+        aria-autocomplete="list"
+        aria-controls="global-search-listbox"
+        :aria-expanded="shouldShowDropdown"
+        :aria-activedescendant="activeOptionId"
         :value="query"
         @input="onInput(($event.target as HTMLInputElement).value)"
         @focus="openDropdown"
@@ -52,6 +58,9 @@
       </button>
     </div>
 
+    <!-- Announces the result count to screen readers as the query changes -->
+    <div class="sr-only" role="status" aria-live="polite">{{ liveMessage }}</div>
+
     <!-- ==================== DROPDOWN ==================== -->
     <Transition v-bind="dropdownTransition">
       <div
@@ -59,8 +68,6 @@
         class="absolute right-0 top-full mt-1.5 w-full min-w-90 max-w-130
                rounded-xl border shadow-xl z-50 overflow-hidden
                bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
-        role="listbox"
-        aria-label="Search results"
       >
         <!-- Header -->
         <SearchDropdownHeader :count="globalResultCount" />
@@ -74,6 +81,9 @@
 
         <div
           v-else
+          id="global-search-listbox"
+          role="listbox"
+          aria-label="Search results"
           class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800"
         >
           <SearchResultsList
@@ -157,7 +167,20 @@ onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown));
 // COMPUTED
 // ---------------------------------------------------------------------------
 const hasQuery = computed(() => query.value.length > 0);
-const shouldShowDropdown = computed(() => dropdownOpen.value && query.value.trim());
+const shouldShowDropdown = computed(() => dropdownOpen.value && query.value.trim() !== '');
+
+// The option the keyboard cursor is on (only meaningful while results are listed).
+const activeOptionId = computed(() =>
+  shouldShowDropdown.value && globalResultCount.value > 0 && focusedIndex.value >= 0
+    ? `search-result-${focusedIndex.value}`
+    : undefined
+);
+
+const liveMessage = computed(() => {
+  if (!query.value.trim()) return '';
+  const n = globalResultCount.value;
+  return n === 0 ? 'No matches found' : `${n} ${n === 1 ? 'result' : 'results'}`;
+});
 
 const dropdownTransition = {
   enterActiveClass: 'transition duration-150 ease-out',
