@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
+import { assertProperty } from '../../../test/prop.ts';
 import { useSearchHighlight } from './useSearchHighlight.ts';
 
 const { highlightText } = useSearchHighlight();
@@ -37,7 +38,7 @@ const unescapeHtml = (s: string) =>
 // removing the marks must give back exactly the original text.
 
 Deno.test('property: the output never contains markup other than <mark>', () => {
-  fc.assert(
+  assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const withoutMarks = highlightText(text, query).replace(MARK, '');
       return !/[<>]/.test(withoutMarks) && !withoutMarks.includes('"');
@@ -49,7 +50,7 @@ Deno.test('property: the output never contains markup other than <mark>', () => 
 // A browser decodes entities within each run of text between tags; an entity can
 // never span a tag. Model that: decode every segment on its own, then join.
 Deno.test('property: the text a browser would show is exactly the original text', () => {
-  fc.assert(
+  assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const shown = highlightText(text, query).split(MARK).map(unescapeHtml).join('');
       assertEquals(shown, text);
@@ -59,7 +60,7 @@ Deno.test('property: the text a browser would show is exactly the original text'
 });
 
 Deno.test('property: a highlighted span is a case-insensitive match of the query', () => {
-  fc.assert(
+  assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const q = query.trim();
       if (!q) return true;

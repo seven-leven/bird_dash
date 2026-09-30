@@ -25,3 +25,6 @@ raw_png
 *.sln
 *.sw?
 .claude
+
+# test runner output (JUnit) in CI
+test-results

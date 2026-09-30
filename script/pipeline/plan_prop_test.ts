@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
+import { assertProperty } from '../../test/prop.ts';
 import { blockingIssues, planWork } from './plan.ts';
 
 // Small id pool so the four sets overlap a lot (that's where the bugs live).
@@ -17,7 +18,7 @@ const sorted = (a: Iterable<string>) => [...a].sort();
 const minus = (a: Set<string>, b: Set<string>) => [...a].filter((x) => !b.has(x));
 
 Deno.test('property: every bucket is exactly the set difference the docs promise', () => {
-  fc.assert(
+  assertProperty(
     fc.property(state, (s) => {
       const plan = planWork(s);
       const allDrawn = new Set([...s.drawnIds, ...minus(s.rawIds, s.drawnIds)]);
@@ -37,7 +38,7 @@ Deno.test('property: every bucket is exactly the set difference the docs promise
 });
 
 Deno.test('property: carrying out a plan leaves nothing left to do', () => {
-  fc.assert(
+  assertProperty(
     fc.property(state, (s) => {
       const first = planWork(s);
       // Simulate executeWork: register new PNGs, transcode (full + thumb), repair thumbs.
@@ -58,7 +59,7 @@ Deno.test('property: carrying out a plan leaves nothing left to do', () => {
 });
 
 Deno.test('property: a fully consistent state has no blocking issues', () => {
-  fc.assert(
+  assertProperty(
     fc.property(ids, (drawn) => {
       const set = new Set(drawn);
       // every drawn id has raw, full and thumb; nothing else exists

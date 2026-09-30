@@ -13,13 +13,19 @@
     "build:vite": "deno run -A ./script/build.ts --vite-only",
 
     // ── Tests ─────────────────────────────────────────────────────────────────
-    // Tier 1 unit tests over the pure logic (composables, stores, script pipeline).
-    "test": "deno test -A --node-modules-dir src/ script/",
-    // Re-run on every save while developing.
+    // Runs every tier and prints one row per tier (script/test.ts); the tier of a
+    // test file comes from its name (script/test/tiers.ts). Pass tier names to run
+    // a subset: `deno task test unit dom`, or use the shortcuts below.
+    "test": "deno run -A ./script/test.ts",
+    "test:unit": "deno run -A ./script/test.ts unit",
+    "test:dom": "deno run -A ./script/test.ts dom",
+    "test:prop": "deno run -A ./script/test.ts prop",
+    "test:contract": "deno run -A ./script/test.ts contract",
+    // Re-run on every save while developing (Deno's own output, one line per test).
     "test:watch": "deno test -A --node-modules-dir --watch src/ script/",
-    // Tests + per-file coverage table; fails if total line coverage drops below the
+    // Every tier + a coverage table; fails if total line coverage drops below the
     // floor. Raise --min-lines as coverage grows (it only ratchets up).
-    "test:coverage": "deno run -A ./script/coverage.ts --min-lines=70",
+    "test:coverage": "deno run -A ./script/test.ts --coverage --min-lines=70",
 
     // ── Type check ────────────────────────────────────────────────────────────
     // Deno type-checks the .ts surface (scripts, composables, types, entrypoint).

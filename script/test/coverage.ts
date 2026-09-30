@@ -1,14 +1,10 @@
 /// <reference lib="deno.ns" />
 /**
- * script/coverage.ts — run the unit tests with coverage, print a per-file table,
- * and fail if total line coverage drops below a floor.
- *
- *   deno task test:coverage                    run with the floor set in deno.jsonc
- *   deno run -A script/coverage.ts --min-lines=60
+ * Coverage helpers for the test runner (script/test.ts): parse LCOV, total it up,
+ * and format it for the terminal and the GitHub job summary.
  *
  * Only `.ts` sources are measured: Deno cannot load `.vue` files, so component
- * behaviour is covered by the browser (E2E) tests rather than this number.
- * In GitHub Actions the table is also written to the job summary.
+ * behaviour is covered by browser tests rather than this number.
  */
 
 export interface Counter {
@@ -85,10 +81,13 @@ export function totals(files: FileCoverage[]): Omit<FileCoverage, 'file'> {
 
 const pct = (c: Counter) => percent(c).toFixed(1).padStart(5);
 
-/** Fixed-width table for the terminal, lowest line coverage first. */
-export function formatTable(files: FileCoverage[], cwd = ''): string {
+/**
+ * Fixed-width table for the terminal, lowest line coverage first. `limit` shows only
+ * the N least-covered files (the total row always covers every file).
+ */
+export function formatTable(files: FileCoverage[], cwd = '', limit = Infinity): string {
   const rel = (f: string) => f.replaceAll('\\', '/').replace(cwd.replaceAll('\\', '/') + '/', '');
-  const rows = [...files].sort((a, b) => percent(a.lines) - percent(b.lines));
+  const rows = [...files].sort((a, b) => percent(a.lines) - percent(b.lines)).slice(0, limit);
   const width = Math.max(4, ...rows.map((r) => rel(r.file).length));
   const head = `${'File'.padEnd(width)}  ${'Lines'.padStart(6)}  ${'Branch'.padStart(6)}  ${
     'Funcs'.padStart(6)
@@ -133,50 +132,22 @@ export function parseMinLines(args: string[]): number {
   return n;
 }
 
-async function run(args: string[], capture: boolean) {
-  return await new Deno.Command(Deno.execPath(), {
-    args,
-    stdout: capture ? 'piped' : 'inherit',
-    stderr: 'inherit',
-  }).output();
-}
-
-if (import.meta.main) {
-  const minLines = parseMinLines(Deno.args);
-  const dir = await Deno.makeTempDir({ prefix: 'coverage-' });
-
-  try {
-    const test = await run(
-      ['test', '-A', '--node-modules-dir', `--coverage=${dir}`, 'src/', 'script/'],
-      false,
-    );
-    if (!test.success) Deno.exit(test.code || 1);
-
-    const report = await run([
+/**
+ * Turn the raw profile a `deno test --coverage=<dir>` run left in `dir` into
+ * per-file counters for our own sources (tests, fixtures and typings excluded).
+ */
+export async function readCoverage(dir: string): Promise<FileCoverage[]> {
+  const { success, stdout } = await new Deno.Command(Deno.execPath(), {
+    args: [
       'coverage',
       dir,
       '--lcov',
       '--include=^file:.*/(src|script)/',
-      '--exclude=_test\\.ts|/test/|\\.d\\.ts',
-    ], true);
-    if (!report.success) throw new Error('deno coverage failed');
-
-    const files = parseLcov(new TextDecoder().decode(report.stdout));
-    const cwd = Deno.cwd();
-    console.log('\n' + formatTable(files, cwd) + '\n');
-
-    const summary = Deno.env.get('GITHUB_STEP_SUMMARY');
-    if (summary) {
-      await Deno.writeTextFile(summary, formatMarkdown(files, minLines, cwd), { append: true });
-    }
-
-    const actual = percent(totals(files).lines);
-    if (actual < minLines) {
-      console.error(`Line coverage ${actual.toFixed(1)}% is below the ${minLines}% floor.\n`);
-      Deno.exit(1);
-    }
-    console.log(`Line coverage ${actual.toFixed(1)}% (floor ${minLines}%).`);
-  } finally {
-    await Deno.remove(dir, { recursive: true }).catch(() => {});
-  }
+      '--exclude=_test\.ts|/test/|\.d\.ts',
+    ],
+    stdout: 'piped',
+    stderr: 'inherit',
+  }).output();
+  if (!success) throw new Error('deno coverage failed');
+  return parseLcov(new TextDecoder().decode(stdout));
 }
