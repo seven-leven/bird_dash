@@ -2,6 +2,8 @@
 import { nextTick, onMounted, watch } from 'vue';
 
 import Chrome from './components/layout/Chrome.vue';
+import EmptyState from './components/ui/EmptyState.vue';
+import Icon from './components/icons/Icon.vue';
 import { flashItem } from './lib/flashItem.ts';
 import { useHashRoute } from './composables/index.ts';
 import { createSearchStore, provideSearch } from './stores/search.ts';
@@ -72,16 +74,35 @@ watch(
     }),
 );
 
-const { isInitialized } = collections;
+const { isInitialized, initError } = collections;
+const reload = () => location.reload();
 
 onMounted(async () => {
   await collections.init();
-  await route.start();
+  if (isInitialized.value) await route.start(); // nothing to route to if init failed
 });
 </script>
 
 <template>
   <Chrome v-if="isInitialized" />
+
+  <div
+    v-else-if="initError"
+    class="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950"
+    role="alert"
+  >
+    <EmptyState title="Couldn't load the gallery" :hint="initError">
+      <template #icon>
+        <Icon name="noResults" class="w-6 h-6" />
+      </template>
+      <button
+        class="focus-ring mt-3 rounded-md px-3 py-1.5 text-sm font-medium bg-accent-700 text-white hover:bg-accent-600"
+        @click="reload()"
+      >
+        Try again
+      </button>
+    </EmptyState>
+  </div>
 
   <div
     v-else

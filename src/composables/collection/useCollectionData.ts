@@ -7,8 +7,13 @@ import type {
   ViewMode,
 } from '../../types/index.ts';
 
-const monthKey = (d: Date) =>
-  `${d.toLocaleString('default', { month: 'long' })} ${d.getFullYear()}`;
+// Drawn dates are `YYYY-MM-DD`, which JS parses as UTC midnight. Bucket them by
+// their UTC month so a drawing dated the 1st never slips into the previous month
+// for viewers west of UTC.
+export const monthKey = (d: Date) =>
+  `${d.toLocaleString('default', { month: 'long', timeZone: 'UTC' })} ${d.getUTCFullYear()}`;
+
+const firstOfMonthUTC = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
 
 export function useCollectionData(
   items: Ref<CollectionItem[]>,
@@ -78,13 +83,12 @@ export function useCollectionData(
     }
     if (minTime === Infinity) return months;
 
-    const minDate = new Date(minTime);
-    const current = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-    const end = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const current = firstOfMonthUTC(new Date(minTime));
+    const end = firstOfMonthUTC(new Date());
 
     while (current <= end) {
       months.push(monthKey(current));
-      current.setMonth(current.getMonth() + 1);
+      current.setUTCMonth(current.getUTCMonth() + 1);
     }
     return months;
   });
