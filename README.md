@@ -66,7 +66,8 @@ src/
   lib/                  Small framework-free helpers
   types/                Shared TypeScript types
 script/                 Deno build pipeline (transcode, integrity, version, changelog)
-test/                   Shared test fixtures (tests themselves sit next to the code, *_test.ts)
+test/                   Shared test helpers (fixtures, fake-DOM setup); tests sit next to the code
+                        as *_test.ts (examples), *_dom_test.ts (fake browser), *_prop_test.ts (properties)
 version.json            Stored major/minor only — patch and count are derived
 ```
 
@@ -134,19 +135,21 @@ rendered specially; any other string fields appear in the info panel.
 
 ## Tasks
 
-| Task                        | Description                                                         |
-| --------------------------- | ------------------------------------------------------------------- |
-| `deno task dev`             | Start the Vite dev server                                           |
-| `deno task build`           | Full build: transcode assets, then bundle the frontend              |
-| `deno task build:assets`    | Transcode images and register new items only                        |
-| `deno task build:vite`      | Bundle the frontend only (assumes assets are built)                 |
-| `deno task check`           | Integrity check (missing/orphaned images); exits 1 on problems      |
-| `deno task test`            | Unit tests, including the `public/*.json` data-contract tests       |
-| `deno task typecheck`       | Type-check the `.ts` sources (`.vue` templates are not covered)     |
-| `deno task version`         | Print the current derived version                                   |
-| `deno task changelog`       | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview) |
-| `deno task preview`         | Preview the production build locally                                |
-| `deno task lint` / `format` | Lint and format                                                     |
+| Task                        | Description                                                          |
+| --------------------------- | -------------------------------------------------------------------- |
+| `deno task dev`             | Start the Vite dev server                                            |
+| `deno task build`           | Full build: transcode assets, then bundle the frontend               |
+| `deno task build:assets`    | Transcode images and register new items only                         |
+| `deno task build:vite`      | Bundle the frontend only (assumes assets are built)                  |
+| `deno task check`           | Integrity check (missing/orphaned images); exits 1 on problems       |
+| `deno task test`            | Unit tests, including the `public/*.json` data-contract tests        |
+| `deno task test:watch`      | Re-run the unit tests on every save                                  |
+| `deno task test:coverage`   | Tests + per-file coverage table; fails below the line-coverage floor |
+| `deno task typecheck`       | Type-check the `.ts` sources (`.vue` templates are not covered)      |
+| `deno task version`         | Print the current derived version                                    |
+| `deno task changelog`       | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview)  |
+| `deno task preview`         | Preview the production build locally                                 |
+| `deno task lint` / `format` | Lint and format                                                      |
 
 ## Versioning
 
@@ -166,9 +169,10 @@ Changelog entries are curated with `deno task changelog`, which lists every comm
 ## Deployment
 
 Pull requests and deploys run the same checks, defined once in
-[`verify.yml`](.github/workflows/verify.yml): lint, format, type-check, unit tests (in a timezone
-west of UTC, so accidental local-time date logic fails), the asset integrity check, and the
-production build. [`ci.yml`](.github/workflows/ci.yml) runs it on every pull request;
+[`verify.yml`](.github/workflows/verify.yml): lint, format, type-check, unit tests with a coverage
+floor (in a timezone west of UTC, so accidental local-time date logic fails), the asset integrity
+check, and the production build. The unit tests also run in three more timezones (UTC, India, and
+UTC+14) in parallel. [`ci.yml`](.github/workflows/ci.yml) runs it on every pull request;
 [`deploy.yml`](.github/workflows/deploy.yml) runs it on every push to `main` and publishes the built
 site to GitHub Pages only if everything passed. The workflows check out full git history
 (`fetch-depth: 0`) so the derived version is accurate.

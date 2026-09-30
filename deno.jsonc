@@ -15,6 +15,11 @@
     // ── Tests ─────────────────────────────────────────────────────────────────
     // Tier 1 unit tests over the pure logic (composables, stores, script pipeline).
     "test": "deno test -A --node-modules-dir src/ script/",
+    // Re-run on every save while developing.
+    "test:watch": "deno test -A --node-modules-dir --watch src/ script/",
+    // Tests + per-file coverage table; fails if total line coverage drops below the
+    // floor. Raise --min-lines as coverage grows (it only ratchets up).
+    "test:coverage": "deno run -A ./script/coverage.ts --min-lines=70",
 
     // ── Type check ────────────────────────────────────────────────────────────
     // Deno type-checks the .ts surface (scripts, composables, types, entrypoint).
@@ -70,6 +75,9 @@
     "@std/assert": "jsr:@std/assert@^1",
     "@std/testing": "jsr:@std/testing@^1",
     "@std/path": "jsr:@std/path@^1.1.4",
+    // Test-only: a browser-like global environment and property-based testing.
+    "@happy-dom/global-registrator": "npm:@happy-dom/global-registrator@^18",
+    "fast-check": "npm:fast-check@^4",
     "@vitejs/plugin-vue": "npm:@vitejs/plugin-vue@^6.0.6",
     "tailwindcss": "npm:tailwindcss@^4.3.0",
     "@tailwindcss/vite": "npm:@tailwindcss/vite@^4.3.0",
