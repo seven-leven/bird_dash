@@ -37,6 +37,12 @@ Deno.test('filtering: searchText substring narrows all outputs', () => {
   assertEquals(stats.value.filtered, 1);
 });
 
+Deno.test('filtering ignores surrounding whitespace and letter case in the query', () => {
+  const items = [makeItem({ commonName: 'Mallard', group: 'Ducks' })];
+  const { activeData } = setup(items, '  MALLARD  ');
+  assertEquals(activeData.value.grouped['Ducks'].length, 1);
+});
+
 Deno.test('group stats: total = all items, drawn = drawn count', () => {
   const items = [
     makeItem({ drawnTime: at(2025, 1) }),

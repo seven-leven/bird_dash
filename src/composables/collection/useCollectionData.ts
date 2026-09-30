@@ -1,4 +1,5 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
+import { normalizeQuery } from '../../lib/normalizeQuery.ts';
 import type {
   CollectionItem,
   CollectionStats,
@@ -23,8 +24,10 @@ export function useCollectionData(
   // =============================================================================
   // FILTERING LOGIC
   // =============================================================================
+  const query = computed(() => normalizeQuery(searchQuery.value));
+
   const allFilteredItems = computed(() => {
-    const q = searchQuery.value.toLowerCase().trim();
+    const q = query.value;
     if (!q) return items.value;
     // searchText already includes name, scientific name, group, id, and the
     // Dhivehi name/script — so one substring test covers them all.
@@ -36,7 +39,7 @@ export function useCollectionData(
   // Drawn items in chronological order (drawn date, then id) — this is what the
   // lightbox pages through, so prev/next follows the timeline, not item ids.
   const searchedDrawnItems = computed(() => {
-    const q = searchQuery.value.toLowerCase().trim();
+    const q = query.value;
     const base = q ? drawnItems.value.filter((i) => i.searchText.includes(q)) : drawnItems.value;
     return [...base].sort((a, b) => a.drawnTime - b.drawnTime || a.sortKey - b.sortKey);
   });
