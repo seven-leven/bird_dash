@@ -1,15 +1,12 @@
 # Changelog
 
-All versions follow `x.y.z+w` where:
+How the version number is built is explained in the README ("Versioning"); `deno task version`
+prints it. To log new work here, run `deno task changelog` — it inserts every commit made since this
+file was last touched under _Unreleased_, ready to edit and commit.
 
-- `x.y` = major/minor, set by hand in `version.json`
-- `z` = patch — the commit count, computed from git at build time
-- `w` = total drawn illustrations, counted from `public/lists/*.json` at build time
-
-`z` and `w` are **derived, never stored**: the deployed site always shows the true numbers and
-nothing can drift. Print the current version with `deno task version`. To log new work here, run
-`deno task changelog` — it inserts every commit made since this file was last touched under
-_Unreleased_, ready to edit and commit.
+Headings such as **v0.8.0** name a _line of work_ (the `major.minor` in `version.json`), not a
+release: the patch number in the running site (`0.8.157`) counts commits, so it is never `.0`.
+Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the drawing count.
 
 ---
 

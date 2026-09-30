@@ -76,7 +76,11 @@
           class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
                  border-slate-100 text-muted dark:border-slate-800/50"
         >
-          <p>Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}</p>
+          <p>
+            Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}
+            &middot; {{ drawnLabel }} &middot;
+            <span class="font-mono" title="The commit this site was built from">{{ appCommit }}</span>
+          </p>
         </footer>
       </slot>
     </template>
@@ -100,8 +104,10 @@ const { query } = useSearch();
 const { viewMode, headerRefs } = useUi();
 const { open: openItem } = useOverlayStore();
 
-/** Derived version string, injected at build time by vite.config.ts */
+// Injected at build time by vite.config.ts (worked out in script/version/compute.ts).
 const appVersion = __APP_VERSION__;
+const appCommit = __APP_COMMIT__;
+const drawnLabel = `${__APP_DRAWN__} ${__APP_DRAWN__ === 1 ? 'drawing' : 'drawings'}`;
 
 // ---------------------------------------------------------------------------
 // COMPUTED

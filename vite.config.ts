@@ -2,46 +2,12 @@ import { defineConfig } from 'vite';
 import deno from '@deno/vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
-import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { computeVersion, formatVersion } from './script/version/compute.ts';
 
-/**
- * Derived app version: major/minor from version.json, patch = commit count,
- * +count = total drawn illustrations across all collections.
- * Mirrors script/version/compute.ts (kept in node APIs so the Vite config
- * works in any runtime).
- */
-function computeAppVersion(): string {
-  const { major, minor } = JSON.parse(readFileSync('./version.json', 'utf-8'));
-
-  let patch = 0;
-  try {
-    patch = Number(execSync('git rev-list --count HEAD', { encoding: 'utf-8' }).trim());
-  } catch {
-    // Shallow or missing git history (e.g. fetch-depth 1) — leave patch at 0.
-  }
-
-  let drawn = 0;
-  const collections: Array<{ id: string }> = JSON.parse(
-    readFileSync('./public/collections.json', 'utf-8'),
-  );
-  for (const col of collections) {
-    try {
-      const groups: Record<string, Array<{ drawn?: string }>> = JSON.parse(
-        readFileSync(`./public/lists/${col.id}.json`, 'utf-8'),
-      );
-      for (const items of Object.values(groups)) {
-        drawn += items.filter((i) => i.drawn).length;
-      }
-    } catch {
-      // list may not exist yet for a new collection
-    }
-  }
-
-  const z = String(patch).padStart(3, '0');
-  const w = String(drawn).padStart(3, '0');
-  return `${major}.${minor}.${z}+${w}`;
-}
+// The version comes from the same function as `deno task version`; there is no
+// second copy of the formula here. Lenient so a dev server still starts without git
+// (CI stays strict), and it runs under Deno, so the script's Deno APIs are available.
+const version = await computeVersion({ lenient: true });
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -49,7 +15,10 @@ export default defineConfig({
   publicDir: 'public',
   base: './',
   define: {
-    __APP_VERSION__: JSON.stringify(computeAppVersion()),
+    // Shown in the page footer (see GalleryContent.vue).
+    __APP_VERSION__: JSON.stringify(formatVersion(version)),
+    __APP_DRAWN__: JSON.stringify(version.drawn),
+    __APP_COMMIT__: JSON.stringify(version.commit),
     // We use only the Composition API — drop the Options-API compat layer and
     // dev-only tooling from the production runtime.
     __VUE_OPTIONS_API__: false,
