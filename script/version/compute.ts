@@ -4,8 +4,8 @@
  *
  * The version is derived, so it can never drift and needs no bump commit:
  *
- *   0.8.154   major.minor  from version.json (edited by hand when a new line of
- *                          work starts, e.g. 0.8 -> 0.9)
+ *   0.9.161   major.minor  from version.json (edited by hand when a new line of
+ *                          work starts, e.g. 0.9 -> 0.10)
  *             patch        the number of commits in this checkout's history
  *                          (`git rev-list --count HEAD`). On main that includes merge
  *                          commits, so it rises by a few with every merged PR; it is a
@@ -82,7 +82,7 @@ export function formatVersion(v: VersionData): string {
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
-/** Everything on one line, for logs and the footer: `0.8.154 · 18 drawings · a1b2c3d`. */
+/** Everything on one line, for logs and the footer: `0.9.161 · 18 drawings · a1b2c3d`. */
 export function describeVersion(v: VersionData): string {
   return `${formatVersion(v)} · ${plural(v.drawn, 'drawing')} · ${v.commit}`;
 }

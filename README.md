@@ -179,12 +179,13 @@ the job page, annotates failures on the changed files, and keeps the JUnit file.
 
 ## Versioning
 
-The footer of the site reads `v0.8.157 · 18 drawings · 4f0f400`. Nothing here is stored except
-`major.minor`; the rest is worked out from the repo when the site is built, so it cannot drift.
+The footer of the site reads something like `v0.9.161 · 18 drawings · 4f0f400`. Nothing here is
+stored except `major.minor`; the rest is worked out from the repo when the site is built, so it
+cannot drift.
 
 | Part          | Where it comes from                                                                 |
 | ------------- | ----------------------------------------------------------------------------------- |
-| `0.8`         | `version.json` — edit by hand when a new line of work starts (e.g. `0.8` → `0.9`)   |
+| `0.9`         | `version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`)  |
 | `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below |
 | `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                      |
 | `4f0f400`     | the commit the build was made from                                                  |
