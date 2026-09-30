@@ -4,6 +4,7 @@ import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 /** Clamp a zoom scale to [0.5, 5]; anything ≤1 snaps back to a neutral 1×. */
 export function clampScale(value: number): number {
+  if (Number.isNaN(value)) return 1; // Math.min/max would pass NaN straight through
   const clamped = Math.min(5, Math.max(0.5, value));
   return clamped <= 1 ? 1 : clamped;
 }

@@ -20,6 +20,10 @@ Deno.test('clampScale: anything at or below 1 snaps to 1', () => {
   assertEquals(clampScale(-2), 1);
 });
 
+Deno.test('clampScale: NaN falls back to 1 instead of poisoning the transform', () => {
+  assertEquals(clampScale(NaN), 1);
+});
+
 Deno.test('pinchScale: spreading fingers zooms in, pinching zooms out', () => {
   assertEquals(pinchScale(1, 100, 200), 2); // fingers twice as far apart
   assertEquals(pinchScale(2, 100, 50), 1); // half as far apart
