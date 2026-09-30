@@ -10,6 +10,49 @@ Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the drawing cou
 
 ---
 
+## Unreleased
+
+- 2026-09-30 | version footer simplified: one implementation (`script/version/compute.ts`) shared by
+  `deno task version`, the build summaries and Vite; the footer now shows the version, the drawing
+  count and the commit (`v0.8.157 · 18 drawings · 4f0f400`) instead of the zero-padded
+  `0.8.157+018`; without git a local build warns and CI fails; the README's "Versioning" section is
+  the single explanation
+- 2026-09-30 | test harness: tests are tiered by file name (unit / dom / prop / contract) and
+  `deno task test` prints one row per tier (about 9 lines instead of 151), lists failures first, and
+  in CI writes a job summary, annotates failures and keeps the JUnit file; a weekly `nightly.yml`
+  runs the property tests at 25× depth
+- 2026-09-30 | tests grown from 44 to 147: fake-DOM tests for the URL router, lightbox and theme,
+  property-based tests (fast-check) for hash round-trips, zoom/gesture maths, the asset planner and
+  the data pipeline; line coverage from 47.8% to over 70% with a 70% floor; the tests also run in
+  UTC, India and UTC+14
+- 2026-09-30 | accessibility & UX: the lightbox is a real dialog (focus moves in, Tab wraps, focus
+  returns to the tile) with touch pinch / pan / swipe; search is an ARIA combobox with a live result
+  count; the theme choice is remembered and applied before first paint (no light flash); Open Graph
+  and Twitter tags give shared links a preview
+- 2026-09-30 | fixes: a slow collection load could show (and cache) another collection's items; a
+  failed `collections.json` left the spinner forever (now an error screen with retry); a drawing
+  dated the 1st of a month showed under the previous month for viewers west of UTC; search
+  highlighting could split an HTML entity ("Tom & Jerry" searched for "amp")
+- 2026-09-30 | CI: `deno task check` now fails on missing or orphaned images; data-contract test for
+  `public/*.json`; pull requests and the Pages deploy share one `verify.yml` (the no-op asset job is
+  gone), and a newer push cancels the superseded run
+- 2026-07-13 | the Pages deploy now runs lint, format, type-check and tests first — nothing ships
+  unless they pass
+- 2026-07-10 | state moved from one injected app context into four domain stores (search, ui,
+  collections, overlay) with read-only state and actions; URL sync consolidated in `useHashRoute`;
+  `App.vue` from about 230 to 90 lines
+- 2026-07-10 | type-check gate in CI (`deno check` over the `.ts` sources; `.vue` templates are not
+  covered because vue-tsc doesn't engage under Deno); the 14 icon components collapsed into one
+  `Icon.vue` with a registry; shared `git()` / `errorMessage()` script helpers; first unit tests
+  (44)
+- 2026-07-09 | refactor pass (net −198 lines): dead exports, types and fields removed, one search
+  state instead of two synced ones, a prop-driven lightbox, scroll-spy refs owned by the app instead
+  of a four-hop expose chain, and the full-size WebP written without a second encode during
+  transcode
+- 2026-07-06 | shareable URLs (`#collection` and `#collection/item` deep-link a collection or an
+  image), the lightbox pages in drawn-date order, and an IntersectionObserver scroll-spy replacing
+  the per-scroll layout reads
+
 ## v0.8.0 (Redesign, Performance & Tooling)
 
 - 2026-07-05 | scroll-spy fix (content-visibility regression), Dhivehi name + Thaana script search,
