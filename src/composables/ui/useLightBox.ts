@@ -1,5 +1,5 @@
 // useLightbox.ts
-import { computed, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 /** Clamp a zoom scale to [0.5, 5]; anything ≤1 snaps back to a neutral 1×. */
@@ -7,6 +7,24 @@ export function clampScale(value: number): number {
   const clamped = Math.min(5, Math.max(0.5, value));
   return clamped <= 1 ? 1 : clamped;
 }
+
+/** Scale during a pinch: the starting scale times how far the fingers have spread. */
+export function pinchScale(startScale: number, startDistance: number, distance: number): number {
+  if (startDistance <= 0) return startScale;
+  return startScale * (distance / startDistance);
+}
+
+/**
+ * A mostly-horizontal drag past `threshold` px is a swipe. Returns which way to
+ * page (dragging left reveals the next item), or null if it wasn't a swipe.
+ */
+export function swipeDirection(dx: number, dy: number, threshold = 60): 'next' | 'prev' | null {
+  if (Math.abs(dx) < threshold || Math.abs(dx) < Math.abs(dy) * 2) return null;
+  return dx < 0 ? 'next' : 'prev';
+}
+
+const FOCUSABLE =
+  'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 interface LightboxOptions {
   props: {
@@ -84,47 +102,6 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   const zoomOut = () => setScale(scale.value - 0.25);
   const handleWheel = (e: WheelEvent) => setScale(scale.value + (e.deltaY > 0 ? -0.1 : 0.1));
 
-  // ── Dragging ──
-  const isDragging = ref(false);
-  const dragStartX = ref(0);
-  const dragStartY = ref(0);
-  const dragStartTranslateX = ref(0);
-  const dragStartTranslateY = ref(0);
-
-  const handleMouseDown = (e: MouseEvent) => {
-    if (scale.value <= 1) return;
-    isDragging.value = true;
-    dragStartX.value = e.clientX;
-    dragStartY.value = e.clientY;
-    dragStartTranslateX.value = translateX.value;
-    dragStartTranslateY.value = translateY.value;
-  };
-
-  // Coalesce pointer moves to one reactive write (and thus one re-render) per
-  // frame instead of one per mousemove event.
-  let moveRaf = 0;
-  let pendingX = 0;
-  let pendingY = 0;
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging.value) return;
-    pendingX = dragStartTranslateX.value + (e.clientX - dragStartX.value) / scale.value;
-    pendingY = dragStartTranslateY.value + (e.clientY - dragStartY.value) / scale.value;
-    if (moveRaf) return;
-    moveRaf = requestAnimationFrame(() => {
-      moveRaf = 0;
-      translateX.value = pendingX;
-      translateY.value = pendingY;
-    });
-  };
-
-  const handleMouseUp = () => {
-    isDragging.value = false;
-    if (moveRaf) {
-      cancelAnimationFrame(moveRaf);
-      moveRaf = 0;
-    }
-  };
-
   // ── Actions ──
   const navigateToItem = (index: number) => {
     const target = props.drawnItems[index];
@@ -140,10 +117,130 @@ export function useLightbox({ props, emit }: LightboxOptions) {
     if (e.target === e.currentTarget) close();
   };
 
+  // ── Pointer gestures (mouse, touch, pen): drag to pan when zoomed, pinch to
+  // zoom, swipe to page when fitted. Pointer capture keeps a drag alive when the
+  // pointer leaves the area. ──
+  const isDragging = ref(false);
+  const pointers = new Map<number, { x: number; y: number }>();
+  let drag = { x: 0, y: 0, tx: 0, ty: 0 };
+  let pinch: { distance: number; scale: number } | null = null;
+  let swipeStart: { x: number; y: number } | null = null;
+
+  const pointerDistance = () => {
+    const [a, b] = [...pointers.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  };
+
+  // Coalesce pan updates to one reactive write (and thus one re-render) per frame.
+  let moveRaf = 0;
+  let pendingX = 0;
+  let pendingY = 0;
+  const cancelPendingMove = () => {
+    if (moveRaf) {
+      cancelAnimationFrame(moveRaf);
+      moveRaf = 0;
+    }
+  };
+
+  const handlePointerDown = (e: PointerEvent) => {
+    try {
+      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    } catch {
+      /* the pointer is no longer active; the gesture still works without capture */
+    }
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (pointers.size === 2) { // a second finger turns the gesture into a pinch
+      pinch = { distance: pointerDistance(), scale: scale.value };
+      isDragging.value = false;
+      swipeStart = null;
+      return;
+    }
+    if (scale.value > 1) {
+      isDragging.value = true;
+      drag = { x: e.clientX, y: e.clientY, tx: translateX.value, ty: translateY.value };
+    } else if (e.pointerType !== 'mouse') {
+      swipeStart = { x: e.clientX, y: e.clientY }; // a mouse drag at 1× shouldn't page
+    }
+  };
+
+  const handlePointerMove = (e: PointerEvent) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+    if (pointers.size === 2 && pinch) {
+      setScale(pinchScale(pinch.scale, pinch.distance, pointerDistance()));
+      return;
+    }
+    if (!isDragging.value) return;
+    pendingX = drag.tx + (e.clientX - drag.x) / scale.value;
+    pendingY = drag.ty + (e.clientY - drag.y) / scale.value;
+    if (moveRaf) return;
+    moveRaf = requestAnimationFrame(() => {
+      moveRaf = 0;
+      translateX.value = pendingX;
+      translateY.value = pendingY;
+    });
+  };
+
+  const handlePointerUp = (e: PointerEvent) => {
+    if (!pointers.delete(e.pointerId)) return;
+    if (pointers.size < 2) pinch = null;
+
+    if (swipeStart && pointers.size === 0 && e.type === 'pointerup') {
+      const dir = swipeDirection(e.clientX - swipeStart.x, e.clientY - swipeStart.y);
+      if (dir === 'next') goToNext();
+      else if (dir === 'prev') goToPrevious();
+    }
+    swipeStart = null;
+
+    if (pointers.size === 0) {
+      isDragging.value = false;
+      cancelPendingMove();
+    }
+  };
+
+  // ── Dialog focus: move focus in on open, keep Tab inside, restore on close ──
+  const dialogRef = ref<HTMLElement | null>(null);
+  let previouslyFocused: HTMLElement | null = null;
+
+  const focusableInDialog = () =>
+    dialogRef.value ? [...dialogRef.value.querySelectorAll<HTMLElement>(FOCUSABLE)] : [];
+
+  const trapTab = (e: KeyboardEvent) => {
+    const els = focusableInDialog();
+    if (els.length === 0) {
+      e.preventDefault();
+      dialogRef.value?.focus();
+      return;
+    }
+    const first = els[0];
+    const last = els[els.length - 1];
+    const active = document.activeElement;
+
+    if (!dialogRef.value?.contains(active)) {
+      e.preventDefault();
+      first.focus();
+    } else if (e.shiftKey && (active === first || active === dialogRef.value)) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   // ── Keyboard Support ──
   const handleKeydown = (e: KeyboardEvent) => {
     if (!props.isOpen) return;
+    // Typing in a text field must not zoom or page the image.
+    if ((e.target as HTMLElement | null)?.closest?.('input, textarea, [contenteditable="true"]')) {
+      return;
+    }
     switch (e.key) {
+      case 'Tab':
+        trapTab(e);
+        break;
       case 'Escape':
         close();
         break;
@@ -174,12 +271,23 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   watch(() => props.isOpen, (open) => {
     if (open) {
       startLoad();
+      previouslyFocused = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+      nextTick(() => dialogRef.value?.focus({ preventScroll: true }));
       document.body.style.overflow = 'hidden';
       globalThis.addEventListener('keydown', handleKeydown);
     } else {
       resetZoom();
       loading.value = false;
       error.value = null;
+      pointers.clear();
+      pinch = null;
+      swipeStart = null;
+      isDragging.value = false;
+      cancelPendingMove();
+      previouslyFocused?.focus({ preventScroll: true });
+      previouslyFocused = null;
       document.body.style.overflow = '';
       globalThis.removeEventListener('keydown', handleKeydown);
     }
@@ -193,11 +301,13 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   });
 
   onUnmounted(() => {
+    cancelPendingMove();
     globalThis.removeEventListener('keydown', handleKeydown);
     document.body.style.overflow = '';
   });
 
   return {
+    dialogRef,
     currentItem,
     hasPrevious,
     hasNext,
@@ -212,9 +322,9 @@ export function useLightbox({ props, emit }: LightboxOptions) {
     zoomOut,
     resetZoom,
     handleWheel,
-    handleMouseDown,
-    handleMouseMove,
-    handleMouseUp,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
     goToPrevious,
     goToNext,
     close,

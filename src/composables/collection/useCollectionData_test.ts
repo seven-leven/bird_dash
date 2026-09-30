@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
-import { useCollectionData } from './useCollectionData.ts';
+import { monthKey, useCollectionData } from './useCollectionData.ts';
 import { at, makeItem } from '../../../test/fixtures.ts';
 import type { CollectionItem, ViewMode } from '../../types/index.ts';
 
@@ -35,6 +35,12 @@ Deno.test('filtering: searchText substring narrows all outputs', () => {
   const { activeData, stats } = setup(items, 'mallard');
   assertEquals(activeData.value.grouped['Ducks'].map((i) => i.commonName), ['Mallard']);
   assertEquals(stats.value.filtered, 1);
+});
+
+Deno.test('filtering ignores surrounding whitespace and letter case in the query', () => {
+  const items = [makeItem({ commonName: 'Mallard', group: 'Ducks' })];
+  const { activeData } = setup(items, '  MALLARD  ');
+  assertEquals(activeData.value.grouped['Ducks'].length, 1);
 });
 
 Deno.test('group stats: total = all items, drawn = drawn count', () => {
@@ -75,6 +81,21 @@ Deno.test('date mode: allMonths is continuous and marks empty months disabled', 
   const feb = activeData.value.sidebarItems.find((s) => s.id === 'February 2025')!;
   assertEquals(feb.disabled, true);
   assertEquals(feb.count, 0);
+});
+
+Deno.test('monthKey buckets by UTC month, so a date on the 1st never slips back a month', () => {
+  // `YYYY-MM-DD` parses as UTC midnight; a local-time month would report
+  // September for this instant anywhere west of UTC.
+  assertEquals(monthKey(new Date('2025-10-01')), 'October 2025');
+  assertEquals(monthKey(new Date('2025-01-01')), 'January 2025');
+  assertEquals(monthKey(new Date('2025-12-31')), 'December 2025');
+});
+
+Deno.test('date mode: a drawing dated the 1st lands in its own month and starts the timeline', () => {
+  const items = [makeItem({ drawnTime: at(2025, 10, 1) })];
+  const { activeData } = setup(items, '', 'date');
+  assertEquals(Object.keys(activeData.value.grouped), ['October 2025']);
+  assertEquals(activeData.value.sidebarItems[0].id, 'October 2025');
 });
 
 Deno.test('searchedDrawnItems: drawn only, ordered by drawnTime then sortKey', () => {

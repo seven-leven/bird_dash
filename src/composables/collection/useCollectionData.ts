@@ -1,4 +1,5 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
+import { normalizeQuery } from '../../lib/normalizeQuery.ts';
 import type {
   CollectionItem,
   CollectionStats,
@@ -7,8 +8,13 @@ import type {
   ViewMode,
 } from '../../types/index.ts';
 
-const monthKey = (d: Date) =>
-  `${d.toLocaleString('default', { month: 'long' })} ${d.getFullYear()}`;
+// Drawn dates are `YYYY-MM-DD`, which JS parses as UTC midnight. Bucket them by
+// their UTC month so a drawing dated the 1st never slips into the previous month
+// for viewers west of UTC.
+export const monthKey = (d: Date) =>
+  `${d.toLocaleString('default', { month: 'long', timeZone: 'UTC' })} ${d.getUTCFullYear()}`;
+
+const firstOfMonthUTC = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
 
 export function useCollectionData(
   items: Ref<CollectionItem[]>,
@@ -18,8 +24,10 @@ export function useCollectionData(
   // =============================================================================
   // FILTERING LOGIC
   // =============================================================================
+  const query = computed(() => normalizeQuery(searchQuery.value));
+
   const allFilteredItems = computed(() => {
-    const q = searchQuery.value.toLowerCase().trim();
+    const q = query.value;
     if (!q) return items.value;
     // searchText already includes name, scientific name, group, id, and the
     // Dhivehi name/script — so one substring test covers them all.
@@ -31,7 +39,7 @@ export function useCollectionData(
   // Drawn items in chronological order (drawn date, then id) — this is what the
   // lightbox pages through, so prev/next follows the timeline, not item ids.
   const searchedDrawnItems = computed(() => {
-    const q = searchQuery.value.toLowerCase().trim();
+    const q = query.value;
     const base = q ? drawnItems.value.filter((i) => i.searchText.includes(q)) : drawnItems.value;
     return [...base].sort((a, b) => a.drawnTime - b.drawnTime || a.sortKey - b.sortKey);
   });
@@ -78,13 +86,12 @@ export function useCollectionData(
     }
     if (minTime === Infinity) return months;
 
-    const minDate = new Date(minTime);
-    const current = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
-    const end = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+    const current = firstOfMonthUTC(new Date(minTime));
+    const end = firstOfMonthUTC(new Date());
 
     while (current <= end) {
       months.push(monthKey(current));
-      current.setMonth(current.getMonth() + 1);
+      current.setUTCMonth(current.getUTCMonth() + 1);
     }
     return months;
   });

@@ -28,6 +28,7 @@ export function createCollectionsStore(deps: {
 
   return {
     isInitialized: base.isInitialized,
+    initError: base.initError,
     list: base.COLLECTIONS,
     activeCollection: base.activeCollection,
     data: readonly(base.data),

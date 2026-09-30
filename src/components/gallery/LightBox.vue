@@ -8,7 +8,12 @@
     >
       <div
         v-if="isOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
+        ref="dialogRef"
+        role="dialog"
+        aria-modal="true"
+        :aria-label="currentItem ? `${currentItem.commonName}, #${currentItem.itemId}` : 'Image viewer'"
+        tabindex="-1"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 outline-none"
         @click="handleBackdropClick"
       >
 
@@ -64,12 +69,12 @@
 
           <!-- Image area -->
           <div
-            class="flex-1 h-full flex items-center justify-center overflow-hidden min-w-0"
+            class="flex-1 h-full flex items-center justify-center overflow-hidden min-w-0 touch-none"
             @wheel.prevent="handleWheel"
-            @mousedown="handleMouseDown"
-            @mousemove="handleMouseMove"
-            @mouseup="handleMouseUp"
-            @mouseleave="handleMouseUp"
+            @pointerdown="handlePointerDown"
+            @pointermove="handlePointerMove"
+            @pointerup="handlePointerUp"
+            @pointercancel="handlePointerUp"
           >
             <Transition
               enter-active-class="transition-opacity duration-200"
@@ -81,6 +86,7 @@
                 v-if="imageUrl && !error"
                 :key="currentItem?.itemId"
                 :src="imageUrl"
+                :alt="currentItem?.commonName"
                 :style="{
                   transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
                   cursor: isDragging ? 'grabbing' : (scale > 1 ? 'grab' : 'default'),
@@ -133,6 +139,7 @@ const emit = defineEmits<{
 }>();
 
 const {
+  dialogRef,
   currentItem,
   hasPrevious,
   hasNext,
@@ -147,9 +154,9 @@ const {
   zoomOut,
   resetZoom,
   handleWheel,
-  handleMouseDown,
-  handleMouseMove,
-  handleMouseUp,
+  handlePointerDown,
+  handlePointerMove,
+  handlePointerUp,
   goToPrevious,
   goToNext,
   close,

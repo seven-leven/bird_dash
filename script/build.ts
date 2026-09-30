@@ -11,7 +11,7 @@
 
 import { COLLECTIONS } from './collection/registry.ts';
 import { scanCollection } from './pipeline/scan.ts';
-import { planWork } from './pipeline/plan.ts';
+import { blockingIssues, planWork } from './pipeline/plan.ts';
 import { executeWork } from './pipeline/execute.ts';
 import { printCheckReport, printSummary, reportWarnings } from './pipeline/report.ts';
 import { computeVersion, formatVersion } from './version/compute.ts';
@@ -82,7 +82,8 @@ export async function buildVite(): Promise<void> {
 // Check (read-only)
 // ---------------------------------------------------------------------------
 
-export async function checkIntegrity(): Promise<void> {
+/** Prints the integrity report and returns how many blocking issues it found. */
+export async function checkIntegrity(): Promise<number> {
   const version = await computeVersion();
   const rows: Array<{
     col: typeof COLLECTIONS[0];
@@ -97,6 +98,7 @@ export async function checkIntegrity(): Promise<void> {
   }
 
   printCheckReport(rows, formatVersion(version));
+  return rows.reduce((n, r) => n + blockingIssues(r.plan), 0);
 }
 
 // ---------------------------------------------------------------------------
@@ -108,7 +110,11 @@ if (import.meta.main) {
 
   const run = async () => {
     if (args.has('--check')) {
-      await checkIntegrity();
+      const issues = await checkIntegrity();
+      if (issues > 0) {
+        console.error(`  integrity check failed: ${issues} issue(s)\n`);
+        Deno.exit(1);
+      }
       return;
     }
     if (args.has('--assets-only')) {

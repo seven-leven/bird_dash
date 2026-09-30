@@ -58,13 +58,22 @@ src/
     layout/             Chrome, TopBar, SideNav — the app shell
     gallery/            Grid, tiles, lightbox, info sheet
     search/             Global search dropdown and sub-components
-    icons/              Shared SVG icon components
+    icons/              Icon.vue + the icon registry (icons.ts)
     ui/                 Reusable primitives (IdBadge, EmptyState)
-  composables/          App logic; useAppContext wires state into the chrome
+  stores/               Domain state — search, ui, collections, overlay — each with readonly
+                        state + actions, shared through provide/inject (defineInjection)
+  composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
+  lib/                  Small framework-free helpers
   types/                Shared TypeScript types
 script/                 Deno build pipeline (transcode, integrity, version, changelog)
+test/                   Shared test fixtures (tests themselves sit next to the code, *_test.ts)
 version.json            Stored major/minor only — patch and count are derived
 ```
+
+State flows one way: `App.vue` creates the stores in dependency order (search and ui → collections →
+overlay) and provides them; components read state from the stores and change it only through their
+actions. `useHashRoute` is the single owner of URL ⇄ state sync (`#<collection>` /
+`#<collection>/<item>`).
 
 ## Data Model
 
@@ -131,7 +140,9 @@ rendered specially; any other string fields appear in the info panel.
 | `deno task build`           | Full build: transcode assets, then bundle the frontend              |
 | `deno task build:assets`    | Transcode images and register new items only                        |
 | `deno task build:vite`      | Bundle the frontend only (assumes assets are built)                 |
-| `deno task check`           | Read-only integrity report (missing/orphaned images)                |
+| `deno task check`           | Integrity check (missing/orphaned images); exits 1 on problems      |
+| `deno task test`            | Unit tests, including the `public/*.json` data-contract tests       |
+| `deno task typecheck`       | Type-check the `.ts` sources (`.vue` templates are not covered)     |
 | `deno task version`         | Print the current derived version                                   |
 | `deno task changelog`       | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview) |
 | `deno task preview`         | Preview the production build locally                                |
@@ -154,9 +165,12 @@ Changelog entries are curated with `deno task changelog`, which lists every comm
 
 ## Deployment
 
-GitHub Actions builds and deploys to GitHub Pages on every push to `main`
-([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). Pull requests run lint, format,
-and build checks via [`ci.yml`](.github/workflows/ci.yml). Both check out full git history
+Pull requests and deploys run the same checks, defined once in
+[`verify.yml`](.github/workflows/verify.yml): lint, format, type-check, unit tests (in a timezone
+west of UTC, so accidental local-time date logic fails), the asset integrity check, and the
+production build. [`ci.yml`](.github/workflows/ci.yml) runs it on every pull request;
+[`deploy.yml`](.github/workflows/deploy.yml) runs it on every push to `main` and publishes the built
+site to GitHub Pages only if everything passed. The workflows check out full git history
 (`fetch-depth: 0`) so the derived version is accurate.
 
 ## License

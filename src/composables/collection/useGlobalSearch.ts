@@ -1,4 +1,5 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
+import { normalizeQuery } from '../../lib/normalizeQuery.ts';
 import type {
   CollectionCache,
   CollectionConfig,
@@ -33,7 +34,7 @@ export function useGlobalSearch(
    * Single pass per item (match once, reuse the fields), query normalized once.
    */
   const globalResults: ComputedRef<GlobalSearchCollectionGroup[]> = computed(() => {
-    const ql = query.value.trim().toLowerCase();
+    const ql = normalizeQuery(query.value);
     if (!ql) return [];
 
     const groups: GlobalSearchCollectionGroup[] = [];

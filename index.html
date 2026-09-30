@@ -9,6 +9,34 @@
       name="description"
       content="A gallery of hand-drawn wildlife illustrations — birds, sharks, and shells of the Maldives, with taxonomic and timeline views, scientific and Dhivehi names."
     />
+
+    <!-- Link previews. Absolute URLs are required by crawlers, so these are tied
+         to the GitHub Pages address. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Wildlife Illustrated" />
+    <meta property="og:title" content="Wildlife Illustrated" />
+    <meta
+      property="og:description"
+      content="Hand-drawn birds, sharks, and shells of the Maldives, with scientific and Dhivehi names."
+    />
+    <meta property="og:url" content="https://seven-leven.github.io/bird_dash/" />
+    <meta
+      property="og:image"
+      content="https://seven-leven.github.io/bird_dash/full/birds/001.webp"
+    />
+    <meta property="og:image:alt" content="A hand-drawn Lesser Whistling-Duck" />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- Apply the saved (or OS) theme before first paint so dark-mode users don't
+         see a light flash. Mirrors resolveInitialTheme in src/composables/core/useTheme.ts. -->
+    <script>
+    try {
+      var stored = localStorage.getItem('theme');
+      var dark = stored === 'dark' ||
+        (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.classList.toggle('dark', dark);
+    } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="app"></div>

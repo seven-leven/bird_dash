@@ -18,6 +18,16 @@ export interface WorkPlan {
 // Fully testable without filesystem mocks.
 // ---------------------------------------------------------------------------
 
+/**
+ * Problems that make `deno task check` fail. `missingRaw` is deliberately
+ * excluded: raw PNGs are gitignored, so CI never has them and every drawn item
+ * would trip it.
+ */
+export function blockingIssues(plan: WorkPlan): number {
+  return plan.toRegister.length + plan.toTranscode.length + plan.toTranscodeThumb.length +
+    plan.orphanedFull.length + plan.orphanedThumb.length;
+}
+
 function diff(a: Set<string>, b: Set<string>): string[] {
   return Array.from(a).filter((id) => !b.has(id));
 }

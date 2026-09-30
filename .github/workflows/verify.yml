@@ -1,0 +1,62 @@
+name: Verify
+
+# Shared by ci.yml (pull requests) and deploy.yml (pushes to main) so both run
+# exactly the same checks.
+on:
+  workflow_call:
+    inputs:
+      upload-pages:
+        description: Upload ./dist as the GitHub Pages artifact (deploy workflow only)
+        type: boolean
+        default: false
+
+# Opt into Node.js 24 for all actions in this workflow
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  verify:
+    name: Lint, types, tests, and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Full history: the app version derives patch from the commit count
+          fetch-depth: 0
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+          cache: true
+
+      - name: Install dependencies
+        run: deno install --allow-scripts
+
+      - name: Lint
+        run: deno lint
+
+      - name: Format check
+        run: deno fmt --check
+
+      - name: Type check
+        run: deno task typecheck
+
+      # A timezone west of UTC (the dev machine is UTC+5) so date-bucketing code
+      # that accidentally uses local time fails here instead of for some viewers.
+      - name: Unit tests
+        run: deno task test
+        env:
+          TZ: America/Los_Angeles
+
+      - name: Asset integrity
+        run: deno task check
+
+      - name: Build frontend
+        run: deno task build:vite
+
+      - name: Upload Pages artifact
+        if: ${{ inputs.upload-pages }}
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
