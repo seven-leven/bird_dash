@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 // Injected by vite.config.ts at build time from script/version/compute.ts.
-/** `major.minor.patch`, e.g. "0.8.154". */
+/** `major.minor.patch`, e.g. "0.9.161". */
 declare const __APP_VERSION__: string;
 /** Illustrations marked drawn across all collections. */
 declare const __APP_DRAWN__: number;
