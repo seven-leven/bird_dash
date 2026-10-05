@@ -139,6 +139,13 @@ rendered specially; any other string fields appear in the info panel.
    `deno task placeholders` to draw `public/placeholders/<id>.webp` from it.
 3. Add source art under `raw_png/<id>/` and run `deno task build:assets`.
 
+## Design
+
+[`docs/DESIGN.md`](docs/DESIGN.md) is the design guide: colours, type, spacing, states, icons and
+the rules to follow when adding to the UI. Its picture,
+[`docs/design-guide.png`](docs/design-guide.png), is drawn from the real tokens and icons by
+`deno task design`.
+
 ## Tasks
 
 | Task                                              | Description                                                          |
@@ -156,6 +163,7 @@ rendered specially; any other string fields appear in the info panel.
 | `deno task version`                               | Print the current derived version                                    |
 | `deno task changelog`                             | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview)  |
 | `deno task placeholders`                          | Redraw the placeholder images from each collection's icon            |
+| `deno task design`                                | Redraw the design guide image and the icon sheet                     |
 | `deno task preview`                               | Preview the production build locally                                 |
 | `deno task lint` / `format`                       | Lint and format                                                      |
 
