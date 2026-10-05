@@ -16,17 +16,13 @@ export const ICONS = {
   },
   shark: {
     body:
-      '<path d="M6 13.5c2-2.8 5-4.3 8.5-4.5L16 4.5l1.3 4.8c1.9.7 3.4 2 4.7 3.9-1.6 2.1-4.3 3.3-7.8 3.3-2.9 0-5.6-1-8.2-3Z"/><path d="M6 13.5 2.5 10v7.5Z"/><path d="m12 16.3-1 2.7 3.5-2.5"/><path d="M18.5 12h.01"/><path d="M14.5 11.5v2.5"/>',
+      '<path d="M22.5 12.5c-2.5-2.3-5.5-3.5-9-3.700L10 3.5l-.5 5.700c-1.7.3-3.2 1-4.5 2L1.5 6 3 12.5 2 17.5l3-3.500c1.7 1.3 3.7 2.1 6 2.400L10 20l4.5-3.500c3.2-.4 5.8-1.6 8-4Z"/><path d="M18.5 12h.01"/>',
   },
   shell: {
     body:
       '<path d="M14 11a2 2 0 1 1-4 0 4 4 0 0 1 8 0 6 6 0 0 1-12 0 8 8 0 0 1 16 0 10 10 0 1 1-20 0 11.93 11.93 0 0 1 2.42-7.22 2 2 0 1 1 3.160 2.44"/>',
   },
 
-  box: {
-    body:
-      '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>',
-  },
   calendar: {
     body:
       '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
@@ -45,10 +41,10 @@ export const ICONS = {
       '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
   },
   moon: { body: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>' },
+  // A search that found nothing — distinct from zoomOut, which it used to duplicate.
   noResults: {
     body:
-      '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>',
-    strokeWidth: 1.5,
+      '<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8.5" y1="8.5" x2="13.5" y2="13.5"/><line x1="13.5" y1="8.5" x2="8.5" y2="13.5"/>',
   },
   reset: {
     body:
@@ -60,6 +56,11 @@ export const ICONS = {
   sun: {
     body:
       '<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>',
+  },
+  // Group view: items arranged by family / order.
+  taxonomy: {
+    body:
+      '<rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3"/><path d="M12 12V8"/>',
   },
   zoomIn: {
     body:
