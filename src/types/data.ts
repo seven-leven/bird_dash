@@ -28,6 +28,8 @@ export interface RawCollectionConfig {
   id: string;
   label: string;
   emoji: string;
+  /** Name of a line icon in src/components/icons/icons.ts; the emoji is the fallback. */
+  icon?: string;
   groupLabel: string;
   itemLabel: string;
   /** `url` may contain `{{common}}` and `{{sci}}` placeholders. */

@@ -1,8 +1,8 @@
 <template>
   <Teleport to="body">
     <Transition
-      enter-active-class="transition-opacity duration-200 ease-out"
-      leave-active-class="transition-opacity duration-150 ease-in"
+      enter-active-class="transition-opacity duration-fast ease-out"
+      leave-active-class="transition-opacity duration-fast ease-in"
       enter-from-class="opacity-0"
       leave-to-class="opacity-0"
     >
@@ -31,13 +31,13 @@
             <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
               <Icon name="reset" class="w-4 h-4" />
             </button>
-            <span class="ml-2 text-[11px] font-mono text-white/35 tabular-nums">{{ Math.round(scale * 100) }}%</span>
+            <span class="ml-2 text-micro font-mono text-white/50 tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
           <!-- Position in the timeline -->
           <span
             v-if="position"
-            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-white/50"
+            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-white/70"
             aria-live="polite"
           >{{ position }}</span>
 
@@ -87,7 +87,7 @@
             @pointercancel="handlePointerUp"
           >
             <Transition
-              enter-active-class="transition-opacity duration-200"
+              enter-active-class="transition-opacity duration-fast"
               enter-from-class="opacity-0"
               enter-to-class="opacity-100"
               mode="out-in"
@@ -115,14 +115,14 @@
             </div>
 
             <!-- Error -->
-            <p v-if="error" class="text-white/25 text-sm">Could not load image</p>
+            <p v-if="error" class="text-white/50 text-sm">Could not load image</p>
           </div>
           </div>
 
           <!-- Info panel -->
           <div
             v-if="currentItem"
-            class="w-full max-h-[45%] overflow-y-auto rounded-xl shrink-0
+            class="w-full max-h-[45%] overflow-y-auto rounded-card shrink-0
                    lg:w-auto lg:max-w-xs lg:max-h-full lg:self-center xl:max-w-sm"
           >
             <ItemSheet :item="currentItem" :collection="collection" />

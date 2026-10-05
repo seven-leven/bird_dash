@@ -1,6 +1,6 @@
 <template>
   <span
-    class="inline-flex items-center rounded px-1.5 py-0.5 font-mono text-[10px] font-semibold tabular-nums"
+    class="inline-flex items-center rounded-control px-1.5 py-0.5 font-mono text-micro font-semibold tabular-nums"
     :class="variantClass"
   >
     <slot>#{{ id }}</slot>
@@ -26,7 +26,7 @@ const props = withDefaults(
 const variantClass = computed(() => {
   switch (props.variant) {
     case 'overlay':
-      return 'bg-black/50 text-white/90 backdrop-blur-sm';
+      return 'bg-black/50 text-white/70 backdrop-blur-sm';
     case 'panel':
       return 'bg-white/10 text-white/70';
     default:

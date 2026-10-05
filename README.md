@@ -8,7 +8,7 @@ lightbox.
 
 ## Features
 
-- **Multiple collections** — birds, sharks, and shells, each with its own taxonomy, emoji, and
+- **Multiple collections** — birds, sharks, and shells, each with its own taxonomy, icon, and
   reference links. Adding a new one is JSON + images, no code.
 - **Two views** — browse by taxonomic group (Family, Order, …) or as a chronological timeline of
   when each piece was drawn.
@@ -89,6 +89,7 @@ scripts, the app's loader and the data contract test.
   "id": "birds",
   "label": "Birds",
   "emoji": "🐦",
+  "icon": "bird",
   "groupLabel": "Family",
   "itemLabel": "bird",
   "links": [
@@ -101,7 +102,9 @@ scripts, the app's loader and the data contract test.
 }
 ```
 
-Link URLs support `{{common}}` (common name) and `{{sci}}` (scientific name) placeholders.
+`icon` names a line icon in [`src/components/icons/icons.ts`](src/components/icons/icons.ts), where
+every SVG in the app lives; without one the emoji is shown instead. Link URLs support `{{common}}`
+(common name) and `{{sci}}` (scientific name) placeholders.
 
 **`public/lists/<id>.json`** — items grouped by taxonomy. An item is considered _drawn_ once it has
 a `drawn` date; without one it renders as the placeholder silhouette. `dhiv` and `dhiv_script` are
@@ -132,7 +135,8 @@ rendered specially; any other string fields appear in the info panel.
 ### Adding a collection
 
 1. Add an entry to `public/collections.json`.
-2. Create `public/lists/<id>.json` and a `public/placeholders/<id>.webp` silhouette.
+2. Create `public/lists/<id>.json`. Add an icon for it to `icons.ts`, name it in the entry, and run
+   `deno task placeholders` to draw `public/placeholders/<id>.webp` from it.
 3. Add source art under `raw_png/<id>/` and run `deno task build:assets`.
 
 ## Tasks
@@ -151,6 +155,7 @@ rendered specially; any other string fields appear in the info panel.
 | `deno task typecheck`                             | Type-check the `.ts` sources (`.vue` templates are not covered)      |
 | `deno task version`                               | Print the current derived version                                    |
 | `deno task changelog`                             | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview)  |
+| `deno task placeholders`                          | Redraw the placeholder images from each collection's icon            |
 | `deno task preview`                               | Preview the production build locally                                 |
 | `deno task lint` / `format`                       | Lint and format                                                      |
 

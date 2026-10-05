@@ -34,14 +34,13 @@
           <button
             v-if="query"
             @click="clear()"
-            class="focus-ring ml-auto flex items-center gap-1.5 rounded-full py-0.5 pl-2.5 pr-1.5 text-[11px] font-medium
+            class="focus-ring ml-auto flex items-center gap-1.5 rounded-full py-0.5 pl-2.5 pr-1.5 text-micro font-medium
                    bg-accent-50 text-accent-700 hover:bg-accent-100
                    dark:bg-accent-950/60 dark:text-accent-300 dark:hover:bg-accent-900/60
-                   transition-colors duration-150"
+                   transition-colors duration-fast"
             :aria-label="`Clear filter ${query}`"
           >
-            <span class="tabular-nums">{{ stats.filtered }}</span>
-            <span class="max-w-40 truncate">result{{ stats.filtered !== 1 ? 's' : '' }} for &ldquo;{{ query }}&rdquo;</span>
+            <span class="max-w-48 truncate tabular-nums">{{ plural(stats.filtered, 'result') }} for &ldquo;{{ query }}&rdquo;</span>
             <Icon name="close" class="w-3 h-3" />
           </button>
         </div>
@@ -82,6 +81,7 @@ import { useCollectionsStore } from '../../stores/collections.ts';
 import { useSearch } from '../../stores/search.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useOverlayStore } from '../../stores/overlay.ts';
+import { plural } from '../../lib/formatCount.ts';
 
 // Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)
 // are only needed after the first tile click, so keep them out of first paint.

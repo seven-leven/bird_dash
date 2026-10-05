@@ -12,10 +12,10 @@
       aria-hidden="true"
     >
       <div class="flex items-center gap-2">
-        <span class="text-sm leading-none">{{ group.collection.emoji }}</span>
+        <CollectionIcon :collection="group.collection" class="w-3.5 h-3.5 text-muted" />
         <span class="caps-label text-muted">{{ group.collection.label }}</span>
       </div>
-      <span class="text-[10px] font-semibold tabular-nums px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400">{{ group.count }}</span>
+      <span class="count-pill">{{ group.count }}</span>
     </div>
 
     <!-- Results: options of the combobox's listbox. Focus stays in the input, so
@@ -30,11 +30,11 @@
       :data-result-idx="flat"
       @mouseenter="$emit('mouseenter', flat)"
       @click="$emit('select', result)"
-      class="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-150
+      class="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-fast
              hover:bg-slate-50 dark:hover:bg-slate-800/60"
       :class="{ 'bg-slate-50 dark:bg-slate-800/60': focusedIndex === flat }"
     >
-      <img :src="result.item.imageUrl" alt="" class="w-8 h-8 rounded-md object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
+      <img :src="result.item.imageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium truncate text-slate-800 dark:text-slate-100" v-html="highlight(result.item.commonName)" />
         <p class="text-xs text-muted italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
@@ -54,6 +54,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
+import CollectionIcon from '../icons/CollectionIcon.vue';
 import type { GlobalSearchCollectionGroup, GlobalSearchResult } from '../../types';
 
 const props = defineProps<{

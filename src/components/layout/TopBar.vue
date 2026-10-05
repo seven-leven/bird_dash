@@ -1,7 +1,7 @@
 <!-- components/layout/TopBar.vue -->
 <template>
   <!-- Below md the search drops to its own full-width row; the rest stays on row one. -->
-  <header class="flex flex-wrap items-center gap-2 min-h-12 px-4 py-2 shrink-0 z-50 transition-colors duration-300
+  <header class="flex flex-wrap items-center gap-2 min-h-12 px-4 py-2 shrink-0 z-50 transition-colors duration-slow
                  md:flex-nowrap md:py-0
                  bg-white border-b border-slate-200
                  dark:bg-slate-950 dark:border-slate-800">
@@ -10,7 +10,7 @@
     <button
       v-if="isMobile"
       @click="toggleSidebar()"
-      class="btn-ghost focus-ring lg:hidden p-2.5 rounded-lg shrink-0"
+      class="btn-ghost focus-ring lg:hidden p-2.5 rounded-control shrink-0"
       aria-label="Toggle sidebar"
       aria-controls="appSidebar"
       :aria-expanded="sidebarOpen"
@@ -19,7 +19,7 @@
     </button>
 
     <!-- Wordmark -->
-    <a v-once href="#" class="hidden md:flex items-baseline gap-1 shrink-0 pr-1 select-none focus-ring rounded-md">
+    <a v-once href="#" class="hidden md:flex items-baseline gap-1 shrink-0 pr-1 select-none focus-ring rounded-control">
       <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
       <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>
     </a>
@@ -32,13 +32,11 @@
         v-for="col in collections"
         :key="col.id"
         @click="switchCollection(col.id)"
-        class="focus-ring flex items-center gap-1.5 px-3 py-1.5 max-md:min-h-9 rounded-md text-sm font-medium transition-colors duration-150"
-        :class="col.id === activeCollection?.id
-          ? 'bg-accent-700 text-white'
-          : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
+        class="nav-item marker-b focus-ring flex items-center gap-1.5 px-3 py-1.5 max-md:min-h-9"
         :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
+        :aria-label="col.label"
       >
-        <span class="text-base leading-none">{{ col.emoji }}</span>
+        <CollectionIcon :collection="col" class="w-4.5 h-4.5" />
         <span class="hidden sm:inline">{{ col.label }}</span>
       </button>
     </nav>
@@ -48,23 +46,21 @@
       :class="dropdownOpen ? 'md:max-w-96' : 'md:max-w-72'"
     />
 
-    <!-- View mode toggle  -->
-    <button
-      @click="toggleViewMode()"
-      class="focus-ring flex items-center gap-1.5 px-2.5 py-1.5 max-md:min-h-9 max-md:ml-auto rounded-md text-sm font-medium transition-colors duration-150 shrink-0"
-      :class="viewMode === 'date'
-        ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
-        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
-      :aria-label="`Switch to ${viewMode === 'group' ? 'date' : 'group'} view`"
-      :title="`Switch to ${viewMode === 'group' ? 'date' : 'group'} view`"
-    >
-      <!-- Icon and label both show the current view; the tooltip names the switch. -->
-      <Icon v-if="viewMode === 'group'" name="box" class="w-4 h-4" />
-      <Icon v-else name="calendar" class="w-4 h-4" />
-      <span class="hidden lg:inline">
-        {{ viewMode === 'group' ? `By ${activeCollection?.groupLabel ?? ''}` : 'By Date' }}
-      </span>
-    </button>
+    <!-- View switch: both views are always shown; the current one is marked. -->
+    <div class="flex items-center gap-0.5 shrink-0 max-md:ml-auto" role="group" aria-label="View">
+      <button
+        v-for="view in views"
+        :key="view.mode"
+        @click="setViewMode(view.mode)"
+        class="nav-item marker-b focus-ring flex items-center gap-1.5 px-2.5 py-1.5 max-md:min-h-9"
+        :aria-pressed="viewMode === view.mode"
+        :aria-label="`${view.label} view`"
+        :title="`${view.label} view`"
+      >
+        <Icon :name="view.icon" class="w-4 h-4" />
+        <span class="hidden lg:inline">{{ view.label }}</span>
+      </button>
+    </div>
 
     <div class="divider-v" />
 
@@ -81,15 +77,22 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import GlobalSearch from '../search/GlobalSearch.vue';
 import Icon from '../icons/Icon.vue';
+import CollectionIcon from '../icons/CollectionIcon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useActions } from '../../stores/actions.ts';
 import { useSearch } from '../../stores/search.ts';
 
 const { list: collections, activeCollection } = useCollectionsStore();
-const { isMobile, sidebarOpen, viewMode, theme, toggleSidebar, toggleViewMode, toggleTheme } = useUi();
+const { isMobile, sidebarOpen, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
 const { switchCollection } = useActions();
 const { dropdownOpen } = useSearch();
+
+const views = computed(() => [
+  { mode: 'group' as const, icon: 'box' as const, label: activeCollection.value?.groupLabel ?? 'Group' },
+  { mode: 'date' as const, icon: 'calendar' as const, label: 'Date' },
+]);
 </script>

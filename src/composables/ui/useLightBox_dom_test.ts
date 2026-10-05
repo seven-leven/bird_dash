@@ -239,7 +239,7 @@ Deno.test('the click that ends a drag does not close; the next plain click does'
 Deno.test('position reports where the open item sits among the drawn items', () =>
   withDom(() => {
     const t = setup(1);
-    assertEquals(t.lb.position.value, '2 / 3');
+    assertEquals(t.lb.position.value, '2 of 3');
     t.props.item = undefined;
     assertEquals(t.lb.position.value, '');
     t.stop();

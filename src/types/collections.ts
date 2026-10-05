@@ -25,6 +25,7 @@ export interface CollectionConfig {
   id: string;
   label: string;
   emoji: string;
+  icon?: string;
   dataUrl: string;
   imageBase: string;
   fullImageBase: string;

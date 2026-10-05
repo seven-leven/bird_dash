@@ -9,7 +9,7 @@
       <div
         v-for="n in 10"
         :key="n"
-        class="aspect-square rounded-xl animate-pulse bg-slate-200 dark:bg-slate-800"
+        class="aspect-square rounded-card animate-pulse bg-slate-200 dark:bg-slate-800"
       />
     </div>
 
@@ -52,8 +52,7 @@
         >
           <span>{{ groupName }}</span>
           <span class="text-xs font-normal tabular-nums text-muted">
-            {{ drawnCounts[String(groupName)] ?? 0 }} drawn
-            <template v-if="viewMode === 'group'"> / {{ items.length }}</template>
+            {{ sectionCount(String(groupName), items.length) }}
           </span>
         </h2>
 
@@ -96,6 +95,7 @@ import { useCollectionsStore } from '../../stores/collections.ts';
 import { useSearch } from '../../stores/search.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useOverlayStore } from '../../stores/overlay.ts';
+import { drawings, drawnOf } from '../../lib/formatCount.ts';
 
 const { data, activeData } = useCollectionsStore();
 const { query } = useSearch();
@@ -106,7 +106,7 @@ const { open: openItem } = useOverlayStore();
 // Injected at build time by vite.config.ts (worked out in script/version/compute.ts).
 const appVersion = __APP_VERSION__;
 const appCommit = __APP_COMMIT__;
-const drawnLabel = `${__APP_DRAWN__} ${__APP_DRAWN__ === 1 ? 'drawing' : 'drawings'}`;
+const drawnLabel = drawings(__APP_DRAWN__);
 
 // ---------------------------------------------------------------------------
 // COMPUTED
@@ -120,4 +120,10 @@ const drawnCounts = computed(() => {
   for (const s of activeData.value.sidebarItems) counts[s.id] = s.count;
   return counts;
 });
+
+// Group view: how many of the group are drawn. Date view: every item is drawn.
+const sectionCount = (name: string, total: number): string => {
+  const drawn = drawnCounts.value[name] ?? 0;
+  return viewMode.value === 'group' ? drawnOf(drawn, total) : drawings(drawn);
+};
 </script>

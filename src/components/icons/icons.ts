@@ -9,6 +9,20 @@ export interface IconDef {
 }
 
 export const ICONS = {
+  // Collection glyphs — named by `icon` in public/collections.json.
+  bird: {
+    body:
+      '<path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="m20 7 2 .5-2 .5"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 18a6 6 0 0 0 3.84-10.61"/>',
+  },
+  shark: {
+    body:
+      '<path d="M6 13.5c2-2.8 5-4.3 8.5-4.5L16 4.5l1.3 4.8c1.9.7 3.4 2 4.7 3.9-1.6 2.1-4.3 3.3-7.8 3.3-2.9 0-5.6-1-8.2-3Z"/><path d="M6 13.5 2.5 10v7.5Z"/><path d="m12 16.3-1 2.7 3.5-2.5"/><path d="M18.5 12h.01"/><path d="M14.5 11.5v2.5"/>',
+  },
+  shell: {
+    body:
+      '<path d="M14 11a2 2 0 1 1-4 0 4 4 0 0 1 8 0 6 6 0 0 1-12 0 8 8 0 0 1 16 0 10 10 0 1 1-20 0 11.93 11.93 0 0 1 2.42-7.22 2 2 0 1 1 3.160 2.44"/>',
+  },
+
   box: {
     body:
       '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>',
@@ -58,3 +72,7 @@ export const ICONS = {
 } as const satisfies Record<string, IconDef>;
 
 export type IconName = keyof typeof ICONS;
+
+/** Narrow a string from data (e.g. collections.json) to a known icon name. */
+export const isIconName = (name: string | undefined): name is IconName =>
+  name !== undefined && Object.hasOwn(ICONS, name);

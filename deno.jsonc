@@ -44,6 +44,8 @@
     "changelog": "deno run -A ./script/changelog.ts",
 
     // ── Utilities ─────────────────────────────────────────────────────────────
+    // Redraw public/placeholders/<id>.webp from each collection's line icon
+    "placeholders": "deno run -A --node-modules-dir ./script/placeholders/generate.ts",
     "serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
     "clean": "rm -rf dist node_modules",
     "lint": "deno lint",
