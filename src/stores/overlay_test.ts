@@ -2,7 +2,7 @@
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createOverlayStore } from './overlay.ts';
-import { at, makeItem, runInScope } from '../../test/fixtures.ts';
+import { at, makeItem, runInScope } from '../../script/test/helpers/fixtures.ts';
 
 Deno.test('open ignores undrawn items (no image to show)', () => {
   const undrawn = makeItem({ isDrawn: false });

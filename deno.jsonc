@@ -37,7 +37,7 @@
     "check": "deno run -A ./script/build.ts --check",
 
     // ── Versioning & changelog ────────────────────────────────────────────────
-    // The version is derived from version.json + git + the data (script/version/compute.ts);
+    // The version is derived from script/version/version.json + git + the data (script/version/compute.ts);
     // see the README, "Versioning". `--long` also prints the drawing count and commit.
     "version": "deno run -A ./script/version/compute.ts",
     // Insert commits made since CHANGELOG.md was last touched under Unreleased

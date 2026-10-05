@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../../test/prop.ts';
+import { assertProperty } from '../../../script/test/helpers/prop.ts';
 import { useSearchHighlight } from './useSearchHighlight.ts';
 
 const { highlightText } = useSearchHighlight();

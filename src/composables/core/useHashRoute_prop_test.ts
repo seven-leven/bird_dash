@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../../test/prop.ts';
+import { assertProperty } from '../../../script/test/helpers/prop.ts';
 import { buildHash, parseHash } from './useHashRoute.ts';
 
 // ids that can legally appear in a URL segment of ours: no '/', no '#'

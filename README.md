@@ -66,9 +66,11 @@ src/
   lib/                  Small framework-free helpers
   types/                Shared TypeScript types
 script/                 Deno build pipeline (transcode, integrity, version, changelog)
-test/                   Shared test helpers (fixtures, fake-DOM setup, property-test depth)
-                        — the tests themselves sit next to the code they cover (see Testing)
-version.json            Stored major/minor only — patch and count are derived
+  version/version.json  Stored major/minor only — patch and count are derived
+  test/                 The test runner; test/helpers/ holds shared fixtures, the fake-DOM
+                        setup and property-test depth. The tests themselves sit next to
+                        the code they cover (see Testing)
+docs/                   Design guide, icon sheet, TODO
 ```
 
 State flows one way: `App.vue` creates the stores in dependency order (search and ui → collections →
@@ -172,12 +174,12 @@ the rules to follow when adding to the UI. Its picture,
 Tests sit next to the code they cover, and the **file name decides the tier**
 ([`script/test/tiers.ts`](script/test/tiers.ts) is the one place that maps names to tiers):
 
-| Tier       | File name            | Use it for                                                                            |
-| ---------- | -------------------- | ------------------------------------------------------------------------------------- |
-| `unit`     | `x_test.ts`          | pure logic — start here                                                               |
-| `dom`      | `x_dom_test.ts`      | code that needs `document`, `location`, focus or storage (fake DOM via `test/dom.ts`) |
-| `prop`     | `x_prop_test.ts`     | an invariant that should hold for _any_ input (fast-check)                            |
-| `contract` | `x_contract_test.ts` | checks the real files in the repo (`public/*.json`, layout)                           |
+| Tier       | File name            | Use it for                                                                                           |
+| ---------- | -------------------- | ---------------------------------------------------------------------------------------------------- |
+| `unit`     | `x_test.ts`          | pure logic — start here                                                                              |
+| `dom`      | `x_dom_test.ts`      | code that needs `document`, `location`, focus or storage (fake DOM via `script/test/helpers/dom.ts`) |
+| `prop`     | `x_prop_test.ts`     | an invariant that should hold for _any_ input (fast-check)                                           |
+| `contract` | `x_contract_test.ts` | checks the real files in the repo (`public/*.json`, layout)                                          |
 
 `deno task test` prints one row per tier instead of a line per test. When something fails it lists
 the failing tests first (file, line, message) and then Deno's full output — the diff, or the type
@@ -198,12 +200,12 @@ The footer of the site reads something like `v0.9.161 · 18 drawings · 4f0f400`
 stored except `major.minor`; the rest is worked out from the repo when the site is built, so it
 cannot drift.
 
-| Part          | Where it comes from                                                                 |
-| ------------- | ----------------------------------------------------------------------------------- |
-| `0.9`         | `version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`)  |
-| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below |
-| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                      |
-| `4f0f400`     | the commit the build was made from                                                  |
+| Part          | Where it comes from                                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------- |
+| `0.9`         | `script/version/version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
+| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below               |
+| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                    |
+| `4f0f400`     | the commit the build was made from                                                                |
 
 - **The patch is a build counter, not a count of fixes.** On `main` it includes merge commits, so it
   rises by a few with every merged PR, and a local branch shows a different number from the deployed

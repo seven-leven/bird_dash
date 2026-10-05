@@ -2,8 +2,8 @@
 import { assertEquals } from '@std/assert';
 import { nextTick } from 'vue';
 import { useTheme } from './useTheme.ts';
-import { runInScope } from '../../../test/fixtures.ts';
-import { withDom } from '../../../test/dom.ts';
+import { runInScope } from '../../../script/test/helpers/fixtures.ts';
+import { withDom } from '../../../script/test/helpers/dom.ts';
 
 const isDarkClass = () => document.documentElement.classList.contains('dark');
 

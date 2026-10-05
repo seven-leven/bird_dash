@@ -2,7 +2,7 @@
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { monthKey, useCollectionData } from './useCollectionData.ts';
-import { at, makeItem } from '../../../test/fixtures.ts';
+import { at, makeItem } from '../../../script/test/helpers/fixtures.ts';
 import type { CollectionItem, ViewMode } from '../../types/index.ts';
 
 function setup(items: CollectionItem[], query = '', mode: ViewMode = 'group') {

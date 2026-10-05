@@ -1,5 +1,5 @@
 import { effectScope } from 'vue';
-import type { CollectionConfig, CollectionItem } from '../src/types/index.ts';
+import type { CollectionConfig, CollectionItem } from '../../../src/types/index.ts';
 
 let counter = 0;
 
