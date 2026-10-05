@@ -37,15 +37,6 @@ export interface CollectionConfig {
   }[];
 }
 
-export interface RawCollectionConfig {
-  id: string;
-  label: string;
-  emoji: string;
-  groupLabel: string;
-  itemLabel: string;
-  links: { label: string; color: string; url: string }[];
-}
-
 export interface DataState {
   items: CollectionItem[];
   loading: boolean;

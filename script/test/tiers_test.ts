@@ -3,9 +3,9 @@ import { assertEquals, assertThrows } from '@std/assert';
 import { groupByTier, isTier, TIER_ORDER, tierOf } from './tiers.ts';
 
 Deno.test('the tier comes from the file-name suffix', () => {
-  assertEquals(tierOf('src/composables/useHashRoute_test.ts'), 'unit');
-  assertEquals(tierOf('src/composables/useHashRoute_dom_test.ts'), 'dom');
-  assertEquals(tierOf('src/composables/useHashRoute_prop_test.ts'), 'prop');
+  assertEquals(tierOf('src/composables/core/useHashRoute_test.ts'), 'unit');
+  assertEquals(tierOf('src/composables/core/useHashRoute_dom_test.ts'), 'dom');
+  assertEquals(tierOf('src/composables/core/useHashRoute_prop_test.ts'), 'prop');
   assertEquals(tierOf('script/collection/data_contract_test.ts'), 'contract');
 });
 

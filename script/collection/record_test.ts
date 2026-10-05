@@ -1,9 +1,9 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import { forEachDrawn } from './record.ts';
-import type { CollectionData } from './record.ts';
+import type { RawCollectionData } from '../../src/types/data.ts';
 
-const data: CollectionData = {
+const data: RawCollectionData = {
   Ducks: [
     { id: '001', name: 'Mallard', drawn: '2025-01-01' },
     { id: '002', name: 'Garganey' }, // undrawn

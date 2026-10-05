@@ -1,5 +1,7 @@
 import { readonly, type Ref, toRef } from 'vue';
-import { useCollectionData, useCollections, useGlobalSearch } from '../composables/index.ts';
+import { useCollectionData } from '../composables/collection/useCollectionData.ts';
+import { useCollections } from '../composables/collection/useCollections.ts';
+import { useGlobalSearch } from '../composables/collection/useGlobalSearch.ts';
 import { defineInjection } from '../composables/core/injection.ts';
 import type { ViewMode } from '../types/index.ts';
 

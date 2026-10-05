@@ -48,7 +48,7 @@
 
         <!-- Scrollable grid (scroll-spy is driven by an IntersectionObserver) -->
         <div
-          ref="scrollContainer"
+          :ref="bindScrollContainer"
           class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar"
         >
           <GalleryContent />
@@ -89,7 +89,7 @@ const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 
 const { data, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
-// scrollContainer is bound as a template ref below (the ui store's writable ref).
-const { isMobile, sidebarOpen, activeSection, scrollContainer, closeSidebar } = useUi();
+// The scroll container is handed to the ui store (for the scroll-spy) as a function ref.
+const { isMobile, sidebarOpen, activeSection, bindScrollContainer, closeSidebar } = useUi();
 const { expandedImage, drawnItems, close, update } = useOverlayStore();
 </script>

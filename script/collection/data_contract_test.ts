@@ -3,6 +3,7 @@ import { assert, assertEquals } from '@std/assert';
 import { COLLECTIONS } from './registry.ts';
 import { loadCollectionData } from './record.ts';
 import { readJson } from '../lib/fs.ts';
+import type { RawCollectionConfig } from '../../src/types/data.ts';
 
 // The app is data-driven: a typo in public/*.json silently breaks routing, search
 // or the timeline rather than failing a build. These tests are that missing gate.
@@ -16,8 +17,7 @@ Deno.test('collections.json: at least one collection, unique ids', () => {
 });
 
 Deno.test('collections.json: link templates only use known placeholders', async () => {
-  type Raw = { id: string; links: { label: string; url: string }[] };
-  const raw = await readJson<Raw[]>('./public/collections.json');
+  const raw = await readJson<RawCollectionConfig[]>('./public/collections.json');
   for (const col of raw) {
     for (const link of col.links) {
       assert(link.label.trim(), `${col.id}: link without a label`);

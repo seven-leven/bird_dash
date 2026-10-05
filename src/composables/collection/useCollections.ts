@@ -1,4 +1,5 @@
-import { computed, type ComputedRef, nextTick, ref, shallowReactive } from 'vue';
+import { computed, type ComputedRef, ref, shallowReactive } from 'vue';
+import { toCollectionConfig, toCollectionItems } from '../../lib/collectionItems.ts';
 import type {
   CollectionCache,
   CollectionConfig,
@@ -6,6 +7,7 @@ import type {
   DataState,
   GlobalStats,
   RawCollectionConfig,
+  RawCollectionData,
 } from '../../types/index.ts';
 
 // Self-contained cast (not import.meta.env directly): under `deno check`, the
@@ -13,12 +15,6 @@ import type {
 // so keep this file independent of that ambient reference.
 const getBase = () =>
   (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
-
-const resolveUrl = (template: string, item: CollectionItem): string => {
-  return template
-    .replace(/{{common}}/g, encodeURIComponent(item.commonName))
-    .replace(/{{sci}}/g, encodeURIComponent(item.scientificName));
-};
 
 export function useCollections() {
   const collections = ref<CollectionConfig[]>([]);
@@ -54,52 +50,8 @@ export function useCollections() {
     const res = await fetch(col.dataUrl);
     if (!res.ok) throw new Error(`HTTP ${res.status} loading ${col.label}`);
 
-    const rawGroups: Record<string, Record<string, unknown>[]> = await res.json();
-    const items: CollectionItem[] = [];
-    const placeholder = `${getBase()}placeholders/${col.id}.webp`;
-    const knownKeys = new Set(['id', 'name', 'sci', 'drawn', 'illustratorNote']);
-
-    let counter = 1;
-    for (const [groupName, list] of Object.entries(rawGroups)) {
-      list.forEach((r: Record<string, unknown>) => {
-        const hasImg = !!r.drawn;
-        const meta: Record<string, string> = {};
-        Object.keys(r).forEach((k: string) => {
-          if (!knownKeys.has(k) && typeof r[k] === 'string') {
-            meta[k] = r[k] as string;
-          }
-        });
-
-        const drawnTime = hasImg ? (new Date(String(r.drawn)).getTime() || 0) : 0;
-        const itemId = String(r.id ?? '');
-        const commonName = String(r.name ?? '');
-        const scientificName = String(r.sci ?? '');
-
-        // Search haystack — includes Dhivehi name + Thaana script (any meta value).
-        const searchText = [commonName, scientificName, groupName, itemId, ...Object.values(meta)]
-          .join(' ')
-          .toLowerCase();
-
-        // Frozen: items never mutate after load, so freezing documents that and
-        // lets the shallowReactive store skip proxying them.
-        items.push(Object.freeze({
-          id: `${col.id}-item-${counter++}`,
-          itemId,
-          commonName,
-          scientificName,
-          group: groupName,
-          imageUrl: hasImg ? `${col.imageBase}${r.id}.webp` : placeholder,
-          placeholderUrl: placeholder,
-          isDrawn: hasImg,
-          sortKey: Number.parseInt(itemId, 10) || 0,
-          drawnTime,
-          searchText,
-          illustratorNote: String(r.illustratorNote ?? ''),
-          meta: Object.keys(meta).length ? meta : undefined,
-        }));
-      });
-    }
-    return items;
+    const raw: RawCollectionData = await res.json();
+    return toCollectionItems(col, raw, getBase());
   };
 
   // One in-flight request per collection, shared by the active load and the
@@ -140,7 +92,7 @@ export function useCollections() {
     }
   };
 
-  const switchCollection = async (id: string, onSwitch?: () => void): Promise<void> => {
+  const switchCollection = async (id: string): Promise<void> => {
     if (id === activeCollectionId.value) return;
     if (!collections.value.some((c) => c.id === id)) return; // unknown id: ignore
     activeCollectionId.value = id;
@@ -150,7 +102,6 @@ export function useCollections() {
       data.items = cached;
       data.error = undefined;
       data.loading = false;
-      nextTick(() => onSwitch?.());
     } else if (activeCollection.value) {
       await loadData(activeCollection.value);
     }
@@ -180,17 +131,7 @@ export function useCollections() {
         throw new Error('No collections are configured');
       }
 
-      collections.value = rawData.map((c: RawCollectionConfig) => ({
-        ...c,
-        dataUrl: `${getBase()}lists/${c.id}.json`,
-        imageBase: `${getBase()}thumb/${c.id}/`,
-        fullImageBase: `${getBase()}full/${c.id}/`,
-        links: c.links.map((l) => ({
-          label: l.label,
-          color: l.color,
-          url: (item: CollectionItem) => resolveUrl(l.url, item),
-        })),
-      }));
+      collections.value = rawData.map((c) => toCollectionConfig(c, getBase()));
     } catch (e: unknown) {
       initError.value = e instanceof Error ? e.message : String(e);
       return;

@@ -4,13 +4,12 @@ import { nextTick, onMounted, watch } from 'vue';
 import Chrome from './components/layout/Chrome.vue';
 import EmptyState from './components/ui/EmptyState.vue';
 import Icon from './components/icons/Icon.vue';
-import { flashItem } from './lib/flashItem.ts';
-import { useHashRoute } from './composables/index.ts';
+import { useHashRoute } from './composables/core/useHashRoute.ts';
 import { createSearchStore, provideSearch } from './stores/search.ts';
 import { createUiStore, provideUi } from './stores/ui.ts';
 import { createCollectionsStore, provideCollections } from './stores/collections.ts';
 import { createOverlayStore, provideOverlay } from './stores/overlay.ts';
-import { type AppActions, provideActions } from './stores/actions.ts';
+import { createAppActions, provideActions } from './stores/actions.ts';
 
 // =============================================================================
 // STORES — created in dependency order, shared through provide/inject.
@@ -30,26 +29,12 @@ provideCollections(collections);
 provideOverlay(overlay);
 
 // =============================================================================
-// CROSS-STORE ORCHESTRATIONS — the only actions that touch more than one store.
-// (Single-domain actions live on their own store; URL sync is handled by the
-// route adapter below, so nothing here pokes location.hash.)
+// CROSS-STORE ORCHESTRATIONS — the only actions that touch more than one store
+// (stores/actions.ts). URL sync is handled by the route adapter below, so nothing
+// there pokes location.hash.
 // =============================================================================
-const switchCollection = async (id: string): Promise<void> => {
-  search.clear();
-  ui.resetHeaders();
-  await collections.switch(id, ui.afterSwitch);
-};
-
-const selectGlobalResult: AppActions['selectGlobalResult'] = async (collectionId, itemId) => {
-  search.setDropdown(false);
-  if (collectionId !== collections.activeCollection.value?.id) {
-    await switchCollection(collectionId);
-  }
-  await nextTick();
-  flashItem(itemId);
-};
-
-provideActions({ switchCollection, selectGlobalResult });
+const actions = createAppActions({ search, ui, collections });
+provideActions(actions);
 
 // =============================================================================
 // URL ⇄ STATE — one owner; reflects (collection, open item) to the hash and
@@ -59,7 +44,7 @@ const route = useHashRoute({
   activeCollection: collections.activeCollection,
   expandedImage: overlay.expandedImage,
   cache: collections.cache,
-  switchCollection,
+  switchCollection: actions.switchCollection,
   openOverlay: overlay.open,
 });
 

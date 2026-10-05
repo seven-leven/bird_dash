@@ -78,7 +78,9 @@ actions. `useHashRoute` is the single owner of URL ⇄ state sync (`#<collection
 
 ## Data Model
 
-The app is data-driven — content lives entirely in `public/`, no code changes needed.
+The app is data-driven — content lives entirely in `public/`, no code changes needed. The shape of
+these files is typed once, in [`src/types/data.ts`](src/types/data.ts), and shared by the build
+scripts, the app's loader and the data contract test.
 
 **`public/collections.json`** — one entry per collection:
 

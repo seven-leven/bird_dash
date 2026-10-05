@@ -1,11 +1,16 @@
 import { nextTick, readonly, ref } from 'vue';
-import { useBreakpoints, useScrollLogic, useTheme } from '../composables/index.ts';
+import { useBreakpoints } from '../composables/core/useBreakpoints.ts';
+import { useTheme } from '../composables/core/useTheme.ts';
+import { useScrollLogic } from '../composables/ui/useScrollLogic.ts';
 import { defineInjection } from '../composables/core/injection.ts';
 import type { ViewMode } from '../types/index.ts';
 
 /**
  * Chrome/UI state: sidebar, theme, viewport, group/date view, and the
- * scroll-spy (active section + its scroll-container/header-ref targets).
+ * scroll-spy (active section). The scroll-spy needs two kinds of DOM element —
+ * the scroll container and each section header — which components hand over
+ * through `bindScrollContainer` / `registerHeader`; the elements themselves stay
+ * private to this store.
  */
 export function createUiStore() {
   const sidebarOpen = ref(false);
@@ -21,7 +26,8 @@ export function createUiStore() {
   };
 
   // Scroll-spy targets — Chrome binds the scroll container, GalleryContent
-  // registers section headers into headerRefs.
+  // registers section headers. Both are used as template function refs, which Vue
+  // calls with the element on mount and with null on unmount.
   const scrollContainer = ref<HTMLElement | null>(null);
   const headerRefs = ref<Record<string, HTMLElement | null>>({});
   const { activeSection, updateActiveSection, goToSection } = useScrollLogic(
@@ -29,6 +35,14 @@ export function createUiStore() {
     headerRefs,
     { isMobile, closeSidebar },
   );
+
+  const bindScrollContainer = (el: unknown): void => {
+    scrollContainer.value = el as HTMLElement | null;
+  };
+  const registerHeader = (name: string, el: unknown): void => {
+    if (el) headerRefs.value[name] = el as HTMLElement;
+    else delete headerRefs.value[name]; // unmounted: don't let the spy measure a detached node
+  };
 
   const toggleViewMode = (): void => {
     viewMode.value = viewMode.value === 'group' ? 'date' : 'group';
@@ -39,10 +53,8 @@ export function createUiStore() {
   const resetHeaders = (): void => {
     headerRefs.value = {};
   };
-  // After a collection's data is in place: jump to top and recompute the spy.
-  const afterSwitch = (): void => {
+  const scrollToTop = (): void => {
     if (scrollContainer.value) scrollContainer.value.scrollTop = 0;
-    updateActiveSection();
   };
 
   return {
@@ -51,9 +63,8 @@ export function createUiStore() {
     theme,
     isMobile: readonly(isMobile),
     activeSection: readonly(activeSection),
-    // Writable ref targets bound via `ref="…"` in the template.
-    scrollContainer,
-    headerRefs,
+    bindScrollContainer,
+    registerHeader,
     toggleSidebar,
     closeSidebar,
     toggleTheme,
@@ -61,7 +72,7 @@ export function createUiStore() {
     goToSection,
     updateActiveSection,
     resetHeaders,
-    afterSwitch,
+    scrollToTop,
   };
 }
 

@@ -123,7 +123,7 @@
 import ItemSheet from './ItemSheet.vue';
 import Icon from '../icons/Icon.vue';
 import type { CollectionItem, CollectionConfig } from '../../types/';
-import { useLightbox } from '../../composables/index';
+import { useLightbox } from '../../composables/ui/useLightBox.ts';
 
 const props = defineProps<{
   isOpen:           boolean;
