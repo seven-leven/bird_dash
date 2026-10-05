@@ -81,7 +81,7 @@ onMounted(async () => {
         <Icon name="noResults" class="w-6 h-6" />
       </template>
       <button
-        class="focus-ring mt-3 rounded-md px-3 py-1.5 text-sm font-medium bg-accent-700 text-white hover:bg-accent-600"
+        class="focus-ring mt-3 rounded-control px-3 py-1.5 text-sm font-medium bg-accent-700 text-white hover:bg-accent-600"
         @click="reload()"
       >
         Try again

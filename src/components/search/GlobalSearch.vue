@@ -1,7 +1,7 @@
 <!-- components/search/GlobalSearch.vue -->
 <template>
   <!-- Width is set by the header (full row on phones, capped from md up). -->
-  <div class="relative min-w-0 transition-[max-width] duration-200" ref="searchWrapperRef">
+  <div class="relative min-w-0 transition-[max-width] duration-fast" ref="searchWrapperRef">
     <!-- ==================== INPUT FIELD ==================== -->
     <div class="relative w-full">
       <!-- Search Icon -->
@@ -28,7 +28,7 @@
         @keydown.enter.prevent="selectFocused"
         placeholder="Search all collections…"
         autocomplete="off"
-        class="block w-full pl-7 pr-12 py-1.5 rounded-md text-sm border transition-colors duration-150
+        class="block w-full pl-7 pr-12 py-1.5 rounded-control text-sm border transition-colors duration-fast
                focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500
                bg-slate-100/80 border-transparent text-slate-900 placeholder-slate-400
                dark:bg-slate-800/80 dark:border-transparent dark:text-slate-100 dark:placeholder-slate-500
@@ -64,7 +64,7 @@
       <div
         v-if="shouldShowDropdown"
         class="absolute right-0 top-full mt-1.5 w-full md:min-w-90 max-w-130
-               rounded-xl border shadow-xl z-50 overflow-hidden
+               rounded-card border shadow-xl z-50 overflow-hidden
                bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
       >
         <!-- Header -->
@@ -181,10 +181,10 @@ const liveMessage = computed(() => {
 });
 
 const dropdownTransition = {
-  enterActiveClass: 'transition duration-150 ease-out',
+  enterActiveClass: 'transition duration-fast ease-out',
   enterFromClass: 'opacity-0 translate-y-1 scale-95',
   enterToClass: 'opacity-100 translate-y-0 scale-100',
-  leaveActiveClass: 'transition duration-150 ease-in',
+  leaveActiveClass: 'transition duration-fast ease-in',
   leaveFromClass: 'opacity-100 translate-y-0 scale-100',
   leaveToClass: 'opacity-0 translate-y-1 scale-95',
 } as const;

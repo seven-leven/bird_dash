@@ -3,6 +3,7 @@
     "id": "birds",
     "label": "Birds",
     "emoji": "🐦",
+    "icon": "bird",
     "groupLabel": "Family",
     "itemLabel": "bird",
     "links": [
@@ -27,6 +28,7 @@
     "id": "sharks",
     "label": "Sharks",
     "emoji": "🦈",
+    "icon": "shark",
     "groupLabel": "Order",
     "itemLabel": "shark",
     "links": [
@@ -51,6 +53,7 @@
     "id": "shells",
     "label": "Shells",
     "emoji": "🐚",
+    "icon": "shell",
     "groupLabel": "Group",
     "itemLabel": "shell",
     "links": [

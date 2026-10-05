@@ -3,7 +3,22 @@
 /* Dark mode is class-based (.dark on <html>), driven by useTheme — not the OS. */
 @variant dark (&:where(.dark, .dark *));
 
+/*
+  Design tokens — the whole app draws from these, so a change here is a change
+  everywhere.
+    radius   rounded-control (buttons, inputs, badges) · rounded-card (tiles,
+             panels, menus) · rounded-full (pills, progress)
+    type     Tailwind's scale, plus text-micro for labels, badges and hints
+    motion   duration-fast (hover, colour) · duration-slow (things that move)
+    on dark  text-white (titles) · text-white/70 (body) · text-white/50 (labels)
+*/
 @theme {
+  --radius-control: 0.375rem;
+  --radius-card: 0.75rem;
+
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1rem;
+
   --animate-shimmer: shimmer 1.5s infinite linear;
 
   @keyframes shimmer {
@@ -34,28 +49,68 @@
   --color-accent-950: var(--color-teal-950);
 }
 
+@utility duration-fast {
+  transition-duration: 150ms;
+}
+@utility duration-slow {
+  transition-duration: 300ms;
+}
+
 @layer components {
   /* Neutral icon/text button used across the chrome (header, sidebar). */
   .btn-ghost {
-    @apply rounded-md text-slate-500 transition-colors duration-150
+    @apply rounded-control text-slate-500 transition-colors duration-fast
       hover:bg-slate-100 hover:text-slate-800
       dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
   }
 
+  /*
+    A choice among siblings: collection tabs, the view switch, sidebar sections.
+    The one look for "this is the current one" is a quiet grey fill, strong text
+    and a teal marker — driven by the ARIA state, so the styling cannot disagree
+    with what assistive tech is told. Solid teal is kept for primary actions.
+  */
+  .nav-item {
+    @apply relative rounded-control text-sm font-medium text-slate-500 transition-colors
+      duration-fast
+      hover:bg-slate-100 hover:text-slate-800
+      dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
+  }
+  .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true']) {
+    @apply bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100;
+  }
+  .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true'])::after {
+    content: '';
+    @apply absolute rounded-full bg-accent-500;
+  }
+  /* Marker under a horizontal item, or beside a vertical one. */
+  .nav-item.marker-b::after {
+    @apply inset-x-2 bottom-0 h-0.5;
+  }
+  .nav-item.marker-l::after {
+    @apply left-0 top-1/2 h-4 w-0.5 -translate-y-1/2;
+  }
+
+  /* Small count pill (search results, group totals). */
+  .count-pill {
+    @apply rounded-full px-1.5 py-0.5 text-micro font-semibold tabular-nums
+      bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300;
+  }
+
   /* Icon button layered over imagery (lightbox controls). */
   .icon-btn-overlay {
-    @apply flex items-center justify-center w-8 h-8 rounded-lg
-      text-white/40 transition-colors duration-150
-      hover:text-white/90 hover:bg-white/10
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40;
+    @apply flex items-center justify-center w-8 h-8 rounded-control
+      text-white/50 transition-colors duration-fast
+      hover:text-white/70 hover:bg-white/10
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400;
   }
 
   /* Previous/next arrows beside the lightbox image. */
   .nav-btn-overlay {
     @apply absolute top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10
-      rounded-lg bg-black/40 text-white/70 transition-colors duration-150
+      rounded-control bg-black/40 text-white/70 transition-colors duration-fast
       hover:bg-black/60 hover:text-white
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40;
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400;
   }
 
   /* Shared keyboard focus treatment. */
@@ -72,12 +127,12 @@
 
   /* Micro label: uppercase section/meta headings. Color set at point of use. */
   .caps-label {
-    @apply text-[10px] font-semibold uppercase tracking-widest;
+    @apply text-micro font-semibold uppercase tracking-widest;
   }
 
   /* Keyboard hint chip. */
   .kbd-hint {
-    @apply rounded border px-1.5 py-0.5 font-mono text-[10px]
+    @apply rounded-control border px-1.5 py-0.5 font-mono text-micro
       bg-slate-50 border-slate-200 text-slate-600
       dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300;
   }

@@ -1,5 +1,6 @@
 // useLightbox.ts
 import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
+import { ratio } from '../../lib/formatCount.ts';
 import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 /** Clamp a zoom scale to [0.5, 5]; anything ≤1 snaps back to a neutral 1×. */
@@ -126,9 +127,9 @@ export function useLightbox({ props, emit }: LightboxOptions) {
     close();
   };
 
-  /** "3 / 18" — where the open item sits in the order the viewer pages through. */
+  /** "3 of 18" — where the open item sits in the order the viewer pages through. */
   const position = computed(() =>
-    currentIndex.value === -1 ? '' : `${currentIndex.value + 1} / ${props.drawnItems.length}`
+    currentIndex.value === -1 ? '' : ratio(currentIndex.value + 1, props.drawnItems.length)
   );
 
   // ── Pointer gestures (mouse, touch, pen): drag to pan when zoomed, pinch to

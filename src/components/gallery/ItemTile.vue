@@ -1,10 +1,10 @@
 <template>
   <div
     :id="`item-${props.item.itemId}`"
-    class="group focus-ring relative aspect-square w-full overflow-hidden rounded-xl
+    class="group focus-ring relative aspect-square w-full overflow-hidden rounded-card
            bg-slate-100 dark:bg-slate-900
            ring-1 ring-black/5 dark:ring-white/5
-           transition-all duration-200 ease-out"
+           transition-all duration-fast ease-out"
     :class="drawn && INTERACTIVE"
     v-bind="buttonAttrs"
     @click="open"
@@ -35,7 +35,7 @@
     <div class="absolute bottom-0 inset-x-0 z-10
                 bg-linear-to-t from-black/80 via-black/40 to-transparent
                 px-3 pb-3 pt-10
-                transition-colors duration-200
+                transition-colors duration-fast
                 group-hover:from-black/90 group-hover:via-black/50">
       <h3
         v-if="props.item.meta?.dhiv_script"
@@ -44,17 +44,17 @@
       >
         {{ props.item.meta.dhiv_script }}
       </h3>
-      <h3 v-else class="text-xs font-semibold leading-snug text-white truncate">
+      <h3 v-else class="text-sm font-semibold leading-snug text-white truncate">
         {{ props.item.commonName }}
       </h3>
 
-      <div class="max-h-0 opacity-0 overflow-hidden transition-all duration-200
+      <div class="max-h-0 opacity-0 overflow-hidden transition-all duration-fast
                   group-hover:max-h-16 group-hover:opacity-100 group-focus-visible:max-h-16 group-focus-visible:opacity-100
                   pointer-coarse:max-h-16 pointer-coarse:opacity-100">
-        <p v-if="props.item.meta?.dhiv_script" class="mt-0.5 text-[11px] font-medium text-white/80 truncate">
+        <p v-if="props.item.meta?.dhiv_script" class="mt-0.5 text-micro font-medium text-white/70 truncate">
           {{ props.item.commonName }}
         </p>
-        <p v-if="props.item.scientificName" class="mt-0.5 text-[10px] italic text-white/60 truncate pointer-coarse:hidden">
+        <p v-if="props.item.scientificName" class="mt-0.5 text-micro italic text-white/70 truncate pointer-coarse:hidden">
           {{ props.item.scientificName }}
         </p>
       </div>

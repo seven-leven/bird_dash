@@ -44,9 +44,10 @@ export function createUiStore() {
     else delete headerRefs.value[name]; // unmounted: don't let the spy measure a detached node
   };
 
-  const toggleViewMode = (): void => {
-    viewMode.value = viewMode.value === 'group' ? 'date' : 'group';
-    nextTick(updateActiveSection);
+  const setViewMode = (mode: ViewMode): void => {
+    if (mode === viewMode.value) return;
+    viewMode.value = mode;
+    nextTick(updateActiveSection); // the section headers are different in each view
   };
 
   // Reset the header set (before a collection switch repopulates it).
@@ -68,7 +69,7 @@ export function createUiStore() {
     toggleSidebar,
     closeSidebar,
     toggleTheme,
-    toggleViewMode,
+    setViewMode,
     goToSection,
     updateActiveSection,
     resetHeaders,
