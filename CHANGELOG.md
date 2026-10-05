@@ -2,7 +2,10 @@
 
 How the version number is built is explained in the README ("Versioning"); `deno task version`
 prints it. To log new work here, run `deno task changelog` — it inserts every commit made since this
-file was last touched under _Unreleased_, ready to edit and commit.
+file was last touched at the top of the newest section, ready to edit and commit.
+
+The site deploys on every merge to `main`, so there is no "unreleased" work: anything listed here is
+live.
 
 Headings such as **v0.9.0** name a _line of work_ (the `major.minor` in
 `script/version/version.json`), not a release: the patch number in the running site (e.g. `0.9.161`)
@@ -11,7 +14,7 @@ was the drawing count.
 
 ---
 
-## Unreleased
+## v0.9.0 (Stores, Tests, Accessibility & Design)
 
 - 2026-10-05 | repo layout: `TODO.md` moved to `docs/`, `version.json` to `script/version/` (next to
   the script that reads it), and the shared test helpers from `test/` to `script/test/helpers/`; the
@@ -40,9 +43,6 @@ was the drawing count.
   and shared by the build scripts, the loader and the contract test; raw-to-item normalisation and
   the cross-store actions are extracted and unit-tested; the ui store no longer exposes DOM refs;
   tests from 149 to 166
-
-## v0.9.0 (Stores, Tests & Accessibility)
-
 - 2026-09-30 | version footer simplified: one implementation (`script/version/compute.ts`) shared by
   `deno task version`, the build summaries and Vite; the footer now shows the version, the drawing
   count and the commit (`v0.8.157 · 18 drawings · 4f0f400`) instead of the zero-padded

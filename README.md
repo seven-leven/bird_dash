@@ -163,7 +163,7 @@ the rules to follow when adding to the UI. Its picture,
 | `deno task test:coverage`                         | Every tier + coverage table; fails below the line-coverage floor     |
 | `deno task typecheck`                             | Type-check the `.ts` sources (`.vue` templates are not covered)      |
 | `deno task version`                               | Print the current derived version                                    |
-| `deno task changelog`                             | Insert unlogged commits under _Unreleased_ (`--dry-run` to preview)  |
+| `deno task changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews) |
 | `deno task placeholders`                          | Redraw the placeholder images from each collection's icon            |
 | `deno task design`                                | Redraw the design guide image and the icon sheet                     |
 | `deno task preview`                               | Preview the production build locally                                 |
@@ -218,7 +218,8 @@ cannot drift.
 
 There are no git hooks, tags or releases: CI and the deploy are the only gates. Changelog entries
 are curated with `deno task changelog`, which lists every commit made since `CHANGELOG.md` was last
-touched and inserts them under an _Unreleased_ heading to edit and commit.
+touched and inserts them at the top of the newest section to edit and commit. Every merge to `main`
+deploys, so there is no "unreleased" section.
 
 ## Deployment
 

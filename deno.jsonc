@@ -40,7 +40,7 @@
     // The version is derived from script/version/version.json + git + the data (script/version/compute.ts);
     // see the README, "Versioning". `--long` also prints the drawing count and commit.
     "version": "deno run -A ./script/version/compute.ts",
-    // Insert commits made since CHANGELOG.md was last touched under Unreleased
+    // Insert commits made since CHANGELOG.md was last touched at the top of the newest section
     "changelog": "deno run -A ./script/changelog.ts",
 
     // ── Utilities ─────────────────────────────────────────────────────────────
