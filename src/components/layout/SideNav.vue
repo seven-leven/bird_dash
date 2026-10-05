@@ -8,6 +8,8 @@
            bg-white border-slate-200
            dark:bg-slate-950 dark:border-slate-800"
     :class="sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'"
+    :inert="isMobile && !sidebarOpen"
+    @keydown.escape="closeSidebar()"
   >
     <!-- Header -->
     <div class="sticky top-0 z-10 px-5 pt-5 pb-4 border-b border-slate-100 dark:border-slate-800/60">
@@ -86,7 +88,8 @@ import { useUi } from '../../stores/ui.ts';
 import type { SidebarItem } from '../../types/index.ts';
 
 const { activeCollection, data, activeData, stats, globalStats } = useCollectionsStore();
-const { sidebarOpen, viewMode, activeSection, goToSection } = useUi();
+// Off-screen on small screens until opened: `inert` keeps it out of the tab order.
+const { sidebarOpen, isMobile, viewMode, activeSection, goToSection, closeSidebar } = useUi();
 
 function getItemClass(item: SidebarItem): string {
   if (item.disabled) {

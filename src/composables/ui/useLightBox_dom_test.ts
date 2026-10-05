@@ -205,3 +205,42 @@ Deno.test('dragging while zoomed pans by the distance divided by the scale', () 
     assertEquals(t.lb.isDragging.value, false);
     t.stop();
   }));
+
+const clickOn = (target: object, currentTarget: object = target) =>
+  ({ target, currentTarget }) as unknown as MouseEvent;
+
+Deno.test('a click on empty space closes; a click that bubbled from a child does not', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    t.lb.handleBackdropClick(clickOn(t.el('first'), t.dialog)); // came from a control
+    assertEquals(t.emitted, []);
+    t.lb.handleBackdropClick(clickOn(t.dialog));
+    assertEquals(t.emitted.map(([e]) => e), ['close']);
+    t.stop();
+  }));
+
+Deno.test('the click that ends a drag does not close; the next plain click does', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    t.lb.handlePointerDown(pointer('pointerdown', 1, 400, 300, 'mouse'));
+    t.lb.handlePointerUp(pointer('pointerup', 1, 300, 300, 'mouse')); // moved 100px
+    t.lb.handleBackdropClick(clickOn(t.dialog));
+    assertEquals(t.emitted, [], 'a drag was treated as a click');
+
+    t.lb.handlePointerDown(pointer('pointerdown', 2, 400, 300, 'mouse'));
+    t.lb.handlePointerUp(pointer('pointerup', 2, 402, 301, 'mouse')); // a real click
+    t.lb.handleBackdropClick(clickOn(t.dialog));
+    assertEquals(t.emitted.map(([e]) => e), ['close']);
+    t.stop();
+  }));
+
+Deno.test('position reports where the open item sits among the drawn items', () =>
+  withDom(() => {
+    const t = setup(1);
+    assertEquals(t.lb.position.value, '2 / 3');
+    t.props.item = undefined;
+    assertEquals(t.lb.position.value, '');
+    t.stop();
+  }));

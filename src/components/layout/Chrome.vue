@@ -49,7 +49,7 @@
         <!-- Scrollable grid (scroll-spy is driven by an IntersectionObserver) -->
         <div
           :ref="bindScrollContainer"
-          class="flex-1 overflow-y-auto p-6 scroll-smooth custom-scrollbar"
+          class="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth custom-scrollbar"
         >
           <GalleryContent />
         </div>
