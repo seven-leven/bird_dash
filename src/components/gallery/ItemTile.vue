@@ -1,24 +1,20 @@
 <template>
   <div
     :id="`item-${props.item.itemId}`"
-    class="group focus-ring relative aspect-square w-full overflow-hidden rounded-xl cursor-pointer
+    class="group focus-ring relative aspect-square w-full overflow-hidden rounded-xl
            bg-slate-100 dark:bg-slate-900
            ring-1 ring-black/5 dark:ring-white/5
-           transition-all duration-200 ease-out
-           hover:ring-black/15 dark:hover:ring-white/10
-           hover:shadow-lg hover:-translate-y-0.5
-           active:scale-[0.98] active:shadow-sm"
-    @click="$emit('cardClick', props.item)"
-    tabindex="0"
-    role="button"
-    :aria-label="`${props.item.commonName}, #${props.item.itemId}`"
-    @keydown.enter="$emit('cardClick', props.item)"
-    @keydown.space.prevent="$emit('cardClick', props.item)"
+           transition-all duration-200 ease-out"
+    :class="drawn && INTERACTIVE"
+    v-bind="buttonAttrs"
+    @click="open"
+    @keydown.enter="open"
+    @keydown.space="onSpace"
   >
     <!-- Illustration — above-the-fold tiles load eagerly (LCP), rest are lazy -->
     <img
       :src="src"
-      :alt="props.item.commonName"
+      :alt="drawn ? props.item.commonName : `${props.item.commonName} (not drawn yet)`"
       :loading="eager ? 'eager' : 'lazy'"
       :fetchpriority="eager ? 'high' : 'auto'"
       decoding="async"
@@ -34,7 +30,8 @@
       class="absolute top-2.5 left-2.5 z-10"
     />
 
-    <!-- Name overlay — hover deepens it and reveals the secondary line -->
+    <!-- Name overlay — hover deepens it and reveals the secondary line. Touch
+         screens have no hover, so there the common name is always shown. -->
     <div class="absolute bottom-0 inset-x-0 z-10
                 bg-linear-to-t from-black/80 via-black/40 to-transparent
                 px-3 pb-3 pt-10
@@ -52,11 +49,12 @@
       </h3>
 
       <div class="max-h-0 opacity-0 overflow-hidden transition-all duration-200
-                  group-hover:max-h-16 group-hover:opacity-100 group-focus-visible:max-h-16 group-focus-visible:opacity-100">
+                  group-hover:max-h-16 group-hover:opacity-100 group-focus-visible:max-h-16 group-focus-visible:opacity-100
+                  pointer-coarse:max-h-16 pointer-coarse:opacity-100">
         <p v-if="props.item.meta?.dhiv_script" class="mt-0.5 text-[11px] font-medium text-white/80 truncate">
           {{ props.item.commonName }}
         </p>
-        <p v-if="props.item.scientificName" class="mt-0.5 text-[10px] italic text-white/60 truncate">
+        <p v-if="props.item.scientificName" class="mt-0.5 text-[10px] italic text-white/60 truncate pointer-coarse:hidden">
           {{ props.item.scientificName }}
         </p>
       </div>
@@ -79,7 +77,30 @@ const props = withDefaults(
   { eager: false },
 );
 
-defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
+const emit = defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
+
+// Only drawn items open the viewer. A placeholder is not a button: it gets no
+// role, tab stop or hover lift, so nothing promises an action that never happens.
+const INTERACTIVE = 'cursor-pointer hover:ring-black/15 dark:hover:ring-white/10 hover:shadow-lg ' +
+  'hover:-translate-y-0.5 active:scale-[0.98] active:shadow-sm';
+const drawn = computed(() => props.item.isDrawn);
+const buttonAttrs = computed(() =>
+  drawn.value
+    ? {
+      tabindex: 0,
+      role: 'button',
+      'aria-label': `${props.item.commonName}, #${props.item.itemId}`,
+    }
+    : {}
+);
+const open = () => {
+  if (drawn.value) emit('cardClick', props.item);
+};
+const onSpace = (e: KeyboardEvent) => {
+  if (!drawn.value) return;
+  e.preventDefault(); // don't scroll the page
+  open();
+};
 
 // The tile is keyed by item.id in the grid, so a new item => a fresh component;
 // no watcher needed. Undrawn items and load failures fall back to the placeholder.
