@@ -2,9 +2,9 @@
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
-import { at, makeCollection, makeItem, runInScope } from '../../test/fixtures.ts';
-import { withDom } from '../../test/dom.ts';
-import type { CollectionConfig, CollectionItem } from '../types/index.ts';
+import { at, makeCollection, makeItem, runInScope } from '../../../test/fixtures.ts';
+import { withDom } from '../../../test/dom.ts';
+import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 // The router is a small state machine (bare load / reflect / deep link / own
 // writes). These tests pin the two bugs that only showed up in a browser:

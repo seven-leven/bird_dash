@@ -1,5 +1,5 @@
 import { readonly, ref } from 'vue';
-import { useDebouncedRef } from '../composables/index.ts';
+import { useDebouncedRef } from '../composables/core/useDebounce.ts';
 import { defineInjection } from '../composables/core/injection.ts';
 
 /**

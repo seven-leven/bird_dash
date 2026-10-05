@@ -1,5 +1,4 @@
-import { readonly, type Ref } from 'vue';
-import { useOverlay } from '../composables/index.ts';
+import { reactive, readonly, type Ref } from 'vue';
 import { defineInjection } from '../composables/core/injection.ts';
 import type { CollectionItem } from '../types/index.ts';
 
@@ -8,14 +7,30 @@ import type { CollectionItem } from '../types/index.ts';
  * pages through) is derived in the collections store and passed in.
  */
 export function createOverlayStore(deps: { drawnItems: Ref<CollectionItem[]> }) {
-  const { expandedImage, openOverlay, closeOverlay, updateOverlayItem } = useOverlay();
+  const expandedImage = reactive({
+    isOpen: false,
+    item: undefined as CollectionItem | undefined,
+  });
+
+  const open = (item: CollectionItem): void => {
+    if (!item.isDrawn) return; // nothing to show for a placeholder
+    expandedImage.item = item;
+    expandedImage.isOpen = true;
+  };
+  // The item is kept on close so the image doesn't vanish during the fade-out.
+  const close = (): void => {
+    expandedImage.isOpen = false;
+  };
+  const update = (item: CollectionItem): void => {
+    expandedImage.item = item;
+  };
 
   return {
     expandedImage: readonly(expandedImage),
     drawnItems: deps.drawnItems,
-    open: openOverlay,
-    close: closeOverlay,
-    update: updateOverlayItem,
+    open,
+    close,
+    update,
   };
 }
 

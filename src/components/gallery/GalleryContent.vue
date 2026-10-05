@@ -46,7 +46,7 @@
         class="mb-12 scroll-mt-10"
       >
         <h2
-          :ref="el => { if (el) headerRefs[String(groupName)] = el as HTMLElement }"
+          :ref="el => registerHeader(String(groupName), el)"
           class="mb-5 pb-2 text-base font-semibold flex items-center justify-between transition-colors border-b
                  text-slate-800 border-slate-200 dark:text-slate-100 dark:border-slate-800"
         >
@@ -99,9 +99,8 @@ import { useOverlayStore } from '../../stores/overlay.ts';
 
 const { data, activeData } = useCollectionsStore();
 const { query } = useSearch();
-// headerRefs is the ui store's ref that scroll-spy reads; the template registers
-// each section header into it.
-const { viewMode, headerRefs } = useUi();
+// The template registers each section header with the ui store for the scroll-spy.
+const { viewMode, registerHeader } = useUi();
 const { open: openItem } = useOverlayStore();
 
 // Injected at build time by vite.config.ts (worked out in script/version/compute.ts).

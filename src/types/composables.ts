@@ -6,7 +6,7 @@ import type { Ref } from 'vue';
 import type { CollectionConfig, CollectionItem } from './collections.ts';
 import type { SidebarItem } from './ui.ts';
 
-// ViewMode lives in ui.ts (next to UIState); re-exported here for the composable
+// ViewMode lives in ui.ts; re-exported here for the composable
 // types and consumers that import it from this module.
 export type { ViewMode } from './ui.ts';
 

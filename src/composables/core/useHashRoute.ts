@@ -1,6 +1,6 @@
 import { nextTick, onMounted, onUnmounted, type Ref, watch } from 'vue';
-import { flashItem } from '../lib/flashItem.ts';
-import type { CollectionCache, CollectionConfig, CollectionItem } from '../types/index.ts';
+import { flashItem } from '../../lib/flashItem.ts';
+import type { CollectionCache, CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 /** Parse the hash grammar `#<collectionId>[/<itemId>]` (leading `#`/`/` optional). */
 export function parseHash(hash: string): { collectionId: string; itemId: string } {
