@@ -1,11 +1,9 @@
 <!-- components/search/GlobalSearch.vue -->
 <template>
-  <div class="relative shrink-0" ref="searchWrapperRef">
+  <!-- Width is set by the header (full row on phones, capped from md up). -->
+  <div class="relative min-w-0 transition-[max-width] duration-200" ref="searchWrapperRef">
     <!-- ==================== INPUT FIELD ==================== -->
-    <div
-      class="relative w-44 sm:w-56 md:w-72 transition-all duration-200"
-      :class="{ 'md:w-96': dropdownOpen }"
-    >
+    <div class="relative w-full">
       <!-- Search Icon -->
       <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
         <Icon name="search" class="h-3.5 w-3.5 text-muted" />
@@ -65,7 +63,7 @@
     <Transition v-bind="dropdownTransition">
       <div
         v-if="shouldShowDropdown"
-        class="absolute right-0 top-full mt-1.5 w-full min-w-90 max-w-130
+        class="absolute right-0 top-full mt-1.5 w-full md:min-w-90 max-w-130
                rounded-xl border shadow-xl z-50 overflow-hidden
                bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
       >

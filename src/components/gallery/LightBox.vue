@@ -34,42 +34,52 @@
             <span class="ml-2 text-[11px] font-mono text-white/35 tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
+          <!-- Position in the timeline -->
+          <span
+            v-if="position"
+            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-white/50"
+            aria-live="polite"
+          >{{ position }}</span>
+
           <!-- Close -->
           <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
             <Icon name="close" class="w-4.5 h-4.5" />
           </button>
         </div>
 
-        <!-- Prev / Next navigation -->
-        <button
-          v-if="hasPrevious"
-          @click.stop="goToPrevious"
-          class="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-lg bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-          aria-label="Previous"
-        >
-          <Icon name="chevronLeft" class="w-5 h-5" />
-        </button>
-
-        <button
-          v-if="hasNext"
-          @click.stop="goToNext"
-          class="absolute right-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10 rounded-lg bg-white/6 hover:bg-white/12 text-white/50 hover:text-white transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
-          aria-label="Next"
-        >
-          <Icon name="chevronRight" class="w-5 h-5" />
-        </button>
-
         <!-- Main layout: image left, info panel right -->
         <div
           class="relative w-full h-full flex flex-col lg:flex-row items-center justify-center
                  gap-4 pt-14 pb-4 px-4
-                 lg:gap-6 lg:pt-14 lg:pb-8 lg:px-16"
-          @click.stop
+                 lg:gap-6 lg:pt-14 lg:pb-8 lg:px-6"
+          @click="handleBackdropClick"
         >
+
+          <!-- Image column: the gesture area plus prev/next, which sit beside the
+               image at every size (in its gutters from lg up). They are siblings of the gesture area, so
+               pointer capture there cannot swallow their clicks. -->
+          <div class="relative flex-1 w-full h-full min-w-0 min-h-0 lg:px-12">
+            <button
+              v-if="hasPrevious"
+              @click.stop="goToPrevious"
+              class="nav-btn-overlay left-1"
+              aria-label="Previous"
+            >
+              <Icon name="chevronLeft" class="w-5 h-5" />
+            </button>
+            <button
+              v-if="hasNext"
+              @click.stop="goToNext"
+              class="nav-btn-overlay right-1"
+              aria-label="Next"
+            >
+              <Icon name="chevronRight" class="w-5 h-5" />
+            </button>
 
           <!-- Image area -->
           <div
-            class="flex-1 h-full flex items-center justify-center overflow-hidden min-w-0 touch-none"
+            class="w-full h-full flex items-center justify-center overflow-hidden touch-none"
+            @click="handleBackdropClick"
             @wheel.prevent="handleWheel"
             @pointerdown="handlePointerDown"
             @pointermove="handlePointerMove"
@@ -107,9 +117,14 @@
             <!-- Error -->
             <p v-if="error" class="text-white/25 text-sm">Could not load image</p>
           </div>
+          </div>
 
           <!-- Info panel -->
-          <div v-if="currentItem" class="w-full lg:w-auto lg:max-w-xs xl:max-w-sm shrink-0 lg:self-center">
+          <div
+            v-if="currentItem"
+            class="w-full max-h-[45%] overflow-y-auto rounded-xl shrink-0
+                   lg:w-auto lg:max-w-xs lg:max-h-full lg:self-center xl:max-w-sm"
+          >
             <ItemSheet :item="currentItem" :collection="collection" />
           </div>
         </div>
@@ -143,6 +158,7 @@ const {
   currentItem,
   hasPrevious,
   hasNext,
+  position,
   imageUrl,
   loading,
   error,

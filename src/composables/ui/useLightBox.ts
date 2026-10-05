@@ -114,9 +114,22 @@ export function useLightbox({ props, emit }: LightboxOptions) {
 
   const close = () => emit('close'); // the isOpen watcher handles cleanup
 
+  // A click on empty space closes the viewer — unless it is the tail end of a
+  // drag, pinch or swipe (the browser still fires `click` after those).
+  let gestureMoved = false;
   const handleBackdropClick = (e: MouseEvent) => {
-    if (e.target === e.currentTarget) close();
+    if (e.target !== e.currentTarget) return;
+    if (gestureMoved) {
+      gestureMoved = false;
+      return;
+    }
+    close();
   };
+
+  /** "3 / 18" — where the open item sits in the order the viewer pages through. */
+  const position = computed(() =>
+    currentIndex.value === -1 ? '' : `${currentIndex.value + 1} / ${props.drawnItems.length}`
+  );
 
   // ── Pointer gestures (mouse, touch, pen): drag to pan when zoomed, pinch to
   // zoom, swipe to page when fitted. Pointer capture keeps a drag alive when the
@@ -126,6 +139,8 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   let drag = { x: 0, y: 0, tx: 0, ty: 0 };
   let pinch: { distance: number; scale: number } | null = null;
   let swipeStart: { x: number; y: number } | null = null;
+  let downAt = { x: 0, y: 0 };
+  const MOVE_SLOP = 8; // px a pointer may wander and still count as a click
 
   const pointerDistance = () => {
     const [a, b] = [...pointers.values()];
@@ -150,6 +165,12 @@ export function useLightbox({ props, emit }: LightboxOptions) {
       /* the pointer is no longer active; the gesture still works without capture */
     }
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.size === 1) {
+      gestureMoved = false;
+      downAt = { x: e.clientX, y: e.clientY };
+    } else {
+      gestureMoved = true;
+    }
 
     if (pointers.size === 2) { // a second finger turns the gesture into a pinch
       pinch = { distance: pointerDistance(), scale: scale.value };
@@ -168,6 +189,7 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   const handlePointerMove = (e: PointerEvent) => {
     if (!pointers.has(e.pointerId)) return;
     pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > MOVE_SLOP) gestureMoved = true;
 
     if (pointers.size === 2 && pinch) {
       setScale(pinchScale(pinch.scale, pinch.distance, pointerDistance()));
@@ -187,6 +209,7 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   const handlePointerUp = (e: PointerEvent) => {
     if (!pointers.delete(e.pointerId)) return;
     if (pointers.size < 2) pinch = null;
+    if (Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) > MOVE_SLOP) gestureMoved = true;
 
     if (swipeStart && pointers.size === 0 && e.type === 'pointerup') {
       const dir = swipeDirection(e.clientX - swipeStart.x, e.clientY - swipeStart.y);
@@ -312,6 +335,7 @@ export function useLightbox({ props, emit }: LightboxOptions) {
     currentItem,
     hasPrevious,
     hasNext,
+    position,
     imageUrl,
     loading,
     error,

@@ -1,6 +1,8 @@
 <!-- components/layout/TopBar.vue -->
 <template>
-  <header class="flex items-center gap-2 h-12 px-4 shrink-0 z-50 transition-colors duration-300
+  <!-- Below md the search drops to its own full-width row; the rest stays on row one. -->
+  <header class="flex flex-wrap items-center gap-2 min-h-12 px-4 py-2 shrink-0 z-50 transition-colors duration-300
+                 md:flex-nowrap md:py-0
                  bg-white border-b border-slate-200
                  dark:bg-slate-950 dark:border-slate-800">
 
@@ -8,8 +10,10 @@
     <button
       v-if="isMobile"
       @click="toggleSidebar()"
-      class="btn-ghost focus-ring lg:hidden p-2 rounded-lg shrink-0"
-      aria-label="Toggle Sidebar"
+      class="btn-ghost focus-ring lg:hidden p-2.5 rounded-lg shrink-0"
+      aria-label="Toggle sidebar"
+      aria-controls="appSidebar"
+      :aria-expanded="sidebarOpen"
     >
       <Icon name="menu" class="w-4.5 h-4.5" />
     </button>
@@ -28,7 +32,7 @@
         v-for="col in collections"
         :key="col.id"
         @click="switchCollection(col.id)"
-        class="focus-ring flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors duration-150"
+        class="focus-ring flex items-center gap-1.5 px-3 py-1.5 max-md:min-h-9 rounded-md text-sm font-medium transition-colors duration-150"
         :class="col.id === activeCollection?.id
           ? 'bg-accent-700 text-white'
           : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
@@ -39,21 +43,24 @@
       </button>
     </nav>
 
-    <div class="flex-1" />
-
-    <GlobalSearch />
+    <GlobalSearch
+      class="order-last basis-full md:order-0 md:basis-auto md:flex-1 md:ml-auto"
+      :class="dropdownOpen ? 'md:max-w-96' : 'md:max-w-72'"
+    />
 
     <!-- View mode toggle  -->
     <button
       @click="toggleViewMode()"
-      class="focus-ring flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors duration-150 shrink-0"
+      class="focus-ring flex items-center gap-1.5 px-2.5 py-1.5 max-md:min-h-9 max-md:ml-auto rounded-md text-sm font-medium transition-colors duration-150 shrink-0"
       :class="viewMode === 'date'
         ? 'bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200'
         : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800'"
       :aria-label="`Switch to ${viewMode === 'group' ? 'date' : 'group'} view`"
+      :title="`Switch to ${viewMode === 'group' ? 'date' : 'group'} view`"
     >
-      <Icon v-if="viewMode === 'group'" name="calendar" class="w-4 h-4" />
-      <Icon v-else name="box" class="w-4 h-4" />
+      <!-- Icon and label both show the current view; the tooltip names the switch. -->
+      <Icon v-if="viewMode === 'group'" name="box" class="w-4 h-4" />
+      <Icon v-else name="calendar" class="w-4 h-4" />
       <span class="hidden lg:inline">
         {{ viewMode === 'group' ? `By ${activeCollection?.groupLabel ?? ''}` : 'By Date' }}
       </span>
@@ -64,7 +71,7 @@
     <!-- Theme toggle -->
     <button
       @click="toggleTheme()"
-      class="btn-ghost focus-ring flex items-center justify-center w-8 h-8 shrink-0"
+      class="btn-ghost focus-ring flex items-center justify-center w-9 h-9 md:w-8 md:h-8 shrink-0"
       :aria-label="theme.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
     >
       <Icon v-if="theme.isDark" name="sun" class="w-4 h-4" />
@@ -79,8 +86,10 @@ import Icon from '../icons/Icon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useActions } from '../../stores/actions.ts';
+import { useSearch } from '../../stores/search.ts';
 
 const { list: collections, activeCollection } = useCollectionsStore();
-const { isMobile, viewMode, theme, toggleSidebar, toggleViewMode, toggleTheme } = useUi();
+const { isMobile, sidebarOpen, viewMode, theme, toggleSidebar, toggleViewMode, toggleTheme } = useUi();
 const { switchCollection } = useActions();
+const { dropdownOpen } = useSearch();
 </script>
