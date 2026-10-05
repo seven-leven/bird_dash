@@ -38,5 +38,5 @@ export const COLLECTIONS: Collection[] = RAW_COLLECTIONS.map((c) => ({
   },
 }));
 
-export const VERSION_FILE = './version.json';
+export const VERSION_FILE = './script/version/version.json';
 export const CHANGELOG_FILE = './CHANGELOG.md';

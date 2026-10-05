@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../test/prop.ts';
+import { assertProperty } from '../test/helpers/prop.ts';
 import { blockingIssues, planWork } from './plan.ts';
 
 // Small id pool so the four sets overlap a lot (that's where the bugs live).

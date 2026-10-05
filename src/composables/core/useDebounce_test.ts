@@ -3,7 +3,7 @@ import { assertEquals } from '@std/assert';
 import { FakeTime } from '@std/testing/time';
 import { nextTick, ref } from 'vue';
 import { useDebouncedRef } from './useDebounce.ts';
-import { runInScope } from '../../../test/fixtures.ts';
+import { runInScope } from '../../../script/test/helpers/fixtures.ts';
 
 Deno.test('debounced ref trails the source by the delay', async () => {
   const time = new FakeTime();

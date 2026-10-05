@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import { createSearchStore } from './search.ts';
-import { runInScope } from '../../test/fixtures.ts';
+import { runInScope } from '../../script/test/helpers/fixtures.ts';
 
 Deno.test('setQuery updates the query and opens the dropdown for non-empty input', () => {
   const { value: s, stop } = runInScope(() => createSearchStore());

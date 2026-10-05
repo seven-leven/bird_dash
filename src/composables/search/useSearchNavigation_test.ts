@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assertEquals } from '@std/assert';
 import { useSearchNavigation } from './useSearchNavigation.ts';
-import { makeCollection, makeItem } from '../../../test/fixtures.ts';
+import { makeCollection, makeItem } from '../../../script/test/helpers/fixtures.ts';
 import type { GlobalSearchCollectionGroup } from '../../types/index.ts';
 
 const birds = makeCollection('birds');

@@ -2,7 +2,7 @@
 /**
  * script/changelog.ts — keep CHANGELOG.md in sync with git history
  *
- *   deno task changelog            insert unlogged commits under "## Unreleased"
+ *   deno task changelog            insert unlogged commits at the top of the newest section
  *   deno task changelog --dry-run  print what would be inserted, change nothing
  *
  * "Unlogged" means: commits made after the last commit that touched
@@ -14,8 +14,6 @@
 
 import { CHANGELOG_FILE } from './collection/registry.ts';
 import { git } from './lib/git.ts';
-
-const UNRELEASED_HEADER = '## Unreleased';
 
 /** Commits since CHANGELOG.md was last modified, oldest first. */
 async function unloggedCommits(): Promise<Array<{ date: string; subject: string }>> {
@@ -36,18 +34,22 @@ async function unloggedCommits(): Promise<Array<{ date: string; subject: string 
   });
 }
 
+/**
+ * Insert `lines` at the top of the newest section (the first `## ` heading).
+ * The site deploys on every merge, so there is no "Unreleased" section: new
+ * work belongs to the current line of work straight away.
+ */
 export function insertEntries(changelog: string, lines: string[]): string {
-  const idx = changelog.indexOf(UNRELEASED_HEADER);
-  if (idx === -1) {
-    // No Unreleased section yet — create one after the first "---" divider.
+  const block = lines.join('\n') + '\n';
+  const heading = changelog.search(/^## /m);
+  if (heading === -1) {
+    // No section yet — put the entries after the first "---" divider.
     const divider = changelog.indexOf('---');
     const at = divider === -1 ? 0 : changelog.indexOf('\n', divider) + 1;
-    const section = `\n${UNRELEASED_HEADER}\n\n${lines.join('\n')}\n`;
-    return changelog.slice(0, at) + section + changelog.slice(at);
+    return changelog.slice(0, at) + '\n' + block + changelog.slice(at);
   }
-  const at = changelog.indexOf('\n', idx) + 1;
-  return changelog.slice(0, at) + '\n' + lines.join('\n') + '\n' +
-    changelog.slice(at, changelog.length).replace(/^\n/, '\n');
+  const at = changelog.indexOf('\n', heading) + 1;
+  return changelog.slice(0, at) + '\n' + block + changelog.slice(at).replace(/^\n/, '');
 }
 
 async function main() {
@@ -70,7 +72,7 @@ async function main() {
 
   const changelog = await Deno.readTextFile(CHANGELOG_FILE);
   await Deno.writeTextFile(CHANGELOG_FILE, insertEntries(changelog, lines));
-  console.log(`[changelog] inserted under "${UNRELEASED_HEADER}" — review, edit, and commit`);
+  console.log('[changelog] inserted at the top of the newest section — review, edit, and commit');
 }
 
 if (import.meta.main) {

@@ -2,7 +2,7 @@
 import { assert, assertEquals } from '@std/assert';
 import { FakeTime } from '@std/testing/time';
 import { flashItem } from './flashItem.ts';
-import { withDom } from '../../test/dom.ts';
+import { withDom } from '../../script/test/helpers/dom.ts';
 
 Deno.test('flashItem scrolls the tile into view and rings it, then clears the ring', () =>
   withDom(async () => {

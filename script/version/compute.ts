@@ -4,7 +4,7 @@
  *
  * The version is derived, so it can never drift and needs no bump commit:
  *
- *   0.9.161   major.minor  from version.json (edited by hand when a new line of
+ *   0.9.161   major.minor  from version.json, next to this file (edited by hand when a new line of
  *                          work starts, e.g. 0.9 -> 0.10)
  *             patch        the number of commits in this checkout's history
  *                          (`git rev-list --count HEAD`). On main that includes merge

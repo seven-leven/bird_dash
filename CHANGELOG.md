@@ -2,16 +2,47 @@
 
 How the version number is built is explained in the README ("Versioning"); `deno task version`
 prints it. To log new work here, run `deno task changelog` — it inserts every commit made since this
-file was last touched under _Unreleased_, ready to edit and commit.
+file was last touched at the top of the newest section, ready to edit and commit.
 
-Headings such as **v0.9.0** name a _line of work_ (the `major.minor` in `version.json`), not a
-release: the patch number in the running site (e.g. `0.9.161`) counts commits, so it is never `.0`.
-Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the drawing count.
+The site deploys on every merge to `main`, so there is no "unreleased" work: anything listed here is
+live.
+
+Headings such as **v0.9.0** name a _line of work_ (the `major.minor` in
+`script/version/version.json`), not a release: the patch number in the running site (e.g. `0.9.161`)
+counts commits, so it is never `.0`. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w`
+was the drawing count.
 
 ---
 
-## v0.9.0 (Stores, Tests & Accessibility)
+## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-05 | repo layout: `TODO.md` moved to `docs/`, `version.json` to `script/version/` (next to
+  the script that reads it), and the shared test helpers from `test/` to `script/test/helpers/`; the
+  project root now holds only the files tools require there
+- 2026-10-05 | design guide: `docs/DESIGN.md` (colour roles with measured contrast, type scale,
+  wording, spacing, states, motion, icon rules, a checklist for UI changes) and
+  `docs/design-guide.png`, drawn from the real tokens and icons by `deno task design`; the site now
+  honours the "reduce motion" system setting
+- 2026-10-05 | icons: collections get line icons (bird, shark, shell) in place of emoji, named by an
+  optional `icon` field in `collections.json`; the no-results icon no longer duplicates zoom-out and
+  the group view uses a hierarchy icon; placeholders are redrawn from the collection icons by
+  `deno task placeholders`
+- 2026-10-05 | one visual system: design tokens in `main.css` (two corner radii, one small label
+  size, two animation speeds, three text levels on dark surfaces); collection tabs, the view switch
+  and sidebar sections share one "current" look driven by ARIA state; the view toggle shows both
+  views; the lightbox uses the app's focus ring; tile and info panel agree on name order (Dhivehi,
+  English, scientific); counts are worded in one place ("15 of 204 drawn")
+- 2026-10-05 | phones: the header no longer pushes the view and theme buttons off-screen (search
+  takes its own row below 768px); two-column grid; the English name is always visible on touch
+  screens; the lightbox info panel scrolls and its arrows sit beside the image
+- 2026-10-05 | fixes: clicking empty space in the lightbox now closes it (a drag or swipe does not);
+  undrawn placeholders are no longer buttons that do nothing; switching to a collection that still
+  has to load scrolls back to the top; the sidebar is out of the tab order while closed on small
+  screens and Escape closes it
+- 2026-10-05 | architecture: the shape of the `public/` files is typed once (`src/types/data.ts`)
+  and shared by the build scripts, the loader and the contract test; raw-to-item normalisation and
+  the cross-store actions are extracted and unit-tested; the ui store no longer exposes DOM refs;
+  tests from 149 to 166
 - 2026-09-30 | version footer simplified: one implementation (`script/version/compute.ts`) shared by
   `deno task version`, the build summaries and Vite; the footer now shows the version, the drawing
   count and the commit (`v0.8.157 · 18 drawings · 4f0f400`) instead of the zero-padded

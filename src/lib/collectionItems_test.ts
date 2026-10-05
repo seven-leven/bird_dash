@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals, assertThrows } from '@std/assert';
 import { resolveUrl, toCollectionConfig, toCollectionItems } from './collectionItems.ts';
-import { makeItem } from '../../test/fixtures.ts';
+import { makeItem } from '../../script/test/helpers/fixtures.ts';
 
 const col = { id: 'birds', imageBase: '/thumb/birds/' };
 
