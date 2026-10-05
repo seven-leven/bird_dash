@@ -16,6 +16,8 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-05 | dark-theme placeholders: undrawn items show a slate-on-slate version of the
+  collection icon in the dark theme instead of a bright white square
 - 2026-10-05 | repo layout: `TODO.md` moved to `docs/`, `version.json` to `script/version/` (next to
   the script that reads it), and the shared test helpers from `test/` to `script/test/helpers/`; the
   project root now holds only the files tools require there

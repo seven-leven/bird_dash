@@ -52,7 +52,7 @@ public/                 Static assets, served as-is
   lists/<id>.json       Item data per collection, grouped by taxonomy
   full/<id>/            Full-resolution WebP illustrations
   thumb/<id>/           Grid thumbnails (generated)
-  placeholders/<id>.webp  Silhouette shown for undrawn items
+  placeholders/<id>.webp  Shown for undrawn items (<id>-dark.webp in the dark theme)
 src/
   components/
     layout/             Chrome, TopBar, SideNav — the app shell
@@ -138,7 +138,8 @@ rendered specially; any other string fields appear in the info panel.
 
 1. Add an entry to `public/collections.json`.
 2. Create `public/lists/<id>.json`. Add an icon for it to `icons.ts`, name it in the entry, and run
-   `deno task placeholders` to draw `public/placeholders/<id>.webp` from it.
+   `deno task placeholders` to draw its light and dark placeholders (`public/placeholders/<id>.webp`
+   and `<id>-dark.webp`) from it.
 3. Add source art under `raw_png/<id>/` and run `deno task build:assets`.
 
 ## Design

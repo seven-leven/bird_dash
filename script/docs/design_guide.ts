@@ -241,7 +241,7 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
     heading(
       y,
       '5 · Icons and placeholders',
-      '24px grid, 2px stroke, round ends, no fills. Placeholders are the same icons in #a1a1a1 on white.',
+      '24px grid, 2px stroke, round ends, no fills. Placeholders are the same icons, drawn once per theme.',
     ),
   );
   const names = Object.keys(ICONS) as (keyof typeof ICONS)[];
@@ -256,16 +256,20 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
 
   const height = y + 60 + Math.ceil(names.length / 9) * 92 + 40;
   const placeholders = await Promise.all(
-    ['birds', 'sharks', 'shells'].map(async (id, i) => ({
-      input: await sharp(`./public/placeholders/${id}.webp`).resize(128).png().toBuffer(),
-      left: 950 + i * 140,
-      top: y + 52,
-    })),
+    ['', '-dark'].flatMap((suffix, row) =>
+      ['birds', 'sharks', 'shells'].map(async (id, i) => ({
+        input: await sharp(`./public/placeholders/${id}${suffix}.webp`).resize(84).png().toBuffer(),
+        left: 1010 + i * 96,
+        top: y + 50 + row * 96,
+      }))
+    ),
   );
   parts.push(
     ...placeholders.map((p) =>
-      rect(p.left - 1, p.top - 1, 130, 130, 'none', 0, `stroke="${SLATE['200']}"`)
+      rect(p.left - 1, p.top - 1, 86, 86, 'none', 0, `stroke="${SLATE['200']}"`)
     ),
+    text(1000, y + 97, 'light', 12, MUTED, 400, 'text-anchor="end"'),
+    text(1000, y + 193, 'dark', 12, MUTED, 400, 'text-anchor="end"'),
   );
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${height}">` +
@@ -309,6 +313,7 @@ if (import.meta.main) {
     ['white 70% on black', whiteOnBlack(0.7), '#000000'],
     ['white 50% on black', whiteOnBlack(0.5), '#000000'],
     ['placeholder #a1a1a1 on white', '#a1a1a1', '#ffffff'],
+    ['dark placeholder slate-600 on slate-900', SLATE['600'], SLATE['900']],
   ];
   for (const [label, a, b] of pairs) console.log(`  ${contrast(a, b).toFixed(1)}:1  ${label}`);
 }

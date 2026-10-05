@@ -149,9 +149,16 @@ Collections name their icon in `public/collections.json` (`"icon": "bird"`).
 
 ## 8. Placeholders
 
-An item that is not drawn yet shows its collection's icon in `#a1a1a1` on white, 512 × 512.
-`deno task placeholders` draws them from the icon set, so they never need editing by hand. They are
-deliberately faint: a placeholder should recede next to a real drawing.
+An item that is not drawn yet shows its collection's icon, 512 × 512, drawn once per theme:
+
+| Theme | File             | Background            | Icon                  |
+| ----- | ---------------- | --------------------- | --------------------- |
+| Light | `<id>.webp`      | white                 | `#a1a1a1`             |
+| Dark  | `<id>-dark.webp` | `slate-900` (#0f172a) | `slate-600` (#475569) |
+
+`deno task placeholders` draws both from the icon set, so they never need editing by hand, and the
+contract test fails if either is missing. They are deliberately faint (about 2.5:1 against their
+background in both themes): a placeholder should recede next to a real drawing.
 
 ## 9. Layout
 

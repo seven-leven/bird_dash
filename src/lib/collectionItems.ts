@@ -43,6 +43,7 @@ export function toCollectionItems(
 ): CollectionItem[] {
   const items: CollectionItem[] = [];
   const placeholder = `${base}placeholders/${col.id}.webp`;
+  const placeholderDark = `${base}placeholders/${col.id}-dark.webp`;
 
   let counter = 1;
   for (const [groupName, list] of Object.entries(raw)) {
@@ -70,6 +71,7 @@ export function toCollectionItems(
         group: groupName,
         imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : placeholder,
         placeholderUrl: placeholder,
+        placeholderDarkUrl: placeholderDark,
         isDrawn: hasImg,
         sortKey: Number.parseInt(itemId, 10) || 0,
         drawnTime: hasImg ? (new Date(String(r.drawn)).getTime() || 0) : 0,
@@ -80,4 +82,14 @@ export function toCollectionItems(
     }
   }
   return items;
+}
+
+/**
+ * The image to show in a grid tile or a result row: the drawing, or — for an
+ * item that is not drawn yet, or whose image failed — the placeholder that
+ * matches the theme.
+ */
+export function tileImage(item: CollectionItem, dark: boolean, failed = false): string {
+  if (item.isDrawn && !failed) return item.imageUrl;
+  return dark ? item.placeholderDarkUrl : item.placeholderUrl;
 }

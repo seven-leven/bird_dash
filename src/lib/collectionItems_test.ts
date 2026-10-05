@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals, assertThrows } from '@std/assert';
-import { resolveUrl, toCollectionConfig, toCollectionItems } from './collectionItems.ts';
+import { resolveUrl, tileImage, toCollectionConfig, toCollectionItems } from './collectionItems.ts';
 import { makeItem } from '../../script/test/helpers/fixtures.ts';
 
 const col = { id: 'birds', imageBase: '/thumb/birds/' };
@@ -27,6 +27,7 @@ Deno.test('toCollectionItems: no date, or an empty one, shows the placeholder', 
     assertEquals(item.drawnTime, 0);
     assertEquals(item.imageUrl, '/base/placeholders/birds.webp');
     assertEquals(item.imageUrl, item.placeholderUrl);
+    assertEquals(item.placeholderDarkUrl, '/base/placeholders/birds-dark.webp');
   }
 });
 
@@ -85,4 +86,20 @@ Deno.test('resolveUrl: fills every placeholder and encodes the values', () => {
     resolveUrl('https://x.test/{{common}}/{{sci}}?again={{common}}', item),
     'https://x.test/Black%20%26%20White%20Tern/A%20b?again=Black%20%26%20White%20Tern',
   );
+});
+
+Deno.test('tileImage: a drawing is the same in both themes; a placeholder follows the theme', () => {
+  const drawn = makeItem({ drawnTime: 1, imageUrl: '/thumb/x/001.webp' });
+  assertEquals(tileImage(drawn, false), '/thumb/x/001.webp');
+  assertEquals(tileImage(drawn, true), '/thumb/x/001.webp');
+
+  const undrawn = makeItem({ isDrawn: false });
+  assertEquals(tileImage(undrawn, false), undrawn.placeholderUrl);
+  assertEquals(tileImage(undrawn, true), undrawn.placeholderDarkUrl);
+});
+
+Deno.test('tileImage: a drawing that failed to load falls back to the themed placeholder', () => {
+  const drawn = makeItem({ drawnTime: 1 });
+  assertEquals(tileImage(drawn, false, true), drawn.placeholderUrl);
+  assertEquals(tileImage(drawn, true, true), drawn.placeholderDarkUrl);
 });
