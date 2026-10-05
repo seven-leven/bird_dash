@@ -92,7 +92,7 @@ const { switchCollection } = useActions();
 const { dropdownOpen } = useSearch();
 
 const views = computed(() => [
-  { mode: 'group' as const, icon: 'box' as const, label: activeCollection.value?.groupLabel ?? 'Group' },
+  { mode: 'group' as const, icon: 'taxonomy' as const, label: activeCollection.value?.groupLabel ?? 'Group' },
   { mode: 'date' as const, icon: 'calendar' as const, label: 'Date' },
 ]);
 </script>
