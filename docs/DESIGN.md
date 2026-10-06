@@ -17,8 +17,14 @@ choice is unclear, pick the option that draws less attention to the interface.
 
 ## 1. Colour
 
-Two ramps and nothing else: **slate** for every neutral, and **accent** (teal) for emphasis. Use the
-Tailwind names (`slate-500`, `accent-700`), never a hex value in a component.
+Two ramps and nothing else: **slate** for every neutral, and **accent** for emphasis. Use the names
+(`slate-500`, `accent-700`), never a hex value or a specific hue (`teal-500`) in a component.
+
+**Each collection has its own accent,** so the colour also tells you where you are: birds are teal,
+sharks blue, shells rose. A collection names its hue with `accent` in `public/collections.json`; the
+menu of allowed hues (teal, emerald, blue, indigo, violet, rose) is in `main.css`. Every hue on the
+menu passes the contrast checks below; yellow, amber and lime are left out because white text on
+them does not.
 
 | Role                                  | Light               | Dark                |
 | ------------------------------------- | ------------------- | ------------------- |
@@ -35,8 +41,9 @@ Tailwind names (`slate-500`, `accent-700`), never a hex value in a component.
 
 Rules:
 
-- **Teal is rare.** It marks keyboard focus, the current item, progress, a search match and the one
-  primary button. If teal appears in more than a few places on a screen, something is wrong.
+- **The accent is rare.** It marks keyboard focus, the current item, progress, a search match and
+  the one primary button. If the accent appears in more than a few places on a screen, something is
+  wrong.
 - **Never use colour alone to say something.** The current tab has a fill and bolder text as well as
   a teal marker, so it still reads for someone who cannot tell teal from grey.
 - **Check contrast for any new text colour.** Body text needs at least 4.5:1 against its background

@@ -92,6 +92,7 @@ scripts, the app's loader and the data contract test.
   "label": "Birds",
   "emoji": "🐦",
   "icon": "bird",
+  "accent": "teal",
   "groupLabel": "Family",
   "itemLabel": "bird",
   "links": [
@@ -105,8 +106,10 @@ scripts, the app's loader and the data contract test.
 ```
 
 `icon` names a line icon in [`src/components/icons/icons.ts`](src/components/icons/icons.ts), where
-every SVG in the app lives; without one the emoji is shown instead. Link URLs support `{{common}}`
-(common name) and `{{sci}}` (scientific name) placeholders.
+every SVG in the app lives; without one the emoji is shown instead. `accent` picks the collection's
+accent colour from the palettes in [`src/assets/main.css`](src/assets/main.css) (teal, emerald,
+blue, indigo, violet, rose; default teal). Link URLs support `{{common}}` (common name) and
+`{{sci}}` (scientific name) placeholders.
 
 **`public/lists/<id>.json`** — items grouped by taxonomy. An item is considered _drawn_ once it has
 a `drawn` date; without one it renders as the placeholder silhouette. `dhiv` and `dhiv_script` are

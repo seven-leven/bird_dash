@@ -131,7 +131,11 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
   // ── Colour ──
   y += 100;
   parts.push(
-    heading(y, '1 · Colour', 'One neutral ramp (slate) and one accent (teal). Nothing else.'),
+    heading(
+      y,
+      '1 · Colour',
+      'One neutral ramp (slate) and one accent, chosen per collection (teal shown). Nothing else.',
+    ),
   );
   parts.push(ramp(y + 48, 'slate', SLATE));
   parts.push(ramp(y + 138, 'accent', TEAL));

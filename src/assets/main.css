@@ -32,21 +32,119 @@
 }
 
 /*
-  Single app-wide accent (active states, focus rings, progress, search
-  highlight, scroll-to flash). Aliased to teal so it swaps in one place.
+  The accent (current marker, focus ring, progress, search highlight, primary
+  button). Components only ever say `accent-500`; which hue that is comes from
+  the open collection: `accent` in public/collections.json names one of the
+  palettes below, and App.vue sets it as `data-accent` on <html>.
+
+  This is the menu of allowed hues. Each has been checked for contrast (white
+  text on the 700 shade is at least 4.5:1); yellow, amber and lime are left out
+  because they fail. To offer another hue, add a block here.
 */
 @theme inline {
-  --color-accent-50: var(--color-teal-50);
-  --color-accent-100: var(--color-teal-100);
-  --color-accent-200: var(--color-teal-200);
-  --color-accent-300: var(--color-teal-300);
-  --color-accent-400: var(--color-teal-400);
-  --color-accent-500: var(--color-teal-500);
-  --color-accent-600: var(--color-teal-600);
-  --color-accent-700: var(--color-teal-700);
-  --color-accent-800: var(--color-teal-800);
-  --color-accent-900: var(--color-teal-900);
-  --color-accent-950: var(--color-teal-950);
+  --color-accent-50: var(--accent-50);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
+  --color-accent-900: var(--accent-900);
+  --color-accent-950: var(--accent-950);
+}
+
+:root {
+  --accent-50: var(--color-teal-50);
+  --accent-100: var(--color-teal-100);
+  --accent-200: var(--color-teal-200);
+  --accent-300: var(--color-teal-300);
+  --accent-400: var(--color-teal-400);
+  --accent-500: var(--color-teal-500);
+  --accent-600: var(--color-teal-600);
+  --accent-700: var(--color-teal-700);
+  --accent-800: var(--color-teal-800);
+  --accent-900: var(--color-teal-900);
+  --accent-950: var(--color-teal-950);
+}
+[data-accent='teal'] {
+  --accent-50: var(--color-teal-50);
+  --accent-100: var(--color-teal-100);
+  --accent-200: var(--color-teal-200);
+  --accent-300: var(--color-teal-300);
+  --accent-400: var(--color-teal-400);
+  --accent-500: var(--color-teal-500);
+  --accent-600: var(--color-teal-600);
+  --accent-700: var(--color-teal-700);
+  --accent-800: var(--color-teal-800);
+  --accent-900: var(--color-teal-900);
+  --accent-950: var(--color-teal-950);
+}
+[data-accent='emerald'] {
+  --accent-50: var(--color-emerald-50);
+  --accent-100: var(--color-emerald-100);
+  --accent-200: var(--color-emerald-200);
+  --accent-300: var(--color-emerald-300);
+  --accent-400: var(--color-emerald-400);
+  --accent-500: var(--color-emerald-500);
+  --accent-600: var(--color-emerald-600);
+  --accent-700: var(--color-emerald-700);
+  --accent-800: var(--color-emerald-800);
+  --accent-900: var(--color-emerald-900);
+  --accent-950: var(--color-emerald-950);
+}
+[data-accent='blue'] {
+  --accent-50: var(--color-blue-50);
+  --accent-100: var(--color-blue-100);
+  --accent-200: var(--color-blue-200);
+  --accent-300: var(--color-blue-300);
+  --accent-400: var(--color-blue-400);
+  --accent-500: var(--color-blue-500);
+  --accent-600: var(--color-blue-600);
+  --accent-700: var(--color-blue-700);
+  --accent-800: var(--color-blue-800);
+  --accent-900: var(--color-blue-900);
+  --accent-950: var(--color-blue-950);
+}
+[data-accent='indigo'] {
+  --accent-50: var(--color-indigo-50);
+  --accent-100: var(--color-indigo-100);
+  --accent-200: var(--color-indigo-200);
+  --accent-300: var(--color-indigo-300);
+  --accent-400: var(--color-indigo-400);
+  --accent-500: var(--color-indigo-500);
+  --accent-600: var(--color-indigo-600);
+  --accent-700: var(--color-indigo-700);
+  --accent-800: var(--color-indigo-800);
+  --accent-900: var(--color-indigo-900);
+  --accent-950: var(--color-indigo-950);
+}
+[data-accent='violet'] {
+  --accent-50: var(--color-violet-50);
+  --accent-100: var(--color-violet-100);
+  --accent-200: var(--color-violet-200);
+  --accent-300: var(--color-violet-300);
+  --accent-400: var(--color-violet-400);
+  --accent-500: var(--color-violet-500);
+  --accent-600: var(--color-violet-600);
+  --accent-700: var(--color-violet-700);
+  --accent-800: var(--color-violet-800);
+  --accent-900: var(--color-violet-900);
+  --accent-950: var(--color-violet-950);
+}
+[data-accent='rose'] {
+  --accent-50: var(--color-rose-50);
+  --accent-100: var(--color-rose-100);
+  --accent-200: var(--color-rose-200);
+  --accent-300: var(--color-rose-300);
+  --accent-400: var(--color-rose-400);
+  --accent-500: var(--color-rose-500);
+  --accent-600: var(--color-rose-600);
+  --accent-700: var(--color-rose-700);
+  --accent-800: var(--color-rose-800);
+  --accent-900: var(--color-rose-900);
+  --accent-950: var(--color-rose-950);
 }
 
 @utility duration-fast {
