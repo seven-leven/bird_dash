@@ -13,9 +13,11 @@ export interface IconDef {
 
 export const ICONS = {
   // ── Collections — named by `icon` in public/collections.json ──
+  // The logo's bird (logo.ts), redrawn at the 24px grid so the tab, the
+  // placeholders and the logo show the same animal.
   bird: {
     body:
-      '<path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="m20 7 2 .5-2 .5"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 18a6 6 0 0 0 3.84-10.61"/>',
+      '<path d="M22.63 4.74 19.02 3.54A3.35 3.35 0 0 0 12.83 5.94C9.99 8.44 5.77 12.48 1.3 17.04L6.89 16.69C11.28 17.9 17.3 16.44 19.19 10.76 19.79 8.95 19.79 7.58 19.45 6.2Z"/><path d="M15.75 9.04c-.69 3.27-3.61 5.5-8.6 6.02"/><path d="m11.97 17.21-.52 3.35"/><path d="m14.89 16.78.34 3.78"/><path d="M16.95 5.17h.01"/>',
   },
   shark: {
     body:
@@ -81,6 +83,36 @@ export const ICONS = {
   },
   moon: { body: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>' },
 
+  // ── Labels — a small icon before a label or a figure ──
+  tag: {
+    body:
+      '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><path d="M7.5 7.5h.01"/>',
+  },
+  image: {
+    body:
+      '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+  },
+  commit: {
+    body:
+      '<circle cx="12" cy="12" r="3"/><line x1="3" y1="12" x2="9" y2="12"/><line x1="15" y1="12" x2="21" y2="12"/>',
+  },
+  layers: {
+    body:
+      '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+  },
+  pencil: {
+    body:
+      '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+  },
+  languages: {
+    body:
+      '<path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/>',
+  },
+  book: {
+    body:
+      '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>',
+  },
+
   // ── Keyboard — key hints under the search results ──
   arrowsUpDown: {
     body:
@@ -88,6 +120,10 @@ export const ICONS = {
   },
   enter: {
     body: '<polyline points="9 10 4 15 9 20"/><path d="M20 4v7a4 4 0 0 1-4 4H4"/>',
+  },
+
+  command: {
+    body: '<path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/>',
   },
 
   // ── Brand — third-party marks, shown exactly as their owners publish them ──
@@ -118,6 +154,7 @@ export const ICON_GROUPS: { label: string; icons: IconName[] }[] = [
   { label: 'Navigation', icons: ['menu', 'chevronLeft', 'chevronRight', 'close', 'externalLink'] },
   { label: 'Viewer', icons: ['zoomIn', 'zoomOut', 'reset'] },
   { label: 'Theme', icons: ['sun', 'moon'] },
-  { label: 'Keyboard', icons: ['arrowsUpDown', 'enter'] },
+  { label: 'Labels', icons: ['tag', 'image', 'commit', 'layers', 'pencil', 'languages', 'book'] },
+  { label: 'Keyboard', icons: ['arrowsUpDown', 'enter', 'command'] },
   { label: 'Brand', icons: ['github'] },
 ];

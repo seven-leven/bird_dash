@@ -41,7 +41,10 @@
         class="absolute inset-y-0 right-0 pr-2 hidden sm:flex items-center pointer-events-none"
         aria-hidden="true"
       >
-        <kbd class="kbd-hint">{{ shortcutLabel }}</kbd>
+        <kbd class="kbd-hint inline-flex items-center gap-0.5">
+          <Icon v-if="isMac" name="command" class="w-2.5 h-2.5" />
+          <template v-else>Ctrl </template>K
+        </kbd>
       </div>
 
       <!-- Clear Button -->
@@ -160,7 +163,6 @@ useClickOutside(() => searchWrapperRef.value, closeDropdown);
 // KEYBOARD SHORTCUT (Ctrl/Cmd + K)
 // ---------------------------------------------------------------------------
 const isMac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
-const shortcutLabel = isMac ? '⌘K' : 'Ctrl K';
 
 function onGlobalKeydown(e: KeyboardEvent) {
   if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {

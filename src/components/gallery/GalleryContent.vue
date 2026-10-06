@@ -51,7 +51,8 @@
                  text-slate-800 border-slate-200 dark:text-slate-100 dark:border-slate-800"
         >
           <span>{{ groupName }}</span>
-          <span class="text-xs font-normal tabular-nums text-muted">
+          <span class="with-icon text-xs font-normal tabular-nums text-muted">
+            <Icon name="pencil" aria-hidden="true" />
             {{ sectionCount(String(groupName), items.length) }}
           </span>
         </h2>
@@ -76,11 +77,17 @@
           class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
                  border-slate-100 text-muted dark:border-slate-800/50"
         >
-          <p>
-            Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}
-            &middot; {{ drawnLabel }} &middot;
-            <span class="font-mono" title="The commit this site was built from">{{ appCommit }}</span>
-            &middot;
+          <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
+            <span>Wildlife Illustrated &copy; {{ new Date().getFullYear() }}</span>
+            <span class="with-icon" title="Version">
+              <Icon name="tag" aria-hidden="true" />v{{ appVersion }}
+            </span>
+            <span class="with-icon">
+              <Icon name="image" aria-hidden="true" />{{ drawnLabel }}
+            </span>
+            <span class="with-icon font-mono" title="The commit this site was built from">
+              <Icon name="commit" aria-hidden="true" />{{ appCommit }}
+            </span>
             <a
               href="https://github.com/seven-leven/bird_dash"
               target="_blank"

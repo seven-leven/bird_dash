@@ -164,11 +164,11 @@ the "reduce motion" system setting, which turns transitions and smooth scrolling
 
 The logo is a bird perched on the open edge of an unfinished frame: a page corner with one side
 missing, and the bird looking out of it. It is drawn with the same round 2px stroke as the icons, so
-the logo and the interface share one hand, but the bird is the logo's own — an outline of a perching
-bird (back, tail, breast, wing, legs), not the simpler `bird` icon used for the collection. The tile
-is the same drawing reversed onto a solid square, not a second design. The source is
-[`src/components/icons/logo.ts`](../src/components/icons/logo.ts); `<LogoMark />` draws it, and
-`deno task design` writes the files in [`docs/logo/`](logo/).
+the logo and the interface share one hand. The bird is an outline of a perching bird (back, tail,
+breast, wing, legs); the `bird` icon used for the collection tab and the placeholders is the same
+bird redrawn at the 24px icon grid. The tile is the same drawing reversed onto a solid square, not a
+second design. The source is [`src/components/icons/logo.ts`](../src/components/icons/logo.ts);
+`<LogoMark />` draws it, and `deno task design` writes the files in [`docs/logo/`](logo/).
 
 | Version               | Use it for                                             | File                              |
 | --------------------- | ------------------------------------------------------ | --------------------------------- |
@@ -201,8 +201,15 @@ by `<Icon name="…" />`. The only other SVG in the project is the logo, in the 
 The registry is grouped by purpose, and the file, the sheet and this guide all follow the same
 order: **Collections** (bird, shark, shell), **Views** (taxonomy, calendar), **Search** (search,
 noResults), **Navigation** (menu, chevrons, close, externalLink), **Viewer** (zoomIn, zoomOut,
-reset), **Theme** (sun, moon), **Keyboard** (arrowsUpDown, enter) and **Brand** (github). A new icon
-goes into one of the groups in `ICON_GROUPS`; a test fails if it is left out.
+reset), **Theme** (sun, moon), **Labels** (tag, image, commit, layers, pencil, languages, book),
+**Keyboard** (arrowsUpDown, enter, command) and **Brand** (github). A new icon goes into one of the
+groups in `ICON_GROUPS`; a test fails if it is left out.
+
+**Label icons** go before a label or a figure, at 12px, in the same colour as the text (the
+`.with-icon` class). Each has one meaning, used everywhere: `tag` is the version, `image` a count of
+drawings, `commit` the build's commit, `layers` all collections together, `pencil` the illustrator
+or "drawn", `languages` a name in another language, `book` further reading. They are decoration next
+to text, never a replacement for it, so they are hidden from screen readers.
 
 **Use an icon, not a Unicode symbol,** for arrows, the return key, ticks and crosses (↑ ↓ ↵ ✓ ✕).
 Those characters come from whatever font the visitor has, so their size, weight and even shape

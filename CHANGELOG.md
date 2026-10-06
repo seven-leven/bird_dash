@@ -16,6 +16,10 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-06 | icons: the collection bird and its placeholders now show the logo's bird; small label
+  icons in the footer (version, drawings, commit), the viewer (Dhivehi name, illustrator's note,
+  learn more), the sidebar total and the section counts; the retry button and the Mac search
+  shortcut get icons too
 - 2026-10-06 | logo: a mark (a bird perched on the open edge of an unfinished frame, in the icon
   stroke), a solid tile for small sizes, and lockups with the wordmark; the mark is in the header,
   the files are in `docs/logo/`, and the rules are in the design guide; the footer link shows
