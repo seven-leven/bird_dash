@@ -85,12 +85,13 @@
           class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800"
         >
           <SearchResultsList
-            :results="globalResults"
+            :results="visibleResults"
             :focused-index="focusedIndex"
             :get-flat-index="getFlatIndex"
             :highlight="highlight"
             @mouseenter="focusedIndex = $event"
             @select="onSelectResult"
+            @expand="expandGroup"
           />
         </div>
 
@@ -102,13 +103,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { GlobalSearchResult } from '../../types/index.ts';
 
 // Composables
 import { useSearchNavigation } from '../../composables/search/useSearchNavigation.ts';
 import { useSearchHighlight } from '../../composables/search/useSearchHighlight.ts';
 import { useClickOutside } from '../../composables/search/useClickOutside.ts';
+import { COLLAPSED_SIZE, collapseGroups } from '../../lib/collapseGroups.ts';
 
 // Stores
 import { useSearch } from '../../stores/search.ts';
@@ -138,8 +140,17 @@ const searchWrapperRef = ref<HTMLElement | null>(null);
 // ---------------------------------------------------------------------------
 // COMPOSABLES
 // ---------------------------------------------------------------------------
+// Long groups start collapsed ("Show 32 more in Birds") so the next collection
+// is not buried; a new query collapses them again. The arrow keys move through
+// what is listed, so navigation works on the visible groups.
+const expandedGroups = ref(new Set<string>());
+const visibleResults = computed(() => collapseGroups(globalResults.value, expandedGroups.value));
+watch(query, () => {
+  if (expandedGroups.value.size) expandedGroups.value = new Set();
+});
+
 const { focusedIndex, getFlatIndex, moveFocus, resetFocus, getFocusedResult } =
-  useSearchNavigation(() => globalResults.value, () => searchWrapperRef.value);
+  useSearchNavigation(() => visibleResults.value, () => searchWrapperRef.value);
 
 const { highlightText } = useSearchHighlight();
 const highlight = (text: string) => highlightText(text, query.value);
@@ -210,6 +221,18 @@ function clearSearch() {
   setQuery('');
   setDropdown(false);
   searchInputRef.value?.focus();
+}
+
+// Reveal the rest of a group, put the keyboard cursor on the first newly shown
+// row, and hand focus back to the input (the "show more" button is gone).
+async function expandGroup(collectionId: string) {
+  expandedGroups.value = new Set([...expandedGroups.value, collectionId]);
+  focusedIndex.value = getFlatIndex(collectionId, COLLAPSED_SIZE);
+  searchInputRef.value?.focus();
+  await nextTick();
+  searchWrapperRef.value
+    ?.querySelector(`[data-result-idx="${focusedIndex.value}"]`)
+    ?.scrollIntoView({ block: 'nearest' });
 }
 
 function selectFocused() {
