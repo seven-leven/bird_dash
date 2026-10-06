@@ -15,8 +15,26 @@
 import { CHANGELOG_FILE } from './collection/registry.ts';
 import { git } from './lib/git.ts';
 
+export interface LoggedCommit {
+  date: string;
+  subject: string;
+}
+
+/** Parse `git log --format=%ad|%s` output. A subject may itself contain `|`. */
+export function parseLog(raw: string): LoggedCommit[] {
+  if (!raw.trim()) return [];
+  return raw.split('\n').map((line) => {
+    const [date, ...rest] = line.split('|');
+    return { date, subject: rest.join('|') };
+  });
+}
+
+/** One changelog line per commit, in the file's `- date | subject` form. */
+export const toLines = (commits: LoggedCommit[]): string[] =>
+  commits.map((c) => `- ${c.date} | ${c.subject}`);
+
 /** Commits since CHANGELOG.md was last modified, oldest first. */
-async function unloggedCommits(): Promise<Array<{ date: string; subject: string }>> {
+export async function unloggedCommits(): Promise<LoggedCommit[]> {
   const lastTouch = await git('log', '-1', '--format=%H', '--', CHANGELOG_FILE);
   const range = lastTouch ? `${lastTouch}..HEAD` : 'HEAD';
   const raw = await git(
@@ -27,11 +45,7 @@ async function unloggedCommits(): Promise<Array<{ date: string; subject: string 
     '--date=short',
     range,
   );
-  if (!raw) return [];
-  return raw.split('\n').map((line) => {
-    const [date, ...rest] = line.split('|');
-    return { date, subject: rest.join('|') };
-  });
+  return parseLog(raw);
 }
 
 /**
@@ -61,7 +75,7 @@ async function main() {
     return;
   }
 
-  const lines = commits.map((c) => `- ${c.date} | ${c.subject}`);
+  const lines = toLines(commits);
   console.log(`[changelog] ${commits.length} unlogged commit(s):`);
   for (const line of lines) console.log(`  ${line}`);
 

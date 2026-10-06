@@ -80,9 +80,10 @@ actions. `useHashRoute` is the single owner of URL ⇄ state sync (`#<collection
 
 ## Data Model
 
-The app is data-driven — content lives entirely in `public/`, no code changes needed. The shape of
-these files is typed once, in [`src/types/data.ts`](src/types/data.ts), and shared by the build
-scripts, the app's loader and the data contract test.
+The app is data-driven — content lives entirely in `public/`, no code changes needed. The quick
+version is below; [`docs/DATA.md`](docs/DATA.md) is the full reference. The shape of these files is
+typed once, in [`src/types/data.ts`](src/types/data.ts), and shared by the build scripts, the app's
+loader and the data contract test.
 
 **`public/collections.json`** — one entry per collection:
 
@@ -145,12 +146,17 @@ rendered specially; any other string fields appear in the info panel.
    and `<id>-dark.webp`) from it.
 3. Add source art under `raw_png/<id>/` and run `deno task build:assets`.
 
-## Design
+## Documentation
 
-[`docs/DESIGN.md`](docs/DESIGN.md) is the design guide: colours, type, spacing, states, icons and
-the rules to follow when adding to the UI. Its picture,
-[`docs/design-guide.png`](docs/design-guide.png), is drawn from the real tokens and icons by
-`deno task design`.
+| Guide                                          | What it covers                                                    |
+| ---------------------------------------------- | ----------------------------------------------------------------- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | The three programs, the layers of the site, the stores, the rules |
+| [`docs/DATA.md`](docs/DATA.md)                 | Every field in `collections.json` and the list files; recipes     |
+| [`docs/TESTING.md`](docs/TESTING.md)           | Tiers, writing tests, coverage, CI                                |
+| [`docs/DESIGN.md`](docs/DESIGN.md)             | Colours, type, spacing, states, icons; a checklist for UI changes |
+
+[`docs/design-guide.png`](docs/design-guide.png) and [`docs/icons.png`](docs/icons.png) are drawn
+from the real tokens and icons by `deno task design`.
 
 ## Tasks
 
@@ -175,28 +181,13 @@ the rules to follow when adding to the UI. Its picture,
 
 ## Testing
 
-Tests sit next to the code they cover, and the **file name decides the tier**
-([`script/test/tiers.ts`](script/test/tiers.ts) is the one place that maps names to tiers):
+Tests sit next to the code they cover, and the file name decides the tier: `x_test.ts` (unit),
+`x_dom_test.ts` (fake browser), `x_prop_test.ts` (property-based) and `x_contract_test.ts` (the real
+files in this repo). `deno task test` runs them all and prints one row per tier;
+`deno task test:coverage` adds a coverage table and fails below the floor.
 
-| Tier       | File name            | Use it for                                                                                           |
-| ---------- | -------------------- | ---------------------------------------------------------------------------------------------------- |
-| `unit`     | `x_test.ts`          | pure logic — start here                                                                              |
-| `dom`      | `x_dom_test.ts`      | code that needs `document`, `location`, focus or storage (fake DOM via `script/test/helpers/dom.ts`) |
-| `prop`     | `x_prop_test.ts`     | an invariant that should hold for _any_ input (fast-check)                                           |
-| `contract` | `x_contract_test.ts` | checks the real files in the repo (`public/*.json`, layout)                                          |
-
-`deno task test` prints one row per tier instead of a line per test. When something fails it lists
-the failing tests first (file, line, message) and then Deno's full output — the diff, or the type
-error that stopped the run. `-v` adds a per-file list. In CI the same run writes a summary table to
-the job page, annotates failures on the changed files, and keeps the JUnit file.
-
-- **Property depth.** `FC_RUNS_MULTIPLIER=10 deno task test:prop` runs ten times as many generated
-  inputs; a weekly scheduled workflow ([`nightly.yml`](.github/workflows/nightly.yml)) runs them at
-  25×. A failing property prints its seed — pass `{ seed, path }` to reproduce it.
-- **A test in the wrong place fails the suite.** The runner only looks in `src/` and `script/`, and
-  a contract test checks that no `*_test.ts` file lives anywhere it would be skipped.
-- Coverage covers `.ts` only (Deno cannot import `.vue` files), so component behaviour needs browser
-  tests, which are not set up yet.
+[`docs/TESTING.md`](docs/TESTING.md) has the full guide: choosing a tier, writing a test, property
+tests, coverage, and what CI runs.
 
 ## Versioning
 
