@@ -17,6 +17,21 @@ Deno.test('collections.json: at least one collection, unique ids', () => {
   assertEquals(new Set(ids).size, ids.length, `duplicate collection ids: ${ids}`);
 });
 
+Deno.test('collections.json: every accent names a palette defined in main.css', async () => {
+  const css = await Deno.readTextFile('./src/assets/main.css');
+  const palettes = new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]));
+  assert(palettes.size > 0, 'no [data-accent] palettes found in main.css');
+
+  const raw = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  for (const col of raw) {
+    if (col.accent === undefined) continue; // falls back to the default
+    assert(
+      palettes.has(col.accent),
+      `${col.id}: accent "${col.accent}" has no palette in main.css (have: ${[...palettes]})`,
+    );
+  }
+});
+
 Deno.test('collections.json: link templates only use known placeholders', async () => {
   const raw = await readJson<RawCollectionConfig[]>('./public/collections.json');
   for (const col of raw) {

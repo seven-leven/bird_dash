@@ -4,6 +4,7 @@
     "label": "Birds",
     "emoji": "🐦",
     "icon": "bird",
+    "accent": "teal",
     "groupLabel": "Family",
     "itemLabel": "bird",
     "links": [
@@ -29,6 +30,7 @@
     "label": "Sharks",
     "emoji": "🦈",
     "icon": "shark",
+    "accent": "blue",
     "groupLabel": "Order",
     "itemLabel": "shark",
     "links": [
@@ -54,6 +56,7 @@
     "label": "Shells",
     "emoji": "🐚",
     "icon": "shell",
+    "accent": "rose",
     "groupLabel": "Group",
     "itemLabel": "shell",
     "links": [

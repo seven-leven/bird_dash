@@ -10,6 +10,7 @@ import { createUiStore, provideUi } from './stores/ui.ts';
 import { createCollectionsStore, provideCollections } from './stores/collections.ts';
 import { createOverlayStore, provideOverlay } from './stores/overlay.ts';
 import { createAppActions, provideActions } from './stores/actions.ts';
+import { applyAccent } from './lib/accent.ts';
 
 // =============================================================================
 // STORES — created in dependency order, shared through provide/inject.
@@ -58,6 +59,9 @@ watch(
       route.apply();
     }),
 );
+
+// Each collection has its own accent colour (`accent` in collections.json).
+watch(() => collections.activeCollection.value?.accent, applyAccent, { immediate: true });
 
 const { isInitialized, initError } = collections;
 const reload = () => location.reload();
