@@ -25,7 +25,7 @@
     "test:watch": "deno test -A --node-modules-dir --watch src/ script/",
     // Every tier + a coverage table; fails if total line coverage drops below the
     // floor. Raise --min-lines as coverage grows (it only ratchets up).
-    "test:coverage": "deno run -A ./script/test.ts --coverage --min-lines=70",
+    "test:coverage": "deno run -A ./script/test.ts --coverage --min-lines=85",
 
     // ── Type check ────────────────────────────────────────────────────────────
     // Deno type-checks the .ts surface (scripts, composables, types, entrypoint).

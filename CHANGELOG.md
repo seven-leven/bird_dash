@@ -16,6 +16,16 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-06 | tests: 18 more (file helpers, git wrapper, version computation against the real repo,
+  the asset scan, the store injection helper, selecting a search result); line coverage from 83.7%
+  to 90.2%, and the floor that fails CI raised from 70% to 85%
+- 2026-10-06 | repo housekeeping: `main` is protected (the CI checks must pass; no force-push or
+  deletion), merged branches are deleted automatically, and 14 old branches were removed
+- 2026-10-06 | search: a collection with 10 or more matches lists its first 7 and a "Show N more"
+  row, so the next collection is not buried under dozens of results
+- 2026-10-06 | one accent colour per collection, chosen with `accent` in `collections.json` (birds
+  teal, sharks blue, shells rose) from a menu of six contrast-checked hues in `main.css`
+- 2026-10-06 | footer: link to the GitHub repository
 - 2026-10-05 | dark-theme placeholders: undrawn items show a slate-on-slate version of the
   collection icon in the dark theme instead of a bright white square
 - 2026-10-05 | repo layout: `TODO.md` moved to `docs/`, `version.json` to `script/version/` (next to
