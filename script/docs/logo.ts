@@ -59,7 +59,7 @@ export function logoSheetSvg(): string {
     text(
       60,
       102,
-      'A bird stepping out of an unfinished frame: wildlife leaving the page it was drawn on. Same stroke as the icons.',
+      'A bird perched on the open edge of an unfinished frame, looking out of the page it was drawn on. Same stroke as the icons.',
       17,
     ),
   );
@@ -110,7 +110,7 @@ export function logoSheetSvg(): string {
   p.push(text(860, 710, 'DON’T', 12, MUTED, 600, 'letter-spacing="1"'));
   const donts = [
     'recolour it with a collection accent',
-    'close the frame or fill the mark',
+    'close the frame, fill the mark or move the bird',
     'stretch, rotate or add a shadow',
     'set the wordmark in another font or all caps',
   ];

@@ -162,9 +162,11 @@ the "reduce motion" system setting, which turns transitions and smooth scrolling
 
 ![Logo](logo.png)
 
-The logo is a bird stepping out of an unfinished frame: wildlife leaving the page it was drawn on.
-It is drawn with the same round 2px stroke as the icons, and the bird _is_ the `bird` icon, so the
-logo and the interface share one hand. The source is
+The logo is a bird perched on the open edge of an unfinished frame: a page corner with one side
+missing, and the bird looking out of it. It is drawn with the same round 2px stroke as the icons, so
+the logo and the interface share one hand, but the bird is the logo's own — an outline of a perching
+bird (back, tail, breast, wing, legs), not the simpler `bird` icon used for the collection. The tile
+is the same drawing reversed onto a solid square, not a second design. The source is
 [`src/components/icons/logo.ts`](../src/components/icons/logo.ts); `<LogoMark />` draws it, and
 `deno task design` writes the files in [`docs/logo/`](logo/).
 
@@ -184,8 +186,8 @@ Rules:
 - **Size:** the mark down to 20px; below that use the tile, whose solid shape survives where the
   open frame would break up.
 - **Clear space:** keep half the mark's width empty on every side.
-- **Don't** close the frame, fill the mark, stretch or rotate it, add a shadow, or set the wordmark
-  in another font or in capitals.
+- **Don't** close the frame, move the bird off its line, fill the mark, stretch or rotate it, add a
+  shadow, or set the wordmark in another font or in capitals.
 
 The browser-tab icon is still one of the drawings (`public/favicon.png`). To use the logo there
 instead, replace it with `docs/logo/tile-512.png`.
