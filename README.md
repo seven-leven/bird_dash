@@ -155,8 +155,9 @@ rendered specially; any other string fields appear in the info panel.
 | [`docs/TESTING.md`](docs/TESTING.md)           | Tiers, writing tests, coverage, CI                                |
 | [`docs/DESIGN.md`](docs/DESIGN.md)             | Colours, type, spacing, states, icons; a checklist for UI changes |
 
-[`docs/design-guide.png`](docs/design-guide.png) and [`docs/icons.png`](docs/icons.png) are drawn
-from the real tokens and icons by `deno task design`.
+[`docs/design-guide.png`](docs/design-guide.png), [`docs/icons.png`](docs/icons.png) and
+[`docs/logo.png`](docs/logo.png) are drawn from the real tokens, icons and logo by
+`deno task design`, which also writes the logo files in `docs/logo/`.
 
 ## Tasks
 

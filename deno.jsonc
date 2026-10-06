@@ -71,7 +71,8 @@
   },
 
   "fmt": {
-    "exclude": ["dist", "node_modules", "public/full", "public/thumb", "raw_png"],
+    // docs/logo holds generated SVG files; the generator, not the formatter, owns their layout
+    "exclude": ["dist", "node_modules", "public/full", "public/thumb", "raw_png", "docs/logo"],
     "singleQuote": true,
     "lineWidth": 100,
     "indentWidth": 2,

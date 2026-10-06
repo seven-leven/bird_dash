@@ -168,12 +168,12 @@ logo and the interface share one hand. The source is
 [`src/components/icons/logo.ts`](../src/components/icons/logo.ts); `<LogoMark />` draws it, and
 `deno task design` writes the files in [`docs/logo/`](logo/).
 
-| Version               | Use it for                                              | File                         |
-| --------------------- | ------------------------------------------------------- | ---------------------------- |
-| **Mark**              | The default, 20px and up                                | `logo/mark.svg`, `mark-white.svg` |
-| **Tile**              | Small or busy places: favicon, app icon, avatar         | `logo/tile.svg`, `tile-512.png` |
-| **Horizontal lockup** | The header, and anywhere wide: mark, then the wordmark  | built in the page            |
-| **Stacked**           | Square spaces and title cards                           | built in the page            |
+| Version               | Use it for                                             | File                              |
+| --------------------- | ------------------------------------------------------ | --------------------------------- |
+| **Mark**              | The default, 20px and up                               | `logo/mark.svg`, `mark-white.svg` |
+| **Tile**              | Small or busy places: favicon, app icon, avatar        | `logo/tile.svg`, `tile-512.png`   |
+| **Horizontal lockup** | The header, and anywhere wide: mark, then the wordmark | built in the page                 |
+| **Stacked**           | Square spaces and title cards                          | built in the page                 |
 
 Rules:
 
@@ -199,8 +199,8 @@ by `<Icon name="…" />`. The only other SVG in the project is the logo, in the 
 The registry is grouped by purpose, and the file, the sheet and this guide all follow the same
 order: **Collections** (bird, shark, shell), **Views** (taxonomy, calendar), **Search** (search,
 noResults), **Navigation** (menu, chevrons, close, externalLink), **Viewer** (zoomIn, zoomOut,
-reset), **Theme** (sun, moon), **Keyboard** (arrowsUpDown, enter) and **Brand** (github). A new icon goes into one of
-the groups in `ICON_GROUPS`; a test fails if it is left out.
+reset), **Theme** (sun, moon), **Keyboard** (arrowsUpDown, enter) and **Brand** (github). A new icon
+goes into one of the groups in `ICON_GROUPS`; a test fails if it is left out.
 
 **Use an icon, not a Unicode symbol,** for arrows, the return key, ticks and crosses (↑ ↓ ↵ ✓ ✕).
 Those characters come from whatever font the visitor has, so their size, weight and even shape

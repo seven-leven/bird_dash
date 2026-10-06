@@ -16,6 +16,11 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-06 | logo: a mark (a bird stepping out of an unfinished frame, drawn in the icon stroke),
+  a solid tile for small sizes, and lockups with the wordmark; the mark is in the header, the files
+  are in `docs/logo/`, and the rules are in the design guide; the footer link shows GitHub's mark
+- 2026-10-06 | accent menu widened from 6 to 12 contrast-checked hues and shown in the design guide;
+  icons grouped by purpose; the search key hints use icons instead of Unicode arrows
 - 2026-10-06 | docs: `docs/ARCHITECTURE.md` (the three programs, the site's layers and stores, the
   rules), `docs/DATA.md` (every field in the data files, what the checks enforce, recipes) and
   `docs/TESTING.md` (tiers, writing tests, coverage, CI); the README links to them
