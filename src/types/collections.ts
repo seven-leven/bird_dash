@@ -6,6 +6,8 @@ export interface CollectionItem {
   group: string;
   imageUrl: string;
   placeholderUrl: string;
+  /** The same placeholder drawn for the dark theme. */
+  placeholderDarkUrl: string;
   /** Precomputed once at load — avoids repeated `imageUrl !== placeholderUrl` checks. */
   isDrawn: boolean;
   /** Numeric form of `itemId`, precomputed for sort comparators. */

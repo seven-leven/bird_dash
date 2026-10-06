@@ -38,6 +38,7 @@ for (const col of COLLECTIONS) {
   Deno.test(`${col.id}: list file has the files the app expects`, async () => {
     assert(await exists(col.paths.json), `missing ${col.paths.json}`);
     assert(await exists(col.paths.placeholder), `missing ${col.paths.placeholder}`);
+    assert(await exists(col.paths.placeholderDark), `missing ${col.paths.placeholderDark}`);
   });
 
   Deno.test(`${col.id}: items have unique numeric ids, names, and valid drawn dates`, async () => {

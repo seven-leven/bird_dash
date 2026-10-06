@@ -60,8 +60,9 @@
           <ItemTile
             v-for="(item, itemIndex) in items"
             :key="item.id"
-            v-memo="[item.isDrawn, item.imageUrl]"
+            v-memo="[item.isDrawn, item.imageUrl, theme.isDark]"
             :item="item"
+            :dark="theme.isDark"
             :eager="groupIndex === 0 && itemIndex < 6"
             @card-click="openItem($event)"
           />
@@ -111,7 +112,7 @@ import { drawings, drawnOf } from '../../lib/formatCount.ts';
 const { data, activeData } = useCollectionsStore();
 const { query } = useSearch();
 // The template registers each section header with the ui store for the scroll-spy.
-const { viewMode, registerHeader } = useUi();
+const { viewMode, theme, registerHeader } = useUi();
 const { open: openItem } = useOverlayStore();
 
 // Injected at build time by vite.config.ts (worked out in script/version/compute.ts).

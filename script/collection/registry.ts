@@ -11,6 +11,7 @@ export interface CollectionPaths {
   full: string; // public/full/{id}/
   thumb: string; // public/thumb/{id}/
   placeholder: string; // public/placeholders/{id}.webp
+  placeholderDark: string; // public/placeholders/{id}-dark.webp
 }
 
 export interface Collection {
@@ -35,6 +36,7 @@ export const COLLECTIONS: Collection[] = RAW_COLLECTIONS.map((c) => ({
     full: `./public/full/${c.id}/`,
     thumb: `./public/thumb/${c.id}/`,
     placeholder: `./public/placeholders/${c.id}.webp`,
+    placeholderDark: `./public/placeholders/${c.id}-dark.webp`,
   },
 }));
 
