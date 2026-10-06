@@ -158,16 +158,51 @@ Two speeds: `duration-fast` (150ms) for hover and colour changes, `duration-slow
 that move, such as the sidebar. Motion should explain a change, not decorate it. The site honours
 the "reduce motion" system setting, which turns transitions and smooth scrolling off.
 
-## 7. Icons
+## 7. Logo
+
+![Logo](logo.png)
+
+The logo is a bird perched on the open edge of an unfinished frame: a page corner with one side
+missing, and the bird looking out of it. It is drawn with the same round 2px stroke as the icons, so
+the logo and the interface share one hand, but the bird is the logo's own — an outline of a perching
+bird (back, tail, breast, wing, legs), not the simpler `bird` icon used for the collection. The tile
+is the same drawing reversed onto a solid square, not a second design. The source is
+[`src/components/icons/logo.ts`](../src/components/icons/logo.ts); `<LogoMark />` draws it, and
+`deno task design` writes the files in [`docs/logo/`](logo/).
+
+| Version               | Use it for                                             | File                              |
+| --------------------- | ------------------------------------------------------ | --------------------------------- |
+| **Mark**              | The default, 20px and up                               | `logo/mark.svg`, `mark-white.svg` |
+| **Tile**              | Small or busy places: favicon, app icon, avatar        | `logo/tile.svg`, `tile-512.png`   |
+| **Horizontal lockup** | The header, and anywhere wide: mark, then the wordmark | built in the page                 |
+| **Stacked**           | Square spaces and title cards                          | built in the page                 |
+
+Rules:
+
+- **Colour:** `slate-900` on light, white on dark. Never an accent colour: the accent changes with
+  the collection, and the logo must not.
+- **Wordmark:** "Wildlife" in semibold, "Illustrated" in light, in the system sans-serif, sentence
+  case, with slightly tight letter-spacing. The second word is muted (`slate-500` / `slate-400`).
+- **Size:** the mark down to 20px; below that use the tile, whose solid shape survives where the
+  open frame would break up.
+- **Clear space:** keep half the mark's width empty on every side.
+- **Don't** close the frame, move the bird off its line, fill the mark, stretch or rotate it, add a
+  shadow, or set the wordmark in another font or in capitals.
+
+The browser-tab icon is still one of the drawings (`public/favicon.png`). To use the logo there
+instead, replace it with `docs/logo/tile-512.png`.
+
+## 8. Icons
 
 Every icon lives in [`src/components/icons/icons.ts`](../src/components/icons/icons.ts) and is drawn
-by `<Icon name="…" />`. There is no SVG markup anywhere else. See [`icons.png`](icons.png).
+by `<Icon name="…" />`. The only other SVG in the project is the logo, in the same folder. See
+[`icons.png`](icons.png).
 
 The registry is grouped by purpose, and the file, the sheet and this guide all follow the same
 order: **Collections** (bird, shark, shell), **Views** (taxonomy, calendar), **Search** (search,
 noResults), **Navigation** (menu, chevrons, close, externalLink), **Viewer** (zoomIn, zoomOut,
-reset), **Theme** (sun, moon) and **Keyboard** (arrowsUpDown, enter). A new icon goes into one of
-the groups in `ICON_GROUPS`; a test fails if it is left out.
+reset), **Theme** (sun, moon), **Keyboard** (arrowsUpDown, enter) and **Brand** (github). A new icon
+goes into one of the groups in `ICON_GROUPS`; a test fails if it is left out.
 
 **Use an icon, not a Unicode symbol,** for arrows, the return key, ticks and crosses (↑ ↓ ↵ ✓ ✕).
 Those characters come from whatever font the visitor has, so their size, weight and even shape
@@ -179,13 +214,17 @@ To add one, match the set:
 - 2px stroke, round ends and joins, **no fills** (a dot is a zero-length line: `M16 7h.01`).
 - One or two bold shapes. If it needs more than about five strokes, simplify it.
 - It must still read at 16px. Check with `deno task design` and look at `docs/icons.png`.
+- **Brand marks are the exception.** Another organisation's logo (GitHub's, in the footer) is shown
+  exactly as its owner publishes it, solid fill included, and marked `filled` in the registry. Do
+  not redraw a brand mark in our line style: it is not ours to change, and most brands forbid it.
+  Show it in one colour, next to the brand's name.
 - Colour comes from the text colour (`currentColor`); size from `w-4 h-4` (16px) in controls or
   `w-5 h-5`/`w-6 h-6` for standalone use.
 - An icon-only button always has an `aria-label`.
 
 Collections name their icon in `public/collections.json` (`"icon": "bird"`).
 
-## 8. Placeholders
+## 9. Placeholders
 
 An item that is not drawn yet shows its collection's icon, 512 × 512, drawn once per theme:
 
@@ -198,7 +237,7 @@ An item that is not drawn yet shows its collection's icon, 512 × 512, drawn onc
 contract test fails if either is missing. They are deliberately faint (about 2.5:1 against their
 background in both themes): a placeholder should recede next to a real drawing.
 
-## 9. Layout
+## 10. Layout
 
 - **Breakpoints:** phone below 640px (two-column grid, search on its own row), tablet from 768px
   (single-row header), desktop from 1024px (sidebar always visible).
