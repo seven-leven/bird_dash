@@ -37,9 +37,13 @@
   the open collection: `accent` in public/collections.json names one of the
   palettes below, and App.vue sets it as `data-accent` on <html>.
 
-  This is the menu of allowed hues. Each has been checked for contrast (white
-  text on the 700 shade is at least 4.5:1); yellow, amber and lime are left out
-  because they fail. To offer another hue, add a block here.
+  This is the menu of allowed hues — more than the collections use today, so a
+  new collection can pick one without touching the CSS. Every hue on it keeps
+  white text on its 700 shade above 4.5:1 and its 500 shade no paler against
+  white than teal's (2.4:1 or more), since that shade draws the current marker
+  and the focus ring. Amber, yellow, lime and green are left out for being too
+  pale there; red is left out because it reads as an error. docs/DESIGN.md has
+  the measurements.
 */
 @theme inline {
   --color-accent-50: var(--accent-50);
@@ -145,6 +149,85 @@
   --accent-800: var(--color-rose-800);
   --accent-900: var(--color-rose-900);
   --accent-950: var(--color-rose-950);
+}
+
+[data-accent='cyan'] {
+  --accent-50: var(--color-cyan-50);
+  --accent-100: var(--color-cyan-100);
+  --accent-200: var(--color-cyan-200);
+  --accent-300: var(--color-cyan-300);
+  --accent-400: var(--color-cyan-400);
+  --accent-500: var(--color-cyan-500);
+  --accent-600: var(--color-cyan-600);
+  --accent-700: var(--color-cyan-700);
+  --accent-800: var(--color-cyan-800);
+  --accent-900: var(--color-cyan-900);
+  --accent-950: var(--color-cyan-950);
+}
+[data-accent='sky'] {
+  --accent-50: var(--color-sky-50);
+  --accent-100: var(--color-sky-100);
+  --accent-200: var(--color-sky-200);
+  --accent-300: var(--color-sky-300);
+  --accent-400: var(--color-sky-400);
+  --accent-500: var(--color-sky-500);
+  --accent-600: var(--color-sky-600);
+  --accent-700: var(--color-sky-700);
+  --accent-800: var(--color-sky-800);
+  --accent-900: var(--color-sky-900);
+  --accent-950: var(--color-sky-950);
+}
+[data-accent='purple'] {
+  --accent-50: var(--color-purple-50);
+  --accent-100: var(--color-purple-100);
+  --accent-200: var(--color-purple-200);
+  --accent-300: var(--color-purple-300);
+  --accent-400: var(--color-purple-400);
+  --accent-500: var(--color-purple-500);
+  --accent-600: var(--color-purple-600);
+  --accent-700: var(--color-purple-700);
+  --accent-800: var(--color-purple-800);
+  --accent-900: var(--color-purple-900);
+  --accent-950: var(--color-purple-950);
+}
+[data-accent='fuchsia'] {
+  --accent-50: var(--color-fuchsia-50);
+  --accent-100: var(--color-fuchsia-100);
+  --accent-200: var(--color-fuchsia-200);
+  --accent-300: var(--color-fuchsia-300);
+  --accent-400: var(--color-fuchsia-400);
+  --accent-500: var(--color-fuchsia-500);
+  --accent-600: var(--color-fuchsia-600);
+  --accent-700: var(--color-fuchsia-700);
+  --accent-800: var(--color-fuchsia-800);
+  --accent-900: var(--color-fuchsia-900);
+  --accent-950: var(--color-fuchsia-950);
+}
+[data-accent='pink'] {
+  --accent-50: var(--color-pink-50);
+  --accent-100: var(--color-pink-100);
+  --accent-200: var(--color-pink-200);
+  --accent-300: var(--color-pink-300);
+  --accent-400: var(--color-pink-400);
+  --accent-500: var(--color-pink-500);
+  --accent-600: var(--color-pink-600);
+  --accent-700: var(--color-pink-700);
+  --accent-800: var(--color-pink-800);
+  --accent-900: var(--color-pink-900);
+  --accent-950: var(--color-pink-950);
+}
+[data-accent='orange'] {
+  --accent-50: var(--color-orange-50);
+  --accent-100: var(--color-orange-100);
+  --accent-200: var(--color-orange-200);
+  --accent-300: var(--color-orange-300);
+  --accent-400: var(--color-orange-400);
+  --accent-500: var(--color-orange-500);
+  --accent-600: var(--color-orange-600);
+  --accent-700: var(--color-orange-700);
+  --accent-800: var(--color-orange-800);
+  --accent-900: var(--color-orange-900);
+  --accent-950: var(--color-orange-950);
 }
 
 @utility duration-fast {

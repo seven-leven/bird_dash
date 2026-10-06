@@ -4,59 +4,13 @@
  * docs/DESIGN.md. Run `deno task design` after changing a token in
  * src/assets/main.css or an icon in src/components/icons/icons.ts.
  *
- * Hex values are Tailwind's slate and teal ramps (the site uses them by name;
- * these are for drawing the swatches).
+ * The colours and the contrast maths are in ./palette.ts.
  */
 import sharp from 'sharp';
-import { ICONS } from '../../src/components/icons/icons.ts';
-
-export const SLATE: Record<string, string> = {
-  '50': '#f8fafc',
-  '100': '#f1f5f9',
-  '200': '#e2e8f0',
-  '300': '#cbd5e1',
-  '400': '#94a3b8',
-  '500': '#64748b',
-  '600': '#475569',
-  '700': '#334155',
-  '800': '#1e293b',
-  '900': '#0f172a',
-  '950': '#020617',
-};
-export const TEAL: Record<string, string> = {
-  '50': '#f0fdfa',
-  '100': '#ccfbf1',
-  '200': '#99f6e4',
-  '300': '#5eead4',
-  '400': '#2dd4bf',
-  '500': '#14b8a6',
-  '600': '#0d9488',
-  '700': '#0f766e',
-  '800': '#115e59',
-  '900': '#134e4a',
-  '950': '#042f2e',
-};
-
-/** WCAG relative luminance of a `#rrggbb` colour. */
-function luminance(hex: string): number {
-  const [r, g, b] = [1, 3, 5].map((i) => {
-    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-}
-
-/** WCAG contrast ratio between two `#rrggbb` colours (1 to 21). */
-export function contrast(a: string, b: string): number {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return (hi + 0.05) / (lo + 0.05);
-}
-
-/** `#rrggbb` for white at the given opacity over black. */
-export const whiteOnBlack = (opacity: number): string => {
-  const v = Math.round(255 * opacity).toString(16).padStart(2, '0');
-  return `#${v}${v}${v}`;
-};
+import { ICON_GROUPS, ICONS } from '../../src/components/icons/icons.ts';
+import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
+import { readJson } from '../lib/fs.ts';
+import type { RawCollectionConfig } from '../../src/types/data.ts';
 
 // ---------------------------------------------------------------------------
 // Drawing helpers
@@ -92,6 +46,45 @@ function ramp(y: number, name: string, colors: Record<string, string>): string {
     return rect(x, y, w - 6, 78, hex, 8, `stroke="${SLATE['200']}"`) +
       text(x + 10, y + 26, `${name}-${step}`, 14, on, 600) + text(x + 10, y + 48, hex, 13, on);
   }).join('');
+}
+
+/**
+ * Lay the icon groups out left to right, wrapping at `maxX`: a small label above
+ * each group, its icons in a row beneath. Returns the markup and the bottom edge.
+ */
+function iconGroups(
+  x0: number,
+  y0: number,
+  maxX: number,
+  o: { size: number; cell: number; row: number; gap: number; label: number; name: number },
+  ink: string,
+): { svg: string; bottom: number } {
+  let x = x0;
+  let y = y0;
+  let svg = '';
+  for (const group of ICON_GROUPS) {
+    const width = group.icons.length * o.cell;
+    if (x > x0 && x + width > maxX) {
+      x = x0;
+      y += o.row;
+    }
+    svg += text(x, y, group.label.toUpperCase(), o.label, MUTED, 600, 'letter-spacing="1"');
+    group.icons.forEach((name, i) => {
+      const cx = x + i * o.cell + o.cell / 2;
+      svg += icon(name, cx - o.size / 2 - 8, y + 16, o.size, ink) +
+        text(
+          cx - 8,
+          y + 16 + o.size + o.name + 8,
+          name,
+          o.name,
+          MUTED,
+          400,
+          'text-anchor="middle"',
+        );
+    });
+    x += width + o.gap;
+  }
+  return { svg, bottom: y + o.row };
 }
 
 /** A `.nav-item` drawn in one theme: default, hover, current. */
@@ -134,7 +127,7 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
     heading(
       y,
       '1 · Colour',
-      'One neutral ramp (slate) and one accent, chosen per collection (teal shown). Nothing else.',
+      'One neutral ramp (slate) and one accent ramp per collection (teal shown; the menu is below).',
     ),
   );
   parts.push(ramp(y + 48, 'slate', SLATE));
@@ -157,8 +150,38 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
     parts.push(text(60, ry, role, 15) + text(520, ry, light, 15) + text(800, ry, dark, 15));
   });
 
+  // ── Accent menu ──
+  const menu = await accentMenu();
+  const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  const usedBy = (hue: string) =>
+    collections.filter((c) => (c.accent ?? 'teal') === hue).map((c) => c.label).join(', ');
+  parts.push(
+    text(60, y + 484, 'Accent menu', 17, INK, 700) +
+      text(
+        180,
+        y + 484,
+        'each collection picks one in collections.json — button shade above, marker shade below; the rest are free for new collections',
+        14,
+        MUTED,
+      ),
+  );
+  const sw = (W - 120) / menu.length;
+  menu.forEach((hue, i) => {
+    const hex = ACCENT_HEX[hue];
+    if (!hex) {
+      throw new Error(`design guide: no hex values for accent "${hue}" (add it to ACCENT_HEX)`);
+    }
+    const x = 60 + i * sw;
+    const who = usedBy(hue);
+    parts.push(
+      rect(x, y + 502, sw - 6, 44, hex[700], 8) + text(x + 10, y + 529, hue, 14, '#ffffff', 600) +
+        rect(x, y + 550, sw - 6, 8, hex[500], 4) +
+        text(x, y + 578, who || 'free', 13, who ? INK : MUTED, who ? 600 : 400),
+    );
+  });
+
   // ── Type ──
-  y += 500;
+  y += 640;
   parts.push(
     heading(y, '2 · Type', 'System sans-serif; Faruma for Thaana script. Six sizes, no others.'),
   );
@@ -248,17 +271,17 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
       '24px grid, 2px stroke, round ends, no fills. Placeholders are the same icons, drawn once per theme.',
     ),
   );
-  const names = Object.keys(ICONS) as (keyof typeof ICONS)[];
-  names.forEach((n, i) => {
-    const x = 60 + (i % 9) * 100;
-    const iy = y + 60 + Math.floor(i / 9) * 92;
-    parts.push(
-      icon(n, x + 16, iy, 36, INK) +
-        text(x + 34, iy + 60, n, 12, MUTED, 400, 'text-anchor="middle"'),
-    );
-  });
+  const groups = iconGroups(68, y + 66, 940, {
+    size: 30,
+    cell: 82,
+    row: 108,
+    gap: 34,
+    label: 11,
+    name: 11,
+  }, INK);
+  parts.push(groups.svg);
 
-  const height = y + 60 + Math.ceil(names.length / 9) * 92 + 40;
+  const height = Math.max(groups.bottom, y + 260) + 20;
   const placeholders = await Promise.all(
     ['', '-dark'].flatMap((suffix, row) =>
       ['birds', 'sharks', 'shells'].map(async (id, i) => ({
@@ -282,19 +305,18 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
 }
 
 async function iconSheet(path: string): Promise<void> {
-  const names = Object.keys(ICONS) as (keyof typeof ICONS)[];
-  const cols = 6;
-  const cell = 150;
-  const rows = Math.ceil(names.length / cols);
-  const body = names.map((n, i) => {
-    const x = (i % cols) * cell;
-    const y = Math.floor(i / cols) * cell;
-    return icon(n, x + 39, y + 20, 72, '#111111') +
-      text(x + 75, y + 125, n, 15, '#555555', 400, 'text-anchor="middle"');
-  }).join('');
+  const width = 1000;
+  const groups = iconGroups(48, 44, width - 20, {
+    size: 60,
+    cell: 132,
+    row: 168,
+    gap: 44,
+    label: 13,
+    name: 14,
+  }, '#111111');
   const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${cols * cell}" height="${rows * cell}">` +
-    rect(0, 0, cols * cell, rows * cell, '#ffffff') + body + '</svg>';
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${groups.bottom}">` +
+    rect(0, 0, width, groups.bottom, '#ffffff') + groups.svg + '</svg>';
   await sharp(new TextEncoder().encode(svg)).png().toFile(path);
 }
 
