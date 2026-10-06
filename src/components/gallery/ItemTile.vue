@@ -66,6 +66,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
+import { tileImage } from '../../lib/collectionItems.ts';
 import type { CollectionItem } from '../../types/';
 
 const props = withDefaults(
@@ -73,8 +74,10 @@ const props = withDefaults(
     item: CollectionItem;
     /** Above-the-fold tiles load eagerly with high priority (helps LCP). */
     eager?: boolean;
+    /** Dark theme: undrawn items show the dark placeholder. */
+    dark?: boolean;
   }>(),
-  { eager: false },
+  { eager: false, dark: false },
 );
 
 const emit = defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
@@ -105,9 +108,7 @@ const onSpace = (e: KeyboardEvent) => {
 // The tile is keyed by item.id in the grid, so a new item => a fresh component;
 // no watcher needed. Undrawn items and load failures fall back to the placeholder.
 const failed = ref(false);
-const src = computed(() =>
-  props.item.isDrawn && !failed.value ? props.item.imageUrl : props.item.placeholderUrl
-);
+const src = computed(() => tileImage(props.item, props.dark, failed.value));
 
 function onError() {
   failed.value = true;

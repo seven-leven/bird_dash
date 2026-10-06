@@ -50,6 +50,7 @@ export function makeItem(overrides: Partial<CollectionItem> = {}): CollectionIte
     group,
     imageUrl: overrides.imageUrl ?? `/thumb/${itemId}.webp`,
     placeholderUrl: overrides.placeholderUrl ?? '/placeholders/col.webp',
+    placeholderDarkUrl: overrides.placeholderDarkUrl ?? '/placeholders/col-dark.webp',
     isDrawn,
     sortKey: overrides.sortKey ?? (Number.parseInt(itemId, 10) || counter),
     drawnTime,

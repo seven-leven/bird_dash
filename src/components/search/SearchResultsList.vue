@@ -34,7 +34,7 @@
              hover:bg-slate-50 dark:hover:bg-slate-800/60"
       :class="{ 'bg-slate-50 dark:bg-slate-800/60': focusedIndex === flat }"
     >
-      <img :src="result.item.imageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
+      <img :src="tileImage(result.item, theme.isDark)" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
       <div class="flex-1 min-w-0">
         <p class="text-sm font-medium truncate text-slate-800 dark:text-slate-100" v-html="highlight(result.item.commonName)" />
         <p class="text-xs text-muted italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
@@ -48,6 +48,17 @@
         <span v-html="highlight(`#${result.item.itemId}`)" />
       </IdBadge>
     </button>
+
+    <!-- A long group is cut short so the next collection stays in reach. -->
+    <button
+      v-if="group.hidden > 0"
+      type="button"
+      @click="$emit('expand', group.collection.id)"
+      class="focus-ring w-full px-4 py-2 text-left text-xs font-medium text-accent-700 transition-colors duration-fast
+             hover:bg-slate-50 dark:text-accent-300 dark:hover:bg-slate-800/60"
+    >
+      Show {{ group.hidden }} more in {{ group.collection.label }}
+    </button>
   </div>
 </template>
 
@@ -55,10 +66,15 @@
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
-import type { GlobalSearchCollectionGroup, GlobalSearchResult } from '../../types';
+import { tileImage } from '../../lib/collectionItems.ts';
+import { useUi } from '../../stores/ui.ts';
+import type { GlobalSearchResult } from '../../types';
+import type { VisibleGroup } from '../../lib/collapseGroups.ts';
+
+const { theme } = useUi();
 
 const props = defineProps<{
-  results: GlobalSearchCollectionGroup[];
+  results: VisibleGroup[];
   focusedIndex: number;
   getFlatIndex: (collectionId: string, idx: number) => number;
   highlight: (text: string) => string;
@@ -67,6 +83,7 @@ const props = defineProps<{
 defineEmits<{
   mouseenter: [index: number];
   select: [result: GlobalSearchResult];
+  expand: [collectionId: string];
 }>();
 
 // Each row's position in the flat keyboard-navigation order, computed once per
