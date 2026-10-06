@@ -55,7 +55,9 @@
       class="shrink-0 px-5 py-4 border-t border-slate-100 dark:border-slate-800/60"
     >
       <div class="flex items-baseline justify-between mb-1.5">
-        <span class="caps-label text-muted">All collections</span>
+        <span class="caps-label with-icon text-muted">
+          <Icon name="layers" aria-hidden="true" />All collections
+        </span>
         <span class="text-xs tabular-nums text-muted">
           {{ drawnOf(globalStats.drawn, globalStats.total) }}
         </span>
@@ -72,6 +74,7 @@
 
 <script setup lang="ts">
 import EmptyState from '../ui/EmptyState.vue';
+import Icon from '../icons/Icon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { drawings, drawnOf, ratio } from '../../lib/formatCount.ts';

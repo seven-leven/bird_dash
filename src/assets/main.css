@@ -311,6 +311,14 @@
     @apply text-micro font-semibold uppercase tracking-widest;
   }
 
+  /* A small icon sitting before a label or a figure. */
+  .with-icon {
+    @apply inline-flex items-center gap-1.5;
+  }
+  .with-icon > svg {
+    @apply size-3 shrink-0;
+  }
+
   /* Keyboard hint chip. */
   .kbd-hint {
     @apply rounded-control border px-1.5 py-0.5 font-mono text-micro

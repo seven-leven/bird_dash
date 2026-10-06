@@ -30,7 +30,9 @@
     <!-- Meta fields -->
     <div v-if="item.meta?.dhiv || Object.keys(otherMeta).length" class="space-y-4">
       <div v-if="item.meta?.dhiv">
-        <p class="caps-label text-white/50 mb-1">Dhivehi name (romanised)</p>
+        <p class="caps-label with-icon text-white/50 mb-1">
+          <Icon name="languages" aria-hidden="true" />Dhivehi name (romanised)
+        </p>
         <p class="text-sm text-white/70">{{ item.meta.dhiv }}</p>
       </div>
 
@@ -45,7 +47,9 @@
 
     <!-- Illustrator note -->
     <div v-if="item.illustratorNote">
-      <p class="caps-label text-white/50 mb-2">From the Illustrator</p>
+      <p class="caps-label with-icon text-white/50 mb-2">
+        <Icon name="pencil" aria-hidden="true" />From the illustrator
+      </p>
       <blockquote class="pl-3 border-l border-white/20">
         <p class="text-white/70 text-sm leading-relaxed italic">{{ item.illustratorNote }}</p>
       </blockquote>
@@ -53,7 +57,9 @@
 
     <!-- External links -->
     <div v-if="links.length">
-      <p class="caps-label text-white/50 mb-2.5">Learn More</p>
+      <p class="caps-label with-icon text-white/50 mb-2.5">
+        <Icon name="book" aria-hidden="true" />Learn more
+      </p>
       <div class="flex flex-wrap gap-2">
         <a
           v-for="link in links"

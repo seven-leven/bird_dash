@@ -1,7 +1,7 @@
 // The Wildlife Illustrated logo: a bird perched on the open edge of an unfinished
 // frame — a page corner with one side missing, and the bird looking out of it.
-// It is drawn on a grid with the same round 2px stroke as the icons, but the
-// bird is the logo's own: an outline of a perching bird, not the `bird` icon.
+// It is drawn on a grid with the same round 2px stroke as the icons. The bird
+// is drawn here first; the `bird` icon in icons.ts is this bird at the 24px grid.
 // Rules for using it are in docs/DESIGN.md.
 //
 // Both versions are inner SVG markup for a 32 × 32 viewBox (see LogoMark.vue and
