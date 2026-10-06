@@ -244,3 +244,77 @@ Deno.test('position reports where the open item sits among the drawn items', () 
     assertEquals(t.lb.position.value, '');
     t.stop();
   }));
+
+Deno.test('the image URL is empty while closed and points at the full image while open', () =>
+  withDom(async () => {
+    const t = setup(1);
+    assertEquals(t.lb.imageUrl.value, '');
+    await t.open();
+    assertEquals(t.lb.imageUrl.value, '/full/x/002.webp');
+    t.stop();
+  }));
+
+Deno.test('opening shows the spinner until the image loads; a failed image shows an error', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    assertEquals([t.lb.loading.value, t.lb.error.value], [true, null]);
+
+    t.lb.handleImageLoad();
+    assertEquals([t.lb.loading.value, t.lb.error.value], [false, null]);
+
+    t.props.item = items[1]; // paging starts a new load
+    await nextTick();
+    assertEquals(t.lb.loading.value, true);
+    t.lb.handleImageError();
+    assertEquals([t.lb.loading.value, t.lb.error.value], [false, 'Image not found']);
+    t.stop();
+  }));
+
+Deno.test('the wheel zooms in steps, never below 1x or above 5x', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    const wheel = (deltaY: number) => t.lb.handleWheel({ deltaY } as WheelEvent);
+
+    wheel(100); // zooming out at 1x stays at 1x
+    assertEquals(t.lb.scale.value, 1);
+    wheel(-100);
+    assert(t.lb.scale.value > 1);
+    for (let i = 0; i < 100; i++) wheel(-100);
+    assertEquals(t.lb.scale.value, 5);
+    for (let i = 0; i < 100; i++) wheel(100);
+    assertEquals(t.lb.scale.value, 1);
+    t.stop();
+  }));
+
+Deno.test('paging to another item resets the zoom', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    t.lb.zoomIn();
+    t.lb.zoomIn();
+    assert(t.lb.scale.value > 1);
+    t.props.item = items[1];
+    await nextTick();
+    assertEquals(t.lb.scale.value, 1);
+    t.stop();
+  }));
+
+Deno.test('previous and next are offered only where there is somewhere to go', () =>
+  withDom(() => {
+    const first = setup(0);
+    assertEquals([first.lb.hasPrevious.value, first.lb.hasNext.value], [false, true]);
+    first.stop();
+
+    const last = setup(2);
+    assertEquals([last.lb.hasPrevious.value, last.lb.hasNext.value], [true, false]);
+    last.lb.goToNext(); // nothing after the last item
+    assertEquals(last.emitted, []);
+    last.stop();
+
+    const none = setup(0);
+    none.props.item = undefined;
+    assertEquals([none.lb.hasPrevious.value, none.lb.hasNext.value], [false, false]);
+    none.stop();
+  }));

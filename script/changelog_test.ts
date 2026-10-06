@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
-import { insertEntries } from './changelog.ts';
+import { insertEntries, parseLog, toLines } from './changelog.ts';
 
 const LINES = ['- 2025-01-02 | feat: b', '- 2025-01-01 | feat: a'];
 
@@ -24,4 +24,20 @@ Deno.test('insertEntries with no section yet adds the lines after the divider', 
   const out = insertEntries('# Changelog\n\n---\n', LINES);
   assert(out.indexOf(LINES[0]) > out.indexOf('---'));
   for (const line of LINES) assertStringIncludes(out, line);
+});
+
+Deno.test('parseLog reads one commit per line and keeps "|" inside a subject', () => {
+  assertEquals(parseLog('2025-01-01|feat: a\n2025-01-02|fix: b | c'), [
+    { date: '2025-01-01', subject: 'feat: a' },
+    { date: '2025-01-02', subject: 'fix: b | c' },
+  ]);
+});
+
+Deno.test('parseLog of empty output is no commits', () => {
+  assertEquals(parseLog(''), []);
+  assertEquals(parseLog('\n'), []);
+});
+
+Deno.test('toLines writes the "- date | subject" form the changelog uses', () => {
+  assertEquals(toLines([{ date: '2025-01-01', subject: 'feat: a' }]), ['- 2025-01-01 | feat: a']);
 });

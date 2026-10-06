@@ -32,8 +32,10 @@ export interface VersionData {
   commit: string;
 }
 
-export async function getCommitCount(): Promise<number> {
-  return Number(await git('rev-list', '--count', 'HEAD'));
+type Git = typeof git;
+
+export async function getCommitCount(run: Git = git): Promise<number> {
+  return Number(await run('rev-list', '--count', 'HEAD'));
 }
 
 export async function getDrawnIds(collectionId?: string): Promise<Set<string>> {
@@ -55,14 +57,17 @@ export async function getDrawnIds(collectionId?: string): Promise<Set<string>> {
  * "unknown" with a warning instead — except in CI, where a deploy must never ship a
  * made-up version.
  */
-export async function computeVersion(opts: { lenient?: boolean } = {}): Promise<VersionData> {
+export async function computeVersion(
+  opts: { lenient?: boolean; git?: Git } = {}, // `git` is replaceable for tests
+): Promise<VersionData> {
+  const run = opts.git ?? git;
   const base = await readJson<{ major: number; minor: number }>(VERSION_FILE);
   const drawn = (await getDrawnIds()).size;
 
   try {
     const [patch, commit] = await Promise.all([
-      getCommitCount(),
-      git('rev-parse', '--short=7', 'HEAD'),
+      getCommitCount(run),
+      run('rev-parse', '--short=7', 'HEAD'),
     ]);
     return { major: base.major, minor: base.minor, patch, drawn, commit };
   } catch (err) {

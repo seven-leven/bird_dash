@@ -44,3 +44,47 @@ Deno.test('computeVersion: the drawn count is the drawn items across every colle
 Deno.test('getDrawnIds: an unknown collection has no drawn items', async () => {
   assertEquals((await getDrawnIds('no-such-collection')).size, 0);
 });
+
+// ── Without git (a zip download, a broken checkout) ──
+
+const noGit = () => Promise.reject(new Error('git: command not found\nmore detail'));
+
+/** Run `fn` with the CI variable set or unset, restoring it afterwards. */
+async function withCi(value: string | undefined, fn: () => Promise<void>): Promise<void> {
+  const before = Deno.env.get('CI');
+  if (value === undefined) Deno.env.delete('CI');
+  else Deno.env.set('CI', value);
+  try {
+    await fn();
+  } finally {
+    if (before === undefined) Deno.env.delete('CI');
+    else Deno.env.set('CI', before);
+  }
+}
+
+Deno.test('computeVersion: strict mode fails without git instead of inventing a version', () =>
+  withCi(undefined, async () => {
+    await assertRejects(() => computeVersion({ git: noGit }), Error, 'git: command not found');
+  }));
+
+Deno.test('computeVersion: lenient mode falls back to patch 0 / "unknown", with a warning', () =>
+  withCi(undefined, async () => {
+    const warnings: string[] = [];
+    const warn = console.warn;
+    console.warn = (msg: string) => warnings.push(msg);
+    try {
+      const v = await computeVersion({ lenient: true, git: noGit });
+      assertEquals([v.patch, v.commit], [0, 'unknown']);
+      assertEquals(v.drawn, (await getDrawnIds()).size, 'the drawing count does not need git');
+    } finally {
+      console.warn = warn;
+    }
+    assertEquals(warnings.length, 1);
+    assert(warnings[0].includes('git: command not found'));
+    assert(!warnings[0].includes('more detail'), 'only the first line of the error is shown');
+  }));
+
+Deno.test('computeVersion: in CI even lenient mode fails, so a deploy never ships a made-up version', () =>
+  withCi('true', async () => {
+    await assertRejects(() => computeVersion({ lenient: true, git: noGit }), Error);
+  }));

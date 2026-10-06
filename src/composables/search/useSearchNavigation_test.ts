@@ -55,3 +55,24 @@ Deno.test('getFocusedResult returns the item at the focused flat index; resetFoc
   resetFocus();
   assertEquals(getFocusedResult(), null);
 });
+
+Deno.test('moveFocus does nothing when there are no results', () => {
+  const { focusedIndex, moveFocus, getFocusedResult } = useSearchNavigation(() => [], () => null);
+  moveFocus(1);
+  moveFocus(-1);
+  assertEquals(focusedIndex.value, -1);
+  assertEquals(getFocusedResult(), null);
+});
+
+Deno.test('moveFocus scrolls the newly focused row into view', () => {
+  const scrolled: string[] = [];
+  const wrapper = {
+    querySelector: (selector: string) => ({
+      scrollIntoView: () => scrolled.push(selector),
+    }),
+  } as unknown as HTMLElement;
+  const { moveFocus } = useSearchNavigation(() => groups, () => wrapper);
+  moveFocus(1);
+  moveFocus(1);
+  assertEquals(scrolled, ['[data-result-idx="0"]', '[data-result-idx="1"]']);
+});
