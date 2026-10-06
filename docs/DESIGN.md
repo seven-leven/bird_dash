@@ -22,9 +22,30 @@ Two ramps and nothing else: **slate** for every neutral, and **accent** for emph
 
 **Each collection has its own accent,** so the colour also tells you where you are: birds are teal,
 sharks blue, shells rose. A collection names its hue with `accent` in `public/collections.json`; the
-menu of allowed hues (teal, emerald, blue, indigo, violet, rose) is in `main.css`. Every hue on the
-menu passes the contrast checks below; yellow, amber and lime are left out because white text on
-them does not.
+menu of allowed hues is in `main.css`, and has more than are in use so a new collection can pick one
+without touching the CSS:
+
+| Hue     | White on 700 (button) | 500 on white (marker, ring) | Used by |
+| ------- | --------------------- | --------------------------- | ------- |
+| teal    | 5.5:1                 | 2.5:1                       | Birds   |
+| emerald | 5.5:1                 | 2.5:1                       | free    |
+| cyan    | 5.4:1                 | 2.4:1                       | free    |
+| sky     | 5.9:1                 | 2.8:1                       | free    |
+| blue    | 6.7:1                 | 3.7:1                       | Sharks  |
+| indigo  | 7.9:1                 | 4.5:1                       | free    |
+| violet  | 7.1:1                 | 4.2:1                       | free    |
+| purple  | 7.0:1                 | 4.0:1                       | free    |
+| fuchsia | 6.3:1                 | 3.5:1                       | free    |
+| pink    | 6.0:1                 | 3.5:1                       | free    |
+| rose    | 6.3:1                 | 3.7:1                       | Shells  |
+| orange  | 5.2:1                 | 2.8:1                       | free    |
+
+A hue is on the menu only if white text on its 700 shade is at least 4.5:1 **and** its 500 shade is
+no paler against white than teal's (2.4:1 or more), because that shade draws the current marker and
+the focus ring. A test checks every hue on the menu against both numbers. Amber, yellow, lime and
+green are left out for being too pale at 500 (1.9 to 2.3:1); red is left out because it reads as an
+error. Pick neighbours that are easy to tell apart: not rose and pink, or violet and purple, for two
+collections that sit side by side.
 
 | Role                                  | Light               | Dark                |
 | ------------------------------------- | ------------------- | ------------------- |
@@ -141,6 +162,16 @@ the "reduce motion" system setting, which turns transitions and smooth scrolling
 
 Every icon lives in [`src/components/icons/icons.ts`](../src/components/icons/icons.ts) and is drawn
 by `<Icon name="…" />`. There is no SVG markup anywhere else. See [`icons.png`](icons.png).
+
+The registry is grouped by purpose, and the file, the sheet and this guide all follow the same
+order: **Collections** (bird, shark, shell), **Views** (taxonomy, calendar), **Search** (search,
+noResults), **Navigation** (menu, chevrons, close, externalLink), **Viewer** (zoomIn, zoomOut,
+reset), **Theme** (sun, moon) and **Keyboard** (arrowsUpDown, enter). A new icon goes into one of
+the groups in `ICON_GROUPS`; a test fails if it is left out.
+
+**Use an icon, not a Unicode symbol,** for arrows, the return key, ticks and crosses (↑ ↓ ↵ ✓ ✕).
+Those characters come from whatever font the visitor has, so their size, weight and even shape
+change from machine to machine. Plain words on a key cap ("esc", "Ctrl K") stay as text.
 
 To add one, match the set:
 
