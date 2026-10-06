@@ -16,6 +16,12 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-06 | docs: `docs/ARCHITECTURE.md` (the three programs, the site's layers and stores, the
+  rules), `docs/DATA.md` (every field in the data files, what the checks enforce, recipes) and
+  `docs/TESTING.md` (tiers, writing tests, coverage, CI); the README links to them
+- 2026-10-06 | tests: 23 more (the no-git fallback of the version, `markDrawn`, the changelog log
+  parser, lightbox image state and zoom limits, collection load errors and stats, the placeholder
+  SVG); line coverage from 90.2% to 93.0%, floor raised from 85% to 88%
 - 2026-10-06 | tests: 18 more (file helpers, git wrapper, version computation against the real repo,
   the asset scan, the store injection helper, selecting a search result); line coverage from 83.7%
   to 90.2%, and the floor that fails CI raised from 70% to 85%

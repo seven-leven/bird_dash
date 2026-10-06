@@ -185,3 +185,61 @@ Deno.test('switching to an unknown collection id is a no-op', async () => {
     restore();
   }
 });
+
+Deno.test('a collection whose list fails to load shows the error, and loading stops', async () => {
+  const { restore } = stubFetch({
+    '/collections.json': () => json([col('a'), col('b')]),
+    '/lists/a.json': () => json(list('a')),
+    '/lists/b.json': () => new Response('gone', { status: 404 }),
+  });
+  try {
+    const c = useCollections();
+    await c.init();
+    await c.switchCollection('b');
+    assertEquals(c.data.error, 'HTTP 404 loading B');
+    assertEquals(c.data.loading, false);
+
+    await c.switchCollection('a'); // going back to a good collection clears it
+    assertEquals(c.data.error, undefined);
+    assertEquals(names(c.data.items), ['item of a']);
+  } finally {
+    restore();
+  }
+});
+
+Deno.test('globalStats counts drawn and total across every loaded collection', async () => {
+  const { restore } = stubFetch({
+    '/collections.json': () => json([col('a'), col('b')]),
+    '/lists/a.json': () =>
+      json({ G: [{ id: '001', name: 'x', drawn: '2025-01-01' }, { id: '002', name: 'y' }] }),
+    '/lists/b.json': () => json({ G: [{ id: '001', name: 'z' }] }),
+  });
+  try {
+    const c = useCollections();
+    await c.init();
+    await tick(); // let the background prefetch of b land
+    assertEquals(c.globalStats.value, { drawn: 1, total: 3 });
+  } finally {
+    restore();
+  }
+});
+
+Deno.test('link templates from collections.json become functions of the item', async () => {
+  const { restore } = stubFetch({
+    '/collections.json': () =>
+      json([{
+        ...col('a'),
+        links: [{ label: 'Wiki', color: 'bg-x', url: 'https://w.test/?q={{common}}' }],
+      }]),
+    '/lists/a.json': () => json(list('a')),
+  });
+  try {
+    const c = useCollections();
+    await c.init();
+    const link = c.activeCollection.value!.links[0];
+    assertEquals(link.url(c.data.items[0]), 'https://w.test/?q=item%20of%20a');
+    assertEquals(c.activeCollection.value!.dataUrl, '/lists/a.json');
+  } finally {
+    restore();
+  }
+});
