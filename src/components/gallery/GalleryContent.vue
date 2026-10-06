@@ -88,8 +88,8 @@
               class="focus-ring inline-flex items-center gap-1 rounded-control underline underline-offset-2
                      hover:text-slate-800 dark:hover:text-slate-200"
             >
+              <Icon name="github" class="w-3.5 h-3.5" aria-hidden="true" />
               GitHub
-              <Icon name="externalLink" class="w-3 h-3" aria-hidden="true" />
             </a>
           </p>
         </footer>

@@ -46,7 +46,7 @@
     // ── Utilities ─────────────────────────────────────────────────────────────
     // Redraw public/placeholders/<id>.webp from each collection's line icon
     "placeholders": "deno run -A --node-modules-dir ./script/placeholders/generate.ts",
-    // Redraw docs/design-guide.png and docs/icons.png (see docs/DESIGN.md)
+    // Redraw docs/design-guide.png, docs/icons.png and the logo files (see docs/DESIGN.md)
     "design": "deno run -A --node-modules-dir ./script/docs/design_guide.ts",
     "serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
     "clean": "rm -rf dist node_modules",

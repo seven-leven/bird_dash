@@ -16,7 +16,14 @@ Deno.test('the registry is written in the same order as the groups', () => {
   assertEquals(Object.keys(ICONS), ICON_GROUPS.flatMap((g) => g.icons));
 });
 
-Deno.test('every icon is stroke-only markup for the shared 24px wrapper', () => {
+Deno.test('only brand marks are filled; every icon of our own is a stroke', () => {
+  const brand = ICON_GROUPS.find((g) => g.label === 'Brand')!.icons as string[];
+  for (const [name, def] of Object.entries(ICONS)) {
+    assertEquals('filled' in def && def.filled === true, brand.includes(name), name);
+  }
+});
+
+Deno.test('every icon is bare markup for the shared 24px wrapper', () => {
   for (const [name, def] of Object.entries(ICONS)) {
     assert(def.body.startsWith('<'), `${name}: body is not SVG markup`);
     assert(!/fill=|stroke=|<svg/.test(def.body), `${name}: colour and wrapper come from Icon.vue`);

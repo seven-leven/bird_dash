@@ -19,9 +19,17 @@
     </button>
 
     <!-- Wordmark -->
-    <a v-once href="#" class="hidden md:flex items-baseline gap-1 shrink-0 pr-1 select-none focus-ring rounded-control">
-      <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
-      <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>
+    <a
+      v-once
+      href="#"
+      class="hidden md:flex items-center gap-2 shrink-0 pr-1 select-none focus-ring rounded-control"
+      aria-label="Wildlife Illustrated"
+    >
+      <LogoMark class="w-6 h-6 text-slate-900 dark:text-white" />
+      <span class="flex items-baseline gap-1" aria-hidden="true">
+        <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
+        <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>
+      </span>
     </a>
 
     <div class="divider-v hidden md:block" />
@@ -81,6 +89,7 @@ import { computed } from 'vue';
 import GlobalSearch from '../search/GlobalSearch.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
+import LogoMark from '../icons/LogoMark.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useActions } from '../../stores/actions.ts';

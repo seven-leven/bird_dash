@@ -7,7 +7,8 @@
  * The colours and the contrast maths are in ./palette.ts.
  */
 import sharp from 'sharp';
-import { ICON_GROUPS, ICONS } from '../../src/components/icons/icons.ts';
+import { ICON_GROUPS, type IconDef, ICONS } from '../../src/components/icons/icons.ts';
+import { writeLogoFiles } from './logo.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
@@ -27,12 +28,13 @@ const text = (x: number, y: number, s: string, size = 15, fill = INK, weight = 4
   }</text>`;
 const rect = (x: number, y: number, w: number, h: number, fill: string, rx = 0, extra = '') =>
   `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" ${extra}/>`;
-const icon = (name: keyof typeof ICONS, x: number, y: number, size: number, stroke: string) =>
-  `<g transform="translate(${x} ${y}) scale(${
-    size / 24
-  })" fill="none" stroke="${stroke}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${
-    ICONS[name].body
-  }</g>`;
+const icon = (name: keyof typeof ICONS, x: number, y: number, size: number, ink: string) => {
+  const def: IconDef = ICONS[name];
+  const paint = def.filled
+    ? `fill="${ink}" stroke="none"`
+    : `fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
+  return `<g transform="translate(${x} ${y}) scale(${size / 24})" ${paint}>${def.body}</g>`;
+};
 const heading = (y: number, title: string, note: string) =>
   text(60, y, title, 24, INK, 700) + text(60, y + 26, note, 15, MUTED);
 
@@ -326,7 +328,8 @@ if (import.meta.main) {
     './docs/design-guide.png',
   );
   await iconSheet('./docs/icons.png');
-  console.log('  wrote docs/design-guide.png and docs/icons.png');
+  await writeLogoFiles();
+  console.log('  wrote docs/design-guide.png, docs/icons.png, docs/logo.png and docs/logo/');
 
   // Contrast figures quoted in docs/DESIGN.md.
   const pairs: [string, string, string][] = [
