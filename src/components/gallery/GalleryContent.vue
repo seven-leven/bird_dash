@@ -79,6 +79,17 @@
             Wildlife Illustrated &copy; {{ new Date().getFullYear() }} &middot; v{{ appVersion }}
             &middot; {{ drawnLabel }} &middot;
             <span class="font-mono" title="The commit this site was built from">{{ appCommit }}</span>
+            &middot;
+            <a
+              href="https://github.com/seven-leven/bird_dash"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="focus-ring inline-flex items-center gap-1 rounded-control underline underline-offset-2
+                     hover:text-slate-800 dark:hover:text-slate-200"
+            >
+              GitHub
+              <Icon name="externalLink" class="w-3 h-3" aria-hidden="true" />
+            </a>
           </p>
         </footer>
       </slot>
