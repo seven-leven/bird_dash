@@ -16,6 +16,10 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-07 | docs: `docs/TEST-PROCEDURES.md`, a step-by-step runbook for the tests (machine setup,
+  everyday running, the pre-PR checklist, what to do when a test, CI, a property test or coverage
+  fails, adding tests and folders, reading the reports on GitHub, maintenance, the runner's flags
+  and how it works); the documented `deno task test -- --verbose` did not work and is corrected
 - 2026-10-07 | tests: the version and changelog commands are tested as commands (dry run, writing,
   nothing to do, failure exit code, a missing list file); that area's line coverage from 73.1% to
   98.3%, the total to 96.2%, floor raised from 90% to 92%

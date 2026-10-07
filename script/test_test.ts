@@ -35,3 +35,8 @@ Deno.test('--report asks for the saved report; it is off by default', () => {
   assertEquals(parseArgs([]).report, false);
   assertEquals(parseArgs(['--coverage', '--report']).report, true);
 });
+
+Deno.test('a bare "--" separator is ignored, so both ways of passing flags work', () => {
+  assertEquals(parseArgs(['--', '--verbose']).verbose, true);
+  assertEquals(parseArgs(['unit', '--', '--fail-fast']).tiers, ['unit']);
+});

@@ -148,12 +148,13 @@ rendered specially; any other string fields appear in the info panel.
 
 ## Documentation
 
-| Guide                                          | What it covers                                                    |
-| ---------------------------------------------- | ----------------------------------------------------------------- |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | The three programs, the layers of the site, the stores, the rules |
-| [`docs/DATA.md`](docs/DATA.md)                 | Every field in `collections.json` and the list files; recipes     |
-| [`docs/TESTING.md`](docs/TESTING.md)           | Tiers, writing tests, coverage, CI                                |
-| [`docs/DESIGN.md`](docs/DESIGN.md)             | Colours, type, spacing, states, icons; a checklist for UI changes |
+| Guide                                                | What it covers                                                    |
+| ---------------------------------------------------- | ----------------------------------------------------------------- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)       | The three programs, the layers of the site, the stores, the rules |
+| [`docs/DATA.md`](docs/DATA.md)                       | Every field in `collections.json` and the list files; recipes     |
+| [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                |
+| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner   |
+| [`docs/DESIGN.md`](docs/DESIGN.md)                   | Colours, type, spacing, states, icons; a checklist for UI changes |
 
 [`docs/design-guide.png`](docs/design-guide.png), [`docs/icons.png`](docs/icons.png) and
 [`docs/logo.png`](docs/logo.png) are drawn from the real tokens, icons and logo by
