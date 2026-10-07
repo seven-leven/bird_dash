@@ -4,7 +4,7 @@
  *
  *   deno task test                      every tier, compact summary
  *   deno task test unit dom             just those tiers (see script/test/tiers.ts)
- *   deno task test -- --verbose         also list every file
+ *   deno task test --verbose            also list every file
  *   deno task test:coverage             every tier + coverage table + line-coverage floor
  *   deno task test:report               the same, and save the full report to test-results/report.md
  *
@@ -45,6 +45,8 @@ export interface Options {
 
 /** Positional arguments are tier names; everything else is a flag. */
 export function parseArgs(args: string[]): Options {
+  // A bare `--` (as in `deno task test -- --verbose`) is a separator, not an option.
+  args = args.filter((a) => a !== '--');
   const flags = args.filter((a) => a.startsWith('-'));
   const names = args.filter((a) => !a.startsWith('-'));
 

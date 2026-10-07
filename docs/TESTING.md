@@ -1,6 +1,10 @@
 # Testing
 
-How the tests are organised, how to run them, and how to write a new one.
+How the tests are organised, how to run them, and how to write a new one. For step-by-step
+instructions (setting up a machine, what to do when a test or CI fails, maintenance, the runner's
+flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). For step-by-step instructions (setting up a
+machine, what to do when a test or CI fails, maintenance, the runner's flags), see
+[TEST-PROCEDURES.md](TEST-PROCEDURES.md).
 
 ## Running them
 
@@ -9,7 +13,7 @@ How the tests are organised, how to run them, and how to write a new one.
 | `deno task test`                                  | Every tier, one summary row per tier                                 |
 | `deno task test unit dom`                         | Just the tiers you name                                              |
 | `deno task test:unit` (`dom`, `prop`, `contract`) | One tier                                                             |
-| `deno task test -- --verbose`                     | Also list every file                                                 |
+| `deno task test --verbose`                        | Also list every file                                                 |
 | `deno task test:watch`                            | Re-run on every save                                                 |
 | `deno task test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
 | `deno task test:report`                           | The same, and save the full report to `test-results/report.md`       |
