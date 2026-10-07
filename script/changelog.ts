@@ -66,32 +66,55 @@ export function insertEntries(changelog: string, lines: string[]): string {
   return changelog.slice(0, at) + '\n' + block + changelog.slice(at).replace(/^\n/, '');
 }
 
-async function main() {
-  const dryRun = Deno.args.includes('--dry-run');
+/** Everything the command touches outside itself — replaceable in tests. */
+export interface ChangelogIo {
+  commits: () => Promise<LoggedCommit[]>;
+  read: () => Promise<string>;
+  write: (text: string) => Promise<void>;
+  log: (line: string) => void;
+}
 
-  const commits = await unloggedCommits();
+/** The real thing: git history, the changelog file at `path`, and the console. */
+export const fileIo = (path: string = CHANGELOG_FILE): ChangelogIo => ({
+  commits: unloggedCommits,
+  read: () => Deno.readTextFile(path),
+  write: (text) => Deno.writeTextFile(path, text),
+  log: (line) => console.log(line),
+});
+
+export type Outcome = 'up-to-date' | 'dry-run' | 'written';
+
+/** The `deno task changelog` command. Returns what it did. */
+export async function run(args: string[], io: ChangelogIo = fileIo()): Promise<Outcome> {
+  const commits = await io.commits();
   if (commits.length === 0) {
-    console.log('[changelog] up to date — no commits since CHANGELOG.md was last touched');
-    return;
+    io.log('[changelog] up to date — no commits since CHANGELOG.md was last touched');
+    return 'up-to-date';
   }
 
   const lines = toLines(commits);
-  console.log(`[changelog] ${commits.length} unlogged commit(s):`);
-  for (const line of lines) console.log(`  ${line}`);
+  io.log(`[changelog] ${commits.length} unlogged commit(s):`);
+  for (const line of lines) io.log(`  ${line}`);
 
-  if (dryRun) {
-    console.log('[changelog] dry run — nothing written');
-    return;
+  if (args.includes('--dry-run')) {
+    io.log('[changelog] dry run — nothing written');
+    return 'dry-run';
   }
 
-  const changelog = await Deno.readTextFile(CHANGELOG_FILE);
-  await Deno.writeTextFile(CHANGELOG_FILE, insertEntries(changelog, lines));
-  console.log('[changelog] inserted at the top of the newest section — review, edit, and commit');
+  await io.write(insertEntries(await io.read(), lines));
+  io.log('[changelog] inserted at the top of the newest section — review, edit, and commit');
+  return 'written';
 }
 
-if (import.meta.main) {
-  main().catch((e) => {
+/** `run` as a process: 0 when it worked, 1 (with the error printed) when it did not. */
+export async function cli(args: string[], io?: ChangelogIo): Promise<number> {
+  try {
+    await run(args, io);
+    return 0;
+  } catch (e) {
     console.error('[changelog] error:', e);
-    Deno.exit(1);
-  });
+    return 1;
+  }
 }
+
+if (import.meta.main) Deno.exit(await cli(Deno.args));

@@ -19,7 +19,7 @@
 
 import { readJson } from '../lib/fs.ts';
 import { git } from '../lib/git.ts';
-import { COLLECTIONS, VERSION_FILE } from '../collection/registry.ts';
+import { type Collection, COLLECTIONS, VERSION_FILE } from '../collection/registry.ts';
 import { forEachDrawn, loadCollectionData } from '../collection/record.ts';
 
 export interface VersionData {
@@ -38,8 +38,11 @@ export async function getCommitCount(run: Git = git): Promise<number> {
   return Number(await run('rev-list', '--count', 'HEAD'));
 }
 
-export async function getDrawnIds(collectionId?: string): Promise<Set<string>> {
-  const targets = collectionId ? COLLECTIONS.filter((c) => c.id === collectionId) : COLLECTIONS;
+export async function getDrawnIds(
+  collectionId?: string,
+  collections: Collection[] = COLLECTIONS,
+): Promise<Set<string>> {
+  const targets = collectionId ? collections.filter((c) => c.id === collectionId) : collections;
 
   const ids = new Set<string>();
   for (const col of targets) {
@@ -92,7 +95,10 @@ export function describeVersion(v: VersionData): string {
   return `${formatVersion(v)} · ${plural(v.drawn, 'drawing')} · ${v.commit}`;
 }
 
-if (import.meta.main) {
-  const v = await computeVersion();
-  console.log(Deno.args.includes('--long') ? describeVersion(v) : formatVersion(v));
+/** What `deno task version` prints: the version, or with `--long` the whole line. */
+export async function cli(args: string[], opts: { git?: Git } = {}): Promise<string> {
+  const v = await computeVersion(opts);
+  return args.includes('--long') ? describeVersion(v) : formatVersion(v);
 }
+
+if (import.meta.main) console.log(await cli(Deno.args));

@@ -16,6 +16,9 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-07 | tests: the version and changelog commands are tested as commands (dry run, writing,
+  nothing to do, failure exit code, a missing list file); that area's line coverage from 73.1% to
+  98.3%, the total to 96.2%, floor raised from 90% to 92%
 - 2026-10-07 | test reporting: tests and coverage are also grouped by area (what part of the project
   they protect), with a count of source files no test imports; `deno task test:report` saves the
   full report, and CI keeps it; fixed a coverage exclude pattern that was silently leaving
