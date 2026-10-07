@@ -65,6 +65,9 @@ Conventions:
   states only what matters to it.
 - **Composables that register lifecycle hooks** run inside `runInScope(...)`, which also gives you a
   `stop()` to clean up.
+- **Use real files when the code is about files.** The asset pipeline tests
+  ([`script/pipeline/pipeline_test.ts`](../script/pipeline/pipeline_test.ts)) build a throwaway
+  collection in a temporary folder with tiny real images, run the real transcoder, and delete it.
 - **Fake the edges, not the logic.** Stub `fetch`, pass in a fake `git`, use a temporary directory;
   run the real code in between.
 - **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI
@@ -130,5 +133,6 @@ their normal depth in three timezones. If it fails, the seed is in the log.
 
 - **Components.** There is no real-browser tier. Things verified by hand today: layout at phone
   width, hover and focus styles, transitions, the lightbox gestures on a real touch screen.
-- **The image transcoder and the report printers** in `script/pipeline/` and `script/image/`.
+- **The command-line wrappers** around the scripts (`build.ts`, the `main` blocks of the changelog
+  and generator scripts). The functions they call are tested; the argument handling is not.
 - `useScrollLogic` and `useBreakpoints`, which need real layout to mean anything.
