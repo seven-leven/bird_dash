@@ -16,6 +16,10 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-07 | tests: the asset pipeline is tested end to end on real images in a temporary folder
+  (transcoding to square 2048px and 400px WebP, registering new drawings, thumbnail repair, failure
+  reporting, the build and check reports); 11 more tests, line coverage 93.8% to 94.2% with three
+  more files now counted, floor raised from 88% to 90%
 - 2026-10-06 | icons: the collection bird and its placeholders now show the logo's bird; small label
   icons in the footer (version, drawings, commit), the viewer (Dhivehi name, illustrator's note,
   learn more), the sidebar total and the section counts; the retry button and the Mac search
