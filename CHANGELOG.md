@@ -16,6 +16,10 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-07 | test reporting: tests and coverage are also grouped by area (what part of the project
+  they protect), with a count of source files no test imports; `deno task test:report` saves the
+  full report, and CI keeps it; fixed a coverage exclude pattern that was silently leaving
+  `record.ts` and the test harness out of the figure (corrected total: 94.9%)
 - 2026-10-07 | tests: the asset pipeline is tested end to end on real images in a temporary folder
   (transcoding to square 2048px and 400px WebP, registering new drawings, thumbnail repair, failure
   reporting, the build and check reports); 11 more tests, line coverage 93.8% to 94.2% with three

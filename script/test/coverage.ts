@@ -111,15 +111,19 @@ export function formatMarkdown(files: FileCoverage[], minLines: number, cwd = ''
     }% | ${percent(r.functions).toFixed(1)}% |`
   );
   return [
-    '### Unit test coverage',
+    '### Coverage',
     '',
     `**${
       percent(t.lines).toFixed(1)
-    }% of lines** (floor: ${minLines}%). \`.vue\` files are not measured.`,
+    }% of lines** in the files tests load (floor: ${minLines}%). \`.vue\` files are not measured.`,
+    '',
+    `<details><summary>Per-file coverage (${files.length} files, least covered first)</summary>`,
     '',
     '| File | Lines | Branches | Functions |',
     '| --- | ---: | ---: | ---: |',
     ...rows,
+    '',
+    '</details>',
     '',
   ].join('\n');
 }
@@ -134,7 +138,7 @@ export function parseMinLines(args: string[]): number {
 
 /**
  * Turn the raw profile a `deno test --coverage=<dir>` run left in `dir` into
- * per-file counters for our own sources (tests, fixtures and typings excluded).
+ * per-file counters for our own sources (tests, test helpers and typings excluded).
  */
 export async function readCoverage(dir: string): Promise<FileCoverage[]> {
   const { success, stdout } = await new Deno.Command(Deno.execPath(), {
@@ -143,7 +147,10 @@ export async function readCoverage(dir: string): Promise<FileCoverage[]> {
       dir,
       '--lcov',
       '--include=^file:.*/(src|script)/',
-      '--exclude=_test\.ts|/test/|\.d\.ts',
+      // Tests, shared test helpers and type declarations. The backslashes are doubled
+      // on purpose: with single ones the dots matched any character, so `.d.ts`
+      // also swallowed every file ending in "d.ts" (record.ts, for one).
+      '--exclude=_test\\.ts$|/test/helpers/|\\.d\\.ts$',
     ],
     stdout: 'piped',
     stderr: 'inherit',

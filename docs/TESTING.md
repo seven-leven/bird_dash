@@ -12,6 +12,7 @@ How the tests are organised, how to run them, and how to write a new one.
 | `deno task test -- --verbose`                     | Also list every file                                                 |
 | `deno task test:watch`                            | Re-run on every save                                                 |
 | `deno task test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
+| `deno task test:report`                           | The same, and save the full report to `test-results/report.md`       |
 | `deno task typecheck`                             | Type-check every `.ts` file                                          |
 | `deno task check`                                 | Asset integrity: missing or orphaned images                          |
 
@@ -42,6 +43,46 @@ The helpers are in [`script/test/helpers/`](../script/test/helpers/).
   back the input"? **Prop.** Describe the inputs and let fast-check generate hundreds.
 - Does it check `public/*.json`, the folder layout or git history? **Contract.** These fail when the
   _data_ is wrong, not the code.
+
+## Areas
+
+Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
+belongs to one area, by its folder ([`script/test/areas.ts`](../script/test/areas.ts)):
+
+| Area                          | Folders                                                           | Protects                                                  |
+| ----------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
+| Site: data and search         | `src/lib`, `src/composables/collection`, `src/composables/search` | Loading collections, filtering, grouping, search          |
+| Site: state and routing       | `src/stores`, `src/composables/core`                              | The stores, shareable links, theme, accent                |
+| Site: viewer and interface    | `src/composables/ui`, `src/components`                            | The lightbox, scroll-spy, icons and logo                  |
+| Asset pipeline and data files | `script/pipeline`, `image`, `collection`, `placeholders`, `lib`   | Image builds, the integrity check, the files in `public/` |
+| Version and changelog         | `script/version`, `script/changelog.ts`                           | The version in the footer, the changelog task             |
+| Test harness and docs tooling | `script/test`, `script/docs`                                      | The runner and its reports, generated guide images        |
+
+A new folder must be added to an area, or a contract test fails.
+
+## Reading the report
+
+Every run prints two tables: by tier, then by area.
+
+```
+area                           tests  lines   untested files  result
+Site: data and search             64   99.0%               1  ✓
+Site: state and routing           40   99.5%               3  ✓
+Asset pipeline and data files     41   91.6%               1  ✓
+```
+
+- **tests:** how many tests live in the area.
+- **lines:** line coverage of the area's files that a test loaded (shown with `test:coverage`).
+- **untested files:** source files in the area that no test imports at all. Coverage cannot see
+  these, so a high percentage beside a non-zero count here means "well tested, where tested".
+- **result:** a tick, the number of failures, or "no tests".
+
+`deno task test:report` also writes `test-results/report.md`: both tables, any failures, the list of
+untested files by name, and coverage for every file. CI writes the same report to the job summary
+page on every run and keeps it, with the JUnit file, as the `test-results` artifact for 14 days.
+
+Use it to decide what to test next: start with the area whose **untested files** or low **lines**
+would hurt most if it broke, not with the file that is easiest to cover.
 
 ## Writing a test
 
@@ -101,7 +142,8 @@ clearly grown, leaving a few points of headroom.
 
 Two things the number does not tell you:
 
-- **Only files a test imports are counted.** A script nothing imports does not lower the figure.
+- **Only files a test imports are counted.** A script nothing imports does not lower the figure. The
+  report lists those files by name under "untested files", so they are not invisible.
 - **`.vue` files are not counted at all.** Deno cannot import them, so component templates are
   checked by hand in the browser. Logic that matters should live in `.ts` files for this reason.
 
@@ -125,6 +167,7 @@ their normal depth in three timezones. If it fails, the seed is in the log.
 
 ## Guard rails
 
+- **Every source and test file must belong to an area,** so nothing is missing from the report.
 - **A test in the wrong place fails the suite.** The runner looks in `src/` and `script/` only, and
   a contract test checks that no `*_test.ts` file lives anywhere else.
 - **Every tier must have at least one test.**

@@ -26,6 +26,9 @@
     // Every tier + a coverage table; fails if total line coverage drops below the
     // floor. Raise --min-lines as coverage grows (it only ratchets up).
     "test:coverage": "deno run -A ./script/test.ts --coverage --min-lines=90",
+    // The same run, and the full report (by tier, by area, per-file coverage, files no
+    // test loads) saved to test-results/report.md. CI saves it on every run.
+    "test:report": "deno run -A ./script/test.ts --coverage --min-lines=90 --report",
 
     // ── Type check ────────────────────────────────────────────────────────────
     // Deno type-checks the .ts surface (scripts, composables, types, entrypoint).

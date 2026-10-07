@@ -172,6 +172,7 @@ rendered specially; any other string fields appear in the info panel.
 | `deno task test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                       |
 | `deno task test:watch`                            | Re-run the tests on every save                                       |
 | `deno task test:coverage`                         | Every tier + coverage table; fails below the line-coverage floor     |
+| `deno task test:report`                           | The same, saving the full report to `test-results/report.md`         |
 | `deno task typecheck`                             | Type-check the `.ts` sources (`.vue` templates are not covered)      |
 | `deno task version`                               | Print the current derived version                                    |
 | `deno task changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews) |
