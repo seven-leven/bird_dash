@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals, assertMatch, assertRejects } from '@std/assert';
-import { computeVersion, getCommitCount, getDrawnIds } from './compute.ts';
+import { cli, computeVersion, getCommitCount, getDrawnIds } from './compute.ts';
 import { git } from '../lib/git.ts';
 import { readJson } from '../lib/fs.ts';
 import { COLLECTIONS, VERSION_FILE } from '../collection/registry.ts';
@@ -88,3 +88,40 @@ Deno.test('computeVersion: in CI even lenient mode fails, so a deploy never ship
   withCi('true', async () => {
     await assertRejects(() => computeVersion({ lenient: true, git: noGit }), Error);
   }));
+
+// ── the command, and a collection whose list file is not there yet ──
+
+Deno.test('cli prints major.minor.patch, and with --long the drawings and commit too', async () => {
+  const short = await cli([]);
+  assertMatch(short, /^\d+\.\d+\.\d+$/);
+
+  const long = await cli(['--long']);
+  assert(long.startsWith(short + ' · '), `"${long}" should start with the version`);
+  assertMatch(long, / · \d+ drawings? · [0-9a-f]{7}$/);
+});
+
+Deno.test('cli fails, rather than printing a made-up version, when git is unavailable', () =>
+  withCi(undefined, async () => {
+    await assertRejects(() => cli([], { git: noGit }), Error, 'git: command not found');
+  }));
+
+Deno.test('getDrawnIds skips a collection whose list file does not exist yet', async () => {
+  const missing = {
+    id: 'ghosts',
+    label: 'Ghosts',
+    emoji: '',
+    paths: {
+      json: './public/lists/no-such-list.json',
+      raw: '',
+      full: '',
+      thumb: '',
+      placeholder: '',
+      placeholderDark: '',
+    },
+  };
+  assertEquals((await getDrawnIds(undefined, [missing])).size, 0);
+
+  // A real collection next to it still counts.
+  const withReal = await getDrawnIds(undefined, [missing, COLLECTIONS[0]]);
+  assertEquals(withReal.size, (await getDrawnIds(COLLECTIONS[0].id)).size);
+});
