@@ -30,3 +30,8 @@ Deno.test("withoutDots drops the dot reporter's progress lines and keeps the res
   const raw = '.\n.\n!\n\nERRORS\nsome test => file.ts:1:1\nerror: boom\n.\n';
   assertEquals(withoutDots(raw), 'ERRORS\nsome test => file.ts:1:1\nerror: boom');
 });
+
+Deno.test('--report asks for the saved report; it is off by default', () => {
+  assertEquals(parseArgs([]).report, false);
+  assertEquals(parseArgs(['--coverage', '--report']).report, true);
+});

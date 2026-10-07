@@ -1,6 +1,7 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals } from '@std/assert';
 import { discoverTests, groupByTier, TIER_ORDER, tierOf } from './tiers.ts';
+import { areaOf, AREAS, discoverSources } from './areas.ts';
 
 // The runner only looks in src/ and script/. A test file anywhere else would pass
 // `deno test` on its own but silently never run in `deno task test` or CI — so
@@ -34,4 +35,21 @@ Deno.test('every discovered test file has a tier, and each tier has at least one
 
   const groups = groupByTier(files);
   for (const tier of TIER_ORDER) assert(groups[tier].length > 0, `no tests in tier "${tier}"`);
+});
+
+Deno.test('every source file and every test file belongs to an area', async () => {
+  const files = [...await discoverSources(), ...await discoverTests()];
+  assert(files.length > 0);
+  assertEquals(
+    files.filter((f) => areaOf(f) === undefined),
+    [],
+    'add these to an area in script/test/areas.ts so they show up in the report',
+  );
+});
+
+Deno.test('every area has at least one source file, so none is a stale entry', async () => {
+  const sources = await discoverSources();
+  for (const area of AREAS) {
+    assert(sources.some((s) => areaOf(s)?.id === area.id), `area "${area.id}" matches no file`);
+  }
 });

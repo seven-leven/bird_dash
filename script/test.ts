@@ -6,6 +6,7 @@
  *   deno task test unit dom             just those tiers (see script/test/tiers.ts)
  *   deno task test -- --verbose         also list every file
  *   deno task test:coverage             every tier + coverage table + line-coverage floor
+ *   deno task test:report               the same, and save the full report to test-results/report.md
  *
  * Deno's own per-test log is 150+ lines for a green run, so this runs the tests once
  * with the dot + JUnit reporters and prints one row per tier instead. On failure it
@@ -17,6 +18,12 @@
 import { discoverTests, groupByTier, isTier, type Tier, TIER_ORDER } from './test/tiers.ts';
 import { parseJunit } from './test/junit.ts';
 import { annotations, formatConsole, formatMarkdown, summarize } from './test/report.ts';
+import {
+  discoverSources,
+  formatAreasConsole,
+  formatAreasMarkdown,
+  summarizeAreas,
+} from './test/areas.ts';
 import {
   formatMarkdown as coverageMarkdown,
   formatTable,
@@ -32,6 +39,8 @@ export interface Options {
   failFast: boolean;
   coverage: boolean;
   minLines: number;
+  /** Save the markdown report to test-results/report.md (always done in CI). */
+  report: boolean;
 }
 
 /** Positional arguments are tier names; everything else is a flag. */
@@ -43,7 +52,7 @@ export function parseArgs(args: string[]): Options {
   if (unknown.length > 0) {
     throw new Error(`unknown tier "${unknown[0]}" (available: ${TIER_ORDER.join(', ')})`);
   }
-  const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage']);
+  const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage', '--report']);
   const bad = flags.find((f) => !known.has(f) && !f.startsWith('--min-lines='));
   if (bad) throw new Error(`unknown option ${bad}`);
 
@@ -57,6 +66,7 @@ export function parseArgs(args: string[]): Options {
     failFast: flags.includes('--fail-fast'),
     coverage,
     minLines,
+    report: flags.includes('--report'),
   };
 }
 
@@ -87,7 +97,8 @@ async function main(argv: string[]): Promise<number> {
 
   const work = await Deno.makeTempDir({ prefix: 'test-' });
   try {
-    if (inCI) await Deno.mkdir('test-results', { recursive: true });
+    const saveReport = inCI || opts.report;
+    if (saveReport) await Deno.mkdir('test-results', { recursive: true });
     const junitPath = inCI ? 'test-results/junit.xml' : `${work}/junit.xml`;
     const covDir = `${work}/coverage`;
 
@@ -127,8 +138,24 @@ async function main(argv: string[]): Promise<number> {
     let summaryMd = formatMarkdown(summary, title);
     let ok = run.success;
 
-    if (opts.coverage && run.success) {
-      const cov = await readCoverage(covDir);
+    // Coverage paths come back absolute; areas work on repo-relative ones.
+    const cwd = Deno.cwd().replaceAll('\\', '/') + '/';
+    const relative = (file: string) => file.replaceAll('\\', '/').replace(cwd, '');
+    const cov = opts.coverage && run.success
+      ? (await readCoverage(covDir)).map((f) => ({ ...f, file: relative(f.file) }))
+      : undefined;
+
+    // The second view of the same run: by area (what is protected) rather than tier.
+    // "Untested files" only means something when every tier ran.
+    const allTiers = opts.tiers.length === TIER_ORDER.length;
+    const areas = summarizeAreas(cases, {
+      coverage: cov,
+      sources: cov && allTiers ? await discoverSources() : [],
+    });
+    if (cases.length > 0) console.log('\n' + formatAreasConsole(areas));
+    summaryMd += '\n' + formatAreasMarkdown(areas);
+
+    if (cov) {
       const actual = percent(totals(cov).lines);
       console.log('\nleast covered files:\n' + formatTable(cov, Deno.cwd(), 8));
       if (actual < opts.minLines) {
@@ -144,6 +171,10 @@ async function main(argv: string[]): Promise<number> {
 
     const summaryFile = Deno.env.get('GITHUB_STEP_SUMMARY');
     if (summaryFile) await Deno.writeTextFile(summaryFile, summaryMd + '\n', { append: true });
+    if (saveReport) {
+      await Deno.writeTextFile('test-results/report.md', summaryMd + '\n');
+      if (!inCI) console.log('\nfull report: test-results/report.md');
+    }
 
     return ok ? 0 : 1;
   } finally {
