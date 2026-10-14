@@ -2,9 +2,8 @@
 
 How the tests are organised, how to run them, and how to write a new one. For step-by-step
 instructions (setting up a machine, what to do when a test or CI fails, maintenance, the runner's
-flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). For step-by-step instructions (setting up a
-machine, what to do when a test or CI fails, maintenance, the runner's flags), see
-[TEST-PROCEDURES.md](TEST-PROCEDURES.md).
+flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). How to get from today's coverage to 100% is in
+[COVERAGE-ROADMAP.md](COVERAGE-ROADMAP.md).
 
 ## Running them
 
