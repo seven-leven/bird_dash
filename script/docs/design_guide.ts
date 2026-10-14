@@ -9,6 +9,7 @@
 import sharp from 'sharp';
 import { ICON_GROUPS, type IconDef, ICONS } from '../../src/components/icons/icons.ts';
 import { writeLogoFiles } from './logo.ts';
+import { iconGridLayout } from './layout.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
@@ -50,32 +51,30 @@ function ramp(y: number, name: string, colors: Record<string, string>): string {
   }).join('');
 }
 
-/**
- * Lay the icon groups out left to right, wrapping at `maxX`: a small label above
- * each group, its icons in a row beneath. Returns the markup and the bottom edge.
- */
 function iconGroups(
   x0: number,
   y0: number,
-  maxX: number,
-  o: { size: number; cell: number; row: number; gap: number; label: number; name: number },
+  o: { cols: number; size: number; cell: number; row: number; label: number; name: number },
   ink: string,
 ): { svg: string; bottom: number } {
-  let x = x0;
-  let y = y0;
+  const layout = iconGridLayout(ICON_GROUPS, o.cols);
   let svg = '';
-  for (const group of ICON_GROUPS) {
-    const width = group.icons.length * o.cell;
-    if (x > x0 && x + width > maxX) {
-      x = x0;
-      y += o.row;
-    }
-    svg += text(x, y, group.label.toUpperCase(), o.label, MUTED, 600, 'letter-spacing="1"');
-    group.icons.forEach((name, i) => {
-      const cx = x + i * o.cell + o.cell / 2;
-      svg += icon(name, cx - o.size / 2 - 8, y + 16, o.size, ink) +
+  for (const group of layout) {
+    const y = y0 + group.row * o.row;
+    svg += text(
+      x0 + group.col * o.cell,
+      y,
+      group.label.toUpperCase(),
+      o.label,
+      MUTED,
+      600,
+      'letter-spacing="1"',
+    );
+    for (const { name, col } of group.icons) {
+      const x = x0 + col * o.cell;
+      svg += icon(name as keyof typeof ICONS, x, y + 16, o.size, ink) +
         text(
-          cx - 8,
+          x + o.size / 2,
           y + 16 + o.size + o.name + 8,
           name,
           o.name,
@@ -83,10 +82,10 @@ function iconGroups(
           400,
           'text-anchor="middle"',
         );
-    });
-    x += width + o.gap;
+    }
   }
-  return { svg, bottom: y + o.row };
+  const rows = Math.max(...layout.map((g) => g.row)) + 1;
+  return { svg, bottom: y0 + rows * o.row };
 }
 
 /** A `.nav-item` drawn in one theme: default, hover, current. */
@@ -273,11 +272,11 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
       '24px grid, 2px stroke, round ends, no fills. Placeholders are the same icons, drawn once per theme.',
     ),
   );
-  const groups = iconGroups(68, y + 66, 940, {
+  const groups = iconGroups(60, y + 66, {
+    cols: 10,
     size: 30,
-    cell: 82,
+    cell: 84,
     row: 108,
-    gap: 34,
     label: 11,
     name: 11,
   }, INK);
@@ -308,11 +307,11 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
 
 async function iconSheet(path: string): Promise<void> {
   const width = 1000;
-  const groups = iconGroups(48, 44, width - 20, {
+  const groups = iconGroups(56, 44, {
+    cols: 7,
     size: 60,
     cell: 132,
     row: 168,
-    gap: 44,
     label: 13,
     name: 14,
   }, '#111111');
