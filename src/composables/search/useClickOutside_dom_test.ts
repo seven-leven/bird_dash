@@ -1,0 +1,50 @@
+/// <reference lib="deno.ns" />
+import { assertEquals } from '@std/assert';
+import { useClickOutside } from './useClickOutside.ts';
+import { mountComposable } from '../../../script/test/helpers/mount.ts';
+import { withDom } from '../../../script/test/helpers/dom.ts';
+
+/** A box with a child, a separate element outside it, and a way to press the mouse on any of them. */
+function page() {
+  const box = document.createElement('div');
+  const inside = document.createElement('span');
+  const outside = document.createElement('p');
+  box.append(inside);
+  document.body.append(box, outside);
+  const press = (el: Element) => el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+  return { box, inside, outside, press };
+}
+
+Deno.test('a press outside the target calls the handler; a press inside it does not', () =>
+  withDom(() => {
+    const { box, inside, outside, press } = page();
+    let calls = 0;
+    const { unmount } = mountComposable(() => useClickOutside(() => box, () => calls++));
+
+    press(inside);
+    press(box);
+    assertEquals(calls, 0);
+    press(outside);
+    assertEquals(calls, 1);
+    unmount();
+  }));
+
+Deno.test('while there is no target yet, nothing happens', () =>
+  withDom(() => {
+    const { outside, press } = page();
+    let calls = 0;
+    const { unmount } = mountComposable(() => useClickOutside(() => null, () => calls++));
+    press(outside);
+    assertEquals(calls, 0);
+    unmount();
+  }));
+
+Deno.test('after the component is gone, the listener is gone too', () =>
+  withDom(() => {
+    const { box, outside, press } = page();
+    let calls = 0;
+    const { unmount } = mountComposable(() => useClickOutside(() => box, () => calls++));
+    unmount();
+    press(outside);
+    assertEquals(calls, 0);
+  }));
