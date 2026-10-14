@@ -23,6 +23,7 @@ import {
   formatAreasConsole,
   formatAreasMarkdown,
   summarizeAreas,
+  untestedFiles,
 } from './test/areas.ts';
 import {
   formatMarkdown as coverageMarkdown,
@@ -169,6 +170,18 @@ async function main(argv: string[]): Promise<number> {
         console.log(`\n✓ line coverage ${actual.toFixed(1)}% (floor ${opts.minLines}%)`);
       }
       summaryMd += '\n' + coverageMarkdown(cov, opts.minLines, Deno.cwd());
+
+      // A file no test imports is invisible to the percentage above, so it gets
+      // its own gate: every source file must be loaded by at least one test.
+      const untested = untestedFiles(areas);
+      if (untested.length > 0) {
+        console.error(
+          `\n✗ ${untested.length} source file(s) are not imported by any test:\n` +
+            untested.map((f) => `    ${f}`).join('\n') +
+            '\n  Add a test for each (docs/TEST-PROCEDURES.md, section 9).',
+        );
+        ok = false;
+      }
     }
 
     const summaryFile = Deno.env.get('GITHUB_STEP_SUMMARY');

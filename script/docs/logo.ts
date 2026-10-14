@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 /**
  * Draws the logo sheet (docs/logo.png) and writes the logo as standalone SVG
- * files (docs/logo/). Run through `deno task design`.
+ * files (docs/logo/). Run through `deno task design` (script/docs/design_guide.ts).
  */
 import sharp from 'sharp';
 import { LOGO_MARK, LOGO_TILE, WORDMARK } from '../../src/components/icons/logo.ts';
@@ -120,23 +120,19 @@ export function logoSheetSvg(): string {
     `<rect width="100%" height="100%" fill="${SLATE['50']}"/>${p.join('')}</svg>`;
 }
 
-export async function writeLogoFiles(): Promise<void> {
-  await Deno.mkdir('./docs/logo', { recursive: true });
+/** Write the logo sheet (`logo.png`) and the standalone files (`logo/`) into `dir`. */
+export async function writeLogoFiles(dir = './docs'): Promise<void> {
+  await Deno.mkdir(`${dir}/logo`, { recursive: true });
   const files: Record<string, string> = {
     'mark.svg': logoSvg('mark', INK),
     'mark-white.svg': logoSvg('mark', '#ffffff'),
     'tile.svg': logoSvg('tile', INK),
   };
   for (const [name, svg] of Object.entries(files)) {
-    await Deno.writeTextFile(`./docs/logo/${name}`, svg + '\n');
+    await Deno.writeTextFile(`${dir}/logo/${name}`, svg + '\n');
   }
   await sharp(new TextEncoder().encode(logoSvg('tile', INK, 512))).png().toFile(
-    './docs/logo/tile-512.png',
+    `${dir}/logo/tile-512.png`,
   );
-  await sharp(new TextEncoder().encode(logoSheetSvg())).png().toFile('./docs/logo.png');
-}
-
-if (import.meta.main) {
-  await writeLogoFiles();
-  console.log('  wrote docs/logo.png and docs/logo/');
+  await sharp(new TextEncoder().encode(logoSheetSvg())).png().toFile(`${dir}/logo.png`);
 }

@@ -151,8 +151,9 @@ clearly grown, leaving a few points of headroom.
 
 Two things the number does not tell you:
 
-- **Only files a test imports are counted.** A script nothing imports does not lower the figure. The
-  report lists those files by name under "untested files", so they are not invisible.
+- **Only files a test imports are counted,** so the percentage alone could hide a file with no tests
+  at all. To close that gap, `deno task test:coverage` also fails if any source file is not imported
+  by at least one test, and names it.
 - **`.vue` files are not counted at all.** Deno cannot import them, so component templates are
   checked by hand in the browser. Logic that matters should live in `.ts` files for this reason.
 
@@ -176,6 +177,7 @@ their normal depth in three timezones. If it fails, the seed is in the log.
 
 ## Guard rails
 
+- **Every source file must be imported by a test.** A new file with no test fails the coverage run.
 - **Every source and test file must belong to an area,** so nothing is missing from the report.
 - **A test in the wrong place fails the suite.** The runner looks in `src/` and `script/` only, and
   a contract test checks that no `*_test.ts` file lives anywhere else.
@@ -185,7 +187,8 @@ their normal depth in three timezones. If it fails, the seed is in the log.
 
 - **Components.** There is no real-browser tier. Things verified by hand today: layout at phone
   width, hover and focus styles, transitions, the lightbox gestures on a real touch screen.
-- **The command-line wrappers** around the scripts (`build.ts`, the `main` blocks of the changelog
-  and generator scripts). The functions they call are tested; the argument handling is not.
+- **The last line of each command.** Every script's work is a tested function; what is left untested
+  is the one line that starts it (`if (import.meta.main) …`) and the function that launches the real
+  `vite build`.
 - **Real layout.** The scroll-spy and the breakpoint are tested with positions and widths the test
   supplies. Whether the browser reports the right ones is still checked by hand.

@@ -16,6 +16,11 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-14 | tests: no untested files left — the build command, the design-guide generator and the
+  logo generator are tested (which step runs for which arguments, exit codes, a real asset build on
+  a throwaway collection, every generated image written at the right size, and `docs/` kept in step
+  with the code that draws it); the coverage run now fails if any source file is not imported by a
+  test; 313 tests
 - 2026-10-14 | tests: every source file of the site is now loaded by a test; 30 more for the
   collections and ui stores, the scroll-spy, the breakpoint and click-outside (291 in all); line
   coverage 96.5%, floor raised from 92% to 94%

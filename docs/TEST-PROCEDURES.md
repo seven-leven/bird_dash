@@ -211,6 +211,16 @@ FC_RUNS_MULTIPLIER=10 deno task test:prop
 4. Do **not** lower the floor to get a pull request through. If code truly cannot be tested (a
    command-line entry point), keep it to one line that calls a tested function.
 
+The coverage run can also fail with every test passing and the percentage fine:
+
+```
+✗ 1 source file(s) are not imported by any test:
+    src/lib/newThing.ts
+```
+
+You added a file and no test loads it. Add a test file next to it (section 9); even one test that
+imports it and checks its main behaviour clears the error.
+
 ## 9. Add a test
 
 1. Create the file next to the code, named for its tier:

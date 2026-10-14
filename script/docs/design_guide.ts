@@ -305,7 +305,8 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
   return { svg, overlays: placeholders };
 }
 
-async function iconSheet(path: string): Promise<void> {
+/** The icon sheet (docs/icons.png) as an SVG. */
+export function iconSheetSvg(): string {
   const width = 1000;
   const groups = iconGroups(56, 44, {
     cols: 7,
@@ -315,22 +316,12 @@ async function iconSheet(path: string): Promise<void> {
     label: 13,
     name: 14,
   }, '#111111');
-  const svg =
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${groups.bottom}">` +
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${groups.bottom}">` +
     rect(0, 0, width, groups.bottom, '#ffffff') + groups.svg + '</svg>';
-  await sharp(new TextEncoder().encode(svg)).png().toFile(path);
 }
 
-if (import.meta.main) {
-  const { svg, overlays } = await designGuide();
-  await sharp(new TextEncoder().encode(svg)).composite(overlays).png().toFile(
-    './docs/design-guide.png',
-  );
-  await iconSheet('./docs/icons.png');
-  await writeLogoFiles();
-  console.log('  wrote docs/design-guide.png, docs/icons.png, docs/logo.png and docs/logo/');
-
-  // Contrast figures quoted in docs/DESIGN.md.
+/** The contrast figures quoted in docs/DESIGN.md, one line each. */
+export function contrastReport(): string[] {
   const pairs: [string, string, string][] = [
     ['text slate-900 on white', SLATE['900'], '#ffffff'],
     ['muted slate-500 on white', SLATE['500'], '#ffffff'],
@@ -343,5 +334,20 @@ if (import.meta.main) {
     ['placeholder #a1a1a1 on white', '#a1a1a1', '#ffffff'],
     ['dark placeholder slate-600 on slate-900', SLATE['600'], SLATE['900']],
   ];
-  for (const [label, a, b] of pairs) console.log(`  ${contrast(a, b).toFixed(1)}:1  ${label}`);
+  return pairs.map(([label, a, b]) => `  ${contrast(a, b).toFixed(1)}:1  ${label}`);
+}
+
+/** Draw every generated image into `dir`: the guide, the icon sheet, the logo sheet and files. */
+export async function writeDesignImages(dir = './docs'): Promise<void> {
+  const png = (svg: string) => sharp(new TextEncoder().encode(svg));
+  const { svg, overlays } = await designGuide();
+  await png(svg).composite(overlays).png().toFile(`${dir}/design-guide.png`);
+  await png(iconSheetSvg()).png().toFile(`${dir}/icons.png`);
+  await writeLogoFiles(dir);
+}
+
+if (import.meta.main) {
+  await writeDesignImages();
+  console.log('  wrote docs/design-guide.png, docs/icons.png, docs/logo.png and docs/logo/');
+  for (const line of contrastReport()) console.log(line);
 }

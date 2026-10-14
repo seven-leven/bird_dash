@@ -1,0 +1,128 @@
+/// <reference lib="deno.ns" />
+import { assert, assertEquals, assertMatch, assertStringIncludes } from '@std/assert';
+import sharp from 'sharp';
+import { contrastReport, designGuide, iconSheetSvg, writeDesignImages } from './design_guide.ts';
+import { logoSheetSvg, logoSvg } from './logo.ts';
+import { accentMenu } from './palette.ts';
+import { ICON_GROUPS, ICONS } from '../../src/components/icons/icons.ts';
+import { readJson } from '../lib/fs.ts';
+import type { RawCollectionConfig } from '../../src/types/data.ts';
+
+// The generated images are drawn from the real tokens, icons and data, so these
+// read main.css, collections.json and the placeholder files.
+
+// sharp caches open files; on Windows that would keep the temporary folder locked.
+sharp.cache(false);
+
+const size = async (path: string) => {
+  const { width, height, format } = await sharp(await Deno.readFile(path)).metadata();
+  return { width, height, format };
+};
+
+Deno.test('the guide names every accent hue on the menu and who uses each', async () => {
+  const { svg } = await designGuide();
+  for (const hue of await accentMenu()) assertStringIncludes(svg, `>${hue}</text>`);
+
+  const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  for (const c of collections) assertStringIncludes(svg, `>${c.label}</text>`);
+  assertStringIncludes(svg, '>free</text>'); // hues no collection has taken yet
+});
+
+Deno.test('the guide and the icon sheet both show every icon, under its group', async () => {
+  const guide = (await designGuide()).svg;
+  const sheet = iconSheetSvg();
+  for (const svg of [guide, sheet]) {
+    for (const group of ICON_GROUPS) {
+      assertStringIncludes(svg, `>${group.label.toUpperCase()}</text>`);
+      for (const name of group.icons) {
+        assertStringIncludes(svg, `>${name}</text>`);
+        assertStringIncludes(svg, ICONS[name].body);
+      }
+    }
+  }
+});
+
+Deno.test('the guide shows both placeholders of every collection', async () => {
+  const { overlays } = await designGuide();
+  const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  assertEquals(overlays.length, collections.length * 2); // light and dark
+});
+
+Deno.test('the contrast report gives a ratio for every pair the guide quotes', () => {
+  const lines = contrastReport();
+  assertEquals(lines.length, 10);
+  for (const line of lines) assertMatch(line, /^ {2}\d+\.\d:1 {2}\S/);
+  assertStringIncludes(lines.join('\n'), 'muted slate-500 on white');
+});
+
+Deno.test('logoSvg is a standalone file in one colour, at the size asked for', () => {
+  const mark = logoSvg('mark', '#123456');
+  assert(mark.startsWith('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"'));
+  assertStringIncludes(mark, 'stroke="#123456"');
+  assert(!mark.includes('currentColor'), 'a standalone file has no page to take a colour from');
+
+  const tile = logoSvg('tile', '#123456', 512);
+  assertStringIncludes(tile, 'width="512" height="512" viewBox="0 0 32 32"');
+  assertStringIncludes(tile, 'fill="#123456"');
+});
+
+Deno.test('the logo sheet shows each version and the rules', () => {
+  const sheet = logoSheetSvg();
+  for (const label of ['MARK', 'TILE', 'HORIZONTAL LOCKUP', 'STACKED', 'SIZES', 'CLEAR SPACE']) {
+    assertStringIncludes(sheet, `>${label}</text>`);
+  }
+  assertStringIncludes(sheet, 'recolour it with a collection accent');
+  assertStringIncludes(sheet, '>Wildlife</tspan>');
+});
+
+Deno.test('`deno task design` writes every image, at the expected sizes, into the folder given', async () => {
+  const dir = await Deno.makeTempDir({ prefix: 'bird_dash_design_' });
+  try {
+    await writeDesignImages(dir);
+
+    const guide = await size(`${dir}/design-guide.png`);
+    assertEquals([guide.width, guide.format], [1400, 'png']);
+    assert(guide.height! > 1500, 'the guide should be a tall page');
+
+    assertEquals((await size(`${dir}/icons.png`)).width, 1000);
+    assertEquals(await size(`${dir}/logo.png`), { width: 1400, height: 900, format: 'png' });
+    assertEquals(await size(`${dir}/logo/tile-512.png`), {
+      width: 512,
+      height: 512,
+      format: 'png',
+    });
+
+    for (const name of ['mark.svg', 'mark-white.svg', 'tile.svg']) {
+      const svg = await Deno.readTextFile(`${dir}/logo/${name}`);
+      assert(svg.startsWith('<svg ') && svg.endsWith('</svg>\n'), name);
+    }
+    assertStringIncludes(await Deno.readTextFile(`${dir}/logo/mark-white.svg`), '#ffffff');
+  } finally {
+    await Deno.remove(dir, { recursive: true });
+  }
+});
+
+Deno.test('the images in docs/ are up to date with the code that draws them', async () => {
+  const dir = await Deno.makeTempDir({ prefix: 'bird_dash_design_' });
+  try {
+    await writeDesignImages(dir);
+    // The SVG files are plain text, so they must match exactly.
+    for (const name of ['mark.svg', 'mark-white.svg', 'tile.svg']) {
+      assertEquals(
+        await Deno.readTextFile(`./docs/logo/${name}`),
+        await Deno.readTextFile(`${dir}/logo/${name}`),
+        `docs/logo/${name} is stale: run \`deno task design\` and commit the result`,
+      );
+    }
+    // PNG bytes can differ between machines (fonts), so compare what is stable: the size.
+    for (const name of ['design-guide.png', 'icons.png', 'logo.png']) {
+      assertEquals(
+        await size(`./docs/${name}`),
+        await size(`${dir}/${name}`),
+        `docs/${name} is stale: run \`deno task design\` and commit the result`,
+      );
+    }
+  } finally {
+    await Deno.remove(dir, { recursive: true });
+  }
+});

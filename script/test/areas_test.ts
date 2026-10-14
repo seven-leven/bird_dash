@@ -1,6 +1,13 @@
 /// <reference lib="deno.ns" />
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
-import { areaOf, AREAS, formatAreasConsole, formatAreasMarkdown, summarizeAreas } from './areas.ts';
+import {
+  areaOf,
+  AREAS,
+  formatAreasConsole,
+  formatAreasMarkdown,
+  summarizeAreas,
+  untestedFiles,
+} from './areas.ts';
 import type { TestCase } from './junit.ts';
 import type { FileCoverage } from './coverage.ts';
 
@@ -91,4 +98,18 @@ Deno.test('the markdown report names what each area protects and lists unloaded 
   assertStringIncludes(md, '1 source file(s) no test imports');
   assertStringIncludes(md, '`script/build.ts`');
   assertStringIncludes(md, '⚠️ no tests');
+});
+
+Deno.test('untestedFiles gathers the unloaded files of every area; empty when all are loaded', () => {
+  const some = summarizeAreas([], {
+    coverage: [cov('src/lib/a.ts', 1, 1)],
+    sources: ['src/lib/a.ts', 'src/lib/never.ts', 'script/build.ts'],
+  });
+  assertEquals(untestedFiles(some).sort(), ['script/build.ts', 'src/lib/never.ts']);
+
+  const none = summarizeAreas([], {
+    coverage: [cov('src/lib/a.ts', 1, 1)],
+    sources: ['src/lib/a.ts'],
+  });
+  assertEquals(untestedFiles(none), []);
 });
