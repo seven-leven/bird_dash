@@ -9,7 +9,7 @@
  *   --check          read-only integrity report, no writes
  */
 
-import { COLLECTIONS } from './collection/registry.ts';
+import { type Collection, COLLECTIONS } from './collection/registry.ts';
 import { scanCollection } from './pipeline/scan.ts';
 import { blockingIssues, planWork } from './pipeline/plan.ts';
 import { executeWork } from './pipeline/execute.ts';
@@ -22,12 +22,12 @@ import type { CollectionSummary } from './pipeline/report.ts';
 // Assets build
 // ---------------------------------------------------------------------------
 
-export async function buildAssets(): Promise<void> {
+export async function buildAssets(collections: Collection[] = COLLECTIONS): Promise<void> {
   const start = Date.now();
   const date = new Date().toISOString().split('T')[0];
   const summaries: CollectionSummary[] = [];
 
-  for (const col of COLLECTIONS) {
+  for (const col of collections) {
     const state = await scanCollection(col);
     const plan = planWork(state);
 
@@ -55,11 +55,9 @@ export async function buildAssets(): Promise<void> {
 // Vite build (subprocess)
 // ---------------------------------------------------------------------------
 
-export async function buildVite(): Promise<void> {
-  console.log('\n  vite\n');
-
+/** Start `vite build` and resolve with its exit code. */
+async function spawnVite(): Promise<number> {
   const root = Deno.cwd();
-
   const { code } = await new Deno.Command('deno', {
     args: [
       'run',
@@ -74,7 +72,12 @@ export async function buildVite(): Promise<void> {
     stdout: 'inherit',
     stderr: 'inherit',
   }).output();
+  return code;
+}
 
+export async function buildVite(spawn: () => Promise<number> = spawnVite): Promise<void> {
+  console.log('\n  vite\n');
+  const code = await spawn();
   if (code !== 0) throw new Error(`vite exited with code ${code}`);
 }
 
@@ -83,15 +86,15 @@ export async function buildVite(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 /** Prints the integrity report and returns how many blocking issues it found. */
-export async function checkIntegrity(): Promise<number> {
+export async function checkIntegrity(collections: Collection[] = COLLECTIONS): Promise<number> {
   const version = await computeVersion();
   const rows: Array<{
-    col: typeof COLLECTIONS[0];
+    col: Collection;
     state: Awaited<ReturnType<typeof scanCollection>>;
     plan: ReturnType<typeof planWork>;
   }> = [];
 
-  for (const col of COLLECTIONS) {
+  for (const col of collections) {
     const state = await scanCollection(col);
     const plan = planWork(state);
     rows.push({ col, state, plan });
@@ -105,34 +108,45 @@ export async function checkIntegrity(): Promise<number> {
 // CLI
 // ---------------------------------------------------------------------------
 
-if (import.meta.main) {
-  const args = new Set(Deno.args);
+/** The three things the command can do — replaceable, so the dispatch can be tested. */
+export interface Steps {
+  assets: () => Promise<void>;
+  vite: () => Promise<void>;
+  /** Resolves with the number of blocking issues found. */
+  check: () => Promise<number>;
+}
 
-  const run = async () => {
-    if (args.has('--check')) {
-      const issues = await checkIntegrity();
+const realSteps: Steps = { assets: buildAssets, vite: buildVite, check: checkIntegrity };
+
+/** Run the command for these arguments and return the process exit code. */
+export async function cli(args: string[], steps: Steps = realSteps): Promise<number> {
+  const has = (flag: string) => args.includes(flag);
+  try {
+    if (has('--check')) {
+      const issues = await steps.check();
       if (issues > 0) {
         console.error(`  integrity check failed: ${issues} issue(s)\n`);
-        Deno.exit(1);
+        return 1;
       }
-      return;
+      return 0;
     }
-    if (args.has('--assets-only')) {
-      await buildAssets();
-      return;
+    if (has('--assets-only')) {
+      await steps.assets();
+      return 0;
     }
-    if (args.has('--vite-only')) {
-      await buildVite();
-      return;
+    if (has('--vite-only')) {
+      await steps.vite();
+      return 0;
     }
     // Default: full build
-    await buildAssets();
-    await buildVite();
-  };
-
-  run().catch((err) => {
+    await steps.assets();
+    await steps.vite();
+    return 0;
+  } catch (err) {
     console.error('\n  build failed:', errorMessage(err));
     if (err instanceof Error && err.stack) console.error(err.stack);
-    Deno.exit(1);
-  });
+    return 1;
+  }
 }
+
+if (import.meta.main) Deno.exit(await cli(Deno.args));

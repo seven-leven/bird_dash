@@ -48,7 +48,7 @@ export const AREAS: Area[] = [
       'script/collection/',
       'script/placeholders/',
       'script/lib/',
-      'script/build.ts',
+      'script/build', // build.ts and its test
     ],
   },
   {
@@ -142,6 +142,9 @@ export function summarizeAreas(
     };
   });
 }
+
+/** Every source file no test imports, across all areas. The coverage run fails if there are any. */
+export const untestedFiles = (rows: AreaSummary[]): string[] => rows.flatMap((r) => r.unloaded);
 
 const pct = (c: Counter | undefined): string =>
   c === undefined ? '' : c.found === 0 ? '—' : `${((c.hit / c.found) * 100).toFixed(1)}%`;
