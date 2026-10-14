@@ -239,8 +239,8 @@ FC_RUNS_MULTIPLIER=10 deno task test:prop
 5. Run `deno task test:coverage` before committing.
 
 Helpers are in `script/test/helpers/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`,
-`runInScope`), `dom.ts` (`withDom`) and `prop.ts` (`assertProperty`). [TESTING.md](TESTING.md) shows
-how each is used.
+`runInScope`), `dom.ts` (`withDom`), `mount.ts` (`mountComposable`) and `prop.ts`
+(`assertProperty`). [TESTING.md](TESTING.md) shows how each is used.
 
 ## 10. Add a new folder of code
 

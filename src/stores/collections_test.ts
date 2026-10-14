@@ -1,0 +1,146 @@
+/// <reference lib="deno.ns" />
+import { assertEquals } from '@std/assert';
+import { ref } from 'vue';
+import { createCollectionsStore } from './collections.ts';
+import type { ViewMode } from '../types/index.ts';
+
+// The store end to end: real loading, caching, filtering and grouping, with only
+// the network replaced.
+
+const BIRDS = {
+  Ducks: [
+    { id: '001', name: 'Mallard', sci: 'Anas platyrhynchos', drawn: '2025-01-10' },
+    { id: '002', name: 'Garganey', sci: 'Spatula querquedula' },
+  ],
+  Herons: [{ id: '003', name: 'Grey Heron', sci: 'Ardea cinerea', drawn: '2025-03-05' }],
+};
+const SHARKS = {
+  Requiem: [{ id: '001', name: 'Grey Reef Shark', sci: 'Carcharhinus amblyrhynchos' }],
+};
+
+const entry = (id: string, label: string) => ({
+  id,
+  label,
+  emoji: '',
+  groupLabel: 'Family',
+  itemLabel: 'item',
+  links: [],
+});
+
+/** A store over two small collections, served by a stand-in `fetch`. */
+async function setup() {
+  const routes: Record<string, unknown> = {
+    '/collections.json': [entry('birds', 'Birds'), entry('sharks', 'Sharks')],
+    '/lists/birds.json': BIRDS,
+    '/lists/sharks.json': SHARKS,
+  };
+  const original = globalThis.fetch;
+  globalThis.fetch = ((input: string | URL | Request) => {
+    const body = routes[String(input)];
+    return Promise.resolve(
+      body ? new Response(JSON.stringify(body)) : new Response('', { status: 404 }),
+    );
+  }) as typeof fetch;
+
+  const query = ref('');
+  const viewMode = ref<ViewMode>('group');
+  const store = createCollectionsStore({ query, viewMode });
+  await store.init();
+  await new Promise((r) => setTimeout(r, 0)); // let the background prefetch land
+  return { store, query, viewMode, restore: () => (globalThis.fetch = original) };
+}
+
+const names = (items: readonly { commonName: string }[]) => items.map((i) => i.commonName);
+
+Deno.test('after init the first collection is active, grouped, and counted', async () => {
+  const { store, restore } = await setup();
+  try {
+    assertEquals(store.isInitialized.value, true);
+    assertEquals(store.list.value.map((c) => c.id), ['birds', 'sharks']);
+    assertEquals(store.activeCollection.value?.id, 'birds');
+
+    assertEquals(Object.keys(store.activeData.value.grouped), ['Ducks', 'Herons']);
+    assertEquals(store.stats.value, { total: 3, filtered: 3, drawn: 2 });
+    assertEquals(store.globalStats.value, { drawn: 2, total: 4 }); // sharks counted too
+  } finally {
+    restore();
+  }
+});
+
+Deno.test('the query filters the grid and the counts, across name, group and id', async () => {
+  const { store, query, restore } = await setup();
+  try {
+    query.value = 'heron';
+    assertEquals(Object.keys(store.activeData.value.grouped), ['Herons']);
+    assertEquals(store.stats.value.filtered, 1);
+
+    query.value = 'ducks'; // a group name matches every item in the group
+    assertEquals(names(store.activeData.value.grouped.Ducks), ['Mallard', 'Garganey']);
+
+    query.value = 'nothing-matches';
+    assertEquals(store.activeData.value.grouped, {});
+    assertEquals(store.stats.value.filtered, 0);
+  } finally {
+    restore();
+  }
+});
+
+Deno.test('the same query searches every loaded collection for the dropdown', async () => {
+  const { store, query, restore } = await setup();
+  try {
+    query.value = 'grey';
+    assertEquals(
+      store.globalResults.value.map((g) => [g.collection.id, names(g.results.map((r) => r.item))]),
+      [['birds', ['Grey Heron']], ['sharks', ['Grey Reef Shark']]],
+    );
+    assertEquals(store.globalResultCount.value, 2);
+
+    query.value = '';
+    assertEquals(store.globalResults.value, []);
+  } finally {
+    restore();
+  }
+});
+
+Deno.test('date view shows only drawn items, oldest first, and the viewer pages in that order', async () => {
+  const { store, viewMode, restore } = await setup();
+  try {
+    viewMode.value = 'date';
+    const months = Object.keys(store.activeData.value.grouped);
+    assertEquals(months, ['January 2025', 'March 2025']);
+    assertEquals(store.stats.value.total, 2); // undrawn items are not part of this view
+    assertEquals(names(store.drawnItems.value), ['Mallard', 'Grey Heron']);
+  } finally {
+    restore();
+  }
+});
+
+Deno.test('switching collection swaps the grid; the cache keeps both', async () => {
+  const { store, restore } = await setup();
+  try {
+    await store.switch('sharks');
+    assertEquals(store.activeCollection.value?.id, 'sharks');
+    assertEquals(Object.keys(store.activeData.value.grouped), ['Requiem']);
+    assertEquals(store.drawnItems.value, []); // no shark is drawn yet
+    assertEquals(Object.keys(store.cache).sort(), ['birds', 'sharks']);
+  } finally {
+    restore();
+  }
+});
+
+Deno.test('components cannot change the loaded data: it is read-only outside the store', async () => {
+  const { store, restore } = await setup();
+  const warn = console.warn;
+  console.warn = () => {}; // Vue warns on the attempt; that is the behaviour under test
+  try {
+    const before = store.data.items.length;
+    const writable = store.data as unknown as { items: unknown[]; loading: boolean };
+    writable.items = [];
+    writable.loading = true;
+    assertEquals(store.data.items.length, before);
+    assertEquals(store.data.loading, false);
+  } finally {
+    console.warn = warn;
+    restore();
+  }
+});

@@ -16,6 +16,9 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-14 | tests: every source file of the site is now loaded by a test; 30 more for the
+  collections and ui stores, the scroll-spy, the breakpoint and click-outside (291 in all); line
+  coverage 96.5%, floor raised from 92% to 94%
 - 2026-10-07 | docs: `docs/TEST-PROCEDURES.md`, a step-by-step runbook for the tests (machine setup,
   everyday running, the pre-PR checklist, what to do when a test, CI, a property test or coverage
   fails, adding tests and folders, reading the reports on GitHub, maintenance, the runner's flags

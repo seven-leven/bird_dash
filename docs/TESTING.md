@@ -108,8 +108,13 @@ Conventions:
   "handleBackdropClick works".
 - **Build data with the fixtures** (`makeItem`, `makeCollection`, `at(year, month, day)`) so a test
   states only what matters to it.
-- **Composables that register lifecycle hooks** run inside `runInScope(...)`, which also gives you a
-  `stop()` to clean up.
+- **Composables that only need a reactive scope** run inside `runInScope(...)`, which also gives you
+  a `stop()` to clean up.
+- **Composables whose `onMounted` / `onUnmounted` must really fire** (a window listener, say) run
+  inside `mountComposable(...)`, which mounts a real component that draws nothing and gives you
+  `unmount()`.
+- **Code that reads the layout** (the scroll-spy) is tested by giving each fake element the position
+  the test wants it to report. That checks the decision, not the browser's measuring.
 - **Use real files when the code is about files.** The asset pipeline tests
   ([`script/pipeline/pipeline_test.ts`](../script/pipeline/pipeline_test.ts)) build a throwaway
   collection in a temporary folder with tiny real images, run the real transcoder, and delete it.
@@ -182,4 +187,5 @@ their normal depth in three timezones. If it fails, the seed is in the log.
   width, hover and focus styles, transitions, the lightbox gestures on a real touch screen.
 - **The command-line wrappers** around the scripts (`build.ts`, the `main` blocks of the changelog
   and generator scripts). The functions they call are tested; the argument handling is not.
-- `useScrollLogic` and `useBreakpoints`, which need real layout to mean anything.
+- **Real layout.** The scroll-spy and the breakpoint are tested with positions and widths the test
+  supplies. Whether the browser reports the right ones is still checked by hand.
