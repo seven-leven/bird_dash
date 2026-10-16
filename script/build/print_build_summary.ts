@@ -1,8 +1,8 @@
-import { COLLECTIONS } from '../collection/registry.ts';
-import type { Collection } from '../collection/registry.ts';
-import type { CollectionState } from './scan.ts';
-import type { WorkPlan } from './plan.ts';
-import type { ExecutionResult } from './execute.ts';
+import { COLLECTIONS } from '../lib/collections.ts';
+import type { Collection } from '../lib/collections.ts';
+import type { CollectionState } from './scan_sources.ts';
+import type { WorkPlan } from './plan_changes.ts';
+import type { ExecutionResult } from './apply_changes.ts';
 
 // ---------------------------------------------------------------------------
 // Column widths — derived from collection data once
@@ -20,7 +20,7 @@ function plural(n: number, word: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// Live log — called during execution from execute.ts
+// Live log — called during execution from apply_changes.ts
 // ---------------------------------------------------------------------------
 
 export const log = {
@@ -113,7 +113,7 @@ export function printCheckReport(
   console.log(`  ${divider}`);
 
   for (const { col, state, plan } of rows) {
-    // Blocking issues only (see blockingIssues in plan.ts); missing raw PNGs are
+    // Blocking issues only (see blockingIssues in plan_changes.ts); missing raw PNGs are
     // expected wherever raw_png/ is absent, so they get a summary note below.
     const issues = [
       ...plan.toRegister.map((id) => `unregistered PNG      ${id}`),

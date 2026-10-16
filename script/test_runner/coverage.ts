@@ -1,5 +1,5 @@
 /**
- * Coverage helpers for the test runner (script/test.ts): parse LCOV, total it up,
+ * Coverage helpers for the test runner (script/test_runner/run_tests.ts): parse LCOV, total it up,
  * and format it for the terminal and the GitHub job summary.
  *
  * Vitest measures every file a test loads, `.vue` components included; which files

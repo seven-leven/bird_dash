@@ -4,8 +4,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, assertEquals, assertMatch, assertStringIncludes } from '@std/assert';
 import sharp from 'sharp';
-import { contrastReport, designGuide, iconSheetSvg, writeDesignImages } from './design_guide.ts';
-import { logoSheetSvg, logoSvg } from './logo.ts';
+import {
+  contrastReport,
+  designGuide,
+  iconSheetSvg,
+  writeDesignImages,
+} from './draw_design_guide.ts';
+import { logoSheetSvg, logoSvg } from './draw_logo.ts';
 import { accentMenu } from './palette.ts';
 import { ICON_GROUPS, ICONS } from '../../src/components/icons/icons.ts';
 import { readJson } from '../lib/fs.ts';

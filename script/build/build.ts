@@ -1,5 +1,5 @@
 /**
- * script/build.ts — unified build entry point
+ * script/build/build.ts — unified build entry point
  *
  * Modes (pass as CLI flag):
  *   (none)           full build: assets → vite
@@ -9,14 +9,14 @@
  */
 
 import { spawn } from 'node:child_process';
-import { type Collection, COLLECTIONS } from './collection/registry.ts';
-import { scanCollection } from './pipeline/scan.ts';
-import { blockingIssues, planWork } from './pipeline/plan.ts';
-import { executeWork } from './pipeline/execute.ts';
-import { printCheckReport, printSummary, reportWarnings } from './pipeline/report.ts';
-import { computeVersion, describeVersion } from './version/compute.ts';
-import { errorMessage } from './lib/error.ts';
-import type { CollectionSummary } from './pipeline/report.ts';
+import { type Collection, COLLECTIONS } from '../lib/collections.ts';
+import { scanCollection } from './scan_sources.ts';
+import { blockingIssues, planWork } from './plan_changes.ts';
+import { executeWork } from './apply_changes.ts';
+import { printCheckReport, printSummary, reportWarnings } from './print_build_summary.ts';
+import { computeVersion, describeVersion } from '../version/version.ts';
+import { errorMessage } from '../lib/error.ts';
+import type { CollectionSummary } from './print_build_summary.ts';
 
 // ---------------------------------------------------------------------------
 // Assets build

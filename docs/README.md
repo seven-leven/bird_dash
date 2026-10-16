@@ -16,19 +16,19 @@ it is done.
 
 ## Plans
 
-| Page                                                   | Status                                               |
-| ------------------------------------------------------ | ---------------------------------------------------- |
-| [plans/COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md) | In progress: what is left untested, in phases        |
-| [plans/MIGRATION.md](plans/MIGRATION.md)               | Done: the toolchain moved from Deno to Node          |
-| [plans/SCRIPTS-LAYOUT.md](plans/SCRIPTS-LAYOUT.md)     | Proposed: one layout and clearer names for `script/` |
-| [plans/TODO.md](plans/TODO.md)                         | Backlog of features and fixes                        |
+| Page                                                   | Status                                           |
+| ------------------------------------------------------ | ------------------------------------------------ |
+| [plans/COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md) | In progress: what is left untested, in phases    |
+| [plans/MIGRATION.md](plans/MIGRATION.md)               | Done: the toolchain moved from Deno to Node      |
+| [plans/SCRIPTS-LAYOUT.md](plans/SCRIPTS-LAYOUT.md)     | Done: one layout and clearer names for `script/` |
+| [plans/TODO.md](plans/TODO.md)                         | Backlog of features and fixes                    |
 
 ## Assets
 
 [`assets/`](assets/) holds generated images: the design guide, the icon sheet, the logo sheet and
 the logo files. Do not edit them by hand; `npm run design` redraws them from the code
-([`script/docs/design_guide.ts`](../script/docs/design_guide.ts)), and a contract test fails when
-they are out of date.
+([`script/design/draw_design_guide.ts`](../script/design/draw_design_guide.ts)), and a contract test
+fails when they are out of date.
 
 ## Adding a page
 

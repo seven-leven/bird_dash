@@ -250,19 +250,19 @@ imports it and checks its main behaviour clears the error.
 4. **Prove it can fail:** break the code on purpose, see the test go red, undo the break.
 5. Run `npm run test:coverage` before committing.
 
-Helpers are in `script/test/helpers/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`,
-`runInScope`), `dom.ts` (`withDom`), `mount.ts` (`mountComposable`) and `prop.ts`
-(`assertProperty`). [TESTING.md](TESTING.md) shows how each is used.
+Helpers are in `src/test_helpers/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`,
+`runInScope`), `with_dom.ts` (`withDom`), `mount_composable.ts` (`mountComposable`) and
+`property_runs.ts` (`assertProperty`). [TESTING.md](TESTING.md) shows how each is used.
 
 ## 10. Add a new folder of code
 
 Every source file must belong to an **area**, or the suite fails with:
 
 ```
-add these to an area in script/test/areas.ts so they show up in the report
+add these to an area in script/test_runner/areas.ts so they show up in the report
 ```
 
-1. Open [`script/test/areas.ts`](../script/test/areas.ts).
+1. Open [`script/test_runner/areas.ts`](../script/test_runner/areas.ts).
 2. Add the folder's path to the `paths` of the area it belongs to, or add a new area (`id`, `label`,
    `protects`, `paths`) if it is a new part of the project.
 3. If you added an area, add its row to the table in [TESTING.md](TESTING.md).
@@ -300,8 +300,8 @@ a failed job: **Re-run failed jobs** on the run's page.
 
 ## 13. Runner reference
 
-`npm test` runs [`script/test.ts`](../script/test.ts). Tier names and flags go after a `--`: `npm
-test -- unit --verbose`.
+`npm test` runs [`script/test_runner/run_tests.ts`](../script/test_runner/run_tests.ts). Tier names
+and flags go after a `--`: `npm test -- unit --verbose`.
 
 | Argument or flag  | Effect                                                            |
 | ----------------- | ----------------------------------------------------------------- |
@@ -330,15 +330,16 @@ Output files, all in `test-results/` (ignored by git): `report.md` and, in CI, `
 
 ## 14. How the runner works
 
-Useful when you need to change it. Each step is one module in `script/test/`, with its own tests.
+Useful when you need to change it. Each step is one module in `script/test_runner/`, with its own
+tests.
 
 1. **Find the tests** (`tiers.ts`): walk `src/` and `script/` for `*_test.ts`.
 2. **Sort them into tiers** (`tiers.ts`) by file name, and keep the tiers you asked for.
 3. **Run them once** with `vitest run`, each file in its own process, asking for a JUnit file (and
    an LCOV coverage file with `--coverage`). Vitest's own output is captured, not shown.
 4. **Read the results** (`junit.ts`) into a list of tests with file, time and failure message.
-5. **Summarise by tier** (`report.ts`) and **by area** (`areas.ts`), and print both tables. On a
-   failure, print the failures first and then Vitest's captured output.
+5. **Summarise by tier** (`test_summary.ts`) and **by area** (`areas.ts`), and print both tables. On
+   a failure, print the failures first and then Vitest's captured output.
 6. **Coverage** (`coverage.ts`): read the LCOV file into per-file numbers, compare the total with
    the floor, and work out which source files no test loaded.
 7. **Write the report**: to the GitHub job summary in CI, and to `test-results/report.md` in CI or

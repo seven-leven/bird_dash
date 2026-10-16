@@ -42,26 +42,19 @@ export const AREAS: Area[] = [
     id: 'pipeline',
     label: 'Asset pipeline and data files',
     protects: 'image builds, the integrity check, the files in public/',
-    paths: [
-      'script/pipeline/',
-      'script/image/',
-      'script/collection/',
-      'script/placeholders/',
-      'script/lib/',
-      'script/build', // build.ts and its test
-    ],
+    paths: ['script/build/', 'script/placeholders/', 'script/lib/'],
   },
   {
     id: 'release',
     label: 'Version and changelog',
     protects: 'the version in the footer, the changelog task',
-    paths: ['script/version/', 'script/changelog'],
+    paths: ['script/version/', 'script/changelog/'],
   },
   {
     id: 'tooling',
     label: 'Test harness and docs tooling',
     protects: 'the test runner and its reports, generated guide images',
-    paths: ['script/test', 'script/docs/'],
+    paths: ['script/test_runner/', 'script/design/'],
   },
 ];
 
@@ -81,7 +74,7 @@ export function areaOf(path: string): Area | undefined {
 export async function discoverSources(roots = ['src', 'script']): Promise<string[]> {
   const skip = (path: string) =>
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
-    path.startsWith('script/test/helpers/') || path.startsWith('src/types/') ||
+    path.startsWith('src/test_helpers/') || path.startsWith('src/types/') ||
     path === 'src/main.ts'; // only mounts App.vue into the page
   return (await walkFiles(roots)).filter((path) => path.endsWith('.ts') && !skip(path));
 }

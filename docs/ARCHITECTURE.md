@@ -9,7 +9,7 @@ How the project is put together, and the rules that keep it that way. For how it
 The repository holds three small programs. They meet only at the files in `public/`.
 
 ```
-raw_png/ (not in git)              script/version/version.json + git history
+raw_png/ (not in git)              script/version/base_version.json + git history
       │                                        │
       ▼                                        ▼
 ┌─ 1. Asset pipeline (script/) ───────────────────────────────┐
@@ -97,18 +97,18 @@ hash, and a hash change (a deep link, the back button) is applied to the stores.
 
 `npm run build:assets` runs four steps per collection:
 
-| Step        | File                         | Does                                                           |
-| ----------- | ---------------------------- | -------------------------------------------------------------- |
-| **Scan**    | `script/pipeline/scan.ts`    | Reads the list file and the three image folders, once          |
-| **Plan**    | `script/pipeline/plan.ts`    | Pure set arithmetic: what to register, transcode, or flag      |
-| **Execute** | `script/pipeline/execute.ts` | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
-| **Report**  | `script/pipeline/report.ts`  | Prints the summary                                             |
+| Step        | File                                  | Does                                                           |
+| ----------- | ------------------------------------- | -------------------------------------------------------------- |
+| **Scan**    | `script/build/scan_sources.ts`        | Reads the list file and the three image folders, once          |
+| **Plan**    | `script/build/plan_changes.ts`        | Pure set arithmetic: what to register, transcode, or flag      |
+| **Execute** | `script/build/apply_changes.ts`       | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
+| **Report**  | `script/build/print_build_summary.ts` | Prints the summary                                             |
 
 Keeping the plan pure is what makes it testable without touching the disk. `npm run check` runs scan
 and plan only, and fails if anything is missing or orphaned.
 
-Other scripts: `version/compute.ts` (the version, see the README), `changelog.ts`,
-`placeholders/generate.ts` and `docs/design_guide.ts` (generated images).
+Other scripts: `version/version.ts` (the version, see the README), `changelog/changelog.ts`,
+`placeholders/draw_placeholders.ts` and `design/draw_design_guide.ts` (generated images).
 
 ## Rules
 
@@ -130,5 +130,5 @@ Other scripts: `version/compute.ts` (the version, see the README), `changelog.ts
 - `.vue` files are type-checked (vue-tsc) but no automated test covers them yet, so component
   behaviour is verified by hand. Vitest can mount them; component tests or a real-browser tier would
   close this.
-- `vite.config.ts` imports `script/version/compute.ts`. It is the one place the site's build depends
+- `vite.config.ts` imports `script/version/version.ts`. It is the one place the site's build depends
   on the pipeline's code, kept so the version formula exists once.

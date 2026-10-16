@@ -1,6 +1,6 @@
 import { listFiles } from '../lib/fs.ts';
-import { loadDrawnIds } from '../collection/record.ts';
-import type { Collection } from '../collection/registry.ts';
+import { loadDrawnIds } from '../lib/lists.ts';
+import type { Collection } from '../lib/collections.ts';
 
 // ---------------------------------------------------------------------------
 // Types

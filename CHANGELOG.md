@@ -16,6 +16,10 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | script/: one folder per command (`build/`, `version/`, `changelog/`, `design/`,
+  `placeholders/`, `test_runner/`) plus `lib/`, with file names that say what they do; the shared
+  test helpers move to `src/test_helpers/`. Script names are unchanged
+  (docs/plans/SCRIPTS-LAYOUT.md)
 - 2026-10-16 | deps: everything on its latest version and pinned exactly (Vue 3.5.44, Vite 8.3.4,
   Tailwind 4.3.3, sharp 0.35.5, Vitest 5.0.5, TypeScript 6.0.3, the newest typescript-eslint
   supports), Node pinned to 24.22.0 (the latest LTS), and every GitHub Action on its latest release,

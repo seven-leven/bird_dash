@@ -14,10 +14,11 @@ Where the tests stand, exactly what is left, and the order to close it in. Measu
 | Tests          | 313   |                 |                                   |
 
 Those numbers were measured under Deno. After the move to Node (16 October 2026) Vitest measures
-with V8, which counts lines differently, and it now also counts `script/test.ts`, which Deno never
-measured because of its name. Re-measured then: **92.0% of lines** (1,260 / 1,370), or 96.7% without
-`script/test.ts` (22% covered). The floor that fails CI is **91% of lines**. There is no floor yet
-for branches. The phase targets below still stand; the line numbers in the tables predate the move.
+with V8, which counts lines differently, and it now also counts `script/test_runner/run_tests.ts`,
+which Deno never measured because of its name. Re-measured then: **92.0% of lines** (1,260 / 1,370),
+or 96.7% without `script/test_runner/run_tests.ts` (22% covered). The floor that fails CI is **91%
+of lines**. There is no floor yet for branches. The phase targets below still stand; the line
+numbers in the tables predate the move.
 
 Reproduce these numbers with `npm run test:report` and open `test-results/report.md`.
 
@@ -41,8 +42,8 @@ Each of these is one or two tests with no refactoring.
 | File                                              | Uncovered    | What it is                                                                                                   | Test to add                                                                                         |
 | ------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `script/lib/fs.ts`                                | 16–17, 26–28 | The re-throw when a folder cannot be read or created for a reason other than "missing" / "exists"            | Point `listFiles` at a file instead of a folder; point `ensureDir` at a path under an existing file |
-| `script/pipeline/execute.ts`                      | 59–62        | A thumbnail repair that fails                                                                                | Plan a thumb repair for an id whose full image is missing                                           |
-| `script/docs/design_guide.ts`                     | 172–174      | An accent on the menu with no hex values                                                                     | Call the guide with a menu containing an unknown hue (make the menu an argument)                    |
+| `script/build/apply_changes.ts`                   | 59–62        | A thumbnail repair that fails                                                                                | Plan a thumb repair for an id whose full image is missing                                           |
+| `script/design/draw_design_guide.ts`              | 172–174      | An accent on the menu with no hex values                                                                     | Call the guide with a menu containing an unknown hue (make the menu an argument)                    |
 | `src/composables/collection/useCollections.ts`    | 34, 63, 96   | No active collection before init; the cache hit inside the loader; switching to the collection already shown | Read `activeCollection` before `init`; switch to the current collection; load a cached one twice    |
 | `src/composables/core/useHashRoute.ts`            | 46           | Clearing the hash with `history.replaceState`                                                                | Close the viewer on a page whose hash is only an item                                               |
 | `src/composables/ui/useScrollLogic.ts`            | 17, 24       | Measuring with no container, and a header slot that is `null`                                                | Call the observer callback before a container is bound; register a `null` header                    |
@@ -70,12 +71,12 @@ Expected after phase 2: about **98%**. Raise the floor to 97%.
 What is left after phases 1 and 2 is almost entirely code that starts other programs or runs only
 from the command line.
 
-| File                                                                            | Uncovered | What it is                                                      | Plan                                                                                                                                               |
-| ------------------------------------------------------------------------------- | --------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `script/placeholders/generate.ts`                                               | 37–57     | The whole command: loop over collections, write two images each | Same refactor as the design guide: `writePlaceholders(collections, dir)`; test it into a temporary folder, as `design_guide_contract_test.ts` does |
-| `script/test.ts`                                                                | most      | `main`, which runs `vitest run` and prints the tables           | Contract test: run the runner on one tiny passing and one failing test file in a temporary folder and check the exit code and output               |
-| `script/build.ts`                                                               | 59–76     | `spawnVite`, which runs the real `vite build`                   | Either a contract test that runs the real build into a temporary `outDir` (adds about a second), or mark it as an accepted gap (below)             |
-| `build.ts` 152, `changelog.ts` 120, `compute.ts` 104, `design_guide.ts` 349–353 | 1–5 each  | The `if (import.meta.main)` line that starts each command       | Cannot run inside a test process. Mark as an accepted gap                                                                                          |
+| File                                                             | Uncovered | What it is                                                      | Plan                                                                                                                                               |
+| ---------------------------------------------------------------- | --------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `script/placeholders/draw_placeholders.ts`                       | 37–57     | The whole command: loop over collections, write two images each | Same refactor as the design guide: `writePlaceholders(collections, dir)`; test it into a temporary folder, as `design_guide_contract_test.ts` does |
+| `script/test_runner/run_tests.ts`                                | most      | `main`, which runs `vitest run` and prints the tables           | Contract test: run the runner on one tiny passing and one failing test file in a temporary folder and check the exit code and output               |
+| `script/build/build.ts`                                          | 59–76     | `spawnVite`, which runs the real `vite build`                   | Either a contract test that runs the real build into a temporary `outDir` (adds about a second), or mark it as an accepted gap (below)             |
+| `build.ts`, `changelog.ts`, `version.ts`, `draw_design_guide.ts` | 1–5 each  | The `if (import.meta.main)` line that starts each command       | Cannot run inside a test process. Mark as an accepted gap                                                                                          |
 
 **Accepted gaps.** Vitest's V8 coverage honours two comments: `/* v8 ignore next */` skips the next
 line, and `/* v8 ignore start */` … `/* v8 ignore stop */` skips a block. Use them only for code
@@ -98,18 +99,19 @@ Expected after phase 3: **100% of lines.** Set the floor to 100%.
 Branch coverage counts both sides of every `if`, `??`, `?.` and `&&`. The uncovered ones fall into
 three kinds:
 
-| Kind                              | Examples                                                                                                                                              | What to do                                                                                   |
-| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| **Real behaviour not yet tested** | the viewer's key and gesture guards; `useCollections` choosing the first collection when the id is unknown; `report.ts` formatting with no slow tests | Write the test                                                                               |
-| **Defaults for missing data**     | `r.sci ?? ''`, `item.meta?.dhiv`, `illustratorNote ?? ''` in `collectionItems.ts`; `attrs.line ?? 0` in `junit.ts`                                    | One test with the field missing                                                              |
-| **Guards that cannot happen**     | `errorMessage` given something that is not an `Error` (`error.ts`, 50%); `globalThis.matchMedia?.` in `useTheme.ts`                                   | Remove the guard if the type system already rules it out; otherwise test it once and keep it |
+| Kind                              | Examples                                                                                                                                                    | What to do                                                                                   |
+| --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Real behaviour not yet tested** | the viewer's key and gesture guards; `useCollections` choosing the first collection when the id is unknown; `test_summary.ts` formatting with no slow tests | Write the test                                                                               |
+| **Defaults for missing data**     | `r.sci ?? ''`, `item.meta?.dhiv`, `illustratorNote ?? ''` in `collectionItems.ts`; `attrs.line ?? 0` in `junit.ts`                                          | One test with the field missing                                                              |
+| **Guards that cannot happen**     | `errorMessage` given something that is not an `Error` (`error.ts`, 50%); `globalThis.matchMedia?.` in `useTheme.ts`                                         | Remove the guard if the type system already rules it out; otherwise test it once and keep it |
 
-Work file by file, starting with the lowest: `script/lib/error.ts` (50%), `script/test/junit.ts`
-(67%), `useCollections.ts` (84%), `script/test/report.ts` (88%), `collectionItems.ts` (88%),
-`script/test/areas.ts` (88%), `useLightBox.ts` (88%).
+Work file by file, starting with the lowest: `script/lib/error.ts` (50%),
+`script/test_runner/junit.ts` (67%), `useCollections.ts` (84%), `script/test_runner/test_summary.ts`
+(88%), `collectionItems.ts` (88%), `script/test_runner/areas.ts` (88%), `useLightBox.ts` (88%).
 
 The runner checks lines only. Add a branch floor with it: a `--min-branches=N` flag beside
-`--min-lines` in `script/test.ts`, starting at today's 91% and raised as each file is finished.
+`--min-lines` in `script/test_runner/run_tests.ts`, starting at today's 91% and raised as each file
+is finished.
 
 Expected after phase 4: **100% of branches**, with any remaining guard listed here with a reason.
 

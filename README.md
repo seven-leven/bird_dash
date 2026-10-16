@@ -65,11 +65,16 @@ src/
   composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
   lib/                  Small framework-free helpers
   types/                Shared TypeScript types
-script/                 Build pipeline, run by Node (transcode, integrity, version, changelog)
-  version/version.json  Stored major/minor only — patch and count are derived
-  test/                 The test runner; test/helpers/ holds shared fixtures, the fake-DOM
-                        setup and property-test depth. The tests themselves sit next to
-                        the code they cover (see Testing)
+script/                 One folder per command, run by Node; shared code in lib/
+  build/                Transcode, register and check the images; the Vite build
+  version/              The derived version; base_version.json stores major/minor only
+  changelog/            Insert unlogged commits into CHANGELOG.md
+  design/               Draw the design guide, icon sheet and logo (docs/assets/)
+  placeholders/         Draw the placeholder images
+  test_runner/          The test runner (`npm test`): tiers, areas, reports, coverage
+  lib/                  Collections, list files, fs and git helpers
+src/test_helpers/       Shared test fixtures, the fake-DOM setup and property-test depth.
+                        The tests themselves sit next to the code they cover (see Testing)
 docs/                   Reference guides at the top level; plans/ for work not done yet,
                         assets/ for generated images (see docs/README.md)
 ```
@@ -202,17 +207,17 @@ The footer of the site reads something like `v0.9.161 · 18 drawings · 4f0f400`
 stored except `major.minor`; the rest is worked out from the repo when the site is built, so it
 cannot drift.
 
-| Part          | Where it comes from                                                                               |
-| ------------- | ------------------------------------------------------------------------------------------------- |
-| `0.9`         | `script/version/version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
-| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below               |
-| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                    |
-| `4f0f400`     | the commit the build was made from                                                                |
+| Part          | Where it comes from                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| `0.9`         | `script/version/base_version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
+| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below                    |
+| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                         |
+| `4f0f400`     | the commit the build was made from                                                                     |
 
 - **The patch is a build counter, not a count of fixes.** On `main` it includes merge commits, so it
   rises by a few with every merged PR, and a local branch shows a different number from the deployed
   site (which is why the commit is shown too).
-- **One implementation.** [`script/version/compute.ts`](script/version/compute.ts) computes all of
+- **One implementation.** [`script/version/version.ts`](script/version/version.ts) computes all of
   it. `npm run version` prints it (`--long` for the whole line), the build and check summaries print
   it, and `vite.config.ts` calls the same function to inject it into the footer.
 - **Without git** (e.g. a zip download) a local build warns and shows patch `0` / commit `unknown`;

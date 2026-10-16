@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
-import { computeVersion, formatVersion } from './script/version/compute.ts';
+import { computeVersion, formatVersion } from './script/version/version.ts';
 
 // The version comes from the same function as `npm run version`; there is no
 // second copy of the formula here. Lenient so a dev server still starts without git
@@ -34,7 +34,7 @@ export default defineConfig({
       },
     },
   },
-  // Tests: `npm test` (script/test.ts) runs these and picks the files per tier.
+  // Tests: `npm test` (script/test_runner/run_tests.ts) runs these and picks the files per tier.
   test: {
     include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
     // Each file in its own process (Vitest isolates files by default), so a fake DOM
@@ -43,8 +43,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       // No `include`: only files a test loads are measured, so the runner can tell
-      // which source files no test imports (script/test/areas.ts).
-      exclude: ['**/*_test.ts', 'script/test/helpers/**', '**/*.d.ts', 'public/**'],
+      // which source files no test imports (script/test_runner/areas.ts).
+      exclude: ['**/*_test.ts', 'src/test_helpers/**', '**/*.d.ts', 'public/**'],
     },
   },
 });

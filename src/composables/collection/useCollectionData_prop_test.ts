@@ -1,10 +1,10 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../../script/test/helpers/prop.ts';
+import { assertProperty } from '../../test_helpers/property_runs.ts';
 import { ref } from 'vue';
 import { monthKey, useCollectionData } from './useCollectionData.ts';
-import { at, makeItem } from '../../../script/test/helpers/fixtures.ts';
+import { at, makeItem } from '../../test_helpers/fixtures.ts';
 import type { ViewMode } from '../../types/index.ts';
 
 const DAY = 86_400_000;

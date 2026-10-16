@@ -4,12 +4,12 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, assertEquals } from '@std/assert';
 import sharp from 'sharp';
-import { scanCollection } from './scan.ts';
-import { blockingIssues, planWork } from './plan.ts';
-import { executeWork } from './execute.ts';
-import { printCheckReport, printSummary, reportWarnings } from './report.ts';
-import { transcode, transcodeThumb } from '../image/transcode.ts';
-import type { Collection } from '../collection/registry.ts';
+import { scanCollection } from './scan_sources.ts';
+import { blockingIssues, planWork } from './plan_changes.ts';
+import { executeWork } from './apply_changes.ts';
+import { printCheckReport, printSummary, reportWarnings } from './print_build_summary.ts';
+import { transcode, transcodeThumb } from './transcode_images.ts';
+import type { Collection } from '../lib/collections.ts';
 
 // The asset pipeline end to end, on real (tiny) images in a temporary folder:
 // scan → plan → execute → scan again. Nothing here touches public/ or raw_png/.

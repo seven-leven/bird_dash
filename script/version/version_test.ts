@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { describeVersion, formatVersion } from './compute.ts';
-import type { VersionData } from './compute.ts';
+import { describeVersion, formatVersion } from './version.ts';
+import type { VersionData } from './version.ts';
 
 const v = (over: Partial<VersionData> = {}): VersionData => ({
   major: 0,

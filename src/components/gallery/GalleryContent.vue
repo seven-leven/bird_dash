@@ -126,7 +126,7 @@ const { query } = useSearch();
 const { viewMode, theme, registerHeader } = useUi();
 const { open: openItem } = useOverlayStore();
 
-// Injected at build time by vite.config.ts (worked out in script/version/compute.ts).
+// Injected at build time by vite.config.ts (worked out in script/version/version.ts).
 const appVersion = __APP_VERSION__;
 const appCommit = __APP_COMMIT__;
 const drawnLabel = drawings(__APP_DRAWN__);

@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../../script/test/helpers/prop.ts';
+import { assertProperty } from '../../test_helpers/property_runs.ts';
 import { useSearchHighlight } from './useSearchHighlight.ts';
 
 const { highlightText } = useSearchHighlight();

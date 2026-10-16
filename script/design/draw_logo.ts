@@ -1,6 +1,6 @@
 /**
  * Draws the logo sheet (docs/assets/logo.png) and writes the logo as standalone SVG
- * files (docs/assets/logo/). Run through `npm run design` (script/docs/design_guide.ts).
+ * files (docs/assets/logo/). Run through `npm run design` (script/design/draw_design_guide.ts).
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';

@@ -2,8 +2,8 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
-import { at, makeCollection, makeItem, runInScope } from '../../../script/test/helpers/fixtures.ts';
-import { withDom } from '../../../script/test/helpers/dom.ts';
+import { at, makeCollection, makeItem, runInScope } from '../../test_helpers/fixtures.ts';
+import { withDom } from '../../test_helpers/with_dom.ts';
 import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 // The router is a small state machine (bare load / reflect / deep link / own

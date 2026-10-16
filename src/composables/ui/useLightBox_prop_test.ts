@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../../script/test/helpers/prop.ts';
+import { assertProperty } from '../../test_helpers/property_runs.ts';
 import { clampScale, pinchScale, swipeDirection } from './useLightBox.ts';
 
 // Any number a gesture could plausibly feed in — including the awkward ones.

@@ -38,6 +38,3 @@ export const COLLECTIONS: Collection[] = RAW_COLLECTIONS.map((c) => ({
     placeholderDark: `./public/placeholders/${c.id}-dark.webp`,
   },
 }));
-
-export const VERSION_FILE = './script/version/version.json';
-export const CHANGELOG_FILE = './CHANGELOG.md';

@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals, assertThrows } from '@std/assert';
-import { parseArgs, withoutDots } from './test.ts';
+import { parseArgs, withoutDots } from './run_tests.ts';
 
 test('no arguments means every tier, in order', () => {
   const o = parseArgs([]);

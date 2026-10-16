@@ -1,5 +1,5 @@
-import { readJson, writeJson } from '../lib/fs.ts';
-import type { Collection } from './registry.ts';
+import { readJson, writeJson } from './fs.ts';
+import type { Collection } from './collections.ts';
 // The list-file shape is defined once, next to the app's own types.
 import type { RawCollectionData, RawItem } from '../../src/types/data.ts';
 

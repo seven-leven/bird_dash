@@ -1,9 +1,9 @@
 import { test } from 'vitest';
 import { readFile, stat } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
-import { COLLECTIONS } from './registry.ts';
-import { loadCollectionData } from './record.ts';
-import { readJson } from '../lib/fs.ts';
+import { COLLECTIONS } from './collections.ts';
+import { loadCollectionData } from './lists.ts';
+import { readJson } from './fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
 import { isIconName } from '../../src/components/icons/icons.ts';
 

@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import type { TestCase } from './junit.ts';
-import { annotations, formatConsole, formatMarkdown, summarize } from './report.ts';
+import { annotations, formatConsole, formatMarkdown, summarize } from './test_summary.ts';
 
 const t = (file: string, name: string, time = 0.001, failure?: string): TestCase => ({
   name,

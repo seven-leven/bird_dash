@@ -1,8 +1,8 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../test/helpers/prop.ts';
-import { blockingIssues, planWork } from './plan.ts';
+import { assertProperty } from '../../src/test_helpers/property_runs.ts';
+import { blockingIssues, planWork } from './plan_changes.ts';
 
 // Small id pool so the four sets overlap a lot (that's where the bugs live).
 const POOL: string[] = ['001', '002', '003', '004', '005', '006', '007', '008'];

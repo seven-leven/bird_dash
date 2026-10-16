@@ -3,7 +3,7 @@
 Everything the site shows comes from the files in `public/`. Adding a drawing or a whole collection
 is a change to these files, not to the code. Their shape is typed in
 [`src/types/data.ts`](../src/types/data.ts) and checked by the contract tests
-([`script/collection/data_contract_test.ts`](../script/collection/data_contract_test.ts)), which run
+([`script/lib/collections_contract_test.ts`](../script/lib/collections_contract_test.ts)), which run
 on every pull request.
 
 ```

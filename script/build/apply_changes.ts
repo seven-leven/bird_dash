@@ -1,8 +1,8 @@
-import { markDrawn } from '../collection/record.ts';
-import { transcode, transcodeThumb } from '../image/transcode.ts';
-import { log } from './report.ts';
-import type { Collection } from '../collection/registry.ts';
-import type { WorkPlan } from './plan.ts';
+import { markDrawn } from '../lib/lists.ts';
+import { transcode, transcodeThumb } from './transcode_images.ts';
+import { log } from './print_build_summary.ts';
+import type { Collection } from '../lib/collections.ts';
+import type { WorkPlan } from './plan_changes.ts';
 
 // ---------------------------------------------------------------------------
 // Types

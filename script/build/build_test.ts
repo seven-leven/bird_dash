@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { assert, assertEquals, assertRejects } from '@std/assert';
 import sharp from 'sharp';
 import { buildAssets, buildVite, checkIntegrity, cli, type Steps } from './build.ts';
-import type { Collection } from './collection/registry.ts';
+import type { Collection } from '../lib/collections.ts';
 
 // sharp caches open files; on Windows that would keep the temporary folder locked.
 sharp.cache(false);

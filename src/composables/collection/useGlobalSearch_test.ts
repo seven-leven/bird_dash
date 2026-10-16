@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useGlobalSearch } from './useGlobalSearch.ts';
-import { makeCollection, makeItem } from '../../../script/test/helpers/fixtures.ts';
+import { makeCollection, makeItem } from '../../test_helpers/fixtures.ts';
 import type { CollectionCache } from '../../types/index.ts';
 
 const birds = makeCollection('birds');

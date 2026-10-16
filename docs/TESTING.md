@@ -27,16 +27,17 @@ and then Vitest's full output, with the diff and the failing line. The tests run
 ## Tiers
 
 Tests sit next to the code they cover, and **the file name decides the tier**.
-[`script/test/tiers.ts`](../script/test/tiers.ts) is the one place that maps names to tiers.
+[`script/test_runner/tiers.ts`](../script/test_runner/tiers.ts) is the one place that maps names to
+tiers.
 
-| Tier       | File name            | Use it for                                               | Helper                               |
-| ---------- | -------------------- | -------------------------------------------------------- | ------------------------------------ |
-| `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `helpers/fixtures.ts`                |
-| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `helpers/dom.ts` (`withDom`)         |
-| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `helpers/prop.ts` (`assertProperty`) |
-| `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                 |
+| Tier       | File name            | Use it for                                               | Helper                                             |
+| ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------------- |
+| `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `test_helpers/fixtures.ts`                         |
+| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `test_helpers/with_dom.ts` (`withDom`)             |
+| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `test_helpers/property_runs.ts` (`assertProperty`) |
+| `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                               |
 
-The helpers are in [`script/test/helpers/`](../script/test/helpers/).
+The helpers are in [`src/test_helpers/`](../src/test_helpers/).
 
 ### Which tier?
 
@@ -52,7 +53,8 @@ The helpers are in [`script/test/helpers/`](../script/test/helpers/).
 ## Areas
 
 Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
-belongs to one area, by its folder ([`script/test/areas.ts`](../script/test/areas.ts)):
+belongs to one area, by its folder
+([`script/test_runner/areas.ts`](../script/test_runner/areas.ts)):
 
 | Area                          | Folders                                                           | Protects                                                  |
 | ----------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
@@ -60,7 +62,7 @@ belongs to one area, by its folder ([`script/test/areas.ts`](../script/test/area
 | Site: state and routing       | `src/stores`, `src/composables/core`                              | The stores, shareable links, theme, accent                |
 | Site: viewer and interface    | `src/composables/ui`, `src/components`                            | The lightbox, scroll-spy, icons and logo                  |
 | Asset pipeline and data files | `script/pipeline`, `image`, `collection`, `placeholders`, `lib`   | Image builds, the integrity check, the files in `public/` |
-| Version and changelog         | `script/version`, `script/changelog.ts`                           | The version in the footer, the changelog task             |
+| Version and changelog         | `script/version`, `script/changelog/changelog.ts`                 | The version in the footer, the changelog task             |
 | Test harness and docs tooling | `script/test`, `script/docs`                                      | The runner and its reports, generated guide images        |
 
 A new folder must be added to an area, or a contract test fails.
@@ -117,8 +119,9 @@ Conventions:
 - **Code that reads the layout** (the scroll-spy) is tested by giving each fake element the position
   the test wants it to report. That checks the decision, not the browser's measuring.
 - **Use real files when the code is about files.** The asset pipeline tests
-  ([`script/pipeline/pipeline_test.ts`](../script/pipeline/pipeline_test.ts)) build a throwaway
-  collection in a temporary folder with tiny real images, run the real transcoder, and delete it.
+  ([`script/build/build_pipeline_test.ts`](../script/build/build_pipeline_test.ts)) build a
+  throwaway collection in a temporary folder with tiny real images, run the real transcoder, and
+  delete it.
 - **Fake the edges, not the logic.** Stub `fetch`, pass in a fake `git`, use a temporary directory;
   run the real code in between.
 - **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI

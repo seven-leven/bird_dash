@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertThrows } from '@std/assert';
 import { resolveUrl, tileImage, toCollectionConfig, toCollectionItems } from './collectionItems.ts';
-import { makeItem } from '../../script/test/helpers/fixtures.ts';
+import { makeItem } from '../test_helpers/fixtures.ts';
 
 const col = { id: 'birds', imageBase: '/thumb/birds/' };
 

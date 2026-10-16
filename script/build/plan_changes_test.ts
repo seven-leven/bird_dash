@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { blockingIssues, planWork } from './plan.ts';
+import { blockingIssues, planWork } from './plan_changes.ts';
 
 const set = (...ids: string[]) => new Set(ids);
 

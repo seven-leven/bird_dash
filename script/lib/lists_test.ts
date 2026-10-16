@@ -3,8 +3,8 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assertEquals } from '@std/assert';
-import { forEachDrawn, loadDrawnIds, markDrawn } from './record.ts';
-import type { Collection } from './registry.ts';
+import { forEachDrawn, loadDrawnIds, markDrawn } from './lists.ts';
+import type { Collection } from './collections.ts';
 import type { RawCollectionData } from '../../src/types/data.ts';
 
 const data: RawCollectionData = {

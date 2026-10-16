@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assert, assertStringIncludes } from '@std/assert';
-import { placeholderSvg, THEMES } from './generate.ts';
+import { placeholderSvg, THEMES } from './draw_placeholders.ts';
 
 const BODY = '<path d="M1 1h2"/>';
 

@@ -7,8 +7,8 @@
  */
 import sharp, { type OverlayOptions } from 'sharp';
 import { ICON_GROUPS, type IconDef, ICONS } from '../../src/components/icons/icons.ts';
-import { writeLogoFiles } from './logo.ts';
-import { iconGridLayout } from './layout.ts';
+import { writeLogoFiles } from './draw_logo.ts';
+import { iconGridLayout } from './icon_grid.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';

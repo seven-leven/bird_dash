@@ -1,4 +1,4 @@
-import type { CollectionState } from './scan.ts';
+import type { CollectionState } from './scan_sources.ts';
 
 // ---------------------------------------------------------------------------
 // Types

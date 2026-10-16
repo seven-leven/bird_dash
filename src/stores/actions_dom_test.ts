@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createAppActions } from './actions.ts';
-import { withDom } from '../../script/test/helpers/dom.ts';
+import { withDom } from '../test_helpers/with_dom.ts';
 
 /** Actions over stand-in stores, plus a tile in the fake DOM to flash. */
 function setup(active: string) {

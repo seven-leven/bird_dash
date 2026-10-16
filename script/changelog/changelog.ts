@@ -1,5 +1,5 @@
 /**
- * script/changelog.ts — keep CHANGELOG.md in sync with git history
+ * script/changelog/changelog.ts — keep CHANGELOG.md in sync with git history
  *
  *   npm run changelog              insert unlogged commits at the top of the newest section
  *   npm run changelog -- --dry-run print what would be inserted, change nothing
@@ -12,8 +12,9 @@
  */
 
 import { readFile, writeFile } from 'node:fs/promises';
-import { CHANGELOG_FILE } from './collection/registry.ts';
-import { git } from './lib/git.ts';
+import { git } from '../lib/git.ts';
+
+export const CHANGELOG_FILE = './CHANGELOG.md';
 
 export interface LoggedCommit {
   date: string;

@@ -1,8 +1,8 @@
 /**
- * script/test.ts — the test runner behind `npm test`.
+ * script/test_runner/run_tests.ts — the test runner behind `npm test`.
  *
  *   npm test                            every tier, compact summary
- *   npm test -- unit dom                just those tiers (see script/test/tiers.ts)
+ *   npm test -- unit dom                just those tiers (see script/test_runner/tiers.ts)
  *   npm test -- --verbose               also list every file
  *   npm run test:coverage               every tier + coverage table + line-coverage floor
  *   npm run test:report                 the same, and save the full report to test-results/report.md
@@ -19,16 +19,16 @@ import { spawn } from 'node:child_process';
 import { appendFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { discoverTests, groupByTier, isTier, type Tier, TIER_ORDER } from './test/tiers.ts';
-import { parseJunit } from './test/junit.ts';
-import { annotations, formatConsole, formatMarkdown, summarize } from './test/report.ts';
+import { discoverTests, groupByTier, isTier, type Tier, TIER_ORDER } from './tiers.ts';
+import { parseJunit } from './junit.ts';
+import { annotations, formatConsole, formatMarkdown, summarize } from './test_summary.ts';
 import {
   discoverSources,
   formatAreasConsole,
   formatAreasMarkdown,
   summarizeAreas,
   untestedFiles,
-} from './test/areas.ts';
+} from './areas.ts';
 import {
   coverageArgs,
   formatMarkdown as coverageMarkdown,
@@ -38,7 +38,7 @@ import {
   readCoverage,
   totals,
   writeHtmlCoverage,
-} from './test/coverage.ts';
+} from './coverage.ts';
 
 export interface Options {
   tiers: Tier[];

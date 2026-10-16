@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assertEquals } from '@std/assert';
-import { scanCollection, toIds } from './scan.ts';
+import { scanCollection, toIds } from './scan_sources.ts';
 
 test('toIds strips .png/.webp (case-insensitive) to bare ids', () => {
   assertEquals(

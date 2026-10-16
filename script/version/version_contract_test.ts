@@ -1,9 +1,9 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertMatch, assertRejects } from '@std/assert';
-import { cli, computeVersion, getCommitCount, getDrawnIds } from './compute.ts';
+import { cli, computeVersion, getCommitCount, getDrawnIds, VERSION_FILE } from './version.ts';
 import { git } from '../lib/git.ts';
 import { readJson } from '../lib/fs.ts';
-import { COLLECTIONS, VERSION_FILE } from '../collection/registry.ts';
+import { COLLECTIONS } from '../lib/collections.ts';
 
 // These run against the real repository: git history and the files in public/.
 
@@ -19,7 +19,7 @@ test('git: a failing command rejects and names the command', async () => {
   );
 });
 
-test('computeVersion: major.minor from version.json, patch and commit from git', async () => {
+test('computeVersion: major.minor from base_version.json, patch and commit from git', async () => {
   const stored = await readJson<{ major: number; minor: number }>(VERSION_FILE);
   const v = await computeVersion();
   assertEquals([v.major, v.minor], [stored.major, stored.minor]);

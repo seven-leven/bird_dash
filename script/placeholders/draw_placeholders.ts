@@ -3,8 +3,8 @@
  * line icon (src/components/icons/icons.ts), once for the light theme (grey on
  * white) and once for the dark theme (`<id>-dark.webp`, slate on slate).
  *
- *   node script/placeholders/generate.ts                  write public/placeholders/<id>[-dark].webp
- *   node script/placeholders/generate.ts --preview <dir>  write PNGs there instead
+ *   node script/placeholders/draw_placeholders.ts                  write public/placeholders/<id>[-dark].webp
+ *   node script/placeholders/draw_placeholders.ts --preview <dir>  write PNGs there instead
  */
 import sharp from 'sharp';
 import { ICONS, isIconName } from '../../src/components/icons/icons.ts';

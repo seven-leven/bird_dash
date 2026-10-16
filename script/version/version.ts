@@ -1,9 +1,9 @@
 /**
- * script/version/compute.ts — the ONE place the app version is worked out.
+ * script/version/version.ts — the ONE place the app version is worked out.
  *
  * The version is derived, so it can never drift and needs no bump commit:
  *
- *   0.9.161   major.minor  from version.json, next to this file (edited by hand when a new line of
+ *   0.9.161   major.minor  from base_version.json, next to this file (edited by hand when a new line of
  *                          work starts, e.g. 0.9 -> 0.10)
  *             patch        the number of commits in this checkout's history
  *                          (`git rev-list --count HEAD`). On main that includes merge
@@ -18,8 +18,11 @@
 
 import { readJson } from '../lib/fs.ts';
 import { git } from '../lib/git.ts';
-import { type Collection, COLLECTIONS, VERSION_FILE } from '../collection/registry.ts';
-import { forEachDrawn, loadCollectionData } from '../collection/record.ts';
+import { type Collection, COLLECTIONS } from '../lib/collections.ts';
+import { forEachDrawn, loadCollectionData } from '../lib/lists.ts';
+
+/** The stored part of the version: major.minor, edited by hand. */
+export const VERSION_FILE = './script/version/base_version.json';
 
 export interface VersionData {
   major: number;

@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
-import { iconGridLayout } from './layout.ts';
+import { iconGridLayout } from './icon_grid.ts';
 import { ICON_GROUPS } from '../../src/components/icons/icons.ts';
 
 const g = (label: string, n: number) => ({

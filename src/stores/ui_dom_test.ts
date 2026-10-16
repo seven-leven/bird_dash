@@ -2,8 +2,8 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { nextTick } from 'vue';
 import { createUiStore } from './ui.ts';
-import { mountComposable } from '../../script/test/helpers/mount.ts';
-import { withDom } from '../../script/test/helpers/dom.ts';
+import { mountComposable } from '../test_helpers/mount_composable.ts';
+import { withDom } from '../test_helpers/with_dom.ts';
 
 /** The ui store, mounted so its window listeners are really attached. */
 function setup(width = 1400) {

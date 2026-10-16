@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises';
 import sharp, { type OutputInfo } from 'sharp';
 import { ensureDir } from '../lib/fs.ts';
 import { errorMessage } from '../lib/error.ts';
-import type { Collection } from '../collection/registry.ts';
+import type { Collection } from '../lib/collections.ts';
 
 // ---------------------------------------------------------------------------
 // Constants

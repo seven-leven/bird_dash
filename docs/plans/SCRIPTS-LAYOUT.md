@@ -2,7 +2,8 @@
 
 A plan to give `script/` one consistent layout and file names that explain themselves.
 
-Status: **proposed**. Nothing here has been done yet.
+Status: **done** (16 October 2026), after the move to Node rather than before it. "As done" at the
+end lists the choices the plan left open.
 
 ## Problems today
 
@@ -133,3 +134,13 @@ lists ([COVERAGE-ROADMAP.md](COVERAGE-ROADMAP.md)) will need their paths updated
   `layout`.
 - No special case for `script/test.ts` remains in `areas.ts`, and the runner shows up in coverage.
 - All checks above pass and the build output is unchanged.
+
+## As done
+
+- Moves in one commit (`git mv`, so history follows each file), path fixes in the next.
+- Tests are named after their module's new name (`plan_test.ts` → `plan_changes_test.ts`,
+  `compute_test.ts` → `version_test.ts`, `test_test.ts` → `run_tests_test.ts`). Two tests cover more
+  than one module and are named for what they check: `build/build_pipeline_test.ts` (was
+  `pipeline/pipeline_test.ts`) and `lib/collections_contract_test.ts` (was
+  `collection/data_contract_test.ts`).
+- The `script/test.ts` special case in `areas.ts` had already gone with the move to Node.
