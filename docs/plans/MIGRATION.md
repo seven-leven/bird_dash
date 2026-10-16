@@ -3,7 +3,8 @@
 A plan for moving the toolchain from Deno 2 to Node.js 24 + npm. The site itself (Vue 3 + Vite +
 Tailwind) does not change; only how we install, run scripts, test, lint and type-check does.
 
-Status: **proposed**. Nothing here has been done yet.
+Status: **done** (16 October 2026). The plan below is kept as the record of why and how; "As done"
+at the end lists where the work differed from it.
 
 ## Why
 
@@ -171,3 +172,32 @@ files". Add an entry to `CHANGELOG.md`.
 - `.vue` files appear in the coverage report and in the type check.
 - The deployed site is byte-for-byte the same build (modulo the version string) as the last Deno
   build.
+
+## As done
+
+All eight phases landed together on one branch rather than as separate pull requests. Where the
+result differs from the plan above:
+
+- **Formatting is dprint, not Prettier or Biome.** `deno fmt` is dprint inside, so `dprint.json`
+  uses the same plugins with Deno's presets and the switch reformatted nothing. The markdown plugin
+  is pinned to 0.22.0, the newest version that wraps lines exactly as `deno fmt` did. `.vue` files
+  stay unformatted, as before.
+- **Lint is ESLint** with the recommended ESLint, typescript-eslint and `eslint-plugin-vue`
+  (`flat/essential`) rules. It found one real issue, now marked in `GalleryContent.vue`: the tile
+  `v-memo` sits inside the section loop, where Vue cannot use it, so it never saves a render.
+- **The coverage floor is 91%, not 94%.** Nothing that was measured before lost coverage (96.7% of
+  those lines are covered). The drop is `script/test.ts`, which Deno never measured because of its
+  name and Vitest now does (22% covered). `public/` is excluded from coverage.
+- **JUnit has no line numbers.** Vitest's JUnit file names the test file but not the line, so the
+  failure list and the GitHub annotations name the file only; Vitest's own output, printed below the
+  tables, still shows the failing line.
+- **The type check found little.** Four extensionless `types/` imports in components, an unused
+  binding (the lightbox dialog's string `ref`, now a function ref), and a missing return in
+  `vite.config.ts`.
+- **`manualChunks` matched Deno's folder layout** (`/vue@`), which npm does not use; it now matches
+  `node_modules/vue/` and `node_modules/@vue/*/`.
+- **Duplicate Vue.** `vue-tsc` pulled in a newer `@vue/shared`, and npm hoisted it, so two copies
+  were bundled; `npm dedupe` fixed it. With the dependency versions from `deno.lock`, the `vue`
+  chunk is byte-identical to the Deno build.
+- **Install scripts.** npm 11 runs only allowed install scripts; `allowScripts` in `package.json`
+  allows sharp and dprint.

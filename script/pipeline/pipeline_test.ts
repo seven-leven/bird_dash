@@ -1,4 +1,7 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { assert, assertEquals } from '@std/assert';
 import sharp from 'sharp';
 import { scanCollection } from './scan.ts';
@@ -23,7 +26,7 @@ async function withCollection(
   raw: string[],
   fn: (col: Collection, dir: string) => Promise<void>,
 ): Promise<void> {
-  const dir = await Deno.makeTempDir({ prefix: 'bird_dash_pipeline_' });
+  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_pipeline_'));
   const col: Collection = {
     id: 'x',
     label: 'Test',
@@ -38,8 +41,8 @@ async function withCollection(
     },
   };
   try {
-    await Deno.writeTextFile(col.paths.json, JSON.stringify({ Group: items }));
-    await Deno.mkdir(col.paths.raw);
+    await writeFile(col.paths.json, JSON.stringify({ Group: items }));
+    await mkdir(col.paths.raw);
     for (const id of raw) {
       // A wide, non-square source, so squaring it is actually exercised.
       await sharp({
@@ -48,7 +51,7 @@ async function withCollection(
     }
     await fn(col, dir);
   } finally {
-    await Deno.remove(dir, { recursive: true });
+    await rm(dir, { recursive: true, force: true });
   }
 }
 
@@ -68,13 +71,13 @@ async function captured(fn: () => unknown): Promise<string> {
 }
 
 const size = async (path: string) => {
-  const { width, height, format } = await sharp(await Deno.readFile(path)).metadata();
+  const { width, height, format } = await sharp(await readFile(path)).metadata();
   return { width, height, format };
 };
 
 // ── transcode ──
 
-Deno.test('transcode writes a square 2048px full image and a 400px thumbnail, both WebP', () =>
+test('transcode writes a square 2048px full image and a 400px thumbnail, both WebP', () =>
   withCollection([], ['001'], async (col) => {
     assertEquals(await transcode(col, '001'), { ok: true });
     assertEquals(await size(`${col.paths.full}001.webp`), {
@@ -89,10 +92,10 @@ Deno.test('transcode writes a square 2048px full image and a 400px thumbnail, bo
     });
   }));
 
-Deno.test('transcode pads a non-square source with white instead of cropping it', () =>
+test('transcode pads a non-square source with white instead of cropping it', () =>
   withCollection([], ['001'], async (col) => {
     await transcode(col, '001');
-    const file = await Deno.readFile(`${col.paths.full}001.webp`);
+    const file = await readFile(`${col.paths.full}001.webp`);
     const { data, info } = await sharp(file).raw().toBuffer({
       resolveWithObject: true,
     });
@@ -106,17 +109,17 @@ Deno.test('transcode pads a non-square source with white instead of cropping it'
     assert(cr > 150 && cg < 100, `expected the picture in the middle, got ${[cr, cg]}`);
   }));
 
-Deno.test('transcode reports a missing source as a failure, not an exception', () =>
+test('transcode reports a missing source as a failure, not an exception', () =>
   withCollection([], [], async (col) => {
     const result = await transcode(col, '404');
     assertEquals(result.ok, false);
     assert(!result.ok && result.error.length > 0);
   }));
 
-Deno.test('transcodeThumb rebuilds a thumbnail from the full image; fails without one', () =>
+test('transcodeThumb rebuilds a thumbnail from the full image; fails without one', () =>
   withCollection([], ['001'], async (col) => {
     await transcode(col, '001');
-    await Deno.remove(`${col.paths.thumb}001.webp`);
+    await rm(`${col.paths.thumb}001.webp`);
     assertEquals(await transcodeThumb(col, '001'), { ok: true });
     assertEquals((await size(`${col.paths.thumb}001.webp`)).width, 400);
 
@@ -125,7 +128,7 @@ Deno.test('transcodeThumb rebuilds a thumbnail from the full image; fails withou
 
 // ── the whole run ──
 
-Deno.test('a build registers new drawings, makes their images, and leaves nothing to do', () =>
+test('a build registers new drawings, makes their images, and leaves nothing to do', () =>
   withCollection(
     [
       { id: '001', name: 'Already drawn', drawn: '2025-01-01' },
@@ -147,7 +150,7 @@ Deno.test('a build registers new drawings, makes their images, and leaves nothin
       assert(output.includes('registered') && output.includes('New drawing (002)'));
 
       // The list file now dates the new drawing and leaves the others alone.
-      const saved = JSON.parse(await Deno.readTextFile(col.paths.json));
+      const saved = JSON.parse(await readFile(col.paths.json, 'utf8'));
       assertEquals(saved.Group.map((i: Item) => i.drawn), ['2025-01-01', '2025-06-01', undefined]);
 
       // A second scan finds nothing left to do.
@@ -157,7 +160,7 @@ Deno.test('a build registers new drawings, makes their images, and leaves nothin
     },
   ));
 
-Deno.test('a drawing with no source image fails that item and is reported, not thrown', () =>
+test('a drawing with no source image fails that item and is reported, not thrown', () =>
   withCollection([{ id: '001', name: 'No PNG', drawn: '2025-01-01' }], [], async (col) => {
     const plan = planWork(await scanCollection(col));
     assertEquals(plan.missingRaw, ['001']);
@@ -173,10 +176,10 @@ Deno.test('a drawing with no source image fails that item and is reported, not t
     assert(output.includes('transcode failed'), 'the failure was not logged');
   }));
 
-Deno.test('a missing thumbnail alone is repaired from the full image', () =>
+test('a missing thumbnail alone is repaired from the full image', () =>
   withCollection([{ id: '001', name: 'A', drawn: '2025-01-01' }], ['001'], async (col) => {
     await transcode(col, '001');
-    await Deno.remove(`${col.paths.thumb}001.webp`);
+    await rm(`${col.paths.thumb}001.webp`);
 
     const plan = planWork(await scanCollection(col));
     assertEquals([plan.toTranscode, plan.toTranscodeThumb], [[], ['001']]);
@@ -184,7 +187,7 @@ Deno.test('a missing thumbnail alone is repaired from the full image', () =>
     assertEquals(blockingIssues(planWork(await scanCollection(col))), 0);
   }));
 
-Deno.test('a source PNG whose id is not in the list is skipped with a warning', () =>
+test('a source PNG whose id is not in the list is skipped with a warning', () =>
   withCollection([{ id: '001', name: 'A' }], ['999'], async (col) => {
     const plan = planWork(await scanCollection(col));
     assertEquals(plan.toRegister, ['999']);
@@ -198,7 +201,7 @@ Deno.test('a source PNG whose id is not in the list is skipped with a warning', 
 
 // ── reports ──
 
-Deno.test('the build summary shows new drawings, failures, the version and the time', () =>
+test('the build summary shows new drawings, failures, the version and the time', () =>
   withCollection([], [], async (col) => {
     const plan = planWork({
       drawnIds: new Set(),
@@ -226,7 +229,7 @@ Deno.test('the build summary shows new drawings, failures, the version and the t
     assert(output.includes('0.9.1 · 4 drawings · abc1234') && output.includes('1.23s'));
   }));
 
-Deno.test('the check report lists each problem by kind and notes missing sources', () =>
+test('the check report lists each problem by kind and notes missing sources', () =>
   withCollection([], [], async (col) => {
     const state = {
       drawnIds: new Set(['001', '002']),
@@ -257,7 +260,7 @@ Deno.test('the check report lists each problem by kind and notes missing sources
     assert(/✗ \d+ issues/.test(output));
   }));
 
-Deno.test('a clean collection gets a tick in the check report', () =>
+test('a clean collection gets a tick in the check report', () =>
   withCollection([], [], async (col) => {
     const state = {
       drawnIds: new Set(['001']),

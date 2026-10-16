@@ -23,17 +23,17 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
-          deno-version: v2.x
-          cache: true
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Install dependencies
-        run: deno install --allow-scripts
+        run: npm ci
 
       - name: Property tests at 25x depth
-        run: deno task test:prop
+        run: npm run test:prop
         env:
           TZ: ${{ matrix.tz }}
           FC_RUNS_MULTIPLIER: '25'

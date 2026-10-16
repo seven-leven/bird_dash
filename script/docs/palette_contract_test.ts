@@ -1,21 +1,21 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { ACCENT_HEX, accentMenu, contrast, whiteOnBlack } from './palette.ts';
 
-Deno.test('contrast: black on white is 21:1 and the order of arguments does not matter', () => {
+test('contrast: black on white is 21:1 and the order of arguments does not matter', () => {
   assertEquals(Math.round(contrast('#000000', '#ffffff')), 21);
   assertEquals(contrast('#14b8a6', '#ffffff'), contrast('#ffffff', '#14b8a6'));
   assertEquals(contrast('#777777', '#777777'), 1);
 });
 
-Deno.test('whiteOnBlack turns an opacity into the grey it produces', () => {
+test('whiteOnBlack turns an opacity into the grey it produces', () => {
   assertEquals(whiteOnBlack(1), '#ffffff');
   assertEquals(whiteOnBlack(0.5), '#808080');
   assertEquals(whiteOnBlack(0), '#000000');
 });
 
 // The rule in docs/DESIGN.md for a hue to be offered as a collection accent.
-Deno.test('every accent on the menu in main.css passes the contrast rule', async () => {
+test('every accent on the menu in main.css passes the contrast rule', async () => {
   const menu = await accentMenu();
   assert(menu.includes('teal'), 'the default accent is missing from the menu');
   assertEquals(new Set(menu).size, menu.length);

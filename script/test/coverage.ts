@@ -1,11 +1,12 @@
-/// <reference lib="deno.ns" />
 /**
  * Coverage helpers for the test runner (script/test.ts): parse LCOV, total it up,
  * and format it for the terminal and the GitHub job summary.
  *
- * Only `.ts` sources are measured: Deno cannot load `.vue` files, so component
- * behaviour is covered by browser tests rather than this number.
+ * Vitest measures every file a test loads, `.vue` components included; which files
+ * count is set in vite.config.ts (`test.coverage`).
  */
+
+import { cp, readFile, rm } from 'node:fs/promises';
 
 export interface Counter {
   found: number;
@@ -21,7 +22,7 @@ export interface FileCoverage {
 
 const empty = (): Counter => ({ found: 0, hit: 0 });
 
-/** Parse LCOV text (the format `deno coverage --lcov` prints) into per-file counters. */
+/** Parse LCOV text (Vitest's `lcovonly` reporter) into per-file counters. */
 export function parseLcov(text: string): FileCoverage[] {
   const files: FileCoverage[] = [];
   let current: FileCoverage | undefined;
@@ -113,9 +114,7 @@ export function formatMarkdown(files: FileCoverage[], minLines: number, cwd = ''
   return [
     '### Coverage',
     '',
-    `**${
-      percent(t.lines).toFixed(1)
-    }% of lines** in the files tests load (floor: ${minLines}%). \`.vue\` files are not measured.`,
+    `**${percent(t.lines).toFixed(1)}% of lines** in the files tests load (floor: ${minLines}%).`,
     '',
     `<details><summary>Per-file coverage (${files.length} files, least covered first)</summary>`,
     '',
@@ -136,54 +135,25 @@ export function parseMinLines(args: string[]): number {
   return n;
 }
 
-/** Which files the coverage numbers (and the HTML report) are about. */
-const FILTERS = [
-  '--include=^file:.*/(src|script)/',
-  // Tests, shared test helpers and type declarations. The backslashes are doubled
-  // on purpose: with single ones the dots matched any character, so `.d.ts`
-  // also swallowed every file ending in "d.ts" (record.ts, for one).
-  '--exclude=_test\\.ts$|/test/helpers/|\\.d\\.ts$',
+/** The coverage arguments for `vitest run`: LCOV always, plus HTML when asked for. */
+export const coverageArgs = (dir: string, html = false): string[] => [
+  '--coverage.enabled',
+  `--coverage.reportsDirectory=${dir}`,
+  '--coverage.reporter=lcovonly',
+  ...(html ? ['--coverage.reporter=html'] : []),
 ];
 
-/**
- * Turn the raw profile a `deno test --coverage=<dir>` run left in `dir` into
- * per-file counters for our own sources (tests, test helpers and typings excluded).
- */
+/** Per-file counters from the LCOV file a `vitest run` with `coverageArgs(dir)` left in `dir`. */
 export async function readCoverage(dir: string): Promise<FileCoverage[]> {
-  const { success, stdout } = await new Deno.Command(Deno.execPath(), {
-    args: ['coverage', dir, '--lcov', ...FILTERS],
-    stdout: 'piped',
-    stderr: 'inherit',
-  }).output();
-  if (!success) throw new Error('deno coverage failed');
-  return parseLcov(new TextDecoder().decode(stdout));
+  return parseLcov(await readFile(`${dir}/lcov.info`, 'utf8'));
 }
 
 /**
- * Write a browsable HTML report of the same profile (same files as `readCoverage`)
- * to `out` and return the path of its index page. Deno always writes it to
- * `<dir>/html/` (`--output` is for LCOV only), so it is copied from there.
+ * Copy the HTML report (from a run with `coverageArgs(dir, true)`) to `out` and
+ * return the path of its index page.
  */
 export async function writeHtmlCoverage(dir: string, out: string): Promise<string> {
-  // Piped: on success Deno only prints the temporary path, which is deleted afterwards.
-  const { success, stderr } = await new Deno.Command(Deno.execPath(), {
-    args: ['coverage', dir, '--html', ...FILTERS],
-    stdout: 'piped',
-    stderr: 'piped',
-  }).output();
-  if (!success) {
-    throw new Error(`deno coverage --html failed\n${new TextDecoder().decode(stderr)}`);
-  }
-  await Deno.remove(out, { recursive: true }).catch(() => {});
-  await copyDir(`${dir}/html`, out);
+  await rm(out, { recursive: true, force: true });
+  await cp(dir, out, { recursive: true });
   return `${out}/index.html`;
-}
-
-async function copyDir(from: string, to: string): Promise<void> {
-  await Deno.mkdir(to, { recursive: true });
-  for await (const entry of Deno.readDir(from)) {
-    const [src, dest] = [`${from}/${entry.name}`, `${to}/${entry.name}`];
-    if (entry.isDirectory) await copyDir(src, dest);
-    else await Deno.copyFile(src, dest);
-  }
 }

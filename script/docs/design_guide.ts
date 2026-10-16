@@ -1,7 +1,6 @@
-/// <reference lib="deno.ns" />
 /**
  * Draws docs/assets/design-guide.png and docs/assets/icons.png — the visual half of
- * docs/DESIGN.md. Run `deno task design` after changing a token in
+ * docs/DESIGN.md. Run `npm run design` after changing a token in
  * src/assets/main.css or an icon in src/components/icons/icons.ts.
  *
  * The colours and the contrast maths are in ./palette.ts.

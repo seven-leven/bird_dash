@@ -1,11 +1,11 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals, assertThrows } from '@std/assert';
 import { resolveUrl, tileImage, toCollectionConfig, toCollectionItems } from './collectionItems.ts';
 import { makeItem } from '../../script/test/helpers/fixtures.ts';
 
 const col = { id: 'birds', imageBase: '/thumb/birds/' };
 
-Deno.test('toCollectionItems: a drawn item gets its thumbnail, date and flags', () => {
+test('toCollectionItems: a drawn item gets its thumbnail, date and flags', () => {
   const [item] = toCollectionItems(col, {
     Ducks: [{ id: '007', name: 'Garganey', sci: 'Spatula querquedula', drawn: '2025-03-01' }],
   }, '/');
@@ -18,7 +18,7 @@ Deno.test('toCollectionItems: a drawn item gets its thumbnail, date and flags', 
   assertEquals(item.drawnTime, Date.UTC(2025, 2, 1));
 });
 
-Deno.test('toCollectionItems: no date, or an empty one, shows the placeholder', () => {
+test('toCollectionItems: no date, or an empty one, shows the placeholder', () => {
   const items = toCollectionItems(col, {
     Ducks: [{ id: '001', name: 'A' }, { id: '002', name: 'B', drawn: '' }],
   }, '/base/');
@@ -31,13 +31,13 @@ Deno.test('toCollectionItems: no date, or an empty one, shows the placeholder', 
   }
 });
 
-Deno.test('toCollectionItems: an unparseable date still counts as drawn, with time 0', () => {
+test('toCollectionItems: an unparseable date still counts as drawn, with time 0', () => {
   const [item] = toCollectionItems(col, { G: [{ id: '1', name: 'A', drawn: 'soon' }] }, '/');
   assertEquals(item.isDrawn, true);
   assertEquals(item.drawnTime, 0);
 });
 
-Deno.test('toCollectionItems: extra string fields become meta and are searchable', () => {
+test('toCollectionItems: extra string fields become meta and are searchable', () => {
   const [item] = toCollectionItems(col, {
     Herons: [{ id: '010', name: 'Grey Heron', dhiv: 'Maakanaa', dhiv_script: 'މާކަނާ', rank: 3 }],
   }, '/');
@@ -48,12 +48,12 @@ Deno.test('toCollectionItems: extra string fields become meta and are searchable
   assertEquals(item.searchText, item.searchText.toLowerCase());
 });
 
-Deno.test('toCollectionItems: no extra fields means no meta object', () => {
+test('toCollectionItems: no extra fields means no meta object', () => {
   const [item] = toCollectionItems(col, { G: [{ id: '1', name: 'A' }] }, '/');
   assertEquals(item.meta, undefined);
 });
 
-Deno.test('toCollectionItems: ids are unique across groups and items are frozen', () => {
+test('toCollectionItems: ids are unique across groups and items are frozen', () => {
   const items = toCollectionItems(col, {
     A: [{ id: '1', name: 'a' }, { id: '2', name: 'b' }],
     B: [{ id: '3', name: 'c' }],
@@ -64,7 +64,7 @@ Deno.test('toCollectionItems: ids are unique across groups and items are frozen'
   }, TypeError);
 });
 
-Deno.test('toCollectionConfig: derives the data and image URLs from the id and base', () => {
+test('toCollectionConfig: derives the data and image URLs from the id and base', () => {
   const config = toCollectionConfig({
     id: 'sharks',
     label: 'Sharks',
@@ -80,7 +80,7 @@ Deno.test('toCollectionConfig: derives the data and image URLs from the id and b
   assertEquals(config.links[0].url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');
 });
 
-Deno.test('resolveUrl: fills every placeholder and encodes the values', () => {
+test('resolveUrl: fills every placeholder and encodes the values', () => {
   const item = makeItem({ commonName: 'Black & White Tern', scientificName: 'A b' });
   assertEquals(
     resolveUrl('https://x.test/{{common}}/{{sci}}?again={{common}}', item),
@@ -88,7 +88,7 @@ Deno.test('resolveUrl: fills every placeholder and encodes the values', () => {
   );
 });
 
-Deno.test('tileImage: a drawing is the same in both themes; a placeholder follows the theme', () => {
+test('tileImage: a drawing is the same in both themes; a placeholder follows the theme', () => {
   const drawn = makeItem({ drawnTime: 1, imageUrl: '/thumb/x/001.webp' });
   assertEquals(tileImage(drawn, false), '/thumb/x/001.webp');
   assertEquals(tileImage(drawn, true), '/thumb/x/001.webp');
@@ -98,7 +98,7 @@ Deno.test('tileImage: a drawing is the same in both themes; a placeholder follow
   assertEquals(tileImage(undrawn, true), undrawn.placeholderDarkUrl);
 });
 
-Deno.test('tileImage: a drawing that failed to load falls back to the themed placeholder', () => {
+test('tileImage: a drawing that failed to load falls back to the themed placeholder', () => {
   const drawn = makeItem({ drawnTime: 1 });
   assertEquals(tileImage(drawn, false, true), drawn.placeholderUrl);
   assertEquals(tileImage(drawn, true, true), drawn.placeholderDarkUrl);

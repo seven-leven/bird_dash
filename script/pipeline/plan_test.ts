@@ -1,10 +1,10 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { blockingIssues, planWork } from './plan.ts';
 
 const set = (...ids: string[]) => new Set(ids);
 
-Deno.test('planWork derives every bucket from set arithmetic', () => {
+test('planWork derives every bucket from set arithmetic', () => {
   const plan = planWork({
     drawnIds: set('001', '002'), // marked drawn in JSON
     rawIds: set('001', '002', '003'), // 003 has a raw PNG but no JSON entry yet
@@ -22,7 +22,7 @@ Deno.test('planWork derives every bucket from set arithmetic', () => {
   assertEquals(plan.orphanedThumb, []);
 });
 
-Deno.test('blockingIssues counts real problems but not missing raw PNGs (absent in CI)', () => {
+test('blockingIssues counts real problems but not missing raw PNGs (absent in CI)', () => {
   const clean = planWork({
     drawnIds: set('001'),
     rawIds: set(), // raw_png/ is gitignored, so CI never has it
@@ -42,7 +42,7 @@ Deno.test('blockingIssues counts real problems but not missing raw PNGs (absent 
   assertEquals(blockingIssues(broken), 2);
 });
 
-Deno.test('planWork flags orphans and missing raws', () => {
+test('planWork flags orphans and missing raws', () => {
   const plan = planWork({
     drawnIds: set('001', '009'), // 009 drawn in JSON but…
     rawIds: set('001'), // …no raw PNG for it

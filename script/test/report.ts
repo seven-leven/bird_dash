@@ -45,6 +45,9 @@ export function summarize(cases: TestCase[], slowCount = 3): Summary {
   };
 }
 
+/** `file:line`, or just the file when the line is unknown (0). */
+const where = (c: TestCase) => c.line > 0 ? `${c.file}:${c.line}` : c.file;
+
 const secs = (t: number) => t < 0.05 ? `${Math.round(t * 1000)}ms` : `${t.toFixed(2)}s`;
 
 /** The compact terminal summary: one row per tier, failures first. */
@@ -58,7 +61,7 @@ export function formatConsole(
     out.push(`✗ ${s.failures.length} failing`, '');
     for (const f of s.failures) {
       out.push(
-        `  ${f.file}:${f.line}`,
+        `  ${where(f)}`,
         `    ${f.name}`,
         `    ${(f.failure ?? '').split('\n')[0]}`,
         '',
@@ -136,7 +139,7 @@ export function formatMarkdown(s: Summary, title: string): string {
     lines.push('', '#### Failures', '');
     for (const f of s.failures) {
       lines.push(
-        `- \`${f.file}:${f.line}\` — ${f.name}`,
+        `- \`${where(f)}\` — ${f.name}`,
         `  > ${(f.failure ?? '').split('\n')[0]}`,
       );
     }
@@ -152,7 +155,7 @@ const escapeProp = (s: string) => escapeData(s).replaceAll(':', '%3A').replaceAl
 /** `::error` workflow commands: GitHub shows each failure on the changed file in the PR. */
 export function annotations(failures: TestCase[]): string[] {
   return failures.map((f) =>
-    `::error file=${escapeProp(f.file)},line=${f.line},title=${
+    `::error file=${escapeProp(f.file)}${f.line > 0 ? `,line=${f.line}` : ''},title=${
       escapeProp(`Test failed: ${f.name}`)
     }::${escapeData((f.failure ?? 'failed').split('\n')[0])}`
   );

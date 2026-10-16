@@ -1,5 +1,5 @@
 /**
- * Reads the JUnit XML that `deno test --junit-path` writes. Deno's output is small
+ * Reads the JUnit XML that Vitest's `junit` reporter writes. The output is small
  * and regular (one <testcase> per test, with a <failure> child when it failed), so a
  * few regexes are enough and no XML dependency is needed.
  */
@@ -8,6 +8,7 @@ export interface TestCase {
   name: string;
   /** Repo-relative posix path of the test file. */
   file: string;
+  /** 0 when the file does not say (Vitest's JUnit output has no line numbers). */
   line: number;
   /** Seconds. */
   time: number;

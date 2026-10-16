@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "types": ["node", "vite/client"],
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true,
+    "verbatimModuleSyntax": true,
+    // Node runs the scripts by stripping types, so only syntax it can erase is allowed
+    // (no enums, namespaces or parameter properties), and imports keep their .ts extension.
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "script/**/*.ts",
+    "vite.config.ts",
+    "eslint.config.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

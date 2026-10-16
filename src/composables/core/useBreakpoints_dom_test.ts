@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useBreakpoints } from './useBreakpoints.ts';
 import { mountComposable } from '../../../script/test/helpers/mount.ts';
@@ -10,7 +10,7 @@ function resizeTo(width: number) {
   globalThis.dispatchEvent(new Event('resize'));
 }
 
-Deno.test('isMobile is measured when the component mounts', () =>
+test('isMobile is measured when the component mounts', () =>
   withDom(() => {
     resizeTo(500);
     const narrow = mountComposable(() => useBreakpoints(1024));
@@ -23,7 +23,7 @@ Deno.test('isMobile is measured when the component mounts', () =>
     wide.unmount();
   }));
 
-Deno.test('the breakpoint itself counts as wide: mobile is strictly below it', () =>
+test('the breakpoint itself counts as wide: mobile is strictly below it', () =>
   withDom(() => {
     resizeTo(1024);
     const at = mountComposable(() => useBreakpoints(1024));
@@ -33,7 +33,7 @@ Deno.test('the breakpoint itself counts as wide: mobile is strictly below it', (
     at.unmount();
   }));
 
-Deno.test('it follows the window as it is resized, until the component is gone', () =>
+test('it follows the window as it is resized, until the component is gone', () =>
   withDom(() => {
     resizeTo(1400);
     const { result, unmount } = mountComposable(() => useBreakpoints(1024));
@@ -47,7 +47,7 @@ Deno.test('it follows the window as it is resized, until the component is gone',
     assertEquals(result.isMobile.value, false, 'still listening after unmount');
   }));
 
-Deno.test('the width to switch at can be chosen', () =>
+test('the width to switch at can be chosen', () =>
   withDom(() => {
     resizeTo(700);
     const { result, unmount } = mountComposable(() => useBreakpoints(640));

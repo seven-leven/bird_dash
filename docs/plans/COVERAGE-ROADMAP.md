@@ -13,9 +13,13 @@ Where the tests stand, exactly what is left, and the order to close it in. Measu
 | Untested files | 0     |                 | 0                                 |
 | Tests          | 313   |                 |                                   |
 
-The floor that fails CI is **94% of lines**. There is no floor yet for branches.
+Those numbers were measured under Deno. After the move to Node (16 October 2026) Vitest measures
+with V8, which counts lines differently, and it now also counts `script/test.ts`, which Deno never
+measured because of its name. Re-measured then: **92.0% of lines** (1,260 / 1,370), or 96.7% without
+`script/test.ts` (22% covered). The floor that fails CI is **91% of lines**. There is no floor yet
+for branches. The phase targets below still stand; the line numbers in the tables predate the move.
 
-Reproduce these numbers with `deno task test:report` and open `test-results/report.md`.
+Reproduce these numbers with `npm run test:report` and open `test-results/report.md`.
 
 ## What "100%" means here
 
@@ -24,8 +28,8 @@ There are three numbers, and they are not the same goal:
 1. **100% of lines** (every line runs in some test). Reachable for the `.ts` code; phases 1 to 3.
 2. **100% of branches** (every `if`, `??` and `?.` taken both ways). Harder: some branches are
    defensive guards that cannot happen in practice. Phase 4.
-3. **The components** (`.vue` files) are not measured at all, because Deno cannot load them. The
-   numbers above say nothing about them. Phase 5 covers them, and is a different kind of work.
+3. **The components** (`.vue` files) are measured only when a test imports one, and none does yet.
+   The numbers above say nothing about them. Phase 5 covers them, and is a different kind of work.
 
 "100%" also does not mean "no bugs". Coverage proves a line ran, not that a test checked its result.
 Every phase below keeps the existing rule: break the code on purpose once and see the new test fail.
@@ -69,17 +73,18 @@ from the command line.
 | File                                                                            | Uncovered | What it is                                                      | Plan                                                                                                                                               |
 | ------------------------------------------------------------------------------- | --------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `script/placeholders/generate.ts`                                               | 37–57     | The whole command: loop over collections, write two images each | Same refactor as the design guide: `writePlaceholders(collections, dir)`; test it into a temporary folder, as `design_guide_contract_test.ts` does |
-| `script/test/coverage.ts`                                                       | 143–160   | `readCoverage`, which runs `deno coverage`                      | Contract test: run a tiny module with `--coverage` into a temp folder, then read it                                                                |
+| `script/test.ts`                                                                | most      | `main`, which runs `vitest run` and prints the tables           | Contract test: run the runner on one tiny passing and one failing test file in a temporary folder and check the exit code and output               |
 | `script/build.ts`                                                               | 59–76     | `spawnVite`, which runs the real `vite build`                   | Either a contract test that runs the real build into a temporary `outDir` (adds about a second), or mark it as an accepted gap (below)             |
 | `build.ts` 152, `changelog.ts` 120, `compute.ts` 104, `design_guide.ts` 349–353 | 1–5 each  | The `if (import.meta.main)` line that starts each command       | Cannot run inside a test process. Mark as an accepted gap                                                                                          |
 
-**Accepted gaps.** Deno (2.9, checked) honours two comments: `// deno-coverage-ignore` skips the
-next line, and `// deno-coverage-ignore-start` … `// deno-coverage-ignore-stop` skips a block. Use
-them only for code that starts a program or a subprocess, never for logic, and say why:
+**Accepted gaps.** Vitest's V8 coverage honours two comments: `/* v8 ignore next */` skips the next
+line, and `/* v8 ignore start */` … `/* v8 ignore stop */` skips a block. Use them only for code
+that starts a program or a subprocess, never for logic, and say why:
 
 ```ts
-// deno-coverage-ignore -- the command's entry point; cli() itself is tested
-if (import.meta.main) Deno.exit(await cli(Deno.args));
+// The command's entry point; cli() itself is tested.
+/* v8 ignore next */
+if (import.meta.main) process.exit(await cli(process.argv.slice(2)));
 ```
 
 They remove lines from the line count only; a branch on an ignored line still counts as untaken.
@@ -116,7 +121,7 @@ in the tested composables and stores; what is not covered is how they are put to
 
 The plan is a fifth tier, **browser**, with files named `x_browser_test.ts`:
 
-1. **Run the real site** with `deno task preview` and drive it with a headless Chrome (Astral,
+1. **Run the real site** with `npm run preview` and drive it with a headless Chrome (Astral,
    `jsr:@astral/astral`, which was tried early on and works with an installed Chrome).
 2. **Start with the journeys a visitor takes:** open the site, switch collection, search and pick a
    result, open a drawing and page through it, follow a shared link, switch theme, use it at phone
@@ -126,14 +131,14 @@ The plan is a fifth tier, **browser**, with files named `x_browser_test.ts`:
 4. **Add it to CI** as its own job after the build, so a slow browser does not hold up the fast
    tiers.
 
-Coverage for `.vue` files is not something Deno can measure even then. The measure for this phase is
-a checklist of journeys, each with a test, kept in `docs/TESTING.md`.
+A browser tier does not add to the coverage number either. The measure for this phase is a checklist
+of journeys, each with a test, kept in `docs/TESTING.md`.
 
 ## Order and floors
 
 | After   | Lines floor | Branches floor | Tests (estimate)       |
 | ------- | ----------- | -------------- | ---------------------- |
-| Today   | 94%         | none           | 313                    |
+| Today   | 91%         | none           | 316                    |
 | Phase 1 | 96%         | none           | ~325                   |
 | Phase 2 | 97%         | none           | ~340                   |
 | Phase 3 | 100%        | none           | ~350                   |

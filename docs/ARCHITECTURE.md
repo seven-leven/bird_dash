@@ -95,7 +95,7 @@ hash, and a hash change (a deep link, the back button) is applied to the stores.
 
 ## The asset pipeline
 
-`deno task build:assets` runs four steps per collection:
+`npm run build:assets` runs four steps per collection:
 
 | Step        | File                         | Does                                                           |
 | ----------- | ---------------------------- | -------------------------------------------------------------- |
@@ -104,8 +104,8 @@ hash, and a hash change (a deep link, the back button) is applied to the stores.
 | **Execute** | `script/pipeline/execute.ts` | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
 | **Report**  | `script/pipeline/report.ts`  | Prints the summary                                             |
 
-Keeping the plan pure is what makes it testable without touching the disk. `deno task check` runs
-scan and plan only, and fails if anything is missing or orphaned.
+Keeping the plan pure is what makes it testable without touching the disk. `npm run check` runs scan
+and plan only, and fails if anything is missing or orphaned.
 
 Other scripts: `version/compute.ts` (the version, see the README), `changelog.ts`,
 `placeholders/generate.ts` and `docs/design_guide.ts` (generated images).
@@ -127,7 +127,8 @@ Other scripts: `version/compute.ts` (the version, see the README), `changelog.ts
 
 ## Known gaps
 
-- `.vue` files are not type-checked or covered by automated tests (Deno cannot import them), so
-  component behaviour is verified by hand. A real-browser test tier would close this.
+- `.vue` files are type-checked (vue-tsc) but no automated test covers them yet, so component
+  behaviour is verified by hand. Vitest can mount them; component tests or a real-browser tier would
+  close this.
 - `vite.config.ts` imports `script/version/compute.ts`. It is the one place the site's build depends
   on the pipeline's code, kept so the version formula exists once.

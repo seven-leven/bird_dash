@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useClickOutside } from './useClickOutside.ts';
 import { mountComposable } from '../../../script/test/helpers/mount.ts';
@@ -15,7 +15,7 @@ function page() {
   return { box, inside, outside, press };
 }
 
-Deno.test('a press outside the target calls the handler; a press inside it does not', () =>
+test('a press outside the target calls the handler; a press inside it does not', () =>
   withDom(() => {
     const { box, inside, outside, press } = page();
     let calls = 0;
@@ -29,7 +29,7 @@ Deno.test('a press outside the target calls the handler; a press inside it does 
     unmount();
   }));
 
-Deno.test('while there is no target yet, nothing happens', () =>
+test('while there is no target yet, nothing happens', () =>
   withDom(() => {
     const { outside, press } = page();
     let calls = 0;
@@ -39,7 +39,7 @@ Deno.test('while there is no target yet, nothing happens', () =>
     unmount();
   }));
 
-Deno.test('after the component is gone, the listener is gone too', () =>
+test('after the component is gone, the listener is gone too', () =>
   withDom(() => {
     const { box, outside, press } = page();
     let calls = 0;

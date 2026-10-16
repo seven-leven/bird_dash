@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { nextTick } from 'vue';
 import { createUiStore } from './ui.ts';
@@ -28,7 +28,7 @@ const header = (top: number) => {
   return el;
 };
 
-Deno.test('the sidebar opens, toggles and closes', () =>
+test('the sidebar opens, toggles and closes', () =>
   withDom(() => {
     const { ui, unmount } = setup();
     assertEquals(ui.sidebarOpen.value, false);
@@ -42,7 +42,7 @@ Deno.test('the sidebar opens, toggles and closes', () =>
     unmount();
   }));
 
-Deno.test('the view starts on groups; choosing the current view again changes nothing', () =>
+test('the view starts on groups; choosing the current view again changes nothing', () =>
   withDom(async () => {
     const { ui, unmount, observers } = setup();
     ui.bindScrollContainer(document.createElement('div'));
@@ -59,7 +59,7 @@ Deno.test('the view starts on groups; choosing the current view again changes no
     unmount();
   }));
 
-Deno.test('the theme toggle flips the page class and remembers the choice', () =>
+test('the theme toggle flips the page class and remembers the choice', () =>
   withDom(async () => {
     const { ui, unmount } = setup();
     assertEquals(ui.theme.isDark, false);
@@ -71,7 +71,7 @@ Deno.test('the theme toggle flips the page class and remembers the choice', () =
     unmount();
   }));
 
-Deno.test('isMobile follows the window width', () =>
+test('isMobile follows the window width', () =>
   withDom(() => {
     const narrow = setup(600);
     assertEquals(narrow.ui.isMobile.value, true);
@@ -82,7 +82,7 @@ Deno.test('isMobile follows the window width', () =>
     wide.unmount();
   }));
 
-Deno.test('registered headers drive the active section; an unmounted header is forgotten', () =>
+test('registered headers drive the active section; an unmounted header is forgotten', () =>
   withDom(() => {
     const { ui, unmount } = setup();
     const container = document.createElement('div');
@@ -102,7 +102,7 @@ Deno.test('registered headers drive the active section; an unmounted header is f
     unmount();
   }));
 
-Deno.test('resetHeaders forgets every header, so a stale one cannot win after a switch', () =>
+test('resetHeaders forgets every header, so a stale one cannot win after a switch', () =>
   withDom(() => {
     const { ui, unmount } = setup();
     const container = document.createElement('div');
@@ -119,7 +119,7 @@ Deno.test('resetHeaders forgets every header, so a stale one cannot win after a 
     unmount();
   }));
 
-Deno.test('scrollToTop resets the bound container, and is safe before one is bound', () =>
+test('scrollToTop resets the bound container, and is safe before one is bound', () =>
   withDom(() => {
     const { ui, unmount } = setup();
     ui.scrollToTop(); // nothing bound yet: must not throw
@@ -135,7 +135,7 @@ Deno.test('scrollToTop resets the bound container, and is safe before one is bou
     unmount();
   }));
 
-Deno.test('on a phone, jumping to a section closes the sidebar', () =>
+test('on a phone, jumping to a section closes the sidebar', () =>
   withDom(() => {
     const { ui, unmount } = setup(600);
     const container = document.createElement('div');

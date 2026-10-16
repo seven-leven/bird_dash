@@ -1,10 +1,10 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createOverlayStore } from './overlay.ts';
 import { at, makeItem, runInScope } from '../../script/test/helpers/fixtures.ts';
 
-Deno.test('open ignores undrawn items (no image to show)', () => {
+test('open ignores undrawn items (no image to show)', () => {
   const undrawn = makeItem({ isDrawn: false });
   const { value: o, stop } = runInScope(() => createOverlayStore({ drawnItems: ref([]) }));
   o.open(undrawn);
@@ -12,7 +12,7 @@ Deno.test('open ignores undrawn items (no image to show)', () => {
   stop();
 });
 
-Deno.test('open shows a drawn item; update swaps it; close hides it', () => {
+test('open shows a drawn item; update swaps it; close hides it', () => {
   const a = makeItem({ itemId: '001', drawnTime: at(2025, 1) });
   const b = makeItem({ itemId: '002', drawnTime: at(2025, 2) });
   const { value: o, stop } = runInScope(() => createOverlayStore({ drawnItems: ref([a, b]) }));

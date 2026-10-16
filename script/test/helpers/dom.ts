@@ -4,7 +4,7 @@ import { GlobalRegistrator } from '@happy-dom/global-registrator';
  * Run `fn` with a browser-like global environment (document, location,
  * localStorage, focus, events, …) and tear it down afterwards.
  *
- * Deno runs each test file in its own isolate, so the globals never leak into
+ * Vitest runs each test file in its own process, so the globals never leak into
  * other files — but within a file every test should go through this helper so
  * the fake DOM is always cleaned up.
  */

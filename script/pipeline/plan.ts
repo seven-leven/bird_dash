@@ -19,7 +19,7 @@ export interface WorkPlan {
 // ---------------------------------------------------------------------------
 
 /**
- * Problems that make `deno task check` fail. `missingRaw` is deliberately
+ * Problems that make `npm run check` fail. `missingRaw` is deliberately
  * excluded: raw PNGs are gitignored, so CI never has them and every drawn item
  * would trip it.
  */

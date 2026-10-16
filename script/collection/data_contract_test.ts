@@ -1,4 +1,5 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
+import { readFile, stat } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import { COLLECTIONS } from './registry.ts';
 import { loadCollectionData } from './record.ts';
@@ -9,16 +10,16 @@ import { isIconName } from '../../src/components/icons/icons.ts';
 // The app is data-driven: a typo in public/*.json silently breaks routing, search
 // or the timeline rather than failing a build. These tests are that missing gate.
 
-const exists = (path: string) => Deno.stat(path).then(() => true, () => false);
+const exists = (path: string) => stat(path).then(() => true, () => false);
 
-Deno.test('collections.json: at least one collection, unique ids', () => {
+test('collections.json: at least one collection, unique ids', () => {
   assert(COLLECTIONS.length > 0, 'no collections configured');
   const ids = COLLECTIONS.map((c) => c.id);
   assertEquals(new Set(ids).size, ids.length, `duplicate collection ids: ${ids}`);
 });
 
-Deno.test('collections.json: every accent names a palette defined in main.css', async () => {
-  const css = await Deno.readTextFile('./src/assets/main.css');
+test('collections.json: every accent names a palette defined in main.css', async () => {
+  const css = await readFile('./src/assets/main.css', 'utf8');
   const palettes = new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]));
   assert(palettes.size > 0, 'no [data-accent] palettes found in main.css');
 
@@ -32,7 +33,7 @@ Deno.test('collections.json: every accent names a palette defined in main.css', 
   }
 });
 
-Deno.test('collections.json: link templates only use known placeholders', async () => {
+test('collections.json: link templates only use known placeholders', async () => {
   const raw = await readJson<RawCollectionConfig[]>('./public/collections.json');
   for (const col of raw) {
     // A missing icon falls back to the emoji; a misspelt one would do so silently.
@@ -50,13 +51,13 @@ Deno.test('collections.json: link templates only use known placeholders', async 
 });
 
 for (const col of COLLECTIONS) {
-  Deno.test(`${col.id}: list file has the files the app expects`, async () => {
+  test(`${col.id}: list file has the files the app expects`, async () => {
     assert(await exists(col.paths.json), `missing ${col.paths.json}`);
     assert(await exists(col.paths.placeholder), `missing ${col.paths.placeholder}`);
     assert(await exists(col.paths.placeholderDark), `missing ${col.paths.placeholderDark}`);
   });
 
-  Deno.test(`${col.id}: items have unique numeric ids, names, and valid drawn dates`, async () => {
+  test(`${col.id}: items have unique numeric ids, names, and valid drawn dates`, async () => {
     const data = await loadCollectionData(col);
     const seen = new Set<string>();
     const problems: string[] = [];

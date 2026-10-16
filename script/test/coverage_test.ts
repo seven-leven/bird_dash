@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals, assertStringIncludes, assertThrows } from '@std/assert';
 import {
   formatMarkdown,
@@ -28,7 +28,7 @@ BRH:0
 end_of_record
 `;
 
-Deno.test('parseLcov reads every record with line, branch and function counters', () => {
+test('parseLcov reads every record with line, branch and function counters', () => {
   const files = parseLcov(LCOV);
   assertEquals(files.length, 2);
   assertEquals(files[0].file, 'C:\\proj\\src\\a.ts');
@@ -37,18 +37,18 @@ Deno.test('parseLcov reads every record with line, branch and function counters'
   assertEquals(files[0].functions, { found: 4, hit: 3 });
 });
 
-Deno.test('percent: nothing to cover counts as fully covered', () => {
+test('percent: nothing to cover counts as fully covered', () => {
   assertEquals(percent({ found: 0, hit: 0 }), 100);
   assertEquals(percent({ found: 4, hit: 1 }), 25);
 });
 
-Deno.test('totals add up across files (not an average of percentages)', () => {
+test('totals add up across files (not an average of percentages)', () => {
   const t = totals(parseLcov(LCOV));
   assertEquals(t.lines, { found: 20, hit: 15 });
   assertEquals(percent(t.lines), 75);
 });
 
-Deno.test('formatTable lists the worst-covered file first and shows relative paths', () => {
+test('formatTable lists the worst-covered file first and shows relative paths', () => {
   const table = formatTable(parseLcov(LCOV), 'C:\\proj');
   const lines = table.split('\n');
   assertStringIncludes(lines[2], 'src/a.ts'); // 50% comes before 100%
@@ -56,14 +56,14 @@ Deno.test('formatTable lists the worst-covered file first and shows relative pat
   assertStringIncludes(lines[lines.length - 1], ' 75.0%');
 });
 
-Deno.test('parseMinLines reads the floor and rejects nonsense', () => {
+test('parseMinLines reads the floor and rejects nonsense', () => {
   assertEquals(parseMinLines([]), 0);
   assertEquals(parseMinLines(['--min-lines=62.5']), 62.5);
   assertThrows(() => parseMinLines(['--min-lines=abc']));
   assertThrows(() => parseMinLines(['--min-lines=140']));
 });
 
-Deno.test('formatMarkdown leads with the total and folds the per-file table away', () => {
+test('formatMarkdown leads with the total and folds the per-file table away', () => {
   const md = formatMarkdown(parseLcov(LCOV), 70, 'C:\\proj');
   assertStringIncludes(md, '**75.0% of lines**');
   assertStringIncludes(md, 'floor: 70%');
@@ -73,7 +73,7 @@ Deno.test('formatMarkdown leads with the total and folds the per-file table away
   assertStringIncludes(rows[1], 'src/b.ts');
 });
 
-Deno.test('formatTable with a limit shows only the worst files but totals them all', () => {
+test('formatTable with a limit shows only the worst files but totals them all', () => {
   const lines = formatTable(parseLcov(LCOV), 'C:\\proj', 1).split('\n');
   assertEquals(lines.filter((l) => l.includes('src/')).length, 1);
   assertStringIncludes(lines[lines.length - 1], ' 75.0%');

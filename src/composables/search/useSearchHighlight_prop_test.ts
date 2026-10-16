@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
 import { assertProperty } from '../../../script/test/helpers/prop.ts';
@@ -37,7 +37,7 @@ const unescapeHtml = (s: string) =>
 // for ANY text and query: nothing but our own <mark> tags may be markup, and
 // removing the marks must give back exactly the original text.
 
-Deno.test('property: the output never contains markup other than <mark>', () => {
+test('property: the output never contains markup other than <mark>', () => {
   assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const withoutMarks = highlightText(text, query).replace(MARK, '');
@@ -49,7 +49,7 @@ Deno.test('property: the output never contains markup other than <mark>', () => 
 
 // A browser decodes entities within each run of text between tags; an entity can
 // never span a tag. Model that: decode every segment on its own, then join.
-Deno.test('property: the text a browser would show is exactly the original text', () => {
+test('property: the text a browser would show is exactly the original text', () => {
   assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const shown = highlightText(text, query).split(MARK).map(unescapeHtml).join('');
@@ -59,7 +59,7 @@ Deno.test('property: the text a browser would show is exactly the original text'
   );
 });
 
-Deno.test('property: a highlighted span is a case-insensitive match of the query', () => {
+test('property: a highlighted span is a case-insensitive match of the query', () => {
   assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const q = query.trim();

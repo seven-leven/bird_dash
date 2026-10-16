@@ -1,21 +1,24 @@
-/// <reference lib="deno.ns" />
 /**
- * script/test.ts — the test runner behind `deno task test`.
+ * script/test.ts — the test runner behind `npm test`.
  *
- *   deno task test                      every tier, compact summary
- *   deno task test unit dom             just those tiers (see script/test/tiers.ts)
- *   deno task test --verbose            also list every file
- *   deno task test:coverage             every tier + coverage table + line-coverage floor
- *   deno task test:report               the same, and save the full report to test-results/report.md
- *   deno task test:html                 the same, plus an HTML coverage report in test-results/coverage/
+ *   npm test                            every tier, compact summary
+ *   npm test -- unit dom                just those tiers (see script/test/tiers.ts)
+ *   npm test -- --verbose               also list every file
+ *   npm run test:coverage               every tier + coverage table + line-coverage floor
+ *   npm run test:report                 the same, and save the full report to test-results/report.md
+ *   npm run test:html                   the same, plus an HTML coverage report in test-results/coverage/
  *
- * Deno's own per-test log is 150+ lines for a green run, so this runs the tests once
+ * Vitest's own per-test log is long for a green run, so this runs the tests once
  * with the dot + JUnit reporters and prints one row per tier instead. On failure it
- * lists the failing tests first and then replays Deno's full output (diffs, stack
- * traces, or the type error that stopped the run). In GitHub Actions it also writes a
+ * lists the failing tests first and then replays Vitest's full output (diffs, stack
+ * traces, or the error that stopped a file from loading). In GitHub Actions it also writes a
  * job summary, emits per-failure annotations and keeps the JUnit file in test-results/.
  */
 
+import { spawn } from 'node:child_process';
+import { appendFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { discoverTests, groupByTier, isTier, type Tier, TIER_ORDER } from './test/tiers.ts';
 import { parseJunit } from './test/junit.ts';
 import { annotations, formatConsole, formatMarkdown, summarize } from './test/report.ts';
@@ -27,6 +30,7 @@ import {
   untestedFiles,
 } from './test/areas.ts';
 import {
+  coverageArgs,
   formatMarkdown as coverageMarkdown,
   formatTable,
   parseMinLines,
@@ -50,7 +54,7 @@ export interface Options {
 
 /** Positional arguments are tier names; everything else is a flag. */
 export function parseArgs(args: string[]): Options {
-  // A bare `--` (as in `deno task test -- --verbose`) is a separator, not an option.
+  // A bare `--` (as in `npm test -- -- --verbose`) is a separator, not an option.
   args = args.filter((a) => a !== '--');
   const flags = args.filter((a) => a.startsWith('-'));
   const names = args.filter((a) => !a.startsWith('-'));
@@ -79,13 +83,28 @@ export function parseArgs(args: string[]): Options {
   };
 }
 
-// deno-lint-ignore no-control-regex -- the ESC byte is exactly what an ANSI colour code starts with
+// eslint-disable-next-line no-control-regex -- the ESC byte is exactly what an ANSI colour code starts with
 const ANSI = /\x1b\[[0-9;]*m/g;
-const decode = (b: Uint8Array) => new TextDecoder().decode(b).replace(ANSI, '');
 
-/** Deno's dot reporter prints one "." per test on its own line when piped; drop them. */
+/** The dot reporter's lines of marks say nothing the summary does not; drop them. */
 export const withoutDots = (output: string): string =>
-  output.split(/\r?\n/).filter((line) => !/^[.!]?$/.test(line.trim())).join('\n');
+  output.split(/\r?\n/).filter((line) => !/^[·x*-]*$/.test(line.trim())).join('\n');
+
+/** Run Vitest (with this Node, no shell) and collect its exit code and output. */
+function vitest(args: string[]): Promise<{ success: boolean; output: string }> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(process.execPath, ['node_modules/vitest/vitest.mjs', 'run', ...args], {
+      env: { ...process.env, FORCE_COLOR: '0' },
+    });
+    let output = '';
+    child.stdout.on('data', (chunk) => (output += chunk));
+    child.stderr.on('data', (chunk) => (output += chunk));
+    child.on('error', reject).on(
+      'close',
+      (code) => resolve({ success: code === 0, output: output.replace(ANSI, '') }),
+    );
+  });
+}
 
 async function main(argv: string[]): Promise<number> {
   let opts: Options;
@@ -96,7 +115,7 @@ async function main(argv: string[]): Promise<number> {
     return 2;
   }
 
-  const inCI = Deno.env.get('GITHUB_ACTIONS') === 'true';
+  const inCI = process.env.GITHUB_ACTIONS === 'true';
   const groups = groupByTier(await discoverTests());
   const files = opts.tiers.flatMap((t) => groups[t]);
   if (files.length === 0) {
@@ -104,41 +123,34 @@ async function main(argv: string[]): Promise<number> {
     return 2;
   }
 
-  const work = await Deno.makeTempDir({ prefix: 'test-' });
+  const work = await mkdtemp(join(tmpdir(), 'test-'));
   try {
     const saveReport = inCI || opts.report;
-    if (saveReport || opts.html) await Deno.mkdir('test-results', { recursive: true });
+    if (saveReport || opts.html) await mkdir('test-results', { recursive: true });
     const junitPath = inCI ? 'test-results/junit.xml' : `${work}/junit.xml`;
     const covDir = `${work}/coverage`;
 
-    const run = await new Deno.Command(Deno.execPath(), {
-      args: [
-        'test',
-        '-A',
-        '--node-modules-dir',
-        '--parallel',
-        '--reporter=dot',
-        `--junit-path=${junitPath}`,
-        ...(opts.failFast ? ['--fail-fast'] : []),
-        ...(opts.coverage ? [`--coverage=${covDir}`] : []),
-        ...files,
-      ],
-      stdout: 'piped',
-      stderr: 'piped',
-    }).output();
+    const run = await vitest([
+      '--reporter=dot',
+      '--reporter=junit',
+      `--outputFile.junit=${junitPath}`,
+      ...(opts.failFast ? ['--bail=1'] : []),
+      ...(opts.coverage ? coverageArgs(covDir, opts.html) : []),
+      ...files,
+    ]);
 
-    const raw = decode(run.stdout) + decode(run.stderr);
-    const cases = parseJunit(await Deno.readTextFile(junitPath).catch(() => ''));
+    const raw = run.output;
+    const cases = parseJunit(await readFile(junitPath, 'utf8').catch(() => ''));
     const summary = summarize(cases);
-    const tz = Deno.env.get('TZ');
+    const tz = process.env.TZ;
     const title = `Tests${tz ? ` (TZ=${tz})` : ''} — ${opts.tiers.join(', ')}`;
 
     console.log(cases.length > 0 ? formatConsole(summary, { verbose: opts.verbose, cases }) : '');
 
-    // Deno's own output holds what the summary can't: assertion diffs, stack traces,
-    // or the type error that stopped the run before any test executed.
+    // Vitest's own output holds what the summary can't: assertion diffs, stack traces,
+    // or the error that stopped a file from loading.
     if (!run.success) {
-      if (inCI) console.log('::group::Full deno test output');
+      if (inCI) console.log('::group::Full vitest output');
       console.log('\n' + withoutDots(raw).trim());
       if (inCI) console.log('::endgroup::');
       if (inCI) { for (const line of annotations(summary.failures)) console.log(line); }
@@ -148,7 +160,7 @@ async function main(argv: string[]): Promise<number> {
     let ok = run.success;
 
     // Coverage paths come back absolute; areas work on repo-relative ones.
-    const cwd = Deno.cwd().replaceAll('\\', '/') + '/';
+    const cwd = process.cwd().replaceAll('\\', '/') + '/';
     const relative = (file: string) => file.replaceAll('\\', '/').replace(cwd, '');
     const cov = opts.coverage && run.success
       ? (await readCoverage(covDir)).map((f) => ({ ...f, file: relative(f.file) }))
@@ -166,7 +178,7 @@ async function main(argv: string[]): Promise<number> {
 
     if (cov) {
       const actual = percent(totals(cov).lines);
-      console.log('\nleast covered files:\n' + formatTable(cov, Deno.cwd(), 8));
+      console.log('\nleast covered files:\n' + formatTable(cov, process.cwd(), 8));
       if (actual < opts.minLines) {
         console.error(
           `\n✗ line coverage ${actual.toFixed(1)}% is below the ${opts.minLines}% floor`,
@@ -175,7 +187,7 @@ async function main(argv: string[]): Promise<number> {
       } else {
         console.log(`\n✓ line coverage ${actual.toFixed(1)}% (floor ${opts.minLines}%)`);
       }
-      summaryMd += '\n' + coverageMarkdown(cov, opts.minLines, Deno.cwd());
+      summaryMd += '\n' + coverageMarkdown(cov, opts.minLines, process.cwd());
 
       if (opts.html) {
         const index = await writeHtmlCoverage(covDir, 'test-results/coverage');
@@ -195,17 +207,17 @@ async function main(argv: string[]): Promise<number> {
       }
     }
 
-    const summaryFile = Deno.env.get('GITHUB_STEP_SUMMARY');
-    if (summaryFile) await Deno.writeTextFile(summaryFile, summaryMd + '\n', { append: true });
+    const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+    if (summaryFile) await appendFile(summaryFile, summaryMd + '\n');
     if (saveReport) {
-      await Deno.writeTextFile('test-results/report.md', summaryMd + '\n');
+      await writeFile('test-results/report.md', summaryMd + '\n');
       if (!inCI) console.log('\nfull report: test-results/report.md');
     }
 
     return ok ? 0 : 1;
   } finally {
-    await Deno.remove(work, { recursive: true }).catch(() => {});
+    await rm(work, { recursive: true, force: true });
   }
 }
 
-if (import.meta.main) Deno.exit(await main(Deno.args));
+if (import.meta.main) process.exit(await main(process.argv.slice(2)));

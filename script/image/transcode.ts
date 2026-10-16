@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { ensureDir } from '../lib/fs.ts';
 import { errorMessage } from '../lib/error.ts';
@@ -62,7 +62,7 @@ export async function transcode(
       .toBuffer();
 
     // Already WebP-encoded — write as-is (a sharp round-trip would re-encode).
-    await Deno.writeFile(full, fullBuffer);
+    await writeFile(full, fullBuffer);
 
     // Derive thumbnail FROM normalized full image
     await writeThumb(fullBuffer, thumb);

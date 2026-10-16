@@ -84,7 +84,7 @@
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import Icon from '../icons/Icon.vue';
-import type { CollectionItem, CollectionConfig } from '../../types/';
+import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 
 const props = defineProps<{
   item:       CollectionItem;

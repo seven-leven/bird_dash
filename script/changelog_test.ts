@@ -1,10 +1,10 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { type ChangelogIo, cli, insertEntries, parseLog, run, toLines } from './changelog.ts';
 
 const LINES = ['- 2025-01-02 | feat: b', '- 2025-01-01 | feat: a'];
 
-Deno.test('insertEntries puts new lines at the top of the newest section', () => {
+test('insertEntries puts new lines at the top of the newest section', () => {
   const changelog =
     '# Changelog\n\n---\n\n## v0.9.0\n\n- 2024-12-31 | old\n\n## v0.8.0\n\n- older\n';
   const out = insertEntries(changelog, LINES);
@@ -15,30 +15,30 @@ Deno.test('insertEntries puts new lines at the top of the newest section', () =>
   );
 });
 
-Deno.test('insertEntries never creates an "Unreleased" section: every merge is live', () => {
+test('insertEntries never creates an "Unreleased" section: every merge is live', () => {
   const out = insertEntries('# Changelog\n\n---\n\n## v0.9.0\n\n- shipped\n', LINES);
   assert(!out.includes('Unreleased'));
 });
 
-Deno.test('insertEntries with no section yet adds the lines after the divider', () => {
+test('insertEntries with no section yet adds the lines after the divider', () => {
   const out = insertEntries('# Changelog\n\n---\n', LINES);
   assert(out.indexOf(LINES[0]) > out.indexOf('---'));
   for (const line of LINES) assertStringIncludes(out, line);
 });
 
-Deno.test('parseLog reads one commit per line and keeps "|" inside a subject', () => {
+test('parseLog reads one commit per line and keeps "|" inside a subject', () => {
   assertEquals(parseLog('2025-01-01|feat: a\n2025-01-02|fix: b | c'), [
     { date: '2025-01-01', subject: 'feat: a' },
     { date: '2025-01-02', subject: 'fix: b | c' },
   ]);
 });
 
-Deno.test('parseLog of empty output is no commits', () => {
+test('parseLog of empty output is no commits', () => {
   assertEquals(parseLog(''), []);
   assertEquals(parseLog('\n'), []);
 });
 
-Deno.test('toLines writes the "- date | subject" form the changelog uses', () => {
+test('toLines writes the "- date | subject" form the changelog uses', () => {
   assertEquals(toLines([{ date: '2025-01-01', subject: 'feat: a' }]), ['- 2025-01-01 | feat: a']);
 });
 
@@ -68,14 +68,14 @@ function fakeIo(commits = COMMITS) {
   return { io, state };
 }
 
-Deno.test('run: with nothing new it says so and leaves the file alone', async () => {
+test('run: with nothing new it says so and leaves the file alone', async () => {
   const { io, state } = fakeIo([]);
   assertEquals(await run([], io), 'up-to-date');
   assertEquals([state.reads, state.writes], [0, 0]);
   assertStringIncludes(state.log.join('\n'), 'up to date');
 });
 
-Deno.test('run --dry-run lists the commits and writes nothing', async () => {
+test('run --dry-run lists the commits and writes nothing', async () => {
   const { io, state } = fakeIo();
   assertEquals(await run(['--dry-run'], io), 'dry-run');
   assertEquals(state.writes, 0);
@@ -86,7 +86,7 @@ Deno.test('run --dry-run lists the commits and writes nothing', async () => {
   assertStringIncludes(out, 'nothing written');
 });
 
-Deno.test('run writes the new entries above the old ones, once', async () => {
+test('run writes the new entries above the old ones, once', async () => {
   const { io, state } = fakeIo();
   assertEquals(await run([], io), 'written');
   assertEquals(state.writes, 1);
@@ -98,12 +98,12 @@ Deno.test('run writes the new entries above the old ones, once', async () => {
   assertStringIncludes(state.log.join('\n'), 'review, edit, and commit');
 });
 
-Deno.test('cli exits 0 when the command works', async () => {
+test('cli exits 0 when the command works', async () => {
   const { io } = fakeIo([]);
   assertEquals(await cli([], io), 0);
 });
 
-Deno.test('cli exits 1 and prints the error when git or the file fails', async () => {
+test('cli exits 1 and prints the error when git or the file fails', async () => {
   const { io } = fakeIo();
   io.read = () => Promise.reject(new Error('cannot read CHANGELOG.md'));
   const printed: unknown[][] = [];

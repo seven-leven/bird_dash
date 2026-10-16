@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 import { markDrawn } from '../collection/record.ts';
 import { transcode, transcodeThumb } from '../image/transcode.ts';
 import { log } from './report.ts';

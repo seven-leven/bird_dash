@@ -1,9 +1,8 @@
-/// <reference lib="deno.ns" />
 /**
  * script/changelog.ts — keep CHANGELOG.md in sync with git history
  *
- *   deno task changelog            insert unlogged commits at the top of the newest section
- *   deno task changelog --dry-run  print what would be inserted, change nothing
+ *   npm run changelog              insert unlogged commits at the top of the newest section
+ *   npm run changelog -- --dry-run print what would be inserted, change nothing
  *
  * "Unlogged" means: commits made after the last commit that touched
  * CHANGELOG.md itself. Updating the changelog therefore marks everything
@@ -12,6 +11,7 @@
  * Merge commits are skipped (their PR subject duplicates the branch commits).
  */
 
+import { readFile, writeFile } from 'node:fs/promises';
 import { CHANGELOG_FILE } from './collection/registry.ts';
 import { git } from './lib/git.ts';
 
@@ -77,14 +77,14 @@ export interface ChangelogIo {
 /** The real thing: git history, the changelog file at `path`, and the console. */
 export const fileIo = (path: string = CHANGELOG_FILE): ChangelogIo => ({
   commits: unloggedCommits,
-  read: () => Deno.readTextFile(path),
-  write: (text) => Deno.writeTextFile(path, text),
+  read: () => readFile(path, 'utf8'),
+  write: (text) => writeFile(path, text),
   log: (line) => console.log(line),
 });
 
 export type Outcome = 'up-to-date' | 'dry-run' | 'written';
 
-/** The `deno task changelog` command. Returns what it did. */
+/** The `npm run changelog` command. Returns what it did. */
 export async function run(args: string[], io: ChangelogIo = fileIo()): Promise<Outcome> {
   const commits = await io.commits();
   if (commits.length === 0) {
@@ -117,4 +117,4 @@ export async function cli(args: string[], io?: ChangelogIo): Promise<number> {
   }
 }
 
-if (import.meta.main) Deno.exit(await cli(Deno.args));
+if (import.meta.main) process.exit(await cli(process.argv.slice(2)));

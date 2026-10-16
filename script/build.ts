@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 /**
  * script/build.ts — unified build entry point
  *
@@ -9,6 +8,7 @@
  *   --check          read-only integrity report, no writes
  */
 
+import { spawn } from 'node:child_process';
 import { type Collection, COLLECTIONS } from './collection/registry.ts';
 import { scanCollection } from './pipeline/scan.ts';
 import { blockingIssues, planWork } from './pipeline/plan.ts';
@@ -56,23 +56,16 @@ export async function buildAssets(collections: Collection[] = COLLECTIONS): Prom
 // ---------------------------------------------------------------------------
 
 /** Start `vite build` and resolve with its exit code. */
-async function spawnVite(): Promise<number> {
-  const root = Deno.cwd();
-  const { code } = await new Deno.Command('deno', {
-    args: [
-      'run',
-      '-A',
-      '--node-modules-dir',
-      'npm:vite',
-      'build',
-      '--config',
-      `${root}/vite.config.ts`,
-    ],
-    cwd: root,
-    stdout: 'inherit',
-    stderr: 'inherit',
-  }).output();
-  return code;
+function spawnVite(): Promise<number> {
+  const root = process.cwd();
+  // Vite's own entry point, run with this Node: no shell, so it works the same on Windows.
+  const vite = `${root}/node_modules/vite/bin/vite.js`;
+  return new Promise((resolve, reject) => {
+    spawn(process.execPath, [vite, 'build', '--config', `${root}/vite.config.ts`], {
+      cwd: root,
+      stdio: 'inherit',
+    }).on('error', reject).on('close', (code) => resolve(code ?? 1));
+  });
 }
 
 export async function buildVite(spawn: () => Promise<number> = spawnVite): Promise<void> {
@@ -149,4 +142,4 @@ export async function cli(args: string[], steps: Steps = realSteps): Promise<num
   }
 }
 
-if (import.meta.main) Deno.exit(await cli(Deno.args));
+if (import.meta.main) process.exit(await cli(process.argv.slice(2)));

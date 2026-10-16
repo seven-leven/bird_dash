@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import {
   areaOf,
@@ -11,7 +11,7 @@ import {
 import type { TestCase } from './junit.ts';
 import type { FileCoverage } from './coverage.ts';
 
-const test = (file: string, failure?: string): TestCase => ({
+const testCase = (file: string, failure?: string): TestCase => ({
   name: 't',
   file,
   line: 1,
@@ -25,7 +25,7 @@ const cov = (file: string, hit: number, found: number): FileCoverage => ({
   functions: { hit: 0, found: 0 },
 });
 
-Deno.test('areaOf places a file by its path, whatever the slashes', () => {
+test('areaOf places a file by its path, whatever the slashes', () => {
   assertEquals(areaOf('src/lib/formatCount.ts')?.id, 'data');
   assertEquals(areaOf('src\\stores\\ui.ts')?.id, 'state');
   assertEquals(areaOf('./src/composables/ui/useLightBox.ts')?.id, 'interface');
@@ -35,17 +35,17 @@ Deno.test('areaOf places a file by its path, whatever the slashes', () => {
   assertEquals(areaOf('somewhere/else.ts'), undefined);
 });
 
-Deno.test('area ids are unique and every area claims at least one path', () => {
+test('area ids are unique and every area claims at least one path', () => {
   assertEquals(new Set(AREAS.map((a) => a.id)).size, AREAS.length);
   for (const a of AREAS) assert(a.paths.length > 0 && a.protects.length > 0, a.id);
 });
 
-Deno.test('summarizeAreas counts tests and failures per area', () => {
+test('summarizeAreas counts tests and failures per area', () => {
   const rows = summarizeAreas([
-    test('src/lib/a_test.ts'),
-    test('src/lib/a_test.ts', 'boom'),
-    test('src/lib/b_test.ts'),
-    test('script/pipeline/plan_test.ts'),
+    testCase('src/lib/a_test.ts'),
+    testCase('src/lib/a_test.ts', 'boom'),
+    testCase('src/lib/b_test.ts'),
+    testCase('script/pipeline/plan_test.ts'),
   ]);
   const data = rows.find((r) => r.area.id === 'data')!;
   assertEquals([data.files, data.tests, data.failed], [2, 3, 1]);
@@ -54,8 +54,8 @@ Deno.test('summarizeAreas counts tests and failures per area', () => {
   assertEquals(data.lines, undefined, 'no coverage was given');
 });
 
-Deno.test('summarizeAreas adds coverage per area and lists files no test loaded', () => {
-  const rows = summarizeAreas([test('src/lib/a_test.ts')], {
+test('summarizeAreas adds coverage per area and lists files no test loaded', () => {
+  const rows = summarizeAreas([testCase('src/lib/a_test.ts')], {
     coverage: [
       cov('src/lib/a.ts', 8, 10),
       cov('src/lib/b.ts', 10, 10),
@@ -70,13 +70,13 @@ Deno.test('summarizeAreas adds coverage per area and lists files no test loaded'
   assertEquals(rows.find((r) => r.area.id === 'release')!.lines, { hit: 0, found: 0 });
 });
 
-Deno.test('the console table shows coverage columns only when coverage was measured', () => {
-  const plain = formatAreasConsole(summarizeAreas([test('src/lib/a_test.ts')]));
+test('the console table shows coverage columns only when coverage was measured', () => {
+  const plain = formatAreasConsole(summarizeAreas([testCase('src/lib/a_test.ts')]));
   assert(!plain.includes('lines'));
   assertStringIncludes(plain, '– no tests'); // areas with nothing are called out
 
   const withCov = formatAreasConsole(
-    summarizeAreas([test('src/lib/a_test.ts', 'x')], {
+    summarizeAreas([testCase('src/lib/a_test.ts', 'x')], {
       coverage: [cov('src/lib/a.ts', 9, 10)],
       sources: ['src/lib/a.ts', 'src/lib/never.ts'],
     }),
@@ -86,9 +86,9 @@ Deno.test('the console table shows coverage columns only when coverage was measu
   assertStringIncludes(withCov, '✗ 1 failed');
 });
 
-Deno.test('the markdown report names what each area protects and lists unloaded files', () => {
+test('the markdown report names what each area protects and lists unloaded files', () => {
   const md = formatAreasMarkdown(
-    summarizeAreas([test('src/lib/a_test.ts')], {
+    summarizeAreas([testCase('src/lib/a_test.ts')], {
       coverage: [cov('src/lib/a.ts', 9, 10)],
       sources: ['src/lib/a.ts', 'script/build.ts'],
     }),
@@ -100,7 +100,7 @@ Deno.test('the markdown report names what each area protects and lists unloaded 
   assertStringIncludes(md, '⚠️ no tests');
 });
 
-Deno.test('untestedFiles gathers the unloaded files of every area; empty when all are loaded', () => {
+test('untestedFiles gathers the unloaded files of every area; empty when all are loaded', () => {
   const some = summarizeAreas([], {
     coverage: [cov('src/lib/a.ts', 1, 1)],
     sources: ['src/lib/a.ts', 'src/lib/never.ts', 'script/build.ts'],

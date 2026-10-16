@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 import RAW_COLLECTIONS from '../../public/collections.json' with { type: 'json' };
 
 // ---------------------------------------------------------------------------

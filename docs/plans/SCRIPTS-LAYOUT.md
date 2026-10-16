@@ -13,8 +13,8 @@ Status: **proposed**. Nothing here has been done yet.
    and an output (`docs/`, `placeholders/`).
 3. **`image/transcode.ts` is used only by the build pipeline** but has a folder of its own.
 4. **`script/docs/` reads like `docs/`**, but it draws the design-system images.
-5. **`script/test.ts` sits beside `script/test/`**, and because it is named `test.ts` Deno treats it
-   as a test file and never measures its coverage (`script/test/areas.ts` special-cases it).
+5. **`script/test.ts` sits beside `script/test/`**, so the runner and its parts read as two
+   different things.
 6. **`script/test/helpers/` is mostly used by `src/` tests** (22 of 23 importers), not by scripts.
 7. **`collection/registry.ts` holds `VERSION_FILE` and `CHANGELOG_FILE`**, which are unrelated to
    collections.
@@ -29,7 +29,7 @@ Status: **proposed**. Nothing here has been done yet.
 - snake_case, matching `design_guide.ts` and `*_test.ts`.
 - A test file is named after its module (`plan_changes.ts` → `plan_changes_test.ts`); tier suffixes
   (`_dom_test`, `_prop_test`, `_contract_test`) are unchanged.
-- Task names do not change; only the paths behind them in `deno.jsonc` do.
+- Script names do not change; only the paths behind them in `package.json` do.
 
 ## Target layout
 
@@ -40,26 +40,26 @@ script/
     collections.ts           the collection list and each one's file paths
     lists.ts                 read/write public/lists/<id>.json
   build/
-    build.ts                 deno task build / build:assets / build:vite / check
+    build.ts                 npm run build / build:assets / build:vite / check
     scan_sources.ts          what is in raw_png/ vs what is registered
     plan_changes.ts          decide what to add, transcode, skip
     apply_changes.ts         do it
     print_build_summary.ts   the table at the end of a build
     transcode_images.ts      PNG → full + thumb WebP
   version/
-    version.ts               compute + `deno task version` (vite.config.ts imports it)
+    version.ts               compute + `npm run version` (vite.config.ts imports it)
     base_version.json        major.minor only; the rest is derived
   changelog/
-    changelog.ts             deno task changelog
+    changelog.ts             npm run changelog
   design/
-    draw_design_guide.ts     deno task design
+    draw_design_guide.ts     npm run design
     draw_logo.ts
     icon_grid.ts             lays icons out in aligned columns
     palette.ts               colours + contrast maths
   placeholders/
-    draw_placeholders.ts     deno task placeholders
+    draw_placeholders.ts     npm run placeholders
   test_runner/
-    run_tests.ts             deno task test*
+    run_tests.ts             npm test*
     tiers.ts  areas.ts
     junit.ts                 parse JUnit XML
     coverage.ts              parse LCOV, tables, HTML report
@@ -107,16 +107,16 @@ src/test_helpers/
    modules.
 2. **Fix paths**, a second commit:
    - relative imports (about 30) in the moved files and their tests;
-   - task paths and the `typecheck` glob in `deno.jsonc`;
+   - script paths in `package.json`;
    - the import in `vite.config.ts`;
    - the area path rules in `script/test_runner/areas.ts`, and delete the `script/test.ts` special
      case (the runner is now measured);
    - the exclusion for test helpers in `script/test_runner/coverage.ts` (now `src/test_helpers/`);
    - path mentions in `README.md`, `docs/ARCHITECTURE.md`, `docs/TESTING.md`,
      `docs/TEST-PROCEDURES.md`, `docs/README.md` and comments that name old files.
-3. **Verify**: `deno lint`, `deno fmt --check`, `deno task typecheck`, `deno task test:coverage`,
-   `deno task check`, `deno task build`, `deno task design` (no image changes), and
-   `deno task version` prints the same version as before.
+3. **Verify**: `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run test:coverage`,
+   `npm run check`, `npm run build`, `npm run design` (no image changes), and `npm run version`
+   prints the same version as before.
 
 Areas keep their names, so test reports stay comparable before and after.
 
@@ -128,7 +128,7 @@ lists ([COVERAGE-ROADMAP.md](COVERAGE-ROADMAP.md)) will need their paths updated
 
 ## Done when
 
-- Every task in `deno.jsonc` runs a file named after it.
+- Every script in `package.json` runs a file named after it.
 - No file in `script/` is named `main`, `index`, `plan`, `execute`, `report`, `generate` or
   `layout`.
 - No special case for `script/test.ts` remains in `areas.ts`, and the runner shows up in coverage.

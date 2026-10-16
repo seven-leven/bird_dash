@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { nextTick } from 'vue';
 import { useTheme } from './useTheme.ts';
@@ -12,7 +12,7 @@ const osPrefersDark = (dark: boolean) => {
   globalThis.matchMedia = (() => ({ matches: dark })) as unknown as typeof matchMedia;
 };
 
-Deno.test('with nothing stored, the OS preference decides and nothing is saved', () =>
+test('with nothing stored, the OS preference decides and nothing is saved', () =>
   withDom(async () => {
     osPrefersDark(true);
     const { value: t, stop } = runInScope(() => useTheme());
@@ -23,7 +23,7 @@ Deno.test('with nothing stored, the OS preference decides and nothing is saved',
     await nextTick();
   }));
 
-Deno.test('a stored choice wins over the OS preference', () =>
+test('a stored choice wins over the OS preference', () =>
   withDom(() => {
     osPrefersDark(true);
     localStorage.setItem('theme', 'light');
@@ -33,7 +33,7 @@ Deno.test('a stored choice wins over the OS preference', () =>
     stop();
   }));
 
-Deno.test('toggling flips the class and persists the choice', () =>
+test('toggling flips the class and persists the choice', () =>
   withDom(async () => {
     osPrefersDark(false);
     const { value: t, stop } = runInScope(() => useTheme());
@@ -51,7 +51,7 @@ Deno.test('toggling flips the class and persists the choice', () =>
     stop();
   }));
 
-Deno.test('blocked storage does not break the theme', () =>
+test('blocked storage does not break the theme', () =>
   withDom(async () => {
     osPrefersDark(false);
     // e.g. private mode / sandboxed iframe: any access to localStorage throws

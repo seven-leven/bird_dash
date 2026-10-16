@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
@@ -53,7 +53,7 @@ function harness(items: Record<string, CollectionItem[]>) {
 const drawn = (itemId: string) => makeItem({ itemId, drawnTime: at(2025, 3, 10) });
 const undrawn = (itemId: string) => makeItem({ itemId, isDrawn: false });
 
-Deno.test('a bare load leaves the URL alone, then later switches are reflected', () =>
+test('a bare load leaves the URL alone, then later switches are reflected', () =>
   withDom(async () => {
     const h = harness({ birds: [], sharks: [] });
     await h.route.start(); // no hash → nothing to apply
@@ -66,7 +66,7 @@ Deno.test('a bare load leaves the URL alone, then later switches are reflected',
     h.stop();
   }));
 
-Deno.test('opening and closing an item is reflected in the URL', () =>
+test('opening and closing an item is reflected in the URL', () =>
   withDom(async () => {
     const item = drawn('001');
     const h = harness({ birds: [item] });
@@ -83,7 +83,7 @@ Deno.test('opening and closing an item is reflected in the URL', () =>
     h.stop();
   }));
 
-Deno.test('a deep link switches collection, opens the item, and is not clobbered on the way', () =>
+test('a deep link switches collection, opens the item, and is not clobbered on the way', () =>
   withDom(async () => {
     const h = harness({ birds: [], sharks: [drawn('019')] });
     await h.loadFirst('birds');
@@ -106,7 +106,7 @@ Deno.test('a deep link switches collection, opens the item, and is not clobbered
     h.stop();
   }));
 
-Deno.test('a deep link to an undrawn item highlights the tile instead of opening it', () =>
+test('a deep link to an undrawn item highlights the tile instead of opening it', () =>
   withDom(async () => {
     const tile = document.createElement('div');
     tile.id = 'item-005';
@@ -124,7 +124,7 @@ Deno.test('a deep link to an undrawn item highlights the tile instead of opening
     h.stop();
   }));
 
-Deno.test("the router's own URL writes are not applied back as navigation", () =>
+test("the router's own URL writes are not applied back as navigation", () =>
   withDom(async () => {
     const h = harness({ birds: [], sharks: [] });
     await h.loadFirst('birds');
@@ -137,7 +137,7 @@ Deno.test("the router's own URL writes are not applied back as navigation", () =
     h.stop();
   }));
 
-Deno.test('the user editing the hash to another collection navigates there', () =>
+test('the user editing the hash to another collection navigates there', () =>
   withDom(async () => {
     const h = harness({ birds: [], sharks: [] });
     await h.loadFirst('sharks');
@@ -150,7 +150,7 @@ Deno.test('the user editing the hash to another collection navigates there', () 
     h.stop();
   }));
 
-Deno.test('an empty or collection-less hash is ignored', () =>
+test('an empty or collection-less hash is ignored', () =>
   withDom(async () => {
     const h = harness({ birds: [] });
     await h.loadFirst('birds');

@@ -58,6 +58,9 @@
         </h2>
 
         <div class="tile-grid">
+          <!-- Inside the section loop the memo cache is shared by every section, so it never
+               hits; harmless (keys differ), but it saves nothing. -->
+          <!-- eslint-disable vue/valid-v-memo -->
           <ItemTile
             v-for="(item, itemIndex) in items"
             :key="item.id"
@@ -67,6 +70,7 @@
             :eager="groupIndex === 0 && itemIndex < 6"
             @card-click="openItem($event)"
           />
+          <!-- eslint-enable vue/valid-v-memo -->
         </div>
       </section>
 

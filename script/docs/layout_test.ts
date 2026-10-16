@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { iconGridLayout } from './layout.ts';
 import { ICON_GROUPS } from '../../src/components/icons/icons.ts';
@@ -8,7 +8,7 @@ const g = (label: string, n: number) => ({
   icons: Array.from({ length: n }, (_, i) => `${label}${i}`),
 });
 
-Deno.test('groups sit side by side with one empty cell between them', () => {
+test('groups sit side by side with one empty cell between them', () => {
   const [a, b] = iconGridLayout([g('a', 3), g('b', 2)], 10);
   assertEquals([a.row, a.col], [0, 0]);
   assertEquals(a.icons.map((i) => i.col), [0, 1, 2]);
@@ -16,18 +16,18 @@ Deno.test('groups sit side by side with one empty cell between them', () => {
   assertEquals(b.icons.map((i) => i.col), [4, 5]);
 });
 
-Deno.test('a group that does not fit starts the next row at the first column', () => {
+test('a group that does not fit starts the next row at the first column', () => {
   const [, b, c] = iconGridLayout([g('a', 3), g('b', 7), g('c', 2)], 10);
   assertEquals([b.row, b.col], [1, 0]); // 3 + gap + 7 would need 11 cells
   assertEquals([c.row, c.col], [1, 8]);
 });
 
-Deno.test('a group that exactly fills the rest of the row stays on it', () => {
+test('a group that exactly fills the rest of the row stays on it', () => {
   const [, b] = iconGridLayout([g('a', 2), g('b', 7)], 10);
   assertEquals([b.row, b.col], [0, 3]);
 });
 
-Deno.test('the real icon set stays inside the grid at both sizes the docs use', () => {
+test('the real icon set stays inside the grid at both sizes the docs use', () => {
   for (const cols of [10, 7]) {
     const placed = iconGridLayout(ICON_GROUPS, cols);
     assertEquals(placed.length, ICON_GROUPS.length);

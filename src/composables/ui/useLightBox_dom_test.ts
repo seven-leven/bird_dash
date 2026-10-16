@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive } from 'vue';
 import { useLightbox } from './useLightBox.ts';
@@ -52,7 +52,7 @@ function setup(startAt = 0) {
 const pointer = (type: string, id: number, x: number, y: number, kind = 'touch') =>
   new PointerEvent(type, { pointerId: id, clientX: x, clientY: y, pointerType: kind });
 
-Deno.test('opening moves focus into the dialog and locks page scroll', () =>
+test('opening moves focus into the dialog and locks page scroll', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -61,7 +61,7 @@ Deno.test('opening moves focus into the dialog and locks page scroll', () =>
     t.stop();
   }));
 
-Deno.test('closing restores focus to what opened it and unlocks scroll', () =>
+test('closing restores focus to what opened it and unlocks scroll', () =>
   withDom(async () => {
     const opener = document.createElement('button');
     document.body.append(opener);
@@ -78,7 +78,7 @@ Deno.test('closing restores focus to what opened it and unlocks scroll', () =>
     t.stop();
   }));
 
-Deno.test('+ / - / 0 zoom, and Escape asks the parent to close', () =>
+test('+ / - / 0 zoom, and Escape asks the parent to close', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -96,7 +96,7 @@ Deno.test('+ / - / 0 zoom, and Escape asks the parent to close', () =>
     t.stop();
   }));
 
-Deno.test('arrow keys page through the drawn items and stop at the ends', () =>
+test('arrow keys page through the drawn items and stop at the ends', () =>
   withDom(async () => {
     const t = setup(0);
     await t.open();
@@ -109,7 +109,7 @@ Deno.test('arrow keys page through the drawn items and stop at the ends', () =>
     t.stop();
   }));
 
-Deno.test('keys typed into a text field do not zoom or page the image', () =>
+test('keys typed into a text field do not zoom or page the image', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -123,7 +123,7 @@ Deno.test('keys typed into a text field do not zoom or page the image', () =>
     t.stop();
   }));
 
-Deno.test('Tab wraps from the last control to the first, Shift+Tab the other way', () =>
+test('Tab wraps from the last control to the first, Shift+Tab the other way', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -143,7 +143,7 @@ Deno.test('Tab wraps from the last control to the first, Shift+Tab the other way
     t.stop();
   }));
 
-Deno.test('keys are ignored while closed', () =>
+test('keys are ignored while closed', () =>
   withDom(async () => {
     const t = setup();
     t.key('+'); // never opened, so the window listener was never attached
@@ -156,7 +156,7 @@ Deno.test('keys are ignored while closed', () =>
     t.stop();
   }));
 
-Deno.test('a two-finger pinch zooms by how far the fingers spread', () =>
+test('a two-finger pinch zooms by how far the fingers spread', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -171,7 +171,7 @@ Deno.test('a two-finger pinch zooms by how far the fingers spread', () =>
     t.stop();
   }));
 
-Deno.test('a finger swipe pages; a mouse drag at 1x does not', () =>
+test('a finger swipe pages; a mouse drag at 1x does not', () =>
   withDom(async () => {
     const t = setup(0);
     await t.open();
@@ -188,7 +188,7 @@ Deno.test('a finger swipe pages; a mouse drag at 1x does not', () =>
     t.stop();
   }));
 
-Deno.test('dragging while zoomed pans by the distance divided by the scale', () =>
+test('dragging while zoomed pans by the distance divided by the scale', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -209,7 +209,7 @@ Deno.test('dragging while zoomed pans by the distance divided by the scale', () 
 const clickOn = (target: object, currentTarget: object = target) =>
   ({ target, currentTarget }) as unknown as MouseEvent;
 
-Deno.test('a click on empty space closes; a click that bubbled from a child does not', () =>
+test('a click on empty space closes; a click that bubbled from a child does not', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -220,7 +220,7 @@ Deno.test('a click on empty space closes; a click that bubbled from a child does
     t.stop();
   }));
 
-Deno.test('the click that ends a drag does not close; the next plain click does', () =>
+test('the click that ends a drag does not close; the next plain click does', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -236,7 +236,7 @@ Deno.test('the click that ends a drag does not close; the next plain click does'
     t.stop();
   }));
 
-Deno.test('position reports where the open item sits among the drawn items', () =>
+test('position reports where the open item sits among the drawn items', () =>
   withDom(() => {
     const t = setup(1);
     assertEquals(t.lb.position.value, '2 of 3');
@@ -245,7 +245,7 @@ Deno.test('position reports where the open item sits among the drawn items', () 
     t.stop();
   }));
 
-Deno.test('the image URL is empty while closed and points at the full image while open', () =>
+test('the image URL is empty while closed and points at the full image while open', () =>
   withDom(async () => {
     const t = setup(1);
     assertEquals(t.lb.imageUrl.value, '');
@@ -254,7 +254,7 @@ Deno.test('the image URL is empty while closed and points at the full image whil
     t.stop();
   }));
 
-Deno.test('opening shows the spinner until the image loads; a failed image shows an error', () =>
+test('opening shows the spinner until the image loads; a failed image shows an error', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -271,7 +271,7 @@ Deno.test('opening shows the spinner until the image loads; a failed image shows
     t.stop();
   }));
 
-Deno.test('the wheel zooms in steps, never below 1x or above 5x', () =>
+test('the wheel zooms in steps, never below 1x or above 5x', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -288,7 +288,7 @@ Deno.test('the wheel zooms in steps, never below 1x or above 5x', () =>
     t.stop();
   }));
 
-Deno.test('paging to another item resets the zoom', () =>
+test('paging to another item resets the zoom', () =>
   withDom(async () => {
     const t = setup();
     await t.open();
@@ -301,7 +301,7 @@ Deno.test('paging to another item resets the zoom', () =>
     t.stop();
   }));
 
-Deno.test('previous and next are offered only where there is somewhere to go', () =>
+test('previous and next are offered only where there is somewhere to go', () =>
   withDom(() => {
     const first = setup(0);
     assertEquals([first.lb.hasPrevious.value, first.lb.hasNext.value], [false, true]);

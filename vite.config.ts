@@ -1,17 +1,16 @@
-import { defineConfig } from 'vite';
-import deno from '@deno/vite-plugin';
+import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 import { computeVersion, formatVersion } from './script/version/compute.ts';
 
-// The version comes from the same function as `deno task version`; there is no
+// The version comes from the same function as `npm run version`; there is no
 // second copy of the formula here. Lenient so a dev server still starts without git
-// (CI stays strict), and it runs under Deno, so the script's Deno APIs are available.
+// (CI stays strict).
 const version = await computeVersion({ lenient: true });
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [deno(), vue(), tailwindcss()],
+  plugins: [vue(), tailwindcss()],
   publicDir: 'public',
   base: './',
   define: {
@@ -30,9 +29,22 @@ export default defineConfig({
       output: {
         // Keep the Vue runtime in its own chunk so it caches across app deploys.
         manualChunks(id: string) {
-          if (id.includes('/vue@') || id.includes('/@vue/')) return 'vue';
+          return /\/node_modules\/(vue|@vue\/[^/]+)\//.test(id) ? 'vue' : undefined;
         },
       },
+    },
+  },
+  // Tests: `npm test` (script/test.ts) runs these and picks the files per tier.
+  test: {
+    include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
+    // Each file in its own process (Vitest isolates files by default), so a fake DOM
+    // or a stubbed global never leaks into another file.
+    pool: 'forks',
+    coverage: {
+      provider: 'v8',
+      // No `include`: only files a test loads are measured, so the runner can tell
+      // which source files no test imports (script/test/areas.ts).
+      exclude: ['**/*_test.ts', 'script/test/helpers/**', '**/*.d.ts', 'public/**'],
     },
   },
 });

@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals, assertMatch, assertRejects } from '@std/assert';
 import { cli, computeVersion, getCommitCount, getDrawnIds } from './compute.ts';
 import { git } from '../lib/git.ts';
@@ -7,11 +7,11 @@ import { COLLECTIONS, VERSION_FILE } from '../collection/registry.ts';
 
 // These run against the real repository: git history and the files in public/.
 
-Deno.test('git: returns trimmed output for a command that succeeds', async () => {
+test('git: returns trimmed output for a command that succeeds', async () => {
   assertEquals(await git('rev-parse', '--is-inside-work-tree'), 'true');
 });
 
-Deno.test('git: a failing command rejects and names the command', async () => {
+test('git: a failing command rejects and names the command', async () => {
   await assertRejects(
     () => git('rev-parse', '--verify', 'refs/heads/no-such-branch-here'),
     Error,
@@ -19,7 +19,7 @@ Deno.test('git: a failing command rejects and names the command', async () => {
   );
 });
 
-Deno.test('computeVersion: major.minor from version.json, patch and commit from git', async () => {
+test('computeVersion: major.minor from version.json, patch and commit from git', async () => {
   const stored = await readJson<{ major: number; minor: number }>(VERSION_FILE);
   const v = await computeVersion();
   assertEquals([v.major, v.minor], [stored.major, stored.minor]);
@@ -28,7 +28,7 @@ Deno.test('computeVersion: major.minor from version.json, patch and commit from 
   assertMatch(v.commit, /^[0-9a-f]{7}$/);
 });
 
-Deno.test('computeVersion: the drawn count is the drawn items across every collection', async () => {
+test('computeVersion: the drawn count is the drawn items across every collection', async () => {
   const all = await getDrawnIds();
   assertEquals((await computeVersion()).drawn, all.size);
 
@@ -41,7 +41,7 @@ Deno.test('computeVersion: the drawn count is the drawn items across every colle
   assertEquals(sum, all.size, 'per-collection counts add up to the total');
 });
 
-Deno.test('getDrawnIds: an unknown collection has no drawn items', async () => {
+test('getDrawnIds: an unknown collection has no drawn items', async () => {
   assertEquals((await getDrawnIds('no-such-collection')).size, 0);
 });
 
@@ -51,23 +51,23 @@ const noGit = () => Promise.reject(new Error('git: command not found\nmore detai
 
 /** Run `fn` with the CI variable set or unset, restoring it afterwards. */
 async function withCi(value: string | undefined, fn: () => Promise<void>): Promise<void> {
-  const before = Deno.env.get('CI');
-  if (value === undefined) Deno.env.delete('CI');
-  else Deno.env.set('CI', value);
+  const before = process.env.CI;
+  if (value === undefined) delete process.env.CI;
+  else process.env.CI = value;
   try {
     await fn();
   } finally {
-    if (before === undefined) Deno.env.delete('CI');
-    else Deno.env.set('CI', before);
+    if (before === undefined) delete process.env.CI;
+    else process.env.CI = before;
   }
 }
 
-Deno.test('computeVersion: strict mode fails without git instead of inventing a version', () =>
+test('computeVersion: strict mode fails without git instead of inventing a version', () =>
   withCi(undefined, async () => {
     await assertRejects(() => computeVersion({ git: noGit }), Error, 'git: command not found');
   }));
 
-Deno.test('computeVersion: lenient mode falls back to patch 0 / "unknown", with a warning', () =>
+test('computeVersion: lenient mode falls back to patch 0 / "unknown", with a warning', () =>
   withCi(undefined, async () => {
     const warnings: string[] = [];
     const warn = console.warn;
@@ -84,14 +84,14 @@ Deno.test('computeVersion: lenient mode falls back to patch 0 / "unknown", with 
     assert(!warnings[0].includes('more detail'), 'only the first line of the error is shown');
   }));
 
-Deno.test('computeVersion: in CI even lenient mode fails, so a deploy never ships a made-up version', () =>
+test('computeVersion: in CI even lenient mode fails, so a deploy never ships a made-up version', () =>
   withCi('true', async () => {
     await assertRejects(() => computeVersion({ lenient: true, git: noGit }), Error);
   }));
 
 // ── the command, and a collection whose list file is not there yet ──
 
-Deno.test('cli prints major.minor.patch, and with --long the drawings and commit too', async () => {
+test('cli prints major.minor.patch, and with --long the drawings and commit too', async () => {
   const short = await cli([]);
   assertMatch(short, /^\d+\.\d+\.\d+$/);
 
@@ -100,12 +100,12 @@ Deno.test('cli prints major.minor.patch, and with --long the drawings and commit
   assertMatch(long, / · \d+ drawings? · [0-9a-f]{7}$/);
 });
 
-Deno.test('cli fails, rather than printing a made-up version, when git is unavailable', () =>
+test('cli fails, rather than printing a made-up version, when git is unavailable', () =>
   withCi(undefined, async () => {
     await assertRejects(() => cli([], { git: noGit }), Error, 'git: command not found');
   }));
 
-Deno.test('getDrawnIds skips a collection whose list file does not exist yet', async () => {
+test('getDrawnIds skips a collection whose list file does not exist yet', async () => {
   const missing = {
     id: 'ghosts',
     label: 'Ghosts',

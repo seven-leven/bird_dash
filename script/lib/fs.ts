@@ -1,4 +1,8 @@
-/// <reference lib="deno.ns" />
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+
+/** True when `err` is a Node system error with this `code` (e.g. `ENOENT`). */
+export const isErrno = (err: unknown, code: string): boolean =>
+  err instanceof Error && (err as NodeJS.ErrnoException).code === code;
 
 /**
  * List all file names in a directory that pass the given filter.
@@ -6,13 +10,10 @@
  */
 export async function listFiles(dir: string, filter: (name: string) => boolean): Promise<string[]> {
   try {
-    const files: string[] = [];
-    for await (const entry of Deno.readDir(dir)) {
-      if (entry.isFile && filter(entry.name)) files.push(entry.name);
-    }
-    return files.sort();
+    const entries = await readdir(dir, { withFileTypes: true });
+    return entries.filter((e) => e.isFile() && filter(e.name)).map((e) => e.name).sort();
   } catch (err) {
-    if (err instanceof Deno.errors.NotFound) return [];
+    if (isErrno(err, 'ENOENT')) return [];
     throw err;
   }
 }
@@ -21,23 +22,19 @@ export async function listFiles(dir: string, filter: (name: string) => boolean):
  * Ensure a directory exists, creating parent directories if needed.
  */
 export async function ensureDir(path: string): Promise<void> {
-  try {
-    await Deno.mkdir(path, { recursive: true });
-  } catch (err) {
-    if (!(err instanceof Deno.errors.AlreadyExists)) throw err;
-  }
+  await mkdir(path, { recursive: true });
 }
 
 /**
  * Read and parse a JSON file.
  */
 export async function readJson<T>(path: string): Promise<T> {
-  return JSON.parse(await Deno.readTextFile(path));
+  return JSON.parse(await readFile(path, 'utf8'));
 }
 
 /**
  * Write data as JSON to a file (2-space indent, trailing newline).
  */
 export async function writeJson(path: string, data: unknown): Promise<void> {
-  await Deno.writeTextFile(path, JSON.stringify(data, null, 2) + '\n');
+  await writeFile(path, JSON.stringify(data, null, 2) + '\n');
 }

@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import type { TestCase } from './junit.ts';
 import { annotations, formatConsole, formatMarkdown, summarize } from './report.ts';
@@ -19,7 +19,7 @@ const cases: TestCase[] = [
   t('src/d_prop_test.ts', 'prop1'),
 ];
 
-Deno.test('summarize groups by tier, counts files/tests/failures, and skips empty tiers', () => {
+test('summarize groups by tier, counts files/tests/failures, and skips empty tiers', () => {
   const s = summarize(cases);
   assertEquals(s.tiers.map((x) => [x.tier, x.files, x.tests, x.failed]), [
     ['unit', 2, 3, 0],
@@ -30,18 +30,18 @@ Deno.test('summarize groups by tier, counts files/tests/failures, and skips empt
   assertEquals(s.failures.map((f) => f.name), ['dom1']);
 });
 
-Deno.test('summarize reports the slowest tests first', () => {
+test('summarize reports the slowest tests first', () => {
   assertEquals(summarize(cases, 2).slowest.map((c) => c.name), ['a2', 'dom1']);
 });
 
-Deno.test('the console summary is short when everything passes', () => {
+test('the console summary is short when everything passes', () => {
   const out = formatConsole(summarize(cases.filter((c) => !c.failure)));
   assertStringIncludes(out, 'all passing');
   assert(!out.includes('failing'));
   assert(out.split('\n').length < 14, 'a green run should stay compact');
 });
 
-Deno.test('failures are listed first, with file:line and only the first message line', () => {
+test('failures are listed first, with file:line and only the first message line', () => {
   const out = formatConsole(summarize(cases));
   const lines = out.split('\n');
   assertEquals(lines[0], '✗ 1 failing');
@@ -50,13 +50,13 @@ Deno.test('failures are listed first, with file:line and only the first message 
   assert(!out.includes('second line'));
 });
 
-Deno.test('verbose lists each file with its test count', () => {
+test('verbose lists each file with its test count', () => {
   const out = formatConsole(summarize(cases), { verbose: true, cases });
   assertStringIncludes(out, '✓ src/a_test.ts  2 tests');
   assertStringIncludes(out, '✗ src/c_dom_test.ts  1 tests');
 });
 
-Deno.test('the markdown summary has a per-tier table and names the failures', () => {
+test('the markdown summary has a per-tier table and names the failures', () => {
   const md = formatMarkdown(summarize(cases), 'Tests (TZ=UTC)');
   assertStringIncludes(md, '### Tests (TZ=UTC)');
   assertStringIncludes(md, '| unit | 2 | 3 |');
@@ -64,7 +64,18 @@ Deno.test('the markdown summary has a per-tier table and names the failures', ()
   assertStringIncludes(md, '`src/c_dom_test.ts:7` — dom1');
 });
 
-Deno.test('annotations use GitHub workflow-command escaping', () => {
+test('without a line number, failures name just the file', () => {
+  const failing = { ...t('src/x_test.ts', 'boom', 0, 'bad'), line: 0 };
+  assertEquals(
+    annotations([failing])[0],
+    '::error file=src/x_test.ts,title=Test failed%3A boom::bad',
+  );
+  const s = summarize([failing]);
+  assertStringIncludes(formatConsole(s), '  src/x_test.ts\n');
+  assertStringIncludes(formatMarkdown(s, 'Tests'), '- `src/x_test.ts` — boom');
+});
+
+test('annotations use GitHub workflow-command escaping', () => {
   const [line] = annotations([
     t('src/x_test.ts', 'has, comma: and colon', 0, '100% bad\nnext line'),
   ]);

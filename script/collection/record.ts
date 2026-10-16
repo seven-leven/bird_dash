@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 import { readJson, writeJson } from '../lib/fs.ts';
 import type { Collection } from './registry.ts';
 // The list-file shape is defined once, next to the app's own types.

@@ -24,32 +24,33 @@ jobs:
           # Full history: the app version derives patch from the commit count
           fetch-depth: 0
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
-          deno-version: v2.x
-          cache: true
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Install dependencies
-        run: deno install --allow-scripts
+        run: npm ci
 
       - name: Lint
-        run: deno lint
+        run: npm run lint
 
       - name: Format check
-        run: deno fmt --check
+        run: npm run format:check
 
+      # vue-tsc: the .ts files and the .vue components
       - name: Type check
-        run: deno task typecheck
+        run: npm run typecheck
 
-      # Every test tier (script/test/tiers.ts) plus the coverage floor from deno.jsonc.
+      # Every test tier (script/test/tiers.ts) plus the coverage floor from package.json.
       # The runner writes a per-tier table and the coverage table to the job summary,
       # annotates failures on the changed files, and keeps the JUnit file. Pinned to a
       # timezone west of UTC (the dev machine is UTC+5) so date code that accidentally
       # uses local time fails here instead of for some viewers; the other zones run
       # in `timezones` below.
       - name: Tests (all tiers) with coverage
-        run: deno task test:coverage
+        run: npm run test:coverage
         env:
           TZ: America/Los_Angeles
 
@@ -62,10 +63,10 @@ jobs:
           retention-days: 14
 
       - name: Asset integrity
-        run: deno task check
+        run: npm run check
 
       - name: Build frontend
-        run: deno task build:vite
+        run: npm run build:vite
 
       - name: Upload Pages artifact
         if: ${{ inputs.upload-pages }}
@@ -86,16 +87,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node
+        uses: actions/setup-node@v6
         with:
-          deno-version: v2.x
-          cache: true
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Install dependencies
-        run: deno install --allow-scripts
+        run: npm ci
 
       - name: Tests (all tiers)
-        run: deno task test
+        run: npm test
         env:
           TZ: ${{ matrix.tz }}

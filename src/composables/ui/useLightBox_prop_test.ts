@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
 import { assertProperty } from '../../../script/test/helpers/prop.ts';
@@ -7,7 +7,7 @@ import { clampScale, pinchScale, swipeDirection } from './useLightBox.ts';
 // Any number a gesture could plausibly feed in — including the awkward ones.
 const anyNumber = fc.double({ noNaN: false });
 
-Deno.test('property: clampScale always returns a usable scale in [1, 5]', () => {
+test('property: clampScale always returns a usable scale in [1, 5]', () => {
   assertProperty(
     fc.property(anyNumber, (x) => {
       const y = clampScale(x);
@@ -17,7 +17,7 @@ Deno.test('property: clampScale always returns a usable scale in [1, 5]', () => 
   );
 });
 
-Deno.test('property: clampScale is idempotent and monotonic', () => {
+test('property: clampScale is idempotent and monotonic', () => {
   assertProperty(
     fc.property(fc.double({ noNaN: true }), fc.double({ noNaN: true }), (a, b) => {
       assertEquals(clampScale(clampScale(a)), clampScale(a));
@@ -28,7 +28,7 @@ Deno.test('property: clampScale is idempotent and monotonic', () => {
   );
 });
 
-Deno.test('property: pinchScale is the identity for unchanged spread and scales linearly', () => {
+test('property: pinchScale is the identity for unchanged spread and scales linearly', () => {
   const pos = fc.double({ min: 0.01, max: 1e4, noNaN: true });
   assertProperty(
     fc.property(pos, pos, (scale, dist) => {
@@ -39,7 +39,7 @@ Deno.test('property: pinchScale is the identity for unchanged spread and scales 
   );
 });
 
-Deno.test('property: swiping right is the mirror image of swiping left', () => {
+test('property: swiping right is the mirror image of swiping left', () => {
   const d = fc.double({ min: -1e4, max: 1e4, noNaN: true });
   assertProperty(
     fc.property(d, d, (dx, dy) => {
@@ -52,7 +52,7 @@ Deno.test('property: swiping right is the mirror image of swiping left', () => {
   );
 });
 
-Deno.test('property: a mostly-vertical drag is never a swipe', () => {
+test('property: a mostly-vertical drag is never a swipe', () => {
   const d = fc.double({ min: -1e4, max: 1e4, noNaN: true });
   assertProperty(
     fc.property(d, d, (dx, dy) => {

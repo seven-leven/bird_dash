@@ -1,11 +1,10 @@
-/// <reference lib="deno.ns" />
 /**
  * Draws the placeholder shown for items that are not drawn yet: the collection's
  * line icon (src/components/icons/icons.ts), once for the light theme (grey on
  * white) and once for the dark theme (`<id>-dark.webp`, slate on slate).
  *
- *   deno run -A script/placeholders/generate.ts            write public/placeholders/<id>[-dark].webp
- *   deno run -A script/placeholders/generate.ts --preview <dir>   write PNGs there instead
+ *   node script/placeholders/generate.ts                  write public/placeholders/<id>[-dark].webp
+ *   node script/placeholders/generate.ts --preview <dir>  write PNGs there instead
  */
 import sharp from 'sharp';
 import { ICONS, isIconName } from '../../src/components/icons/icons.ts';
@@ -35,8 +34,9 @@ export function placeholderSvg(iconBody: string, theme: Theme = 'light'): string
 }
 
 if (import.meta.main) {
-  const previewAt = Deno.args.indexOf('--preview');
-  const previewDir = previewAt === -1 ? null : Deno.args[previewAt + 1];
+  const args = process.argv.slice(2);
+  const previewAt = args.indexOf('--preview');
+  const previewDir = previewAt === -1 ? null : args[previewAt + 1];
   const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
 
   for (const col of collections) {

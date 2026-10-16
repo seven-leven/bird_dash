@@ -1,8 +1,8 @@
 # Changelog
 
-How the version number is built is explained in the README ("Versioning"); `deno task version`
-prints it. To log new work here, run `deno task changelog` — it inserts every commit made since this
-file was last touched at the top of the newest section, ready to edit and commit.
+How the version number is built is explained in the README ("Versioning"); `npm run version` prints
+it. To log new work here, run `npm run changelog` — it inserts every commit made since this file was
+last touched at the top of the newest section, ready to edit and commit.
 
 The site deploys on every merge to `main`, so there is no "unreleased" work: anything listed here is
 live.
@@ -16,6 +16,11 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | tooling: moved from Deno to Node 24 + npm. Tests run on Vitest (same files, same
+  tiers, same `npm test` summary), `vue-tsc` now type-checks the `.vue` components too, ESLint and
+  dprint replace `deno lint` and `deno fmt` (same formatting), and CI uses `setup-node`. The site
+  build is unchanged; the line-coverage floor is re-based to 91% because the test runner itself is
+  now measured (see docs/plans/MIGRATION.md)
 - 2026-10-14 | tests: no untested files left — the build command, the design-guide generator and the
   logo generator are tested (which step runs for which arguments, exit codes, a real asset build on
   a throwaway collection, every generated image written at the right size, and `docs/` kept in step

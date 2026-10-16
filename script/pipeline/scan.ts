@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 import { listFiles } from '../lib/fs.ts';
 import { loadDrawnIds } from '../collection/record.ts';
 import type { Collection } from '../collection/registry.ts';

@@ -27,7 +27,7 @@
 
 ## 🛠️ Workflow & Tooling
 
-- [x] **Ship Script**: `deno task changelog` inserts unlogged commits at the top of the newest
+- [x] **Ship Script**: `npm run changelog` inserts unlogged commits at the top of the newest
       changelog section.
 - [x] **Docs**: `CHANGELOG.md` scheme documented; entries curated via the changelog task.
 - [x] **CI**: lint / format / build run on every pull request.

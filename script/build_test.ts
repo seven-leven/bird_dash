@@ -1,4 +1,7 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { assert, assertEquals, assertRejects } from '@std/assert';
 import sharp from 'sharp';
 import { buildAssets, buildVite, checkIntegrity, cli, type Steps } from './build.ts';
@@ -36,13 +39,13 @@ function fakeSteps(over: Partial<Steps> = {}) {
   return { steps, ran };
 }
 
-Deno.test('with no arguments the build makes the assets, then the site', async () => {
+test('with no arguments the build makes the assets, then the site', async () => {
   const { steps, ran } = fakeSteps();
   assertEquals(await cli([], steps), 0);
   assertEquals(ran, ['assets', 'vite']);
 });
 
-Deno.test('--assets-only and --vite-only run just that step', async () => {
+test('--assets-only and --vite-only run just that step', async () => {
   const a = fakeSteps();
   assertEquals(await cli(['--assets-only'], a.steps), 0);
   assertEquals(a.ran, ['assets']);
@@ -52,13 +55,13 @@ Deno.test('--assets-only and --vite-only run just that step', async () => {
   assertEquals(v.ran, ['vite']);
 });
 
-Deno.test('--check only checks, and exits 0 when nothing is wrong', async () => {
+test('--check only checks, and exits 0 when nothing is wrong', async () => {
   const { steps, ran } = fakeSteps();
   assertEquals(await cli(['--check'], steps), 0);
   assertEquals(ran, ['check']);
 });
 
-Deno.test('--check exits 1 and says how many issues it found', async () => {
+test('--check exits 1 and says how many issues it found', async () => {
   const { steps } = fakeSteps({ check: () => Promise.resolve(3) });
   let code = -1;
   const output = await captured(async () => {
@@ -68,7 +71,7 @@ Deno.test('--check exits 1 and says how many issues it found', async () => {
   assert(output.includes('integrity check failed: 3 issue(s)'));
 });
 
-Deno.test('a step that fails stops the build: exit 1, the reason printed, later steps skipped', async () => {
+test('a step that fails stops the build: exit 1, the reason printed, later steps skipped', async () => {
   const { steps, ran } = fakeSteps({ assets: () => Promise.reject(new Error('disk full')) });
   let code = -1;
   const output = await captured(async () => {
@@ -81,7 +84,7 @@ Deno.test('a step that fails stops the build: exit 1, the reason printed, later 
 
 // ── the site build ──
 
-Deno.test('buildVite succeeds when vite exits 0 and fails with its exit code otherwise', async () => {
+test('buildVite succeeds when vite exits 0 and fails with its exit code otherwise', async () => {
   await captured(() => buildVite(() => Promise.resolve(0)));
   await captured(() =>
     assertRejects(() => buildVite(() => Promise.resolve(2)), Error, 'vite exited with code 2')
@@ -97,7 +100,7 @@ async function withCollection(
   raw: string[],
   fn: (col: Collection) => Promise<void>,
 ): Promise<void> {
-  const dir = await Deno.makeTempDir({ prefix: 'bird_dash_build_' });
+  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_build_'));
   const col: Collection = {
     id: 'x',
     label: 'Test',
@@ -112,19 +115,19 @@ async function withCollection(
     },
   };
   try {
-    await Deno.writeTextFile(col.paths.json, JSON.stringify({ Group: items }));
-    await Deno.mkdir(col.paths.raw);
+    await writeFile(col.paths.json, JSON.stringify({ Group: items }));
+    await mkdir(col.paths.raw);
     for (const id of raw) {
       await sharp({ create: { width: 40, height: 40, channels: 3, background: '#3366cc' } })
         .png().toFile(`${col.paths.raw}${id}.png`);
     }
     await fn(col);
   } finally {
-    await Deno.remove(dir, { recursive: true });
+    await rm(dir, { recursive: true, force: true });
   }
 }
 
-Deno.test('buildAssets builds a collection, prints the summary, and leaves the check clean', () =>
+test('buildAssets builds a collection, prints the summary, and leaves the check clean', () =>
   withCollection([{ id: '001', name: 'New drawing' }], ['001'], async (col) => {
     let issuesBefore = -1;
     await captured(async () => {
@@ -145,14 +148,14 @@ Deno.test('buildAssets builds a collection, prints the summary, and leaves the c
     assert(report.includes('✓'));
   }));
 
-Deno.test('buildAssets fails, naming the item, when a drawing cannot be converted', () =>
+test('buildAssets fails, naming the item, when a drawing cannot be converted', () =>
   withCollection([{ id: '007', name: 'No source', drawn: '2025-01-01' }], [], async (col) => {
     await captured(() =>
       assertRejects(() => buildAssets([col]), Error, 'asset build failed:\n  x/007:')
     );
   }));
 
-Deno.test('checkIntegrity counts the blocking issues across collections', () =>
+test('checkIntegrity counts the blocking issues across collections', () =>
   withCollection([{ id: '001', name: 'A', drawn: '2025-01-01' }], [], async (col) => {
     let issues = -1;
     const report = await captured(async () => {

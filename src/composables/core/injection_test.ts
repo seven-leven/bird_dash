@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals, assertThrows } from '@std/assert';
 import { createRenderer, defineComponent, h } from 'vue';
 import { defineInjection } from './injection.ts';
@@ -24,7 +24,7 @@ interface Counter {
   count: number;
 }
 
-Deno.test('a value provided by a parent is what a child component uses', () => {
+test('a value provided by a parent is what a child component uses', () => {
   const [provideCounter, useCounter] = defineInjection<Counter>('counter');
   const store = { count: 3 };
   let seen: Counter | undefined;
@@ -47,7 +47,7 @@ Deno.test('a value provided by a parent is what a child component uses', () => {
   app.unmount();
 });
 
-Deno.test('using a store with no provider above throws, naming the store', () => {
+test('using a store with no provider above throws, naming the store', () => {
   const [, useCounter] = defineInjection<Counter>('counter');
   let error: unknown;
 
@@ -75,7 +75,7 @@ Deno.test('using a store with no provider above throws, naming the store', () =>
   app.unmount();
 });
 
-Deno.test('two injections with the same name do not collide', () => {
+test('two injections with the same name do not collide', () => {
   const [provideA, useA] = defineInjection<string>('same');
   const [provideB, useB] = defineInjection<string>('same');
   let seen: string[] = [];

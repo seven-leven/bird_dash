@@ -1,20 +1,23 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { assertEquals } from '@std/assert';
 import { scanCollection, toIds } from './scan.ts';
 
-Deno.test('toIds strips .png/.webp (case-insensitive) to bare ids', () => {
+test('toIds strips .png/.webp (case-insensitive) to bare ids', () => {
   assertEquals(
     [...toIds(['001.png', '002.webp', '003.PNG', '004.WEBP'])].sort(),
     ['001', '002', '003', '004'],
   );
 });
 
-Deno.test('toIds dedupes ids shared across extensions', () => {
+test('toIds dedupes ids shared across extensions', () => {
   assertEquals([...toIds(['001.png', '001.webp'])], ['001']);
 });
 
-Deno.test('scanCollection reads the drawn ids and the three image folders', async () => {
-  const dir = await Deno.makeTempDir({ prefix: 'bird_dash_scan_' });
+test('scanCollection reads the drawn ids and the three image folders', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_scan_'));
   try {
     const paths = {
       json: `${dir}/list.json`,
@@ -24,19 +27,19 @@ Deno.test('scanCollection reads the drawn ids and the three image folders', asyn
       placeholder: '',
       placeholderDark: '',
     };
-    await Deno.writeTextFile(
+    await writeFile(
       paths.json,
       JSON.stringify({
         Ducks: [{ id: '001', name: 'A', drawn: '2025-01-01' }, { id: '002', name: 'B' }],
         Geese: [{ id: '003', name: 'C', drawn: '2025-02-01' }],
       }),
     );
-    await Deno.mkdir(paths.raw);
-    await Deno.mkdir(paths.full);
+    await mkdir(paths.raw);
+    await mkdir(paths.full);
     for (const f of ['001.png', '004.png', 'notes.txt']) {
-      await Deno.writeTextFile(paths.raw + f, '');
+      await writeFile(paths.raw + f, '');
     }
-    for (const f of ['001.webp', '001.png']) await Deno.writeTextFile(paths.full + f, '');
+    for (const f of ['001.webp', '001.png']) await writeFile(paths.full + f, '');
 
     const state = await scanCollection({ id: 'x', label: 'X', emoji: '', paths });
     assertEquals([...state.drawnIds].sort(), ['001', '003']); // 002 has no date
@@ -44,6 +47,6 @@ Deno.test('scanCollection reads the drawn ids and the three image folders', asyn
     assertEquals([...state.fullIds], ['001']); // only .webp
     assertEquals([...state.thumbIds], []);
   } finally {
-    await Deno.remove(dir, { recursive: true });
+    await rm(dir, { recursive: true, force: true });
   }
 });

@@ -19,14 +19,14 @@ it is done.
 | Page                                                   | Status                                               |
 | ------------------------------------------------------ | ---------------------------------------------------- |
 | [plans/COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md) | In progress: what is left untested, in phases        |
-| [plans/MIGRATION.md](plans/MIGRATION.md)               | Proposed: moving the toolchain from Deno to Node     |
+| [plans/MIGRATION.md](plans/MIGRATION.md)               | Done: the toolchain moved from Deno to Node          |
 | [plans/SCRIPTS-LAYOUT.md](plans/SCRIPTS-LAYOUT.md)     | Proposed: one layout and clearer names for `script/` |
 | [plans/TODO.md](plans/TODO.md)                         | Backlog of features and fixes                        |
 
 ## Assets
 
 [`assets/`](assets/) holds generated images: the design guide, the icon sheet, the logo sheet and
-the logo files. Do not edit them by hand; `deno task design` redraws them from the code
+the logo files. Do not edit them by hand; `npm run design` redraws them from the code
 ([`script/docs/design_guide.ts`](../script/docs/design_guide.ts)), and a contract test fails when
 they are out of date.
 

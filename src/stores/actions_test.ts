@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createAppActions } from './actions.ts';
@@ -30,13 +30,13 @@ function setup(known: string[]) {
   return { actions, calls, slow, finish };
 }
 
-Deno.test('switchCollection: clears the search, then scrolls to the top once the data is in', async () => {
+test('switchCollection: clears the search, then scrolls to the top once the data is in', async () => {
   const { actions, calls } = setup(['a', 'b']);
   await actions.switchCollection('b');
   assertEquals(calls, ['clear', 'resetHeaders', 'scrollToTop']);
 });
 
-Deno.test('switchCollection: a collection that has to be fetched is scrolled to the top too', async () => {
+test('switchCollection: a collection that has to be fetched is scrolled to the top too', async () => {
   const { actions, calls, slow, finish } = setup(['a', 'b']);
   slow('b');
   const done = actions.switchCollection('b');
@@ -48,7 +48,7 @@ Deno.test('switchCollection: a collection that has to be fetched is scrolled to 
   assertEquals(calls.filter((c) => c === 'scrollToTop').length, 1);
 });
 
-Deno.test('switchCollection: a load the user has already left does not scroll the new view', async () => {
+test('switchCollection: a load the user has already left does not scroll the new view', async () => {
   const { actions, calls, slow, finish } = setup(['a', 'b', 'c']);
   slow('b');
   const toB = actions.switchCollection('b');
@@ -60,7 +60,7 @@ Deno.test('switchCollection: a load the user has already left does not scroll th
   assertEquals(calls.filter((c) => c === 'scrollToTop').length, 1, 'b scrolled c to the top');
 });
 
-Deno.test('switchCollection: an unknown id does not scroll', async () => {
+test('switchCollection: an unknown id does not scroll', async () => {
   const { actions, calls } = setup(['a']);
   await actions.switchCollection('nope');
   assertEquals(calls.includes('scrollToTop'), false);

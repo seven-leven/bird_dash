@@ -7,21 +7,22 @@ flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). How to get from today's co
 
 ## Running them
 
-| Command                                           | What it does                                                         |
-| ------------------------------------------------- | -------------------------------------------------------------------- |
-| `deno task test`                                  | Every tier, one summary row per tier                                 |
-| `deno task test unit dom`                         | Just the tiers you name                                              |
-| `deno task test:unit` (`dom`, `prop`, `contract`) | One tier                                                             |
-| `deno task test --verbose`                        | Also list every file                                                 |
-| `deno task test:watch`                            | Re-run on every save                                                 |
-| `deno task test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
-| `deno task test:report`                           | The same, and save the full report to `test-results/report.md`       |
-| `deno task test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`    |
-| `deno task typecheck`                             | Type-check every `.ts` file                                          |
-| `deno task check`                                 | Asset integrity: missing or orphaned images                          |
+| Command                                         | What it does                                                         |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| `npm test`                                      | Every tier, one summary row per tier                                 |
+| `npm test -- unit dom`                          | Just the tiers you name                                              |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | One tier                                                             |
+| `npm test -- --verbose`                         | Also list every file                                                 |
+| `npm run test:watch`                            | Re-run on every save                                                 |
+| `npm run test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
+| `npm run test:report`                           | The same, and save the full report to `test-results/report.md`       |
+| `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`    |
+| `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)           |
+| `npm run check`                                 | Asset integrity: missing or orphaned images                          |
 
-A passing run prints about ten lines. A failing run lists the failed tests first (file, line,
-message) and then Deno's full output, with the diff or the type error that stopped it.
+A passing run prints about ten lines. A failing run lists the failed tests first (file and message)
+and then Vitest's full output, with the diff and the failing line. The tests run on
+[Vitest](https://vitest.dev/), with the assertions from `@std/assert`.
 
 ## Tiers
 
@@ -81,7 +82,7 @@ Asset pipeline and data files     41   91.6%               1  ✓
   these, so a high percentage beside a non-zero count here means "well tested, where tested".
 - **result:** a tick, the number of failures, or "no tests".
 
-`deno task test:report` also writes `test-results/report.md`: both tables, any failures, the list of
+`npm run test:report` also writes `test-results/report.md`: both tables, any failures, the list of
 untested files by name, and coverage for every file. CI writes the same report to the job summary
 page on every run and keeps it, with the JUnit file, as the `test-results` artifact for 14 days.
 
@@ -93,11 +94,11 @@ would hurt most if it broke, not with the file that is easiest to cover.
 A unit test:
 
 ```ts
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { drawnOf } from './formatCount.ts';
 
-Deno.test('drawnOf words a share the same way everywhere', () => {
+test('drawnOf words a share the same way everywhere', () => {
   assertEquals(drawnOf(15, 204), '15 of 204 drawn');
 });
 ```
@@ -137,7 +138,7 @@ assertProperty(
 );
 ```
 
-- `FC_RUNS_MULTIPLIER=10 deno task test:prop` runs ten times as many inputs.
+- `FC_RUNS_MULTIPLIER=10 npm run test:prop` runs ten times as many inputs.
 - When a property fails, fast-check prints a **seed** and a **path**. Add `{ seed, path }` to the
   parameters to replay exactly that case, fix it, then remove them.
 - Random strings rarely hit special cases. Mix in the tokens that matter (see the highlight test,
@@ -145,17 +146,19 @@ assertProperty(
 
 ## Coverage
 
-`deno task test:coverage` prints the least-covered files and fails if total line coverage is below
-the floor set in `deno.jsonc` (`--min-lines`). The floor only moves up: raise it when coverage has
+`npm run test:coverage` prints the least-covered files and fails if total line coverage is below the
+floor set in `package.json` (`--min-lines`). The floor only moves up: raise it when coverage has
 clearly grown, leaving a few points of headroom.
 
 Two things the number does not tell you:
 
 - **Only files a test imports are counted,** so the percentage alone could hide a file with no tests
-  at all. To close that gap, `deno task test:coverage` also fails if any source file is not imported
+  at all. To close that gap, `npm run test:coverage` also fails if any source file is not imported
   by at least one test, and names it.
-- **`.vue` files are not counted at all.** Deno cannot import them, so component templates are
-  checked by hand in the browser. Logic that matters should live in `.ts` files for this reason.
+- **`.vue` files count only once a test imports one.** No test does yet, so components are checked
+  by hand in the browser, and the untested-files gate covers `.ts` files only. Vitest compiles
+  `.vue` files exactly as the build does, so a component test is now possible; until there are some,
+  logic that matters should live in `.ts` files.
 
 ## In CI
 

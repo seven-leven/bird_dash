@@ -96,15 +96,15 @@ Notes:
 
 Do not edit these by hand; run the task that makes them.
 
-| Files                                   | Made by                  | From                                 |
-| --------------------------------------- | ------------------------ | ------------------------------------ |
-| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `deno task build:assets` | `raw_png/<id>/*.png`                 |
-| `placeholders/<id>[-dark].webp`         | `deno task placeholders` | the collection's `icon`              |
-| `drawn` dates on newly added items      | `deno task build:assets` | a new PNG whose item has no date yet |
+| Files                                   | Made by                | From                                 |
+| --------------------------------------- | ---------------------- | ------------------------------------ |
+| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run build:assets` | `raw_png/<id>/*.png`                 |
+| `placeholders/<id>[-dark].webp`         | `npm run placeholders` | the collection's `icon`              |
+| `drawn` dates on newly added items      | `npm run build:assets` | a new PNG whose item has no date yet |
 
 ## What the checks enforce
 
-`deno task test` (contract tier) fails if:
+`npm test` (contract tier) fails if:
 
 - `collections.json` is empty or has a duplicate `id`;
 - an `icon` is not in the icon registry, or an `accent` is not on the menu in `main.css`;
@@ -113,7 +113,7 @@ Do not edit these by hand; run the task that makes them.
 - an item's `id` is not digits or is repeated, its `name` is empty, or its `drawn` is not a real
   `YYYY-MM-DD` date; or a group name is blank.
 
-`deno task check` fails if:
+`npm run check` fails if:
 
 - an item is marked drawn but its full or thumbnail image is missing;
 - an image exists for an item that is not marked drawn (an orphan);
@@ -126,7 +126,7 @@ Do not edit these by hand; run the task that makes them.
 1. Save the PNG as `raw_png/<collection>/<id>.png`.
 2. Make sure the item exists in `public/lists/<collection>.json`. You can leave `drawn` out; the
    build dates it today.
-3. Run `deno task build:assets`, then `deno task check`.
+3. Run `npm run build:assets`, then `npm run check`.
 
 **Add an item that is not drawn yet:** add it to the list file with `id` and `name` and no `drawn`.
 
@@ -135,8 +135,8 @@ Do not edit these by hand; run the task that makes them.
 1. Add an entry to `collections.json`. Pick an `icon` (add one to `icons.ts` if needed) and an
    `accent` from the menu in [DESIGN.md](DESIGN.md).
 2. Create `public/lists/<id>.json`.
-3. Run `deno task placeholders` to draw its two placeholder images.
-4. Add source art under `raw_png/<id>/` and run `deno task build:assets`.
+3. Run `npm run placeholders` to draw its two placeholder images.
+4. Add source art under `raw_png/<id>/` and run `npm run build:assets`.
 
 **Add a new kind of information** (conservation status, season): add a string field to the items. It
 appears in the viewer and in search with no code change. Give it its own treatment later by adding

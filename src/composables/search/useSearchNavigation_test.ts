@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useSearchNavigation } from './useSearchNavigation.ts';
 import { makeCollection, makeItem } from '../../../script/test/helpers/fixtures.ts';
@@ -28,7 +28,7 @@ function nav() {
   return useSearchNavigation(() => groups, () => null); // null wrapper → no DOM scroll
 }
 
-Deno.test('getFlatIndex accounts for preceding groups', () => {
+test('getFlatIndex accounts for preceding groups', () => {
   const { getFlatIndex } = nav();
   assertEquals(getFlatIndex('birds', 0), 0);
   assertEquals(getFlatIndex('birds', 1), 1);
@@ -36,7 +36,7 @@ Deno.test('getFlatIndex accounts for preceding groups', () => {
   assertEquals(getFlatIndex('missing', 0), -1);
 });
 
-Deno.test('moveFocus wraps around the flat list', () => {
+test('moveFocus wraps around the flat list', () => {
   const { focusedIndex, moveFocus } = nav();
   assertEquals(focusedIndex.value, -1);
   moveFocus(1);
@@ -47,7 +47,7 @@ Deno.test('moveFocus wraps around the flat list', () => {
   assertEquals(focusedIndex.value, 0);
 });
 
-Deno.test('getFocusedResult returns the item at the focused flat index; resetFocus clears', () => {
+test('getFocusedResult returns the item at the focused flat index; resetFocus clears', () => {
   const { moveFocus, getFocusedResult, resetFocus } = nav();
   moveFocus(1); // index 0
   moveFocus(1); // index 1
@@ -56,7 +56,7 @@ Deno.test('getFocusedResult returns the item at the focused flat index; resetFoc
   assertEquals(getFocusedResult(), null);
 });
 
-Deno.test('moveFocus does nothing when there are no results', () => {
+test('moveFocus does nothing when there are no results', () => {
   const { focusedIndex, moveFocus, getFocusedResult } = useSearchNavigation(() => [], () => null);
   moveFocus(1);
   moveFocus(-1);
@@ -64,7 +64,7 @@ Deno.test('moveFocus does nothing when there are no results', () => {
   assertEquals(getFocusedResult(), null);
 });
 
-Deno.test('moveFocus scrolls the newly focused row into view', () => {
+test('moveFocus scrolls the newly focused row into view', () => {
   const scrolled: string[] = [];
   const wrapper = {
     querySelector: (selector: string) => ({

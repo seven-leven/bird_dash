@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 /**
  * script/version/compute.ts — the ONE place the app version is worked out.
  *
@@ -13,7 +12,7 @@
  *   18 drawings            how many illustrations are marked drawn in public/lists/*.json
  *   a1b2c3d                the commit the build was made from
  *
- * Used by `deno task version`, the build/check summaries, and vite.config.ts (which
+ * Used by `npm run version`, the build/check summaries, and vite.config.ts (which
  * injects it into the page footer). See the README ("Versioning") for the overview.
  */
 
@@ -74,7 +73,7 @@ export async function computeVersion(
     ]);
     return { major: base.major, minor: base.minor, patch, drawn, commit };
   } catch (err) {
-    if (!opts.lenient || Deno.env.get('CI')) throw err;
+    if (!opts.lenient || process.env.CI) throw err;
     console.warn(
       `[version] git is unavailable (${(err as Error).message.split('\n')[0]}); ` +
         'using patch 0 and commit "unknown"',
@@ -95,10 +94,10 @@ export function describeVersion(v: VersionData): string {
   return `${formatVersion(v)} · ${plural(v.drawn, 'drawing')} · ${v.commit}`;
 }
 
-/** What `deno task version` prints: the version, or with `--long` the whole line. */
+/** What `npm run version` prints: the version, or with `--long` the whole line. */
 export async function cli(args: string[], opts: { git?: Git } = {}): Promise<string> {
   const v = await computeVersion(opts);
   return args.includes('--long') ? describeVersion(v) : formatVersion(v);
 }
 
-if (import.meta.main) console.log(await cli(Deno.args));
+if (import.meta.main) console.log(await cli(process.argv.slice(2)));

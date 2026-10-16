@@ -7,7 +7,7 @@ import * as fc from 'fast-check';
  * the seed and path; re-run with `{ seed, path }` in the params to reproduce.
  * Synchronous properties only (that is all we have).
  */
-const multiplier = Number(Deno.env.get('FC_RUNS_MULTIPLIER')) || 1;
+const multiplier = Number(process.env.FC_RUNS_MULTIPLIER) || 1;
 
 export function assertProperty<Ts extends unknown[]>(
   property: fc.IProperty<Ts>,

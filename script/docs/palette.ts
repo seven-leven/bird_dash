@@ -1,9 +1,10 @@
-/// <reference lib="deno.ns" />
 /**
  * The colours the design guide draws, and the contrast maths behind the rules
  * in docs/DESIGN.md. Hex values are Tailwind's (the site uses the colours by
  * name; these exist to draw swatches and to measure contrast).
  */
+
+import { readFile } from 'node:fs/promises';
 
 export const SLATE: Record<string, string> = {
   '50': '#f8fafc',
@@ -50,7 +51,7 @@ export const ACCENT_HEX: Record<string, { 500: string; 700: string }> = {
 
 /** The accent hues on offer: the `[data-accent='…']` palettes in main.css, in file order. */
 export async function accentMenu(): Promise<string[]> {
-  const css = await Deno.readTextFile('./src/assets/main.css');
+  const css = await readFile('./src/assets/main.css', 'utf8');
   return [...new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]))];
 }
 

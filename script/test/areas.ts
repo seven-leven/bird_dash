@@ -1,4 +1,3 @@
-/// <reference lib="deno.ns" />
 /**
  * Areas: what part of the project a file belongs to. Tiers (tiers.ts) say *how*
  * a test runs; areas say *what* it protects. The report groups tests and
@@ -9,6 +8,7 @@
  */
 import type { TestCase } from './junit.ts';
 import type { Counter, FileCoverage } from './coverage.ts';
+import { walkFiles } from './tiers.ts';
 
 export interface Area {
   id: string;
@@ -75,28 +75,15 @@ export function areaOf(path: string): Area | undefined {
 
 /**
  * Source files that could be tested: every `.ts` under the roots except tests,
- * test helpers, type declarations, type-only modules and the entry point. (`.vue` files cannot be
- * imported by Deno, so they are outside this list and outside coverage.)
+ * test helpers, type declarations, type-only modules and the entry point. `.vue` files are
+ * not on this list yet: they count in coverage once a test imports one, but no test has to.
  */
 export async function discoverSources(roots = ['src', 'script']): Promise<string[]> {
   const skip = (path: string) =>
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
     path.startsWith('script/test/helpers/') || path.startsWith('src/types/') ||
-    path === 'src/main.ts' || // only mounts App.vue, which Deno cannot import
-    path === 'script/test.ts'; // Deno treats a file named test.ts as a test and never measures it
-  const found: string[] = [];
-  const walk = async (dir: string): Promise<void> => {
-    for await (const entry of Deno.readDir(dir)) {
-      const path = `${dir}/${entry.name}`;
-      if (entry.isDirectory) {
-        if (entry.name !== 'node_modules') await walk(path);
-      } else if (entry.isFile && entry.name.endsWith('.ts') && !skip(path)) {
-        found.push(path);
-      }
-    }
-  };
-  for (const root of roots) await walk(root);
-  return found.sort();
+    path === 'src/main.ts'; // only mounts App.vue into the page
+  return (await walkFiles(roots)).filter((path) => path.endsWith('.ts') && !skip(path));
 }
 
 export interface AreaSummary {

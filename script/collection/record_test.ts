@@ -1,4 +1,7 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { assertEquals } from '@std/assert';
 import { forEachDrawn, loadDrawnIds, markDrawn } from './record.ts';
 import type { Collection } from './registry.ts';
@@ -14,13 +17,13 @@ const data: RawCollectionData = {
   ],
 };
 
-Deno.test('forEachDrawn visits only drawn items, across all groups', () => {
+test('forEachDrawn visits only drawn items, across all groups', () => {
   const seen: string[] = [];
   forEachDrawn(data, (item) => seen.push(item.id));
   assertEquals(seen, ['001', '003']);
 });
 
-Deno.test('forEachDrawn passes the full item to the callback', () => {
+test('forEachDrawn passes the full item to the callback', () => {
   const names: string[] = [];
   forEachDrawn(data, (item) => names.push(item.name));
   assertEquals(names, ['Mallard', 'Greylag']);
@@ -31,7 +34,7 @@ async function withList(
   data: RawCollectionData,
   fn: (col: Collection, read: () => Promise<RawCollectionData>) => Promise<void>,
 ): Promise<void> {
-  const dir = await Deno.makeTempDir({ prefix: 'bird_dash_record_' });
+  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_record_'));
   const json = `${dir}/list.json`;
   const col: Collection = {
     id: 'x',
@@ -40,14 +43,14 @@ async function withList(
     paths: { json, raw: '', full: '', thumb: '', placeholder: '', placeholderDark: '' },
   };
   try {
-    await Deno.writeTextFile(json, JSON.stringify(data));
-    await fn(col, async () => JSON.parse(await Deno.readTextFile(json)));
+    await writeFile(json, JSON.stringify(data));
+    await fn(col, async () => JSON.parse(await readFile(json, 'utf8')));
   } finally {
-    await Deno.remove(dir, { recursive: true });
+    await rm(dir, { recursive: true, force: true });
   }
 }
 
-Deno.test('markDrawn dates an undrawn item, saves the file and returns its name', () =>
+test('markDrawn dates an undrawn item, saves the file and returns its name', () =>
   withList(data, async (col, read) => {
     assertEquals(await markDrawn(col, '002', '2025-06-01'), 'Garganey');
     const saved = await read();
@@ -56,13 +59,13 @@ Deno.test('markDrawn dates an undrawn item, saves the file and returns its name'
     assertEquals([...await loadDrawnIds(col)].sort(), ['001', '002', '003']);
   }));
 
-Deno.test('markDrawn keeps the original date of an item that is already drawn', () =>
+test('markDrawn keeps the original date of an item that is already drawn', () =>
   withList(data, async (col, read) => {
     assertEquals(await markDrawn(col, '001', '2030-01-01'), 'Mallard');
     assertEquals((await read()).Ducks[0].drawn, '2025-01-01');
   }));
 
-Deno.test('markDrawn returns null for an id that is not in the list', () =>
+test('markDrawn returns null for an id that is not in the list', () =>
   withList(data, async (col, read) => {
     assertEquals(await markDrawn(col, '999', '2025-06-01'), null);
     assertEquals(await read(), data);

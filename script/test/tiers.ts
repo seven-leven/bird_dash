@@ -1,8 +1,7 @@
-/// <reference lib="deno.ns" />
 /**
  * Test tiers. The tier of a test file is encoded in its name, and this module is
  * the ONE place that maps names to tiers — the runner, the CI summary and the
- * `deno task test:<tier>` tasks all read it.
+ * `npm run test:<tier>` scripts all read it.
  *
  *   unit      x_test.ts            pure logic, no environment            (fastest)
  *   dom       x_dom_test.ts        needs a browser-like global (fake DOM)
@@ -11,6 +10,8 @@
  *
  * Browser tests (a real Chrome against the built site) would be a fifth tier.
  */
+
+import { readdir } from 'node:fs/promises';
 
 export const TIERS = {
   unit: 'pure logic, no environment',
@@ -36,18 +37,18 @@ export function tierOf(path: string): Tier {
 
 /** Every `*_test.ts` under the given roots, as sorted repo-relative posix paths. */
 export async function discoverTests(roots = ['src', 'script']): Promise<string[]> {
+  return (await walkFiles(roots)).filter((path) => path.endsWith('_test.ts'));
+}
+
+/** Every file under the given roots (skipping node_modules), as sorted posix paths. */
+export async function walkFiles(roots: string[]): Promise<string[]> {
   const found: string[] = [];
-  const walk = async (dir: string): Promise<void> => {
-    for await (const entry of Deno.readDir(dir)) {
-      const path = `${dir}/${entry.name}`;
-      if (entry.isDirectory) {
-        if (entry.name !== 'node_modules') await walk(path);
-      } else if (entry.isFile && entry.name.endsWith('_test.ts')) {
-        found.push(path);
-      }
+  for (const root of roots) {
+    for (const entry of await readdir(root, { withFileTypes: true, recursive: true })) {
+      const path = `${entry.parentPath}/${entry.name}`.replaceAll('\\', '/');
+      if (entry.isFile() && !path.split('/').includes('node_modules')) found.push(path);
     }
-  };
-  for (const root of roots) await walk(root);
+  }
   return found.sort();
 }
 

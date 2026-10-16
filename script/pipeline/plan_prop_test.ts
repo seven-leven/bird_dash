@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
 import { assertProperty } from '../test/helpers/prop.ts';
@@ -17,7 +17,7 @@ const state = fc.record({ drawn: ids, raw: ids, full: ids, thumb: ids }).map((s)
 const sorted = (a: Iterable<string>) => [...a].sort();
 const minus = (a: Set<string>, b: Set<string>) => [...a].filter((x) => !b.has(x));
 
-Deno.test('property: every bucket is exactly the set difference the docs promise', () => {
+test('property: every bucket is exactly the set difference the docs promise', () => {
   assertProperty(
     fc.property(state, (s) => {
       const plan = planWork(s);
@@ -37,7 +37,7 @@ Deno.test('property: every bucket is exactly the set difference the docs promise
   );
 });
 
-Deno.test('property: carrying out a plan leaves nothing left to do', () => {
+test('property: carrying out a plan leaves nothing left to do', () => {
   assertProperty(
     fc.property(state, (s) => {
       const first = planWork(s);
@@ -58,7 +58,7 @@ Deno.test('property: carrying out a plan leaves nothing left to do', () => {
   );
 });
 
-Deno.test('property: a fully consistent state has no blocking issues', () => {
+test('property: a fully consistent state has no blocking issues', () => {
   assertProperty(
     fc.property(ids, (drawn) => {
       const set = new Set(drawn);
