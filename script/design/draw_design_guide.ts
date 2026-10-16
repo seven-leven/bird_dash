@@ -168,6 +168,8 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
   const sw = (W - 120) / menu.length;
   menu.forEach((hue, i) => {
     const hex = ACCENT_HEX[hue];
+    // A guard for a new accent added to main.css without its hex values; the real data has them all.
+    /* c8 ignore next 3 */
     if (!hex) {
       throw new Error(`design guide: no hex values for accent "${hue}" (add it to ACCENT_HEX)`);
     }
@@ -345,6 +347,8 @@ export async function writeDesignImages(dir = './docs/assets'): Promise<void> {
   await writeLogoFiles(dir);
 }
 
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
 if (import.meta.main) {
   await writeDesignImages();
   console.log('  wrote design-guide.png, icons.png, logo.png and logo/ in docs/assets/');

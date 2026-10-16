@@ -5,20 +5,18 @@ Where the tests stand, exactly what is left, and the order to close it in. Measu
 
 ## Where we are
 
-| Measure        | Now   | Covered / total | Left             |
-| -------------- | ----- | --------------- | ---------------- |
-| Lines          | 97.5% | 1,342 / 1,376   | 34               |
-| Branches       | 89.3% | 654 / 732       | 78 untaken sides |
-| Functions      | 96.8% | 391 / 404       | 13               |
-| Untested files | 0     |                 | 0                |
-| Tests          | 327   |                 |                  |
+| Measure        | Now   | Covered / total | Left |
+| -------------- | ----- | --------------- | ---- |
+| Lines          | 99.2% | 1,341 / 1,352   | 11   |
+| Branches       | 97.0% | 681 / 702       | 21   |
+| Untested files | 0     |                 | 0    |
 
-Measured on 16 October 2026 with Vitest (V8 coverage), after the move to Node. The floor that fails
-CI is **96% of lines**; there is no floor yet for branches. Earlier numbers were measured under
-Deno, which counted lines differently and never measured the test runner (it took any file named
-`test.ts` for a test). The test runner's `main` and the placeholder command are now tested (they
-were the two least covered files, at 22% and 36%), so phase 3's table below is partly done; its line
-numbers predate the move.
+Measured on 16 October 2026 with Vitest (V8 coverage), after the move to Node. CI fails below **98%
+of lines** or **95% of branches** (`--min-branches`, added for phase 4). Code that cannot run in a
+test is marked `/* c8 ignore next */` with its reason (the entry-point lines, `spawnVite`, and
+guards for things that cannot happen), so it is out of both totals; `grep -rn "c8 ignore" src
+script` lists every one. Earlier numbers were measured under Deno and are not comparable. The tables
+below predate the move; most of what they list is now covered.
 
 Reproduce these numbers with `npm run test:report` and open `test-results/report.md`.
 

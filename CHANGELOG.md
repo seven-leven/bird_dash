@@ -16,6 +16,10 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | tests: branch coverage 89.3% → 97.0% and lines 97.5% → 99.2%, from tests for the
+  lightbox's gestures and focus trap, collection loading and the runner's edge cases; code that
+  cannot run in a test is marked `/* c8 ignore */` with its reason. A branch floor joins the line
+  floor: CI now fails below 98% of lines or 95% of branches
 - 2026-10-16 | tests: the test runner's `main` (every exit code, the coverage floor, the
   untested-files gate, the CI output) and the placeholder command are now tested; line coverage
   92.0% → 97.5%, branches 80.2% → 89.3%, floor raised from 91% to 96%

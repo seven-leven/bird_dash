@@ -243,3 +243,52 @@ test('link templates from collections.json become functions of the item', async 
     restore();
   }
 });
+
+test('before init there is no active collection', () => {
+  assertEquals(useCollections().activeCollection.value, undefined);
+});
+
+test('switching to the collection already shown does not reload it', async () => {
+  const { calls, restore } = stubFetch({
+    '/collections.json': () => json([col('a')]),
+    '/lists/a.json': () => json(list('a')),
+  });
+  try {
+    const c = useCollections();
+    await c.init();
+    const before = calls.length;
+    await c.switchCollection('a');
+    assertEquals(calls.length, before);
+  } finally {
+    restore();
+  }
+});
+
+test('a request that fails with a non-Error value still gives a readable message', async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = (() => Promise.reject('offline')) as typeof fetch;
+  try {
+    const c = useCollections();
+    await c.init();
+    assertEquals(c.initError.value, 'offline');
+  } finally {
+    globalThis.fetch = original;
+  }
+});
+
+test('a list that fails with a non-Error value shows that value as the error', async () => {
+  const { restore } = stubFetch({
+    '/collections.json': () => json([col('a')]),
+    '/lists/a.json': () => {
+      throw 'list unavailable';
+    },
+  });
+  try {
+    const c = useCollections();
+    await c.init();
+    assertEquals(c.data.error, 'list unavailable');
+    assertEquals(c.data.loading, false);
+  } finally {
+    restore();
+  }
+});

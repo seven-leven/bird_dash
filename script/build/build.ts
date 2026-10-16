@@ -56,6 +56,8 @@ export async function buildAssets(collections: Collection[] = COLLECTIONS): Prom
 // ---------------------------------------------------------------------------
 
 /** Start `vite build` and resolve with its exit code. */
+// Runs the real build, so no test calls it; buildVite is tested with a stand-in.
+/* c8 ignore start */
 function spawnVite(): Promise<number> {
   const root = process.cwd();
   // Vite's own entry point, run with this Node: no shell, so it works the same on Windows.
@@ -67,6 +69,7 @@ function spawnVite(): Promise<number> {
     }).on('error', reject).on('close', (code) => resolve(code ?? 1));
   });
 }
+/* c8 ignore stop */
 
 export async function buildVite(spawn: () => Promise<number> = spawnVite): Promise<void> {
   console.log('\n  vite\n');
@@ -142,4 +145,6 @@ export async function cli(args: string[], steps: Steps = realSteps): Promise<num
   }
 }
 
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
 if (import.meta.main) process.exit(await cli(process.argv.slice(2)));

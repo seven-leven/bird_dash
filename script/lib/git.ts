@@ -12,6 +12,8 @@ export async function git(...args: string[]): Promise<string> {
     const { stdout } = await exec('git', args, { maxBuffer: 64 * 1024 * 1024 });
     return stdout.trim();
   } catch (err) {
+    // execFile errors always carry stderr; the message is a fallback that never runs in practice.
+    /* c8 ignore next */
     const stderr = (err as { stderr?: string }).stderr ?? (err as Error).message;
     throw new Error(`git ${args.join(' ')} failed: ${stderr}`, { cause: err });
   }

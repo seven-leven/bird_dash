@@ -103,4 +103,6 @@ export async function cli(args: string[], opts: { git?: Git } = {}): Promise<str
   return args.includes('--long') ? describeVersion(v) : formatVersion(v);
 }
 
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
 if (import.meta.main) console.log(await cli(process.argv.slice(2)));

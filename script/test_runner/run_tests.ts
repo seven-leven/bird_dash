@@ -33,6 +33,7 @@ import {
   coverageArgs,
   formatMarkdown as coverageMarkdown,
   formatTable,
+  parseMinBranches,
   parseMinLines,
   percent,
   readCoverage,
@@ -46,6 +47,7 @@ export interface Options {
   failFast: boolean;
   coverage: boolean;
   minLines: number;
+  minBranches: number;
   /** Save the markdown report to test-results/report.md (always done in CI). */
   report: boolean;
   /** Write the HTML coverage report to test-results/coverage/ (needs --coverage). */
@@ -64,12 +66,16 @@ export function parseArgs(args: string[]): Options {
     throw new Error(`unknown tier "${unknown[0]}" (available: ${TIER_ORDER.join(', ')})`);
   }
   const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage', '--report', '--html']);
-  const bad = flags.find((f) => !known.has(f) && !f.startsWith('--min-lines='));
+  const bad = flags.find((f) =>
+    !known.has(f) && !f.startsWith('--min-lines=') && !f.startsWith('--min-branches=')
+  );
   if (bad) throw new Error(`unknown option ${bad}`);
 
   const minLines = parseMinLines(flags);
   const coverage = flags.includes('--coverage');
   if (minLines > 0 && !coverage) throw new Error('--min-lines needs --coverage');
+  const minBranches = parseMinBranches(flags);
+  if (minBranches > 0 && !coverage) throw new Error('--min-branches needs --coverage');
   if (flags.includes('--html') && !coverage) throw new Error('--html needs --coverage');
 
   return {
@@ -78,6 +84,7 @@ export function parseArgs(args: string[]): Options {
     failFast: flags.includes('--fail-fast'),
     coverage,
     minLines,
+    minBranches,
     report: flags.includes('--report'),
     html: flags.includes('--html'),
   };
@@ -197,17 +204,24 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
     summaryMd += '\n' + formatAreasMarkdown(areas);
 
     if (cov) {
-      const actual = percent(totals(cov).lines);
+      const total = totals(cov);
       console.log('\nleast covered files:\n' + formatTable(cov, process.cwd(), 8));
-      if (actual < opts.minLines) {
-        console.error(
-          `\n✗ line coverage ${actual.toFixed(1)}% is below the ${opts.minLines}% floor`,
-        );
-        ok = false;
-      } else {
-        console.log(`\n✓ line coverage ${actual.toFixed(1)}% (floor ${opts.minLines}%)`);
+      const floors = [
+        ['line', percent(total.lines), opts.minLines],
+        ['branch', percent(total.branches), opts.minBranches],
+      ] as const;
+      for (const [measure, actual, floor] of floors) {
+        if (actual < floor) {
+          console.error(
+            `\n✗ ${measure} coverage ${actual.toFixed(1)}% is below the ${floor}% floor`,
+          );
+          ok = false;
+        } else {
+          console.log(`\n✓ ${measure} coverage ${actual.toFixed(1)}% (floor ${floor}%)`);
+        }
       }
-      summaryMd += '\n' + coverageMarkdown(cov, opts.minLines, process.cwd());
+      summaryMd += '\n' +
+        coverageMarkdown(cov, opts.minLines, process.cwd(), opts.minBranches);
 
       if (opts.html) {
         const index = await writeHtmlCoverage(covDir, `${resultsDir}/coverage`);
@@ -240,4 +254,6 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
   }
 }
 
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
 if (import.meta.main) process.exit(await main(process.argv.slice(2)));

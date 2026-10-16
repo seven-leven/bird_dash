@@ -27,6 +27,7 @@ test('unknown tiers and options are rejected with a helpful message', () => {
 
 test('a coverage floor without --coverage is an error, not silently ignored', () => {
   assertThrows(() => parseArgs(['--min-lines=50']), Error, '--min-lines needs --coverage');
+  assertThrows(() => parseArgs(['--min-branches=50']), Error, '--min-branches needs --coverage');
 });
 
 test("withoutDots drops the dot reporter's progress lines and keeps the rest", () => {
@@ -88,6 +89,8 @@ async function runMain(argv: string[], opts: {
   success?: boolean;
   env?: Record<string, string>;
   tests?: string[];
+  /** Raw LCOV, used instead of `coverage` (for branch counters). */
+  lcovText?: string;
 } = {}): Promise<Run> {
   const resultsDir = await mkdtemp(join(tmpdir(), 'bird_dash_runner_'));
   const lines: string[] = [];
@@ -97,7 +100,8 @@ async function runMain(argv: string[], opts: {
   let args: string[] = [];
   const deps: RunnerDeps = {
     discoverTests: async () => opts.tests ?? ['src/lib/a_test.ts', 'src/lib/b_dom_test.ts'],
-    discoverSources: async () => opts.sources ?? Object.keys(opts.coverage ?? {}),
+    discoverSources: async () =>
+      opts.sources ?? (opts.lcovText ? ['src/lib/a.ts'] : Object.keys(opts.coverage ?? {})),
     vitest: async (given) => {
       args = given;
       const value = (flag: string) => given.find((a) => a.startsWith(flag))?.slice(flag.length);
@@ -105,7 +109,7 @@ async function runMain(argv: string[], opts: {
       const covDir = value('--coverage.reportsDirectory=');
       if (covDir) {
         await mkdir(covDir, { recursive: true });
-        await writeFile(`${covDir}/lcov.info`, lcov(opts.coverage ?? {}));
+        await writeFile(`${covDir}/lcov.info`, opts.lcovText ?? lcov(opts.coverage ?? {}));
       }
       return { success: opts.success ?? true, output: ' RUN  v5\n···x\n FAIL  boom detail' };
     },
@@ -237,4 +241,56 @@ test('main: --html copies the coverage report into the results folder', async ()
   } finally {
     await cleanUp(run);
   }
+});
+
+test('main: a run that produced no results prints no tables and fails', async () => {
+  const run = await runMain([], { success: false });
+  await cleanUp(run);
+  assertEquals(run.code, 1);
+  assert(!run.out.includes('tier '), 'no tier table without results');
+  assertStringIncludes(run.out, 'FAIL  boom detail');
+});
+
+test('main: --report saves the report and says where, outside CI', async () => {
+  const run = await runMain(['--report'], { cases: [['src/lib/a_test.ts', 'adds']] });
+  try {
+    assertEquals(run.code, 0);
+    assertStringIncludes(run.out, `full report: ${run.resultsDir}/report.md`);
+    assertStringIncludes(
+      await readFile(`${run.resultsDir}/report.md`, 'utf8'),
+      'All 1 tests passed',
+    );
+  } finally {
+    await cleanUp(run);
+  }
+});
+
+test('--min-branches sets the branch floor', () => {
+  assertEquals(parseArgs(['--coverage']).minBranches, 0);
+  assertEquals(parseArgs(['--coverage', '--min-branches=95']).minBranches, 95);
+});
+
+/** LCOV with branch counters, for the branch-floor tests. */
+const withBranches = (found: number, hit: number) =>
+  `SF:src/lib/a.ts\nLF:10\nLH:10\nBRF:${found}\nBRH:${hit}\nend_of_record\n`;
+
+test('main: branch coverage below its floor fails even when lines are fine', async () => {
+  const run = await runMain(['--coverage', '--min-lines=90', '--min-branches=95'], {
+    cases: [['src/lib/a_test.ts', 'adds']],
+    lcovText: withBranches(20, 18),
+  });
+  await cleanUp(run);
+  assertEquals(run.code, 1);
+  assertStringIncludes(run.out, '✓ line coverage 100.0% (floor 90%)');
+  assertStringIncludes(run.out, '✗ branch coverage 90.0% is below the 95% floor');
+});
+
+test('main: branch coverage at its floor passes', async () => {
+  const run = await runMain(['--coverage', '--min-branches=90'], {
+    cases: [['src/lib/a_test.ts', 'adds']],
+    lcovText: withBranches(20, 18),
+  });
+  await cleanUp(run);
+  assertEquals(run.code, 0);
+  assertStringIncludes(run.out, '✓ branch coverage 90.0% (floor 90%)');
 });

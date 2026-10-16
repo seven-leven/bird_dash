@@ -117,3 +117,7 @@ test('cli exits 1 and prints the error when git or the file fails', async () => 
   assertEquals(printed.length, 1);
   assertStringIncludes(String(printed[0][1]), 'cannot read CHANGELOG.md');
 });
+
+test('insertEntries with no heading and no divider puts the entries at the very top', () => {
+  assertEquals(insertEntries('Some notes.\n', ['- a']), '\n- a\nSome notes.\n');
+});

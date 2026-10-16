@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import sharp from 'sharp';
-import { placeholderSvg, THEMES, writePlaceholders } from './draw_placeholders.ts';
+import { cli, placeholderSvg, THEMES, writePlaceholders } from './draw_placeholders.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
 
 // Files are read into memory and the cache is off, so Windows can delete the temporary folder.
@@ -67,4 +67,17 @@ test('writePlaceholders with a preview folder writes PNGs there instead', () =>
     });
     assertEquals(written, [`${dir}/placeholder_sharks.png`, `${dir}/placeholder_sharks-dark.png`]);
     assertEquals((await sharp(await readFile(written[0])).metadata()).format, 'png');
+  }));
+
+test('cli --preview draws every collection that has an icon into the folder given', () =>
+  withTempDir(async (dir) => {
+    const lines: string[] = [];
+    const { log } = console;
+    console.log = (line: string) => lines.push(line);
+    try {
+      const written = await cli(['--preview', dir]);
+      assert(written.length > 0 && written.every((p) => p.startsWith(`${dir}/placeholder_`)));
+    } finally {
+      console.log = log;
+    }
   }));

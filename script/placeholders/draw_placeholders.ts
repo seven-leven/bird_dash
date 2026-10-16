@@ -63,10 +63,14 @@ export async function writePlaceholders(
 /** The `npm run placeholders` command: `--preview <dir>` writes PNGs there instead. */
 export async function cli(args: string[]): Promise<string[]> {
   const previewAt = args.indexOf('--preview');
+  // Without --preview this writes the real files in public/, so tests always pass a folder.
+  /* c8 ignore next */
   const previewDir = previewAt === -1 ? null : args[previewAt + 1];
   return writePlaceholders(await readJson<RawCollectionConfig[]>('./public/collections.json'), {
     previewDir,
   });
 }
 
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
 if (import.meta.main) await cli(process.argv.slice(2));

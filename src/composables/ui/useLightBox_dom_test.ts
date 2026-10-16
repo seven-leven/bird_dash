@@ -318,3 +318,109 @@ test('previous and next are offered only where there is somewhere to go', () =>
     assertEquals([none.lb.hasPrevious.value, none.lb.hasNext.value], [false, false]);
     none.stop();
   }));
+
+test('pointer events for a pointer that never went down are ignored', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    t.lb.handlePointerMove(pointer('pointermove', 7, 500, 500));
+    t.lb.handlePointerUp(pointer('pointerup', 7, 500, 500));
+    assertEquals([t.lb.scale.value, t.lb.isDragging.value, t.emitted], [1, false, []]);
+    t.stop();
+  }));
+
+test('a finger swipe right pages back, and does nothing on the first drawing', () =>
+  withDom(async () => {
+    const t = setup(1);
+    await t.open();
+    t.lb.handlePointerDown(pointer('pointerdown', 1, 200, 300));
+    t.lb.handlePointerUp(pointer('pointerup', 1, 350, 305));
+    assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '001']]);
+    t.stop();
+
+    const first = setup(0);
+    await first.open();
+    first.lb.handlePointerDown(pointer('pointerdown', 1, 200, 300));
+    first.lb.handlePointerUp(pointer('pointerup', 1, 350, 305));
+    assertEquals(first.emitted, []);
+    first.stop();
+  }));
+
+test('a tap (a finger that hardly moves) neither pages nor counts as a drag', () =>
+  withDom(async () => {
+    const t = setup(1);
+    await t.open();
+    t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
+    t.lb.handlePointerMove(pointer('pointermove', 1, 302, 301));
+    t.lb.handlePointerUp(pointer('pointerup', 1, 302, 301));
+    assertEquals(t.emitted, []);
+    t.lb.handleBackdropClick(clickOn(t.dialog)); // the tap's click still closes
+    assertEquals(t.emitted.map(([e]) => e), ['close']);
+    t.stop();
+  }));
+
+test('several moves in one frame are written once, with the latest position', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    t.key('+');
+    t.key('+'); // 1.5x
+    t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
+    t.lb.handlePointerMove(pointer('pointermove', 1, 315, 300));
+    t.lb.handlePointerMove(pointer('pointermove', 1, 330, 300)); // same frame
+    await new Promise((r) => requestAnimationFrame(() => r(null)));
+    assertEquals(t.lb.translateX.value, 20); // 30px / 1.5, not 10 then 20
+    t.lb.handlePointerUp(pointer('pointerup', 1, 330, 300));
+    t.stop();
+  }));
+
+test('closing while a move is waiting for its frame cancels it', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    t.key('+'); // zoomed, so a drag pans
+    t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
+    t.lb.handlePointerMove(pointer('pointermove', 1, 360, 300)); // a frame is now pending
+    t.props.isOpen = false;
+    await nextTick();
+    await new Promise((r) => requestAnimationFrame(() => r(null)));
+    assertEquals(t.lb.translateX.value, 0);
+    t.stop();
+  }));
+
+test('with nothing focusable in the dialog, Tab keeps focus on the dialog itself', () =>
+  withDom(async () => {
+    const t = setup();
+    t.dialog.innerHTML = '<p>only text</p>';
+    await t.open();
+    const e = t.key('Tab', {}, t.dialog);
+    assert(e.defaultPrevented);
+    assertEquals(document.activeElement, t.dialog);
+    t.stop();
+  }));
+
+test('Tab from outside the dialog pulls focus back in; Shift+Tab on the dialog goes to the end', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    const outside = document.createElement('button');
+    document.body.append(outside);
+    outside.focus();
+    assert(t.key('Tab', {}, outside).defaultPrevented);
+    assertEquals(document.activeElement, t.el('first'));
+
+    t.dialog.focus();
+    assert(t.key('Tab', { shiftKey: true }, t.dialog).defaultPrevented);
+    assertEquals(document.activeElement, t.el('last'));
+    t.stop();
+  }));
+
+test('without a dialog element the focus trap does nothing', () =>
+  withDom(async () => {
+    const t = setup();
+    t.lb.dialogRef.value = null;
+    await t.open();
+    const e = t.key('Tab');
+    assert(e.defaultPrevented); // still kept inside: there is nowhere to go
+    t.stop();
+  }));

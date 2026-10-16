@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { assertEquals } from '@std/assert';
+import { assertEquals, assertRejects } from '@std/assert';
 import { ensureDir, listFiles, readJson, writeJson } from './fs.ts';
 
 /** Run `fn` with a fresh temporary directory, removed afterwards. */
@@ -47,4 +47,10 @@ test('writeJson then readJson round-trips, 2-space indented with a trailing newl
     const text = await readFile(path, 'utf8');
     assertEquals(text.endsWith('}\n'), true);
     assertEquals(text.split('\n')[1], '  "Ducks": [');
+  }));
+
+test('listFiles still throws for errors other than a missing directory', () =>
+  withTempDir(async (dir) => {
+    await writeFile(`${dir}/file.txt`, '');
+    await assertRejects(() => listFiles(`${dir}/file.txt`, () => true)); // not a directory
   }));

@@ -43,7 +43,7 @@ jobs:
       - name: Type check
         run: npm run typecheck
 
-      # Every test tier (script/test_runner/tiers.ts) plus the coverage floor from package.json.
+      # Every test tier (script/test_runner/tiers.ts) plus the coverage floors from package.json.
       # The runner writes a per-tier table and the coverage table to the job summary,
       # annotates failures on the changed files, and keeps the JUnit file. Pinned to a
       # timezone west of UTC (the dev machine is UTC+5) so date code that accidentally

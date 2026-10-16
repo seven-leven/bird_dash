@@ -7,18 +7,18 @@ flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). How to get from today's co
 
 ## Running them
 
-| Command                                         | What it does                                                         |
-| ----------------------------------------------- | -------------------------------------------------------------------- |
-| `npm test`                                      | Every tier, one summary row per tier                                 |
-| `npm test -- unit dom`                          | Just the tiers you name                                              |
-| `npm run test:unit` (`dom`, `prop`, `contract`) | One tier                                                             |
-| `npm test -- --verbose`                         | Also list every file                                                 |
-| `npm run test:watch`                            | Re-run on every save                                                 |
-| `npm run test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
-| `npm run test:report`                           | The same, and save the full report to `test-results/report.md`       |
-| `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`    |
-| `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)           |
-| `npm run check`                                 | Asset integrity: missing or orphaned images                          |
+| Command                                         | What it does                                                      |
+| ----------------------------------------------- | ----------------------------------------------------------------- |
+| `npm test`                                      | Every tier, one summary row per tier                              |
+| `npm test -- unit dom`                          | Just the tiers you name                                           |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | One tier                                                          |
+| `npm test -- --verbose`                         | Also list every file                                              |
+| `npm run test:watch`                            | Re-run on every save                                              |
+| `npm run test:coverage`                         | Every tier, a coverage table, and fail below a coverage floor     |
+| `npm run test:report`                           | The same, and save the full report to `test-results/report.md`    |
+| `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/` |
+| `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)        |
+| `npm run check`                                 | Asset integrity: missing or orphaned images                       |
 
 A passing run prints about ten lines. A failing run lists the failed tests first (file and message)
 and then Vitest's full output, with the diff and the failing line. The tests run on
@@ -149,9 +149,14 @@ assertProperty(
 
 ## Coverage
 
-`npm run test:coverage` prints the least-covered files and fails if total line coverage is below the
-floor set in `package.json` (`--min-lines`). The floor only moves up: raise it when coverage has
-clearly grown, leaving a few points of headroom.
+`npm run test:coverage` prints the least-covered files and fails if total line or branch coverage is
+below its floor in `package.json` (`--min-lines`, `--min-branches`). The floors only move up: raise
+them when coverage has clearly grown, leaving a point or two of headroom.
+
+Code that cannot run in a test is marked `/* c8 ignore next */` with a comment saying why: the `if
+(import.meta.main)` line of each command, `spawnVite` (the real build), and guards for things that
+cannot happen (a key handler that only exists while the viewer is open). Grep for `c8 ignore` to see
+them all. Anything a test could reach is tested instead.
 
 Two things the number does not tell you:
 
