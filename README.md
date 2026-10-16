@@ -154,18 +154,22 @@ rendered specially; any other string fields appear in the info panel.
 
 ## Documentation
 
-Start at [`docs/README.md`](docs/README.md), the index. The reference guides:
+Everything in [`docs/`](docs/):
 
-| Guide                                                | What it covers                                                    |
-| ---------------------------------------------------- | ----------------------------------------------------------------- |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)       | The three programs, the layers of the site, the stores, the rules |
-| [`docs/DATA.md`](docs/DATA.md)                       | Every field in `collections.json` and the list files; recipes     |
-| [`docs/DESIGN.md`](docs/DESIGN.md)                   | Colours, type, spacing, states, icons; a checklist for UI changes |
-| [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                |
-| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner   |
+| Page                                                 | What it covers                                                      |
+| ---------------------------------------------------- | ------------------------------------------------------------------- |
+| [`docs/README.md`](docs/README.md)                   | The index of these pages, and where a new page goes                 |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)       | The three programs, the layers of the site, the stores, the rules   |
+| [`docs/DATA.md`](docs/DATA.md)                       | Every field in `collections.json` and the list files; recipes       |
+| [`docs/DESIGN.md`](docs/DESIGN.md)                   | Colours, type, spacing, states, icons; a checklist for UI changes   |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md)             | Why the project is set up as it is, and when to revisit each choice |
+| [`docs/WORKFLOW.md`](docs/WORKFLOW.md)               | Branch, commit, pull request, merge, deploy; upgrading dependencies |
+| [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                  |
+| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner     |
+| [`docs/plans/TODO.md`](docs/plans/TODO.md)           | The backlog: features, fixes and the component tests still to write |
 
-The backlog lives in [`docs/plans/TODO.md`](docs/plans/TODO.md). The images in
-[`docs/assets/`](docs/assets/) are drawn from the real tokens, icons and logo by `npm run design`.
+The images in [`docs/assets/`](docs/assets/) are drawn from the real tokens, icons and logo by `npm
+run design`.
 
 ## Tasks
 

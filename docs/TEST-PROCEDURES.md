@@ -294,16 +294,14 @@ a failed job: **Re-run failed jobs** on the run's page.
 
 ## 12. Maintenance
 
-| Task                           | How                                                                                                                                                                                                                                           |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Coverage floors                | `--min-lines` and `--min-branches` in `package.json` (three scripts), both 100. Never lower them; test the new code or mark it `c8 ignore` with the reason                                                                                    |
-| Update dependencies            | Every version is exact (no `^`; `.npmrc` sets `save-exact`). `npm outdated`, then `npm install <name>@<version>`, then the full check list in section 3. Run `npm dedupe` after, so only one copy of each `@vue/*` package ships              |
-| Update Node                    | Change `.nvmrc` (and `engines` in `package.json`), run the check list on that version                                                                                                                                                         |
-| Update a GitHub Action         | Actions are pinned to a commit, with the version in a comment. Take the commit of the new release tag (`git ls-remote https://github.com/<owner>/<action> refs/tags/<tag>^{}`), replace both, and read the release notes for breaking changes |
-| Add a timezone to CI           | Add it to the `tz` list in `.github/workflows/verify.yml`                                                                                                                                                                                     |
-| Change the weekly deep run     | `.github/workflows/nightly.yml` (schedule, zones, `FC_RUNS_MULTIPLIER`)                                                                                                                                                                       |
-| Change what must pass to merge | Repository Settings → Branches → the rule for `main`. If a job is renamed in `verify.yml`, update the required check names there too, or merges will wait forever                                                                             |
-| Slow suite                     | The `slowest:` list under the tables names the three slowest tests                                                                                                                                                                            |
+| Task                                         | How                                                                                                                                                               |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Coverage floors                              | `--min-lines` and `--min-branches` in `package.json` (three scripts), both 100. Never lower them; test the new code or mark it `c8 ignore` with the reason        |
+| Update dependencies, Node or a GitHub Action | See [WORKFLOW.md, "Upgrading dependencies"](WORKFLOW.md#upgrading-dependencies); every version is pinned exactly                                                  |
+| Add a timezone to CI                         | Add it to the `tz` list in `.github/workflows/verify.yml`                                                                                                         |
+| Change the weekly deep run                   | `.github/workflows/nightly.yml` (schedule, zones, `FC_RUNS_MULTIPLIER`)                                                                                           |
+| Change what must pass to merge               | Repository Settings → Branches → the rule for `main`. If a job is renamed in `verify.yml`, update the required check names there too, or merges will wait forever |
+| Slow suite                                   | The `slowest:` list under the tables names the three slowest tests                                                                                                |
 
 ## 13. Runner reference
 

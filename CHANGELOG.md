@@ -16,6 +16,9 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | docs: `docs/DECISIONS.md` (why the project is set up as it is, and when to revisit
+  each choice) and `docs/WORKFLOW.md` (branch to live site, merging, deploys, upgrading pinned
+  dependencies); the README now links every page in `docs/`
 - 2026-10-16 | tests: 100% of lines, branches and functions in the `.ts` code (373 tests, up from
   316). The test runner and the placeholder command are tested like the rest; code that only starts
   a real program (each command's entry line, `vite build`, Vitest itself) or guards a case that
