@@ -44,7 +44,7 @@ export default defineConfig({
       provider: 'v8',
       // No `include`: only files a test loads are measured, so the runner can tell
       // which source files no test imports (script/test_runner/areas.ts).
-      exclude: ['**/*_test.ts', 'src/test_helpers/**', '**/*.d.ts', 'public/**'],
+      exclude: ['**/*_test.ts', 'src/testing/**', '**/*.d.ts', 'public/**'],
     },
   },
 });

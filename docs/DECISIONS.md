@@ -177,12 +177,57 @@ section.
 ### One folder per command in `script/`
 
 **Chosen:** `script/build/`, `version/`, `changelog/`, `design/`, `placeholders/`, `test_runner/`,
-with shared code in `script/lib/`. Files are snake_case and named for what they do
-(`plan_changes.ts`, not `plan.ts`); each command's entry file is named after it. The helpers that
-tests share live in `src/test_helpers/`, because nearly all of their users are `src/` tests.
+with shared code in `script/lib/`. Files are named for what they do (`plan_changes.ts`, not
+`plan.ts`); each command's entry file is named after it. The helpers that tests share live in
+`src/testing/`, because nearly all of their users are `src/` tests.
 
 **Why.** An entry point is easy to find, and a file name alone (in an editor tab, a stack trace)
 says what the file does.
+
+### One naming style per tree
+
+**Chosen:** `src/` uses camelCase file names (`useHashRoute.ts`, `withDom.ts`) and PascalCase for
+components (`LightBox.vue`); `script/` uses snake_case (`plan_changes.ts`). A file that exports one
+main thing is named after it exactly: `useLightbox.ts` exports `useLightbox`. Test files keep their
+module's name plus the tier suffix (`useLightbox_dom_test.ts`).
+
+**Why.** Each tree follows its own ecosystem (Vue projects are camelCase; the scripts started in
+snake_case), and the rule is checkable at a glance: a snake_case name in `src/` is a mistake. When
+the file name and the export differ, even by one capital, searching for one misses the other.
+
+### `src/` is what the code imports, `public/` is what it fetches
+
+**Chosen:** anything the code imports goes in `src/`, so Vite processes it: the styles and font are
+in `src/styles/` (`main.css`, `fonts/`). Anything fetched by URL at run time, or that needs a fixed
+address, goes in `public/`: `collections.json`, the lists, the drawings, the placeholders, the
+favicon.
+
+**Why.** `main.css` is Tailwind source (`@import 'tailwindcss'`, `@variant`, theme tokens); served
+from `public/` it would arrive unprocessed and the site would have no styles. Through Vite, the font
+also gets a content hash in its name (`Faruma-<hash>.woff`), so browsers can cache it for good and
+still notice a change. The folder is called `styles/`, not `assets/`, because `public/` and
+`docs/assets/` hold the content and images.
+
+### The icon and logo drawings live in `src/lib/`
+
+**Chosen:** `src/lib/icons.ts` and `src/lib/logo.ts` hold the SVG drawings; `Icon.vue`,
+`CollectionIcon.vue` and `LogoMark.vue` in `src/components/icons/` render them.
+
+**Why.** The drawings are plain data with no Vue in them, and two commands read them (the design
+guide and the placeholder generator). Scripts importing from `src/lib/` is expected; scripts
+reaching into `src/components/` blurred the layers. For the test report they still count under
+"viewer and interface": an area's longest matching path wins (`script/test_runner/areas.ts`).
+
+### Generated images are committed
+
+**Chosen:** `public/full/`, `public/thumb/` and `public/placeholders/` are in git, although `npm run
+build:assets` and `npm run placeholders` generate them. The source PNGs (`raw_png/`, tens of MB) are
+not.
+
+**Why.** CI and the deploy run only the Vite build: they never see `raw_png/`, so the generated
+images must already be in the repository. Committing the small WebPs (a few MB) instead of the large
+sources keeps the repository light, and the integrity check (`npm run check`) fails if an image is
+missing or orphaned. Do not add these folders to `.gitignore`.
 
 ### Docs: reference pages, a backlog, generated images
 

@@ -15,7 +15,10 @@ export interface Area {
   label: string;
   /** What breaks for a visitor or for you if this area is wrong. */
   protects: string;
-  /** Repo-relative path prefixes. The first area that matches a path wins. */
+  /**
+   * Repo-relative path prefixes. The longest prefix that matches a path wins, so an
+   * area can claim a file out of a folder another area owns (the icons in src/lib/).
+   */
   paths: string[];
 }
 
@@ -36,7 +39,7 @@ export const AREAS: Area[] = [
     id: 'interface',
     label: 'Site: viewer and interface',
     protects: 'the lightbox, scroll-spy, icons and logo',
-    paths: ['src/composables/ui/', 'src/components/'],
+    paths: ['src/composables/ui/', 'src/components/', 'src/lib/icons', 'src/lib/logo'],
   },
   {
     id: 'pipeline',
@@ -63,7 +66,15 @@ const posix = (path: string) => path.replaceAll('\\', '/').replace(/^\.\//, '');
 /** The area a repo-relative path belongs to, or undefined if none claims it. */
 export function areaOf(path: string): Area | undefined {
   const p = posix(path);
-  return AREAS.find((a) => a.paths.some((prefix) => p.startsWith(prefix)));
+  let best: { area: Area; length: number } | undefined;
+  for (const area of AREAS) {
+    for (const prefix of area.paths) {
+      if (p.startsWith(prefix) && prefix.length > (best?.length ?? 0)) {
+        best = { area, length: prefix.length };
+      }
+    }
+  }
+  return best?.area;
 }
 
 /**
@@ -74,7 +85,7 @@ export function areaOf(path: string): Area | undefined {
 export async function discoverSources(roots = ['src', 'script']): Promise<string[]> {
   const skip = (path: string) =>
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
-    path.startsWith('src/test_helpers/') || path.startsWith('src/types/') ||
+    path.startsWith('src/testing/') || path.startsWith('src/types/') ||
     path === 'src/main.ts'; // only mounts App.vue into the page
   return (await walkFiles(roots)).filter((path) => path.endsWith('.ts') && !skip(path));
 }

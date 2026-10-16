@@ -1,8 +1,8 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../test_helpers/property_runs.ts';
-import { clampScale, pinchScale, swipeDirection } from './useLightBox.ts';
+import { assertProperty } from '../../testing/propertyRuns.ts';
+import { clampScale, pinchScale, swipeDirection } from './useLightbox.ts';
 
 // Any number a gesture could plausibly feed in — including the awkward ones.
 const anyNumber = fc.double({ noNaN: false });

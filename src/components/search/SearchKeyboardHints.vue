@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import Icon from '../icons/Icon.vue';
-import type { IconName } from '../icons/icons.ts';
+import type { IconName } from '../../lib/icons.ts';
 
 const hints: { icon?: IconName; text?: string; name: string; label: string }[] = [
   { icon: 'arrowsUpDown', name: 'Up and down arrow keys', label: 'navigate' },

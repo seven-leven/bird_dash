@@ -58,13 +58,17 @@ src/
     layout/             Chrome, TopBar, SideNav — the app shell
     gallery/            Grid, tiles, lightbox, info sheet
     search/             Global search dropdown and sub-components
-    icons/              Icon.vue + the icon registry (icons.ts)
+    icons/              Icon, CollectionIcon and LogoMark (the drawings are in lib/)
     ui/                 Reusable primitives (IdBadge, EmptyState)
   stores/               Domain state — search, ui, collections, overlay — each with readonly
                         state + actions, shared through provide/inject (defineInjection)
   composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
-  lib/                  Small framework-free helpers
+  lib/                  Small framework-free helpers, and the icon and logo drawings
+                        (icons.ts, logo.ts) that both the site and the scripts use
   types/                Shared TypeScript types
+  styles/               main.css (Tailwind and the design tokens) and fonts/
+  testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
+                        The tests themselves sit next to the code they cover (see Testing)
 script/                 One folder per command, run by Node; shared code in lib/
   build/                Transcode, register and check the images; the Vite build
   version/              The derived version; base_version.json stores major/minor only
@@ -73,8 +77,6 @@ script/                 One folder per command, run by Node; shared code in lib/
   placeholders/         Draw the placeholder images
   test_runner/          The test runner (`npm test`): tiers, areas, reports, coverage
   lib/                  Collections, list files, fs and git helpers
-src/test_helpers/       Shared test fixtures, the fake-DOM setup and property-test depth.
-                        The tests themselves sit next to the code they cover (see Testing)
 docs/                   Reference guides at the top level; plans/ for work not done yet,
                         assets/ for generated images (see docs/README.md)
 ```
@@ -112,11 +114,11 @@ loader and the data contract test.
 }
 ```
 
-`icon` names a line icon in [`src/components/icons/icons.ts`](src/components/icons/icons.ts), where
-every SVG in the app lives; without one the emoji is shown instead. `accent` picks the collection's
-accent colour from the palettes in [`src/assets/main.css`](src/assets/main.css) (twelve to choose
-from, listed in [`docs/DESIGN.md`](docs/DESIGN.md); default teal). Link URLs support `{{common}}`
-(common name) and `{{sci}}` (scientific name) placeholders.
+`icon` names a line icon in [`src/lib/icons.ts`](src/lib/icons.ts), where every SVG in the app
+lives; without one the emoji is shown instead. `accent` picks the collection's accent colour from
+the palettes in [`src/styles/main.css`](src/styles/main.css) (twelve to choose from, listed in
+[`docs/DESIGN.md`](docs/DESIGN.md); default teal). Link URLs support `{{common}}` (common name) and
+`{{sci}}` (scientific name) placeholders.
 
 **`public/lists/<id>.json`** — items grouped by taxonomy. An item is considered _drawn_ once it has
 a `drawn` date; without one it renders as the placeholder silhouette. `dhiv` and `dhiv_script` are

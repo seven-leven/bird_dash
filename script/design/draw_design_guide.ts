@@ -1,12 +1,12 @@
 /**
  * Draws docs/assets/design-guide.png and docs/assets/icons.png — the visual half of
  * docs/DESIGN.md. Run `npm run design` after changing a token in
- * src/assets/main.css or an icon in src/components/icons/icons.ts.
+ * src/styles/main.css or an icon in src/lib/icons.ts.
  *
  * The colours and the contrast maths are in ./palette.ts.
  */
 import sharp, { type OverlayOptions } from 'sharp';
-import { ICON_GROUPS, type IconDef, ICONS } from '../../src/components/icons/icons.ts';
+import { ICON_GROUPS, type IconDef, ICONS } from '../../src/lib/icons.ts';
 import { writeLogoFiles } from './draw_logo.ts';
 import { iconGridLayout } from './icon_grid.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';

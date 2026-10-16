@@ -6,7 +6,7 @@ a button, a colour or an icon.
 ![Design guide](assets/design-guide.png)
 
 The picture is drawn from the real tokens and icons by `npm run design`. The tokens themselves live
-in [`src/assets/main.css`](../src/assets/main.css); that file is the source of truth, and this page
+in [`src/styles/main.css`](../src/styles/main.css); that file is the source of truth, and this page
 explains how to use it.
 
 ## The one idea
@@ -167,9 +167,8 @@ missing, and the bird looking out of it. It is drawn with the same round 2px str
 the logo and the interface share one hand. The bird is an outline of a perching bird (back, tail,
 breast, wing, legs); the `bird` icon used for the collection tab and the placeholders is the same
 bird redrawn at the 24px icon grid. The tile is the same drawing reversed onto a solid square, not a
-second design. The source is [`src/components/icons/logo.ts`](../src/components/icons/logo.ts);
-`<LogoMark />` draws it, and `npm run design` writes the files in
-[`docs/assets/logo/`](assets/logo/).
+second design. The source is [`src/lib/logo.ts`](../src/lib/logo.ts); `<LogoMark />` draws it, and
+`npm run design` writes the files in [`docs/assets/logo/`](assets/logo/).
 
 | Version               | Use it for                                             | File                              |
 | --------------------- | ------------------------------------------------------ | --------------------------------- |
@@ -195,8 +194,8 @@ instead, replace it with `docs/assets/logo/tile-512.png`.
 
 ## 8. Icons
 
-Every icon lives in [`src/components/icons/icons.ts`](../src/components/icons/icons.ts) and is drawn
-by `<Icon name="…" />`. The only other SVG in the project is the logo, in the same folder. See
+Every icon lives in [`src/lib/icons.ts`](../src/lib/icons.ts) and is drawn by `<Icon name="…" />`.
+The only other SVG in the project is the logo, in the same folder. See
 [`icons.png`](assets/icons.png).
 
 The registry is grouped by purpose, and the file, the sheet and this guide all follow the same

@@ -51,7 +51,7 @@ export const ACCENT_HEX: Record<string, { 500: string; 700: string }> = {
 
 /** The accent hues on offer: the `[data-accent='…']` palettes in main.css, in file order. */
 export async function accentMenu(): Promise<string[]> {
-  const css = await readFile('./src/assets/main.css', 'utf8');
+  const css = await readFile('./src/styles/main.css', 'utf8');
   return [...new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]))];
 }
 

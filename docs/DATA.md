@@ -41,8 +41,8 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 | `id`         | yes      | Used in the URL (`#birds`), file names and folder names. Lowercase, no spaces, unique        |
 | `label`      | yes      | The name on the tab                                                                          |
 | `emoji`      | yes      | Shown in terminal reports, and on the tab if there is no `icon`                              |
-| `icon`       | no       | Name of an icon in `src/components/icons/icons.ts`. Also what the placeholder is drawn from  |
-| `accent`     | no       | The collection's accent colour: a hue from the menu in `src/assets/main.css`. Default `teal` |
+| `icon`       | no       | Name of an icon in `src/lib/icons.ts`. Also what the placeholder is drawn from               |
+| `accent`     | no       | The collection's accent colour: a hue from the menu in `src/styles/main.css`. Default `teal` |
 | `groupLabel` | yes      | What a group is called ("Family", "Order"); labels the group view and the sidebar            |
 | `itemLabel`  | yes      | The singular noun for an item ("bird")                                                       |
 | `links`      | yes      | "Learn more" links in the viewer; may be an empty array                                      |

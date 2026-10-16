@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createOverlayStore } from './overlay.ts';
-import { at, makeItem, runInScope } from '../test_helpers/fixtures.ts';
+import { at, makeItem, runInScope } from '../testing/fixtures.ts';
 
 test('open ignores undrawn items (no image to show)', () => {
   const undrawn = makeItem({ isDrawn: false });

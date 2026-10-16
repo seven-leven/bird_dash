@@ -2,9 +2,9 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
-import { at, makeCollection, makeItem, runInScope } from '../../test_helpers/fixtures.ts';
-import { mountComposable } from '../../test_helpers/mount_composable.ts';
-import { withDom } from '../../test_helpers/with_dom.ts';
+import { at, makeCollection, makeItem, runInScope } from '../../testing/fixtures.ts';
+import { mountComposable } from '../../testing/mountComposable.ts';
+import { withDom } from '../../testing/withDom.ts';
 import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
 // The router is a small state machine (bare load / reflect / deep link / own

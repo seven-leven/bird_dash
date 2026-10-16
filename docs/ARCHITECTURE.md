@@ -45,14 +45,14 @@ used by all three.
 
 Imports only point leftwards in this list; nothing imports from a layer to its right.
 
-| Layer            | Folder             | What lives there                                                                                                                           |
-| ---------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Types            | `src/types/`       | Shapes only. `data.ts` is the raw files; `collections.ts` the app's own                                                                    |
-| Pure helpers     | `src/lib/`         | Functions with no Vue and no DOM state: normalising items, wording counts, collapsing search groups                                        |
-| Composables      | `src/composables/` | Reusable logic that uses Vue reactivity or the browser: loading and caching, filtering and grouping, the lightbox, scroll-spy, URL routing |
-| Stores           | `src/stores/`      | The app's state, one per domain, each exposing read-only state and actions                                                                 |
-| Components       | `src/components/`  | Templates. They read stores and call actions; they hold no shared state                                                                    |
-| Composition root | `src/App.vue`      | Creates the stores, provides them, starts the router                                                                                       |
+| Layer            | Folder             | What lives there                                                                                                                                                  |
+| ---------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Types            | `src/types/`       | Shapes only. `data.ts` is the raw files; `collections.ts` the app's own                                                                                           |
+| Pure helpers     | `src/lib/`         | Functions with no Vue and no DOM state: normalising items, wording counts, collapsing search groups; the icon and logo drawings, which the build scripts read too |
+| Composables      | `src/composables/` | Reusable logic that uses Vue reactivity or the browser: loading and caching, filtering and grouping, the lightbox, scroll-spy, URL routing                        |
+| Stores           | `src/stores/`      | The app's state, one per domain, each exposing read-only state and actions                                                                                        |
+| Components       | `src/components/`  | Templates. They read stores and call actions; they hold no shared state                                                                                           |
+| Composition root | `src/App.vue`      | Creates the stores, provides them, starts the router                                                                                                              |
 
 ### Stores
 
