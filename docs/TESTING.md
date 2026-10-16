@@ -2,8 +2,8 @@
 
 How the tests are organised, how to run them, and how to write a new one. For step-by-step
 instructions (setting up a machine, what to do when a test or CI fails, maintenance, the runner's
-flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). How to get from today's coverage to 100% is in
-[COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md).
+flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). The `.ts` code is at 100% coverage; tests for
+the `.vue` components are next, in [TODO.md](plans/TODO.md).
 
 ## Running them
 

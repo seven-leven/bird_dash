@@ -164,9 +164,8 @@ Start at [`docs/README.md`](docs/README.md), the index. The reference guides:
 | [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                |
 | [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner   |
 
-Plans (the coverage roadmap, the finished Deno → Node migration, the `script/` layout, the backlog)
-live in [`docs/plans/`](docs/plans/). The images in [`docs/assets/`](docs/assets/) are drawn from
-the real tokens, icons and logo by `npm run design`.
+The backlog lives in [`docs/plans/TODO.md`](docs/plans/TODO.md). The images in
+[`docs/assets/`](docs/assets/) are drawn from the real tokens, icons and logo by `npm run design`.
 
 ## Tasks
 

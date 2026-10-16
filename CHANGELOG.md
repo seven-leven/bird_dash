@@ -16,29 +16,24 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
-- 2026-10-16 | tests: 100% of lines, branches and functions in the `.ts` code (373 tests), with both
-  CI floors at 100%; two dead branches removed (the hash router's "clear the hash" path, a repeated
-  id check in `switchCollection`). Component (`.vue`) tests are next, in docs/plans/TODO.md
-- 2026-10-16 | tests: branch coverage 89.3% → 97.0% and lines 97.5% → 99.2%, from tests for the
-  lightbox's gestures and focus trap, collection loading and the runner's edge cases; code that
-  cannot run in a test is marked `/* c8 ignore */` with its reason. A branch floor joins the line
-  floor: CI now fails below 98% of lines or 95% of branches
-- 2026-10-16 | tests: the test runner's `main` (every exit code, the coverage floor, the
-  untested-files gate, the CI output) and the placeholder command are now tested; line coverage
-  92.0% → 97.5%, branches 80.2% → 89.3%, floor raised from 91% to 96%
+- 2026-10-16 | tests: 100% of lines, branches and functions in the `.ts` code (373 tests, up from
+  316). The test runner and the placeholder command are tested like the rest; code that only starts
+  a real program (each command's entry line, `vite build`, Vitest itself) or guards a case that
+  cannot happen is marked `/* c8 ignore */` with its reason; two dead branches were removed. CI now
+  fails below 100% of lines or branches (new `--min-branches` flag). Tests for the `.vue` components
+  are next (docs/plans/TODO.md)
 - 2026-10-16 | script/: one folder per command (`build/`, `version/`, `changelog/`, `design/`,
   `placeholders/`, `test_runner/`) plus `lib/`, with file names that say what they do; the shared
   test helpers move to `src/test_helpers/`. Script names are unchanged
-  (docs/plans/SCRIPTS-LAYOUT.md)
-- 2026-10-16 | deps: everything on its latest version and pinned exactly (Vue 3.5.44, Vite 8.3.4,
-  Tailwind 4.3.3, sharp 0.35.5, Vitest 5.0.5, TypeScript 6.0.3, the newest typescript-eslint
-  supports), Node pinned to 24.22.0 (the latest LTS), and every GitHub Action on its latest release,
-  pinned to that release's commit
-- 2026-10-16 | tooling: moved from Deno to Node 24 + npm. Tests run on Vitest (same files, same
-  tiers, same `npm test` summary), `vue-tsc` now type-checks the `.vue` components too, ESLint and
-  dprint replace `deno lint` and `deno fmt` (same formatting), and CI uses `setup-node`. The site
-  build is unchanged; the line-coverage floor is re-based to 91% because the test runner itself is
-  now measured (see docs/plans/MIGRATION.md)
+- 2026-10-16 | tooling: moved from Deno to Node + npm. Tests run on Vitest (same files, tiers and
+  `npm test` summary), `vue-tsc` type-checks the `.vue` components too, ESLint and dprint replace
+  `deno lint` and `deno fmt` (same formatting), and CI uses `setup-node`. Every dependency and
+  GitHub Action is on its latest release and pinned exactly: Node 24.22.0 (LTS), Vue 3.5.44, Vite
+  8.3.4, Tailwind 4.3.3, sharp 0.35.5, Vitest 5.0.5, TypeScript 6.0.3 (the newest typescript-eslint
+  supports), actions pinned to their release commits. The site itself is unchanged
+- 2026-10-16 | docs: `docs/` reorganised into reference guides, `plans/` (now just the backlog,
+  TODO.md; finished plans are deleted) and `assets/` for the generated images; `npm run test:html`
+  writes a browsable line-by-line coverage report
 - 2026-10-14 | tests: no untested files left — the build command, the design-guide generator and the
   logo generator are tested (which step runs for which arguments, exit codes, a real asset build on
   a throwaway collection, every generated image written at the right size, and `docs/` kept in step
