@@ -33,25 +33,44 @@ export function placeholderSvg(iconBody: string, theme: Theme = 'light'): string
     `stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${iconBody}</g></svg>`;
 }
 
-if (import.meta.main) {
-  const args = process.argv.slice(2);
-  const previewAt = args.indexOf('--preview');
-  const previewDir = previewAt === -1 ? null : args[previewAt + 1];
-  const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
-
+/**
+ * Draw both placeholders of every collection that has an icon, and return the paths written.
+ * `previewDir` writes PNGs there (`placeholder_<id>[-dark].png`) instead of the WebPs in `dir`.
+ */
+export async function writePlaceholders(
+  collections: RawCollectionConfig[],
+  opts: { dir?: string; previewDir?: string | null; log?: (line: string) => void } = {},
+): Promise<string[]> {
+  const { dir = './public/placeholders', previewDir = null, log = console.log } = opts;
+  const written: string[] = [];
   for (const col of collections) {
     if (!isIconName(col.icon)) {
-      console.log(`  ${col.id}: no icon set in collections.json — skipped`);
+      log(`  ${col.id}: no icon set in collections.json — skipped`);
       continue;
     }
     for (const theme of Object.keys(THEMES) as Theme[]) {
       const name = `${col.id}${THEMES[theme].suffix}`;
       const image = sharp(new TextEncoder().encode(placeholderSvg(ICONS[col.icon].body, theme)));
-      const path = previewDir
-        ? `${previewDir}/placeholder_${name}.png`
-        : `./public/placeholders/${name}.webp`;
+      const path = previewDir ? `${previewDir}/placeholder_${name}.png` : `${dir}/${name}.webp`;
       await (previewDir ? image.png() : image.webp({ quality: 90 })).toFile(path);
-      console.log(`  ${name}: wrote ${path}`);
+      log(`  ${name}: wrote ${path}`);
+      written.push(path);
     }
   }
+  return written;
 }
+
+/** The `npm run placeholders` command: `--preview <dir>` writes PNGs there instead. */
+export async function cli(args: string[]): Promise<string[]> {
+  const previewAt = args.indexOf('--preview');
+  // Without --preview this writes the real files in public/, so tests always pass a folder.
+  /* c8 ignore next */
+  const previewDir = previewAt === -1 ? null : args[previewAt + 1];
+  return writePlaceholders(await readJson<RawCollectionConfig[]>('./public/collections.json'), {
+    previewDir,
+  });
+}
+
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
+if (import.meta.main) await cli(process.argv.slice(2));

@@ -84,3 +84,14 @@ test('annotations use GitHub workflow-command escaping', () => {
     '::error file=src/x_test.ts,line=7,title=Test failed%3A has%2C comma%3A and colon::100%25 bad',
   );
 });
+
+test('a failure with no message is listed with an empty line, not "undefined"', () => {
+  const failing = { ...t('src/x_test.ts', 'boom'), line: 3 };
+  const s = { ...summarize([failing]), failures: [failing] };
+  assert(!formatConsole(s).includes('undefined'));
+  assert(!formatMarkdown(s, 'Tests').includes('undefined'));
+  assertEquals(
+    annotations([failing])[0],
+    '::error file=src/x_test.ts,line=3,title=Test failed%3A boom::failed',
+  );
+});

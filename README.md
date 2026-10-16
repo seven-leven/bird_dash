@@ -164,9 +164,8 @@ Start at [`docs/README.md`](docs/README.md), the index. The reference guides:
 | [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                |
 | [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner   |
 
-Plans (the coverage roadmap, the finished Deno → Node migration, the `script/` layout, the backlog)
-live in [`docs/plans/`](docs/plans/). The images in [`docs/assets/`](docs/assets/) are drawn from
-the real tokens, icons and logo by `npm run design`.
+The backlog lives in [`docs/plans/TODO.md`](docs/plans/TODO.md). The images in
+[`docs/assets/`](docs/assets/) are drawn from the real tokens, icons and logo by `npm run design`.
 
 ## Tasks
 
@@ -180,7 +179,7 @@ the real tokens, icons and logo by `npm run design`.
 | `npm test`                                      | Every test tier, one summary row per tier (`npm test -- unit dom`)   |
 | `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                       |
 | `npm run test:watch`                            | Re-run the tests on every save                                       |
-| `npm run test:coverage`                         | Every tier + coverage table; fails below the line-coverage floor     |
+| `npm run test:coverage`                         | Every tier + coverage table; fails below the line or branch floor    |
 | `npm run test:report`                           | The same, saving the full report to `test-results/report.md`         |
 | `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`   |
 | `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)     |

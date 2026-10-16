@@ -107,3 +107,22 @@ test('searchedDrawnItems: drawn only, ordered by drawnTime then sortKey', () => 
   const { searchedDrawnItems } = setup(items);
   assertEquals(searchedDrawnItems.value.map((i) => i.itemId), ['002', '010']);
 });
+
+test('date mode leaves out a drawn item whose date could not be read', () => {
+  const items = [
+    makeItem({ itemId: '001', drawnTime: at(2025, 1, 5) }),
+    makeItem({ itemId: '002', isDrawn: true, drawnTime: 0 }), // "drawn" with an unreadable date
+  ];
+  const { activeData } = setup(items, '', 'date');
+  const all = Object.values(activeData.value.grouped).flat().map((i) => i.itemId);
+  assertEquals(all, ['001']);
+});
+
+test('a query narrows the drawn items the viewer pages through; no query keeps them all', () => {
+  const items = [
+    makeItem({ itemId: '001', commonName: 'Mallard', drawnTime: at(2025, 1, 5) }),
+    makeItem({ itemId: '002', commonName: 'Heron', drawnTime: at(2025, 1, 6) }),
+  ];
+  assertEquals(setup(items, 'heron').searchedDrawnItems.value.map((i) => i.itemId), ['002']);
+  assertEquals(setup(items, '').searchedDrawnItems.value.map((i) => i.itemId), ['001', '002']);
+});

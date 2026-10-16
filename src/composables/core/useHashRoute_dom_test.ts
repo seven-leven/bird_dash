@@ -3,6 +3,7 @@ import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
 import { at, makeCollection, makeItem, runInScope } from '../../test_helpers/fixtures.ts';
+import { mountComposable } from '../../test_helpers/mount_composable.ts';
 import { withDom } from '../../test_helpers/with_dom.ts';
 import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
 
@@ -163,4 +164,58 @@ test('an empty or collection-less hash is ignored', () =>
     assertEquals(h.switched, []);
     assertEquals(h.opened, []);
     h.stop();
+  }));
+
+test('an open viewer with no item selected reflects just the collection', () =>
+  withDom(async () => {
+    const h = harness({ birds: [], sharks: [] });
+    await h.loadFirst('birds');
+    await h.switchCollection('sharks');
+    h.expandedImage.isOpen = true; // open, but the item has not been set yet
+    await nextTick();
+    assertEquals(location.hash, '#sharks');
+    h.stop();
+  }));
+
+test('a state whose hash is already in the address bar adds no history entry', () =>
+  withDom(async () => {
+    const h = harness({ birds: [], sharks: [] });
+    await h.loadFirst('birds');
+    location.hash = '#sharks'; // typed by hand, not yet applied
+    const entries = history.length;
+    await h.switchCollection('sharks');
+    await nextTick();
+    assertEquals(location.hash, '#sharks');
+    assertEquals(history.length, entries);
+    h.stop();
+  }));
+
+test('mounted, the router follows hashchange events, and stops when unmounted', () =>
+  withDom(async () => {
+    const collections = [makeCollection('birds'), makeCollection('sharks')];
+    const activeCollection = ref<CollectionConfig | undefined>(collections[0]);
+    const switched: string[] = [];
+    const { unmount } = mountComposable(() =>
+      useHashRoute({
+        activeCollection,
+        expandedImage: reactive({ isOpen: false, item: undefined }),
+        cache: { birds: [], sharks: [] },
+        switchCollection: async (id) => {
+          switched.push(id);
+          activeCollection.value = collections.find((c) => c.id === id);
+        },
+        openOverlay: () => {},
+      })
+    );
+
+    location.hash = '#sharks';
+    globalThis.dispatchEvent(new HashChangeEvent('hashchange'));
+    await nextTick();
+    assertEquals(switched, ['sharks']);
+
+    unmount();
+    location.hash = '#birds';
+    globalThis.dispatchEvent(new HashChangeEvent('hashchange'));
+    await nextTick();
+    assertEquals(switched, ['sharks']); // no longer listening
   }));

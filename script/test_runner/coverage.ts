@@ -103,7 +103,12 @@ export function formatTable(files: FileCoverage[], cwd = '', limit = Infinity): 
   return [head, '-'.repeat(head.length), ...body, '-'.repeat(head.length), foot].join('\n');
 }
 
-export function formatMarkdown(files: FileCoverage[], minLines: number, cwd = ''): string {
+export function formatMarkdown(
+  files: FileCoverage[],
+  minLines: number,
+  cwd = '',
+  minBranches = 0,
+): string {
   const rel = (f: string) => f.replaceAll('\\', '/').replace(cwd.replaceAll('\\', '/') + '/', '');
   const t = totals(files);
   const rows = [...files].sort((a, b) => percent(a.lines) - percent(b.lines)).map((r) =>
@@ -114,7 +119,9 @@ export function formatMarkdown(files: FileCoverage[], minLines: number, cwd = ''
   return [
     '### Coverage',
     '',
-    `**${percent(t.lines).toFixed(1)}% of lines** in the files tests load (floor: ${minLines}%).`,
+    `**${percent(t.lines).toFixed(1)}% of lines** (floor: ${minLines}%) and **${
+      percent(t.branches).toFixed(1)
+    }% of branches** (floor: ${minBranches}%) in the files tests load.`,
     '',
     `<details><summary>Per-file coverage (${files.length} files, least covered first)</summary>`,
     '',
@@ -127,13 +134,19 @@ export function formatMarkdown(files: FileCoverage[], minLines: number, cwd = ''
   ].join('\n');
 }
 
-/** Read `--min-lines=N` from the arguments (default 0 = report only). */
-export function parseMinLines(args: string[]): number {
-  const arg = args.find((a) => a.startsWith('--min-lines='));
+/** Read a percentage floor such as `--min-lines=N` from the arguments (default 0 = report only). */
+function parseFloor(args: string[], flag: string): number {
+  const arg = args.find((a) => a.startsWith(`${flag}=`));
   const n = arg ? Number(arg.split('=')[1]) : 0;
   if (!Number.isFinite(n) || n < 0 || n > 100) throw new Error(`invalid ${arg}`);
   return n;
 }
+
+/** `--min-lines=N`: the line-coverage floor. */
+export const parseMinLines = (args: string[]): number => parseFloor(args, '--min-lines');
+
+/** `--min-branches=N`: the branch-coverage floor. */
+export const parseMinBranches = (args: string[]): number => parseFloor(args, '--min-branches');
 
 /** The coverage arguments for `vitest run`: LCOV always, plus HTML when asked for. */
 export const coverageArgs = (dir: string, html = false): string[] => [

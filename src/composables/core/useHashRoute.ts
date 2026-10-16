@@ -38,12 +38,11 @@ export function useHashRoute(deps: {
   let primed = false;
   let applying = false;
 
+  // Only ever called with a non-empty hash: there is always an active collection.
   const write = (hash: string): void => {
-    const next = hash ? `#${hash}` : '';
+    const next = `#${hash}`;
     last = next;
-    if (location.hash === next) return;
-    if (next) location.hash = next;
-    else history.replaceState(null, '', location.pathname + location.search);
+    if (location.hash !== next) location.hash = next;
   };
 
   // state → URL

@@ -4,6 +4,7 @@ import {
   formatMarkdown,
   formatTable,
   parseLcov,
+  parseMinBranches,
   parseMinLines,
   percent,
   totals,
@@ -67,6 +68,7 @@ test('formatMarkdown leads with the total and folds the per-file table away', ()
   const md = formatMarkdown(parseLcov(LCOV), 70, 'C:\\proj');
   assertStringIncludes(md, '**75.0% of lines**');
   assertStringIncludes(md, 'floor: 70%');
+  assertStringIncludes(md, 'of branches** (floor: 0%)');
   assertStringIncludes(md, '<details><summary>Per-file coverage (2 files');
   const rows = md.split('\n').filter((l) => l.startsWith('| `'));
   assertStringIncludes(rows[0], 'src/a.ts'); // least covered first, relative path
@@ -77,4 +79,26 @@ test('formatTable with a limit shows only the worst files but totals them all', 
   const lines = formatTable(parseLcov(LCOV), 'C:\\proj', 1).split('\n');
   assertEquals(lines.filter((l) => l.includes('src/')).length, 1);
   assertStringIncludes(lines[lines.length - 1], ' 75.0%');
+});
+
+test('parseLcov ignores counters that come before any SF line', () => {
+  const stray = 'LF:9\nLH:9\nBRF:9\nBRH:9\nFNF:9\nFNH:9\nend_of_record\n';
+  assertEquals(parseLcov(stray + 'SF:a.ts\nLF:2\nLH:1\nend_of_record\n'), [
+    {
+      file: 'a.ts',
+      lines: { found: 2, hit: 1 },
+      branches: { found: 0, hit: 0 },
+      functions: { found: 0, hit: 0 },
+    },
+  ]);
+});
+
+test('parseMinBranches reads its own flag, independent of --min-lines', () => {
+  assertEquals(parseMinBranches(['--min-lines=90']), 0);
+  assertEquals(parseMinBranches(['--min-branches=95']), 95);
+  assertThrows(() => parseMinBranches(['--min-branches=-1']));
+});
+
+test('formatMarkdown shows the branch total and its floor', () => {
+  assertStringIncludes(formatMarkdown(parseLcov(LCOV), 70, '', 80), 'of branches** (floor: 80%)');
 });

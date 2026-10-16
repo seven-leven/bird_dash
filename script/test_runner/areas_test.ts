@@ -113,3 +113,12 @@ test('untestedFiles gathers the unloaded files of every area; empty when all are
   });
   assertEquals(untestedFiles(none), []);
 });
+
+test('with coverage but no source list, nothing is reported unloaded', () => {
+  const rows = summarizeAreas([testCase('src/lib/a_test.ts')], {
+    coverage: [cov('src/lib/a.ts', 0, 0)],
+  });
+  assertEquals(untestedFiles(rows), []);
+  // An area whose loaded files have no lines shows a dash, not 0% or NaN.
+  assertStringIncludes(formatAreasConsole(rows), '—');
+});

@@ -164,3 +164,11 @@ test('checkIntegrity counts the blocking issues across collections', () =>
     assertEquals(issues, 2); // one missing full image, seen in each of the two entries
     assert(report.includes('missing full WebP     001'));
   }));
+
+test('cli reports a thrown non-Error value without a stack trace', async () => {
+  const { steps } = fakeSteps({ assets: () => Promise.reject('disk full') });
+  let code = 0;
+  const output = await captured(async () => (code = await cli(['--assets-only'], steps)));
+  assertEquals(code, 1);
+  assert(output.includes('build failed: disk full'));
+});

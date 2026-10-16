@@ -10,8 +10,10 @@ import type {
   RawCollectionData,
 } from '../../types/index.ts';
 
-// Self-contained cast (not import.meta.env directly), so this file also loads
-// where Vite has not defined import.meta.env; the base is then '/'.
+// Self-contained cast (not import.meta.env directly), so this file also loads where Vite has
+// not defined import.meta.env; the base is then '/'. Vite and Vitest always define it, so the
+// fallback never runs in a test.
+/* c8 ignore next 2 */
 const getBase = () =>
   (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 
@@ -31,6 +33,8 @@ export function useCollections() {
 
   const activeCollection: ComputedRef<CollectionConfig | undefined> = computed(() => {
     if (!isInitialized.value) return undefined;
+    // The fallback cannot run: the active id always comes from this list.
+    /* c8 ignore next 2 */
     return collections.value.find((c: CollectionConfig) => c.id === activeCollectionId.value) ??
       collections.value[0];
   });
@@ -93,7 +97,8 @@ export function useCollections() {
 
   const switchCollection = async (id: string): Promise<void> => {
     if (id === activeCollectionId.value) return;
-    if (!collections.value.some((c) => c.id === id)) return; // unknown id: ignore
+    const col = collections.value.find((c) => c.id === id);
+    if (!col) return; // unknown id: ignore
     activeCollectionId.value = id;
 
     const cached = collectionCache[id];
@@ -101,8 +106,8 @@ export function useCollections() {
       data.items = cached;
       data.error = undefined;
       data.loading = false;
-    } else if (activeCollection.value) {
-      await loadData(activeCollection.value);
+    } else {
+      await loadData(col);
     }
   };
 

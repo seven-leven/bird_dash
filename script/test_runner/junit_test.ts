@@ -77,3 +77,9 @@ test('entities are decoded once (&amp;lt; is the text "&lt;")', () => {
     '<testcase name="a &amp;lt; b" classname="./x_test.ts" time="0" line="1">\n</testcase>';
   assertEquals(parseJunit(xml)[0].name, 'a &lt; b');
 });
+
+test('missing attributes get defaults, and a failure without a message still counts', () => {
+  assertEquals(parseJunit('<testcase ><failure/></testcase>'), [
+    { name: '(unnamed)', file: '', line: 0, time: 0, failure: 'failed' },
+  ]);
+});

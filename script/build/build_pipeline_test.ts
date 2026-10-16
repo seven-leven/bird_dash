@@ -273,3 +273,17 @@ test('a clean collection gets a tick in the check report', () =>
     );
     assert(output.includes('✓') && !output.includes('✗'));
   }));
+
+test('a thumbnail that cannot be rebuilt (a broken full image) fails that item', () =>
+  withCollection([{ id: '001', name: 'A', drawn: '2025-01-01' }], ['001'], async (col) => {
+    await transcode(col, '001');
+    await rm(`${col.paths.thumb}001.webp`);
+    await writeFile(`${col.paths.full}001.webp`, 'not an image');
+
+    const plan = planWork(await scanCollection(col));
+    let result!: Awaited<ReturnType<typeof executeWork>>;
+    await captured(async () => {
+      result = await executeWork(col, plan, '2025-06-01');
+    });
+    assertEquals(result.failed.map((f) => f.id), ['001']);
+  }));

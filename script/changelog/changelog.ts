@@ -37,6 +37,8 @@ export const toLines = (commits: LoggedCommit[]): string[] =>
 /** Commits since CHANGELOG.md was last modified, oldest first. */
 export async function unloggedCommits(): Promise<LoggedCommit[]> {
   const lastTouch = await git('log', '-1', '--format=%H', '--', CHANGELOG_FILE);
+  // "Never committed" happens only in a repository without a CHANGELOG.md commit, not this one.
+  /* c8 ignore next */
   const range = lastTouch ? `${lastTouch}..HEAD` : 'HEAD';
   const raw = await git(
     'log',
@@ -118,4 +120,6 @@ export async function cli(args: string[], io?: ChangelogIo): Promise<number> {
   }
 }
 
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
 if (import.meta.main) process.exit(await cli(process.argv.slice(2)));

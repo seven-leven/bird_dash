@@ -33,6 +33,7 @@ import {
   coverageArgs,
   formatMarkdown as coverageMarkdown,
   formatTable,
+  parseMinBranches,
   parseMinLines,
   percent,
   readCoverage,
@@ -46,6 +47,7 @@ export interface Options {
   failFast: boolean;
   coverage: boolean;
   minLines: number;
+  minBranches: number;
   /** Save the markdown report to test-results/report.md (always done in CI). */
   report: boolean;
   /** Write the HTML coverage report to test-results/coverage/ (needs --coverage). */
@@ -64,12 +66,16 @@ export function parseArgs(args: string[]): Options {
     throw new Error(`unknown tier "${unknown[0]}" (available: ${TIER_ORDER.join(', ')})`);
   }
   const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage', '--report', '--html']);
-  const bad = flags.find((f) => !known.has(f) && !f.startsWith('--min-lines='));
+  const bad = flags.find((f) =>
+    !known.has(f) && !f.startsWith('--min-lines=') && !f.startsWith('--min-branches=')
+  );
   if (bad) throw new Error(`unknown option ${bad}`);
 
   const minLines = parseMinLines(flags);
   const coverage = flags.includes('--coverage');
   if (minLines > 0 && !coverage) throw new Error('--min-lines needs --coverage');
+  const minBranches = parseMinBranches(flags);
+  if (minBranches > 0 && !coverage) throw new Error('--min-branches needs --coverage');
   if (flags.includes('--html') && !coverage) throw new Error('--html needs --coverage');
 
   return {
@@ -78,6 +84,7 @@ export function parseArgs(args: string[]): Options {
     failFast: flags.includes('--fail-fast'),
     coverage,
     minLines,
+    minBranches,
     report: flags.includes('--report'),
     html: flags.includes('--html'),
   };
@@ -91,6 +98,8 @@ export const withoutDots = (output: string): string =>
   output.split(/\r?\n/).filter((line) => !/^[·x*-]*$/.test(line.trim())).join('\n');
 
 /** Run Vitest (with this Node, no shell) and collect its exit code and output. */
+// Starts a real Vitest, so no test calls it; main is tested with a stand-in.
+/* c8 ignore start */
 function vitest(args: string[]): Promise<{ success: boolean; output: string }> {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, ['node_modules/vitest/vitest.mjs', 'run', ...args], {
@@ -105,8 +114,28 @@ function vitest(args: string[]): Promise<{ success: boolean; output: string }> {
     );
   });
 }
+/* c8 ignore stop */
 
-async function main(argv: string[]): Promise<number> {
+/** What the runner touches outside itself — replaceable, so `main` can be tested. */
+export interface RunnerDeps {
+  discoverTests: () => Promise<string[]>;
+  discoverSources: () => Promise<string[]>;
+  vitest: (args: string[]) => Promise<{ success: boolean; output: string }>;
+  env: Record<string, string | undefined>;
+  /** Where the report, the JUnit file in CI and the HTML coverage go. */
+  resultsDir: string;
+}
+
+const realDeps: RunnerDeps = {
+  discoverTests,
+  discoverSources,
+  vitest,
+  env: process.env,
+  resultsDir: 'test-results',
+};
+
+/** Run the tests for these arguments and return the process exit code. */
+export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise<number> {
   let opts: Options;
   try {
     opts = parseArgs(argv);
@@ -115,8 +144,9 @@ async function main(argv: string[]): Promise<number> {
     return 2;
   }
 
-  const inCI = process.env.GITHUB_ACTIONS === 'true';
-  const groups = groupByTier(await discoverTests());
+  const { env, resultsDir } = deps;
+  const inCI = env.GITHUB_ACTIONS === 'true';
+  const groups = groupByTier(await deps.discoverTests());
   const files = opts.tiers.flatMap((t) => groups[t]);
   if (files.length === 0) {
     console.error(`test: no test files for ${opts.tiers.join(', ')}`);
@@ -126,11 +156,11 @@ async function main(argv: string[]): Promise<number> {
   const work = await mkdtemp(join(tmpdir(), 'test-'));
   try {
     const saveReport = inCI || opts.report;
-    if (saveReport || opts.html) await mkdir('test-results', { recursive: true });
-    const junitPath = inCI ? 'test-results/junit.xml' : `${work}/junit.xml`;
+    if (saveReport || opts.html) await mkdir(resultsDir, { recursive: true });
+    const junitPath = inCI ? `${resultsDir}/junit.xml` : `${work}/junit.xml`;
     const covDir = `${work}/coverage`;
 
-    const run = await vitest([
+    const run = await deps.vitest([
       '--reporter=dot',
       '--reporter=junit',
       `--outputFile.junit=${junitPath}`,
@@ -142,7 +172,7 @@ async function main(argv: string[]): Promise<number> {
     const raw = run.output;
     const cases = parseJunit(await readFile(junitPath, 'utf8').catch(() => ''));
     const summary = summarize(cases);
-    const tz = process.env.TZ;
+    const tz = env.TZ;
     const title = `Tests${tz ? ` (TZ=${tz})` : ''} — ${opts.tiers.join(', ')}`;
 
     console.log(cases.length > 0 ? formatConsole(summary, { verbose: opts.verbose, cases }) : '');
@@ -171,26 +201,33 @@ async function main(argv: string[]): Promise<number> {
     const allTiers = opts.tiers.length === TIER_ORDER.length;
     const areas = summarizeAreas(cases, {
       coverage: cov,
-      sources: cov && allTiers ? await discoverSources() : [],
+      sources: cov && allTiers ? await deps.discoverSources() : [],
     });
     if (cases.length > 0) console.log('\n' + formatAreasConsole(areas));
     summaryMd += '\n' + formatAreasMarkdown(areas);
 
     if (cov) {
-      const actual = percent(totals(cov).lines);
+      const total = totals(cov);
       console.log('\nleast covered files:\n' + formatTable(cov, process.cwd(), 8));
-      if (actual < opts.minLines) {
-        console.error(
-          `\n✗ line coverage ${actual.toFixed(1)}% is below the ${opts.minLines}% floor`,
-        );
-        ok = false;
-      } else {
-        console.log(`\n✓ line coverage ${actual.toFixed(1)}% (floor ${opts.minLines}%)`);
+      const floors = [
+        ['line', percent(total.lines), opts.minLines],
+        ['branch', percent(total.branches), opts.minBranches],
+      ] as const;
+      for (const [measure, actual, floor] of floors) {
+        if (actual < floor) {
+          console.error(
+            `\n✗ ${measure} coverage ${actual.toFixed(1)}% is below the ${floor}% floor`,
+          );
+          ok = false;
+        } else {
+          console.log(`\n✓ ${measure} coverage ${actual.toFixed(1)}% (floor ${floor}%)`);
+        }
       }
-      summaryMd += '\n' + coverageMarkdown(cov, opts.minLines, process.cwd());
+      summaryMd += '\n' +
+        coverageMarkdown(cov, opts.minLines, process.cwd(), opts.minBranches);
 
       if (opts.html) {
-        const index = await writeHtmlCoverage(covDir, 'test-results/coverage');
+        const index = await writeHtmlCoverage(covDir, `${resultsDir}/coverage`);
         console.log(`\ncoverage report: ${index}`);
       }
 
@@ -207,11 +244,11 @@ async function main(argv: string[]): Promise<number> {
       }
     }
 
-    const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+    const summaryFile = env.GITHUB_STEP_SUMMARY;
     if (summaryFile) await appendFile(summaryFile, summaryMd + '\n');
     if (saveReport) {
-      await writeFile('test-results/report.md', summaryMd + '\n');
-      if (!inCI) console.log('\nfull report: test-results/report.md');
+      await writeFile(`${resultsDir}/report.md`, summaryMd + '\n');
+      if (!inCI) console.log(`\nfull report: ${resultsDir}/report.md`);
     }
 
     return ok ? 0 : 1;
@@ -220,4 +257,6 @@ async function main(argv: string[]): Promise<number> {
   }
 }
 
+// The command's entry point: it only runs as a program, never inside a test.
+/* c8 ignore next */
 if (import.meta.main) process.exit(await main(process.argv.slice(2)));

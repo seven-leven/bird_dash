@@ -107,6 +107,8 @@ export function useLightbox({ props, emit }: LightboxOptions) {
   // ── Actions ──
   const navigateToItem = (index: number) => {
     const target = props.drawnItems[index];
+    // Always found: callers check hasPrevious / hasNext first.
+    /* c8 ignore next */
     if (target) emit('update:item', target); // the item watcher resets zoom + load state
   };
 
@@ -257,6 +259,8 @@ export function useLightbox({ props, emit }: LightboxOptions) {
 
   // ── Keyboard Support ──
   const handleKeydown = (e: KeyboardEvent) => {
+    // Cannot happen: the listener is attached only while open (see the isOpen watcher).
+    /* c8 ignore next */
     if (!props.isOpen) return;
     // Typing in a text field must not zoom or page the image.
     if ((e.target as HTMLElement | null)?.closest?.('input, textarea, [contenteditable="true"]')) {

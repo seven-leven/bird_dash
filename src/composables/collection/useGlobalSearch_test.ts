@@ -48,3 +48,9 @@ test('id match is reported in matchedFields', () => {
   const { globalResults } = useGlobalSearch(ref([birds]), cache, ref('001'));
   assertEquals(globalResults.value[0].results[0].matchedFields, ['id']);
 });
+
+test('a collection whose list has not loaded yet is searched as empty', () => {
+  const sharks = makeCollection('sharks'); // not in the cache
+  const { globalResults } = useGlobalSearch(ref([birds, sharks]), cache, ref('mallard'));
+  assertEquals(globalResults.value.map((g) => g.collection.id), ['birds']);
+});

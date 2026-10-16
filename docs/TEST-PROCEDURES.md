@@ -202,16 +202,23 @@ FC_RUNS_MULTIPLIER=10 npm run test:prop
 ## 8. When coverage is below the floor
 
 ```
-✗ line coverage 91.4% is below the 92% floor
+✗ line coverage 99.8% is below the 100% floor
+✗ branch coverage 99.6% is below the 100% floor
 ```
+
+There are two floors, one for lines and one for branches (both sides of every `if`, `??` and `?.`),
+and both are 100%: every line and branch of the `.ts` code is tested, so any new code without a test
+fails the run.
 
 1. Run `npm run test:report` and open `test-results/report.md`.
 2. Look at **least covered files** and at the **By area** table. New code you added without tests is
    the usual cause.
 3. Add tests for it (section 9). Prefer testing what would hurt most if it broke over what is
    easiest to cover.
-4. Do **not** lower the floor to get a pull request through. If code truly cannot be tested (a
-   command-line entry point), keep it to one line that calls a tested function.
+4. Do **not** lower the floor to get a pull request through. If code truly cannot run in a test (a
+   command-line entry point, a subprocess, a guard for something that cannot happen), keep it to one
+   line and mark it with `/* c8 ignore next */` and a comment saying why. Never mark logic that a
+   test could reach.
 
 The coverage run can also fail with every test passing and the percentage fine:
 
@@ -289,7 +296,7 @@ a failed job: **Re-run failed jobs** on the run's page.
 
 | Task                           | How                                                                                                                                                                                                                                           |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Raise the coverage floor       | Edit `--min-lines` in `package.json` (three scripts). Leave a few points of headroom. Never lower                                                                                                                                             |
+| Coverage floors                | `--min-lines` and `--min-branches` in `package.json` (three scripts), both 100. Never lower them; test the new code or mark it `c8 ignore` with the reason                                                                                    |
 | Update dependencies            | Every version is exact (no `^`; `.npmrc` sets `save-exact`). `npm outdated`, then `npm install <name>@<version>`, then the full check list in section 3. Run `npm dedupe` after, so only one copy of each `@vue/*` package ships              |
 | Update Node                    | Change `.nvmrc` (and `engines` in `package.json`), run the check list on that version                                                                                                                                                         |
 | Update a GitHub Action         | Actions are pinned to a commit, with the version in a comment. Take the commit of the new release tag (`git ls-remote https://github.com/<owner>/<action> refs/tags/<tag>^{}`), replace both, and read the release notes for breaking changes |
@@ -303,15 +310,16 @@ a failed job: **Re-run failed jobs** on the run's page.
 `npm test` runs [`script/test_runner/run_tests.ts`](../script/test_runner/run_tests.ts). Tier names
 and flags go after a `--`: `npm test -- unit --verbose`.
 
-| Argument or flag  | Effect                                                            |
-| ----------------- | ----------------------------------------------------------------- |
-| `unit dom …`      | Run only these tiers (any of `unit`, `dom`, `prop`, `contract`)   |
-| `--verbose`, `-v` | Also list every test file with its count and time                 |
-| `--fail-fast`     | Stop at the first failure                                         |
-| `--coverage`      | Measure coverage and print the least-covered files                |
-| `--min-lines=N`   | With `--coverage`: fail if total line coverage is below N percent |
-| `--report`        | Save the full report to `test-results/report.md`                  |
-| `--html`          | With `--coverage`: also write `test-results/coverage/index.html`  |
+| Argument or flag   | Effect                                                            |
+| ------------------ | ----------------------------------------------------------------- |
+| `unit dom …`       | Run only these tiers (any of `unit`, `dom`, `prop`, `contract`)   |
+| `--verbose`, `-v`  | Also list every test file with its count and time                 |
+| `--fail-fast`      | Stop at the first failure                                         |
+| `--coverage`       | Measure coverage and print the least-covered files                |
+| `--min-lines=N`    | With `--coverage`: fail if total line coverage is below N percent |
+| `--min-branches=N` | With `--coverage`: the same for branch coverage                   |
+| `--report`         | Save the full report to `test-results/report.md`                  |
+| `--html`           | With `--coverage`: also write `test-results/coverage/index.html`  |
 
 | Environment variable  | Effect                                                      |
 | --------------------- | ----------------------------------------------------------- |
@@ -341,7 +349,7 @@ tests.
 5. **Summarise by tier** (`test_summary.ts`) and **by area** (`areas.ts`), and print both tables. On
    a failure, print the failures first and then Vitest's captured output.
 6. **Coverage** (`coverage.ts`): read the LCOV file into per-file numbers, compare the total with
-   the floor, and work out which source files no test loaded.
+   floors, and work out which source files no test loaded.
 7. **Write the report**: to the GitHub job summary in CI, and to `test-results/report.md` in CI or
    with `--report`.
 8. **Exit** with the code from section 13.
