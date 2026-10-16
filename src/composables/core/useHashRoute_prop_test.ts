@@ -1,13 +1,13 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../../script/test/helpers/prop.ts';
+import { assertProperty } from '../../test_helpers/property_runs.ts';
 import { buildHash, parseHash } from './useHashRoute.ts';
 
 // ids that can legally appear in a URL segment of ours: no '/', no '#'
 const segment = fc.stringMatching(/^[a-zA-Z0-9_-]{1,16}$/);
 
-Deno.test('property: parseHash inverts buildHash for any collection and item', () => {
+test('property: parseHash inverts buildHash for any collection and item', () => {
   assertProperty(
     fc.property(segment, fc.oneof(fc.constant(''), segment), (collectionId, itemId) => {
       assertEquals(parseHash(`#${buildHash(collectionId, itemId)}`), { collectionId, itemId });
@@ -15,7 +15,7 @@ Deno.test('property: parseHash inverts buildHash for any collection and item', (
   );
 });
 
-Deno.test('property: parseHash never throws and never returns a "/" inside an id', () => {
+test('property: parseHash never throws and never returns a "/" inside an id', () => {
   assertProperty(
     fc.property(fc.string(), (hash) => {
       const { collectionId, itemId } = parseHash(hash);
@@ -25,7 +25,7 @@ Deno.test('property: parseHash never throws and never returns a "/" inside an id
   );
 });
 
-Deno.test('property: a leading "#" or "#/" prefix makes no difference', () => {
+test('property: a leading "#" or "#/" prefix makes no difference', () => {
   assertProperty(
     fc.property(segment, segment, (c, i) => {
       const body = buildHash(c, i);

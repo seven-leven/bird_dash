@@ -68,7 +68,7 @@ import IdBadge from '../ui/IdBadge.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { tileImage } from '../../lib/collectionItems.ts';
 import { useUi } from '../../stores/ui.ts';
-import type { GlobalSearchResult } from '../../types';
+import type { GlobalSearchResult } from '../../types/index.ts';
 import type { VisibleGroup } from '../../lib/collapseGroups.ts';
 
 const { theme } = useUi();

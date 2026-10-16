@@ -8,7 +8,7 @@
     >
       <div
         v-if="isOpen"
-        ref="dialogRef"
+        :ref="setDialogRef"
         role="dialog"
         aria-modal="true"
         :aria-label="currentItem ? `${currentItem.commonName}, #${currentItem.itemId}` : 'Image viewer'"
@@ -137,7 +137,7 @@
 <script setup lang="ts">
 import ItemSheet from './ItemSheet.vue';
 import Icon from '../icons/Icon.vue';
-import type { CollectionItem, CollectionConfig } from '../../types/';
+import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 import { useLightbox } from '../../composables/ui/useLightBox.ts';
 
 const props = defineProps<{
@@ -180,4 +180,9 @@ const {
   handleImageLoad,
   handleImageError
 } = useLightbox({ props, emit });
+
+/** Hands the dialog element to useLightbox (its focus trap reads it). */
+const setDialogRef = (el: unknown) => {
+  dialogRef.value = el instanceof HTMLElement ? el : null;
+};
 </script>

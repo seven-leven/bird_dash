@@ -1,12 +1,11 @@
-/// <reference lib="deno.ns" />
+import { test, vi } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { FakeTime } from '@std/testing/time';
 import { nextTick, ref } from 'vue';
 import { useDebouncedRef } from './useDebounce.ts';
-import { runInScope } from '../../../script/test/helpers/fixtures.ts';
+import { runInScope } from '../../test_helpers/fixtures.ts';
 
-Deno.test('debounced ref trails the source by the delay', async () => {
-  const time = new FakeTime();
+test('debounced ref trails the source by the delay', async () => {
+  vi.useFakeTimers();
   try {
     const { value: { source, debounced }, stop } = runInScope(() => {
       const source = ref('a');
@@ -19,17 +18,17 @@ Deno.test('debounced ref trails the source by the delay', async () => {
     await nextTick(); // let the watch fire and schedule the timeout
     assertEquals(debounced.value, 'a'); // not yet — still within the delay
 
-    await time.tickAsync(120);
+    await vi.advanceTimersByTimeAsync(120);
     assertEquals(debounced.value, 'b'); // trailing edge fired
 
     stop();
   } finally {
-    time.restore();
+    vi.useRealTimers();
   }
 });
 
-Deno.test('a burst collapses to a single trailing update', async () => {
-  const time = new FakeTime();
+test('a burst collapses to a single trailing update', async () => {
+  vi.useFakeTimers();
   try {
     const { value: { source, debounced }, stop } = runInScope(() => {
       const source = ref(0);
@@ -39,15 +38,15 @@ Deno.test('a burst collapses to a single trailing update', async () => {
     for (const n of [1, 2, 3]) {
       source.value = n;
       await nextTick();
-      await time.tickAsync(50); // each change resets the 100ms timer
+      await vi.advanceTimersByTimeAsync(50); // each change resets the 100ms timer
     }
     assertEquals(debounced.value, 0); // none have settled yet
 
-    await time.tickAsync(100);
+    await vi.advanceTimersByTimeAsync(100);
     assertEquals(debounced.value, 3); // only the last value lands
 
     stop();
   } finally {
-    time.restore();
+    vi.useRealTimers();
   }
 });

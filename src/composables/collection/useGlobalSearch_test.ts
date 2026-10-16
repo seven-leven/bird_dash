@@ -1,8 +1,8 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useGlobalSearch } from './useGlobalSearch.ts';
-import { makeCollection, makeItem } from '../../../script/test/helpers/fixtures.ts';
+import { makeCollection, makeItem } from '../../test_helpers/fixtures.ts';
 import type { CollectionCache } from '../../types/index.ts';
 
 const birds = makeCollection('birds');
@@ -17,7 +17,7 @@ const cache: CollectionCache = {
   ],
 };
 
-Deno.test('empty query yields no groups and zero count', () => {
+test('empty query yields no groups and zero count', () => {
   const { globalResults, globalResultCount } = useGlobalSearch(
     ref([birds, shells]),
     cache,
@@ -27,7 +27,7 @@ Deno.test('empty query yields no groups and zero count', () => {
   assertEquals(globalResultCount.value, 0);
 });
 
-Deno.test('matches group by collection with counts', () => {
+test('matches group by collection with counts', () => {
   const { globalResults, globalResultCount } = useGlobalSearch(
     ref([birds, shells]),
     cache,
@@ -38,13 +38,13 @@ Deno.test('matches group by collection with counts', () => {
   assertEquals(byId.birds, 2);
 });
 
-Deno.test('matchedFields flags which display fields matched', () => {
+test('matchedFields flags which display fields matched', () => {
   const { globalResults } = useGlobalSearch(ref([birds]), cache, ref('mallard'));
   const result = globalResults.value[0].results[0];
   assertEquals(result.matchedFields, ['commonName']);
 });
 
-Deno.test('id match is reported in matchedFields', () => {
+test('id match is reported in matchedFields', () => {
   const { globalResults } = useGlobalSearch(ref([birds]), cache, ref('001'));
   assertEquals(globalResults.value[0].results[0].matchedFields, ['id']);
 });

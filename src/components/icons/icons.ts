@@ -143,7 +143,7 @@ export const isIconName = (name: string | undefined): name is IconName =>
   name !== undefined && Object.hasOwn(ICONS, name);
 
 /**
- * The icons in the order they are documented (docs/icons.png, the design guide):
+ * The icons in the order they are documented (docs/assets/icons.png, the design guide):
  * grouped by what they are for. Every icon belongs to exactly one group — a
  * test checks that, so a new icon cannot be left out of the sheet.
  */

@@ -1,9 +1,9 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { createSearchStore } from './search.ts';
-import { runInScope } from '../../script/test/helpers/fixtures.ts';
+import { runInScope } from '../test_helpers/fixtures.ts';
 
-Deno.test('setQuery updates the query and opens the dropdown for non-empty input', () => {
+test('setQuery updates the query and opens the dropdown for non-empty input', () => {
   const { value: s, stop } = runInScope(() => createSearchStore());
   assertEquals(s.query.value, '');
   assertEquals(s.dropdownOpen.value, false);
@@ -14,14 +14,14 @@ Deno.test('setQuery updates the query and opens the dropdown for non-empty input
   stop();
 });
 
-Deno.test('setQuery with blank input does not open the dropdown', () => {
+test('setQuery with blank input does not open the dropdown', () => {
   const { value: s, stop } = runInScope(() => createSearchStore());
   s.setQuery('   ');
   assertEquals(s.dropdownOpen.value, false);
   stop();
 });
 
-Deno.test('setDropdown toggles independently; clear resets both', () => {
+test('setDropdown toggles independently; clear resets both', () => {
   const { value: s, stop } = runInScope(() => createSearchStore());
   s.setQuery('x');
   s.setDropdown(false);

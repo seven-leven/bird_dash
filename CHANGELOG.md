@@ -1,8 +1,8 @@
 # Changelog
 
-How the version number is built is explained in the README ("Versioning"); `deno task version`
-prints it. To log new work here, run `deno task changelog` — it inserts every commit made since this
-file was last touched at the top of the newest section, ready to edit and commit.
+How the version number is built is explained in the README ("Versioning"); `npm run version` prints
+it. To log new work here, run `npm run changelog` — it inserts every commit made since this file was
+last touched at the top of the newest section, ready to edit and commit.
 
 The site deploys on every merge to `main`, so there is no "unreleased" work: anything listed here is
 live.
@@ -16,6 +16,19 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | script/: one folder per command (`build/`, `version/`, `changelog/`, `design/`,
+  `placeholders/`, `test_runner/`) plus `lib/`, with file names that say what they do; the shared
+  test helpers move to `src/test_helpers/`. Script names are unchanged
+  (docs/plans/SCRIPTS-LAYOUT.md)
+- 2026-10-16 | deps: everything on its latest version and pinned exactly (Vue 3.5.44, Vite 8.3.4,
+  Tailwind 4.3.3, sharp 0.35.5, Vitest 5.0.5, TypeScript 6.0.3, the newest typescript-eslint
+  supports), Node pinned to 24.22.0 (the latest LTS), and every GitHub Action on its latest release,
+  pinned to that release's commit
+- 2026-10-16 | tooling: moved from Deno to Node 24 + npm. Tests run on Vitest (same files, same
+  tiers, same `npm test` summary), `vue-tsc` now type-checks the `.vue` components too, ESLint and
+  dprint replace `deno lint` and `deno fmt` (same formatting), and CI uses `setup-node`. The site
+  build is unchanged; the line-coverage floor is re-based to 91% because the test runner itself is
+  now measured (see docs/plans/MIGRATION.md)
 - 2026-10-14 | tests: no untested files left — the build command, the design-guide generator and the
   logo generator are tested (which step runs for which arguments, exit codes, a real asset build on
   a throwaway collection, every generated image written at the right size, and `docs/` kept in step
@@ -76,8 +89,8 @@ was the drawing count.
   honours the "reduce motion" system setting
 - 2026-10-05 | icons: collections get line icons (bird, shark, shell) in place of emoji, named by an
   optional `icon` field in `collections.json`; the no-results icon no longer duplicates zoom-out and
-  the group view uses a hierarchy icon; placeholders are redrawn from the collection icons by
-  `deno task placeholders`
+  the group view uses a hierarchy icon; placeholders are redrawn from the collection icons by `deno
+  task placeholders`
 - 2026-10-05 | one visual system: design tokens in `main.css` (two corner radii, one small label
   size, two animation speeds, three text levels on dark surfaces); collection tabs, the view switch
   and sidebar sections share one "current" look driven by ARIA state; the view toggle shows both
@@ -99,10 +112,10 @@ was the drawing count.
   count and the commit (`v0.8.157 · 18 drawings · 4f0f400`) instead of the zero-padded
   `0.8.157+018`; without git a local build warns and CI fails; the README's "Versioning" section is
   the single explanation
-- 2026-09-30 | test harness: tests are tiered by file name (unit / dom / prop / contract) and
-  `deno task test` prints one row per tier (about 9 lines instead of 151), lists failures first, and
-  in CI writes a job summary, annotates failures and keeps the JUnit file; a weekly `nightly.yml`
-  runs the property tests at 25× depth
+- 2026-09-30 | test harness: tests are tiered by file name (unit / dom / prop / contract) and `deno
+  task test` prints one row per tier (about 9 lines instead of 151), lists failures first, and in CI
+  writes a job summary, annotates failures and keeps the JUnit file; a weekly `nightly.yml` runs the
+  property tests at 25× depth
 - 2026-09-30 | tests grown from 44 to 147: fake-DOM tests for the URL router, lightbox and theme,
   property-based tests (fast-check) for hash round-trips, zoom/gesture maths, the asset planner and
   the data pipeline; line coverage from 47.8% to over 70% with a 70% floor; the tests also run in
@@ -144,8 +157,8 @@ was the drawing count.
 - 2026-07-05 | performance: precomputed item fields (isDrawn / sortKey / searchText), native lazy
   images, debounced search, shallowReactive immutable data, code-split lightbox, Vue prod flags and
   a vendor chunk
-- 2026-07-05 | derived versioning (patch = commit count, +count = illustrations) and
-  `deno task changelog`; feature-based component structure with `useAppContext` provide/inject
+- 2026-07-05 | derived versioning (patch = commit count, +count = illustrations) and `deno task
+  changelog`; feature-based component structure with `useAppContext` provide/inject
 - 2026-07-05 | docs: README rewritten for the new architecture
 - 2026-07-05 | repo hygiene: PR CI (lint/format/build), LF line-ending policy, Pages moved to
   workflow builds, dead gh-pages branch removed

@@ -1,12 +1,11 @@
-/// <reference lib="deno.ns" />
+import { test, vi } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
-import { FakeTime } from '@std/testing/time';
 import { flashItem } from './flashItem.ts';
-import { withDom } from '../../script/test/helpers/dom.ts';
+import { withDom } from '../test_helpers/with_dom.ts';
 
-Deno.test('flashItem scrolls the tile into view and rings it, then clears the ring', () =>
+test('flashItem scrolls the tile into view and rings it, then clears the ring', () =>
   withDom(async () => {
-    const time = new FakeTime();
+    vi.useFakeTimers();
     try {
       const tile = document.createElement('div');
       tile.id = 'item-042';
@@ -18,14 +17,14 @@ Deno.test('flashItem scrolls the tile into view and rings it, then clears the ri
       assertEquals(scrolled, { behavior: 'smooth', block: 'center' });
       assert(tile.classList.contains('ring-2'));
 
-      await time.tickAsync(1800);
+      await vi.advanceTimersByTimeAsync(1800);
       assert(!tile.classList.contains('ring-2'), 'ring should be removed after 1.8s');
     } finally {
-      time.restore();
+      vi.useRealTimers();
     }
   }));
 
-Deno.test('flashItem quietly ignores an item that is not on screen', () =>
+test('flashItem quietly ignores an item that is not on screen', () =>
   withDom(() => {
     flashItem('nope'); // must not throw
   }));

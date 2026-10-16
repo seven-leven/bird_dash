@@ -22,7 +22,7 @@ lightbox.
 
 ## Tech Stack
 
-- **Runtime & tooling:** [Deno](https://deno.land/)
+- **Runtime & tooling:** [Node.js](https://nodejs.org/) 24 and npm; Vitest, vue-tsc, ESLint, dprint
 - **Framework:** Vue 3 (`<script setup>`, composables, provide/inject)
 - **Build tool:** Vite
 - **Styling:** Tailwind CSS v4 (single accent design token, class-based dark mode)
@@ -35,11 +35,11 @@ lightbox.
 git clone https://github.com/seven-leven/bird_dash.git
 cd bird_dash
 
-# 2. Install dependencies (sharp needs its native binary, hence --allow-scripts)
-deno install --allow-scripts
+# 2. Install dependencies (Node 24; see .nvmrc)
+npm install
 
 # 3. Run the dev server
-deno task dev
+npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
@@ -65,12 +65,18 @@ src/
   composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
   lib/                  Small framework-free helpers
   types/                Shared TypeScript types
-script/                 Deno build pipeline (transcode, integrity, version, changelog)
-  version/version.json  Stored major/minor only — patch and count are derived
-  test/                 The test runner; test/helpers/ holds shared fixtures, the fake-DOM
-                        setup and property-test depth. The tests themselves sit next to
-                        the code they cover (see Testing)
-docs/                   Design guide, icon sheet, TODO
+script/                 One folder per command, run by Node; shared code in lib/
+  build/                Transcode, register and check the images; the Vite build
+  version/              The derived version; base_version.json stores major/minor only
+  changelog/            Insert unlogged commits into CHANGELOG.md
+  design/               Draw the design guide, icon sheet and logo (docs/assets/)
+  placeholders/         Draw the placeholder images
+  test_runner/          The test runner (`npm test`): tiers, areas, reports, coverage
+  lib/                  Collections, list files, fs and git helpers
+src/test_helpers/       Shared test fixtures, the fake-DOM setup and property-test depth.
+                        The tests themselves sit next to the code they cover (see Testing)
+docs/                   Reference guides at the top level; plans/ for work not done yet,
+                        assets/ for generated images (see docs/README.md)
 ```
 
 State flows one way: `App.vue` creates the stores in dependency order (search and ui → collections →
@@ -136,59 +142,61 @@ rendered specially; any other string fields appear in the info panel.
 
 1. Drop the source PNG in `raw_png/<collection>/<id>.png` (e.g. `raw_png/birds/005.png`).
 2. Add or update the item's entry in `public/lists/<collection>.json`, giving it a `drawn` date.
-3. Run `deno task build:assets` to transcode the PNG into `full/` and `thumb/` WebPs.
+3. Run `npm run build:assets` to transcode the PNG into `full/` and `thumb/` WebPs.
 
 ### Adding a collection
 
 1. Add an entry to `public/collections.json`.
 2. Create `public/lists/<id>.json`. Add an icon for it to `icons.ts`, name it in the entry, and run
-   `deno task placeholders` to draw its light and dark placeholders (`public/placeholders/<id>.webp`
+   `npm run placeholders` to draw its light and dark placeholders (`public/placeholders/<id>.webp`
    and `<id>-dark.webp`) from it.
-3. Add source art under `raw_png/<id>/` and run `deno task build:assets`.
+3. Add source art under `raw_png/<id>/` and run `npm run build:assets`.
 
 ## Documentation
 
-| Guide                                                  | What it covers                                                    |
-| ------------------------------------------------------ | ----------------------------------------------------------------- |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)         | The three programs, the layers of the site, the stores, the rules |
-| [`docs/DATA.md`](docs/DATA.md)                         | Every field in `collections.json` and the list files; recipes     |
-| [`docs/TESTING.md`](docs/TESTING.md)                   | Tiers, writing tests, coverage, CI                                |
-| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md)   | Step by step: setup, running, failures, maintenance, the runner   |
-| [`docs/COVERAGE-ROADMAP.md`](docs/COVERAGE-ROADMAP.md) | What is left untested, and the phases to reach 100%               |
-| [`docs/DESIGN.md`](docs/DESIGN.md)                     | Colours, type, spacing, states, icons; a checklist for UI changes |
+Start at [`docs/README.md`](docs/README.md), the index. The reference guides:
 
-[`docs/design-guide.png`](docs/design-guide.png), [`docs/icons.png`](docs/icons.png) and
-[`docs/logo.png`](docs/logo.png) are drawn from the real tokens, icons and logo by
-`deno task design`, which also writes the logo files in `docs/logo/`.
+| Guide                                                | What it covers                                                    |
+| ---------------------------------------------------- | ----------------------------------------------------------------- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)       | The three programs, the layers of the site, the stores, the rules |
+| [`docs/DATA.md`](docs/DATA.md)                       | Every field in `collections.json` and the list files; recipes     |
+| [`docs/DESIGN.md`](docs/DESIGN.md)                   | Colours, type, spacing, states, icons; a checklist for UI changes |
+| [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                |
+| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner   |
+
+Plans (the coverage roadmap, the finished Deno → Node migration, the `script/` layout, the backlog)
+live in [`docs/plans/`](docs/plans/). The images in [`docs/assets/`](docs/assets/) are drawn from
+the real tokens, icons and logo by `npm run design`.
 
 ## Tasks
 
-| Task                                              | Description                                                          |
-| ------------------------------------------------- | -------------------------------------------------------------------- |
-| `deno task dev`                                   | Start the Vite dev server                                            |
-| `deno task build`                                 | Full build: transcode assets, then bundle the frontend               |
-| `deno task build:assets`                          | Transcode images and register new items only                         |
-| `deno task build:vite`                            | Bundle the frontend only (assumes assets are built)                  |
-| `deno task check`                                 | Integrity check (missing/orphaned images); exits 1 on problems       |
-| `deno task test`                                  | Every test tier, one summary row per tier (`test unit dom` for some) |
-| `deno task test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                       |
-| `deno task test:watch`                            | Re-run the tests on every save                                       |
-| `deno task test:coverage`                         | Every tier + coverage table; fails below the line-coverage floor     |
-| `deno task test:report`                           | The same, saving the full report to `test-results/report.md`         |
-| `deno task typecheck`                             | Type-check the `.ts` sources (`.vue` templates are not covered)      |
-| `deno task version`                               | Print the current derived version                                    |
-| `deno task changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews) |
-| `deno task placeholders`                          | Redraw the placeholder images from each collection's icon            |
-| `deno task design`                                | Redraw the design guide image and the icon sheet                     |
-| `deno task preview`                               | Preview the production build locally                                 |
-| `deno task lint` / `format`                       | Lint and format                                                      |
+| Task                                            | Description                                                          |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| `npm run dev`                                   | Start the Vite dev server                                            |
+| `npm run build`                                 | Full build: transcode assets, then bundle the frontend               |
+| `npm run build:assets`                          | Transcode images and register new items only                         |
+| `npm run build:vite`                            | Bundle the frontend only (assumes assets are built)                  |
+| `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems       |
+| `npm test`                                      | Every test tier, one summary row per tier (`npm test -- unit dom`)   |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                       |
+| `npm run test:watch`                            | Re-run the tests on every save                                       |
+| `npm run test:coverage`                         | Every tier + coverage table; fails below the line-coverage floor     |
+| `npm run test:report`                           | The same, saving the full report to `test-results/report.md`         |
+| `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`   |
+| `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)     |
+| `npm run version`                               | Print the current derived version                                    |
+| `npm run changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews) |
+| `npm run placeholders`                          | Redraw the placeholder images from each collection's icon            |
+| `npm run design`                                | Redraw the design guide image and the icon sheet                     |
+| `npm run preview`                               | Preview the production build locally                                 |
+| `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks        |
 
 ## Testing
 
 Tests sit next to the code they cover, and the file name decides the tier: `x_test.ts` (unit),
 `x_dom_test.ts` (fake browser), `x_prop_test.ts` (property-based) and `x_contract_test.ts` (the real
-files in this repo). `deno task test` runs them all and prints one row per tier;
-`deno task test:coverage` adds a coverage table and fails below the floor.
+files in this repo). `npm test` runs them all and prints one row per tier; `npm run test:coverage`
+adds a coverage table and fails below the floor.
 
 [`docs/TESTING.md`](docs/TESTING.md) has the full guide: choosing a tier, writing a test, property
 tests, coverage, and what CI runs.
@@ -199,24 +207,24 @@ The footer of the site reads something like `v0.9.161 · 18 drawings · 4f0f400`
 stored except `major.minor`; the rest is worked out from the repo when the site is built, so it
 cannot drift.
 
-| Part          | Where it comes from                                                                               |
-| ------------- | ------------------------------------------------------------------------------------------------- |
-| `0.9`         | `script/version/version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
-| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below               |
-| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                    |
-| `4f0f400`     | the commit the build was made from                                                                |
+| Part          | Where it comes from                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| `0.9`         | `script/version/base_version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
+| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below                    |
+| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                         |
+| `4f0f400`     | the commit the build was made from                                                                     |
 
 - **The patch is a build counter, not a count of fixes.** On `main` it includes merge commits, so it
   rises by a few with every merged PR, and a local branch shows a different number from the deployed
   site (which is why the commit is shown too).
-- **One implementation.** [`script/version/compute.ts`](script/version/compute.ts) computes all of
-  it. `deno task version` prints it (`--long` for the whole line), the build and check summaries
-  print it, and `vite.config.ts` calls the same function to inject it into the footer.
+- **One implementation.** [`script/version/version.ts`](script/version/version.ts) computes all of
+  it. `npm run version` prints it (`--long` for the whole line), the build and check summaries print
+  it, and `vite.config.ts` calls the same function to inject it into the footer.
 - **Without git** (e.g. a zip download) a local build warns and shows patch `0` / commit `unknown`;
-  `deno task version` and any build with `CI` set fail instead of inventing a number.
+  `npm run version` and any build with `CI` set fail instead of inventing a number.
 
 There are no git hooks, tags or releases: CI and the deploy are the only gates. Changelog entries
-are curated with `deno task changelog`, which lists every commit made since `CHANGELOG.md` was last
+are curated with `npm run changelog`, which lists every commit made since `CHANGELOG.md` was last
 touched and inserts them at the top of the newest section to edit and commit. Every merge to `main`
 deploys, so there is no "unreleased" section.
 

@@ -1,9 +1,9 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useScrollLogic } from './useScrollLogic.ts';
-import { runInScope } from '../../../script/test/helpers/fixtures.ts';
-import { withDom } from '../../../script/test/helpers/dom.ts';
+import { runInScope } from '../../test_helpers/fixtures.ts';
+import { withDom } from '../../test_helpers/with_dom.ts';
 
 // The scroll-spy reads positions from the layout, which a fake DOM does not
 // have. So each element is given the position the test wants it to report.
@@ -64,7 +64,7 @@ function setup(headers: Record<string, number>, mobile = false) {
   return { spy, stop, observer, container, tops, els, scrolls, closed: () => closed };
 }
 
-Deno.test('the active section is the last header that has passed the line near the top', () =>
+test('the active section is the last header that has passed the line near the top', () =>
   withDom(() => {
     // The line is 100px below the top of the container.
     const t = setup({ Ducks: -400, Herons: 40, Terns: 600 });
@@ -77,7 +77,7 @@ Deno.test('the active section is the last header that has passed the line near t
     t.stop();
   }));
 
-Deno.test('with every header still below the line, the previous section is kept', () =>
+test('with every header still below the line, the previous section is kept', () =>
   withDom(() => {
     const t = setup({ Ducks: 300, Herons: 700 });
     t.spy.updateActiveSection();
@@ -85,7 +85,7 @@ Deno.test('with every header still below the line, the previous section is kept'
     t.stop();
   }));
 
-Deno.test('updating watches every header and a band at the top of the container', () =>
+test('updating watches every header and a band at the top of the container', () =>
   withDom(() => {
     const t = setup({ Ducks: 0, Herons: 500 });
     t.spy.updateActiveSection();
@@ -99,7 +99,7 @@ Deno.test('updating watches every header and a band at the top of the container'
     t.stop();
   }));
 
-Deno.test('fast scrolling is caught by the scroll listener, at most once per 100ms', () =>
+test('fast scrolling is caught by the scroll listener, at most once per 100ms', () =>
   withDom(() => {
     const t = setup({ Ducks: -50, Herons: 900 });
     let now = 1000;
@@ -128,7 +128,7 @@ Deno.test('fast scrolling is caught by the scroll listener, at most once per 100
     t.stop();
   }));
 
-Deno.test('jumping to a section scrolls just above it and marks it active at once', () =>
+test('jumping to a section scrolls just above it and marks it active at once', () =>
   withDom(() => {
     const t = setup({ Ducks: 0, Herons: 500 });
     Object.defineProperty(t.els.Herons, 'offsetTop', { value: 1280 });
@@ -139,7 +139,7 @@ Deno.test('jumping to a section scrolls just above it and marks it active at onc
     t.stop();
   }));
 
-Deno.test('on a phone, jumping to a section also closes the sidebar', () =>
+test('on a phone, jumping to a section also closes the sidebar', () =>
   withDom(() => {
     const t = setup({ Ducks: 0 }, true);
     t.spy.goToSection('Ducks');
@@ -147,7 +147,7 @@ Deno.test('on a phone, jumping to a section also closes the sidebar', () =>
     t.stop();
   }));
 
-Deno.test('jumping to a section that is not on the page does nothing', () =>
+test('jumping to a section that is not on the page does nothing', () =>
   withDom(() => {
     const t = setup({ Ducks: 0 });
     t.spy.goToSection('Nope');
@@ -157,7 +157,7 @@ Deno.test('jumping to a section that is not on the page does nothing', () =>
     t.stop();
   }));
 
-Deno.test('before the scroll container exists, updating is a safe no-op', () =>
+test('before the scroll container exists, updating is a safe no-op', () =>
   withDom(() => {
     const observer = fakeObserver();
     const { value: spy, stop } = runInScope(() =>
@@ -168,7 +168,7 @@ Deno.test('before the scroll container exists, updating is a safe no-op', () =>
     stop();
   }));
 
-Deno.test('stopping the spy disconnects the observer and the scroll listener', () =>
+test('stopping the spy disconnects the observer and the scroll listener', () =>
   withDom(() => {
     const t = setup({ Ducks: -10, Herons: 900 });
     t.spy.updateActiveSection();

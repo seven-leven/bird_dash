@@ -19,57 +19,58 @@ jobs:
     name: Lint, types, tests, and build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # Full history: the app version derives patch from the commit count
           fetch-depth: 0
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          deno-version: v2.x
-          cache: true
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Install dependencies
-        run: deno install --allow-scripts
+        run: npm ci
 
       - name: Lint
-        run: deno lint
+        run: npm run lint
 
       - name: Format check
-        run: deno fmt --check
+        run: npm run format:check
 
+      # vue-tsc: the .ts files and the .vue components
       - name: Type check
-        run: deno task typecheck
+        run: npm run typecheck
 
-      # Every test tier (script/test/tiers.ts) plus the coverage floor from deno.jsonc.
+      # Every test tier (script/test_runner/tiers.ts) plus the coverage floor from package.json.
       # The runner writes a per-tier table and the coverage table to the job summary,
       # annotates failures on the changed files, and keeps the JUnit file. Pinned to a
       # timezone west of UTC (the dev machine is UTC+5) so date code that accidentally
       # uses local time fails here instead of for some viewers; the other zones run
       # in `timezones` below.
       - name: Tests (all tiers) with coverage
-        run: deno task test:coverage
+        run: npm run test:coverage
         env:
           TZ: America/Los_Angeles
 
       - name: Keep test results
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: test-results
           path: test-results/
           retention-days: 14
 
       - name: Asset integrity
-        run: deno task check
+        run: npm run check
 
       - name: Build frontend
-        run: deno task build:vite
+        run: npm run build:vite
 
       - name: Upload Pages artifact
         if: ${{ inputs.upload-pages }}
-        uses: actions/upload-pages-artifact@v5
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ./dist
 
@@ -84,18 +85,18 @@ jobs:
       matrix:
         tz: [UTC, Asia/Kolkata, Pacific/Kiritimati]
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Setup Deno
-        uses: denoland/setup-deno@v2
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          deno-version: v2.x
-          cache: true
+          node-version-file: .nvmrc
+          cache: npm
 
       - name: Install dependencies
-        run: deno install --allow-scripts
+        run: npm ci
 
       - name: Tests (all tiers)
-        run: deno task test
+        run: npm test
         env:
           TZ: ${{ matrix.tz }}

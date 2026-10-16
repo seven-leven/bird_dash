@@ -3,38 +3,41 @@
 How the tests are organised, how to run them, and how to write a new one. For step-by-step
 instructions (setting up a machine, what to do when a test or CI fails, maintenance, the runner's
 flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). How to get from today's coverage to 100% is in
-[COVERAGE-ROADMAP.md](COVERAGE-ROADMAP.md).
+[COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md).
 
 ## Running them
 
-| Command                                           | What it does                                                         |
-| ------------------------------------------------- | -------------------------------------------------------------------- |
-| `deno task test`                                  | Every tier, one summary row per tier                                 |
-| `deno task test unit dom`                         | Just the tiers you name                                              |
-| `deno task test:unit` (`dom`, `prop`, `contract`) | One tier                                                             |
-| `deno task test --verbose`                        | Also list every file                                                 |
-| `deno task test:watch`                            | Re-run on every save                                                 |
-| `deno task test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
-| `deno task test:report`                           | The same, and save the full report to `test-results/report.md`       |
-| `deno task typecheck`                             | Type-check every `.ts` file                                          |
-| `deno task check`                                 | Asset integrity: missing or orphaned images                          |
+| Command                                         | What it does                                                         |
+| ----------------------------------------------- | -------------------------------------------------------------------- |
+| `npm test`                                      | Every tier, one summary row per tier                                 |
+| `npm test -- unit dom`                          | Just the tiers you name                                              |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | One tier                                                             |
+| `npm test -- --verbose`                         | Also list every file                                                 |
+| `npm run test:watch`                            | Re-run on every save                                                 |
+| `npm run test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
+| `npm run test:report`                           | The same, and save the full report to `test-results/report.md`       |
+| `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`    |
+| `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)           |
+| `npm run check`                                 | Asset integrity: missing or orphaned images                          |
 
-A passing run prints about ten lines. A failing run lists the failed tests first (file, line,
-message) and then Deno's full output, with the diff or the type error that stopped it.
+A passing run prints about ten lines. A failing run lists the failed tests first (file and message)
+and then Vitest's full output, with the diff and the failing line. The tests run on
+[Vitest](https://vitest.dev/), with the assertions from `@std/assert`.
 
 ## Tiers
 
 Tests sit next to the code they cover, and **the file name decides the tier**.
-[`script/test/tiers.ts`](../script/test/tiers.ts) is the one place that maps names to tiers.
+[`script/test_runner/tiers.ts`](../script/test_runner/tiers.ts) is the one place that maps names to
+tiers.
 
-| Tier       | File name            | Use it for                                               | Helper                               |
-| ---------- | -------------------- | -------------------------------------------------------- | ------------------------------------ |
-| `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `helpers/fixtures.ts`                |
-| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `helpers/dom.ts` (`withDom`)         |
-| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `helpers/prop.ts` (`assertProperty`) |
-| `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                 |
+| Tier       | File name            | Use it for                                               | Helper                                             |
+| ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------------- |
+| `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `test_helpers/fixtures.ts`                         |
+| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `test_helpers/with_dom.ts` (`withDom`)             |
+| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `test_helpers/property_runs.ts` (`assertProperty`) |
+| `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                               |
 
-The helpers are in [`script/test/helpers/`](../script/test/helpers/).
+The helpers are in [`src/test_helpers/`](../src/test_helpers/).
 
 ### Which tier?
 
@@ -50,7 +53,8 @@ The helpers are in [`script/test/helpers/`](../script/test/helpers/).
 ## Areas
 
 Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
-belongs to one area, by its folder ([`script/test/areas.ts`](../script/test/areas.ts)):
+belongs to one area, by its folder
+([`script/test_runner/areas.ts`](../script/test_runner/areas.ts)):
 
 | Area                          | Folders                                                           | Protects                                                  |
 | ----------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
@@ -58,7 +62,7 @@ belongs to one area, by its folder ([`script/test/areas.ts`](../script/test/area
 | Site: state and routing       | `src/stores`, `src/composables/core`                              | The stores, shareable links, theme, accent                |
 | Site: viewer and interface    | `src/composables/ui`, `src/components`                            | The lightbox, scroll-spy, icons and logo                  |
 | Asset pipeline and data files | `script/pipeline`, `image`, `collection`, `placeholders`, `lib`   | Image builds, the integrity check, the files in `public/` |
-| Version and changelog         | `script/version`, `script/changelog.ts`                           | The version in the footer, the changelog task             |
+| Version and changelog         | `script/version`, `script/changelog/changelog.ts`                 | The version in the footer, the changelog task             |
 | Test harness and docs tooling | `script/test`, `script/docs`                                      | The runner and its reports, generated guide images        |
 
 A new folder must be added to an area, or a contract test fails.
@@ -80,7 +84,7 @@ Asset pipeline and data files     41   91.6%               1  ✓
   these, so a high percentage beside a non-zero count here means "well tested, where tested".
 - **result:** a tick, the number of failures, or "no tests".
 
-`deno task test:report` also writes `test-results/report.md`: both tables, any failures, the list of
+`npm run test:report` also writes `test-results/report.md`: both tables, any failures, the list of
 untested files by name, and coverage for every file. CI writes the same report to the job summary
 page on every run and keeps it, with the JUnit file, as the `test-results` artifact for 14 days.
 
@@ -92,11 +96,11 @@ would hurt most if it broke, not with the file that is easiest to cover.
 A unit test:
 
 ```ts
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { drawnOf } from './formatCount.ts';
 
-Deno.test('drawnOf words a share the same way everywhere', () => {
+test('drawnOf words a share the same way everywhere', () => {
   assertEquals(drawnOf(15, 204), '15 of 204 drawn');
 });
 ```
@@ -115,8 +119,9 @@ Conventions:
 - **Code that reads the layout** (the scroll-spy) is tested by giving each fake element the position
   the test wants it to report. That checks the decision, not the browser's measuring.
 - **Use real files when the code is about files.** The asset pipeline tests
-  ([`script/pipeline/pipeline_test.ts`](../script/pipeline/pipeline_test.ts)) build a throwaway
-  collection in a temporary folder with tiny real images, run the real transcoder, and delete it.
+  ([`script/build/build_pipeline_test.ts`](../script/build/build_pipeline_test.ts)) build a
+  throwaway collection in a temporary folder with tiny real images, run the real transcoder, and
+  delete it.
 - **Fake the edges, not the logic.** Stub `fetch`, pass in a fake `git`, use a temporary directory;
   run the real code in between.
 - **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI
@@ -136,7 +141,7 @@ assertProperty(
 );
 ```
 
-- `FC_RUNS_MULTIPLIER=10 deno task test:prop` runs ten times as many inputs.
+- `FC_RUNS_MULTIPLIER=10 npm run test:prop` runs ten times as many inputs.
 - When a property fails, fast-check prints a **seed** and a **path**. Add `{ seed, path }` to the
   parameters to replay exactly that case, fix it, then remove them.
 - Random strings rarely hit special cases. Mix in the tokens that matter (see the highlight test,
@@ -144,17 +149,19 @@ assertProperty(
 
 ## Coverage
 
-`deno task test:coverage` prints the least-covered files and fails if total line coverage is below
-the floor set in `deno.jsonc` (`--min-lines`). The floor only moves up: raise it when coverage has
+`npm run test:coverage` prints the least-covered files and fails if total line coverage is below the
+floor set in `package.json` (`--min-lines`). The floor only moves up: raise it when coverage has
 clearly grown, leaving a few points of headroom.
 
 Two things the number does not tell you:
 
 - **Only files a test imports are counted,** so the percentage alone could hide a file with no tests
-  at all. To close that gap, `deno task test:coverage` also fails if any source file is not imported
+  at all. To close that gap, `npm run test:coverage` also fails if any source file is not imported
   by at least one test, and names it.
-- **`.vue` files are not counted at all.** Deno cannot import them, so component templates are
-  checked by hand in the browser. Logic that matters should live in `.ts` files for this reason.
+- **`.vue` files count only once a test imports one.** No test does yet, so components are checked
+  by hand in the browser, and the untested-files gate covers `.ts` files only. Vitest compiles
+  `.vue` files exactly as the build does, so a component test is now possible; until there are some,
+  logic that matters should live in `.ts` files.
 
 ## In CI
 

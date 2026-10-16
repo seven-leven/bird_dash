@@ -1,15 +1,15 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { monthKey, useCollectionData } from './useCollectionData.ts';
-import { at, makeItem } from '../../../script/test/helpers/fixtures.ts';
+import { at, makeItem } from '../../test_helpers/fixtures.ts';
 import type { CollectionItem, ViewMode } from '../../types/index.ts';
 
 function setup(items: CollectionItem[], query = '', mode: ViewMode = 'group') {
   return useCollectionData(ref(items), ref(query), ref(mode));
 }
 
-Deno.test('group mode: buckets by group, drawn-first then sortKey', () => {
+test('group mode: buckets by group, drawn-first then sortKey', () => {
   const items = [
     makeItem({ itemId: '003', group: 'A', sortKey: 3, isDrawn: false }),
     makeItem({ itemId: '001', group: 'A', sortKey: 1, drawnTime: at(2025, 1) }),
@@ -27,7 +27,7 @@ Deno.test('group mode: buckets by group, drawn-first then sortKey', () => {
   assertEquals({ count: sidebarA.count, total: sidebarA.total }, { count: 1, total: 3 });
 });
 
-Deno.test('filtering: searchText substring narrows all outputs', () => {
+test('filtering: searchText substring narrows all outputs', () => {
   const items = [
     makeItem({ commonName: 'Mallard', group: 'Ducks' }),
     makeItem({ commonName: 'Garganey', group: 'Ducks' }),
@@ -37,13 +37,13 @@ Deno.test('filtering: searchText substring narrows all outputs', () => {
   assertEquals(stats.value.filtered, 1);
 });
 
-Deno.test('filtering ignores surrounding whitespace and letter case in the query', () => {
+test('filtering ignores surrounding whitespace and letter case in the query', () => {
   const items = [makeItem({ commonName: 'Mallard', group: 'Ducks' })];
   const { activeData } = setup(items, '  MALLARD  ');
   assertEquals(activeData.value.grouped['Ducks'].length, 1);
 });
 
-Deno.test('group stats: total = all items, drawn = drawn count', () => {
+test('group stats: total = all items, drawn = drawn count', () => {
   const items = [
     makeItem({ drawnTime: at(2025, 1) }),
     makeItem({ isDrawn: false }),
@@ -53,7 +53,7 @@ Deno.test('group stats: total = all items, drawn = drawn count', () => {
   assertEquals(stats.value, { total: 3, filtered: 3, drawn: 1 });
 });
 
-Deno.test('date mode: buckets drawn items by month, chronological', () => {
+test('date mode: buckets drawn items by month, chronological', () => {
   const items = [
     makeItem({ itemId: '001', drawnTime: at(2025, 3, 10) }),
     makeItem({ itemId: '002', drawnTime: at(2025, 1, 5) }),
@@ -69,7 +69,7 @@ Deno.test('date mode: buckets drawn items by month, chronological', () => {
   assertEquals(stats.value.total, 3);
 });
 
-Deno.test('date mode: allMonths is continuous and marks empty months disabled', () => {
+test('date mode: allMonths is continuous and marks empty months disabled', () => {
   const items = [
     makeItem({ drawnTime: at(2025, 1, 1) }),
     makeItem({ drawnTime: at(2025, 3, 1) }),
@@ -83,7 +83,7 @@ Deno.test('date mode: allMonths is continuous and marks empty months disabled', 
   assertEquals(feb.count, 0);
 });
 
-Deno.test('monthKey buckets by UTC month, so a date on the 1st never slips back a month', () => {
+test('monthKey buckets by UTC month, so a date on the 1st never slips back a month', () => {
   // `YYYY-MM-DD` parses as UTC midnight; a local-time month would report
   // September for this instant anywhere west of UTC.
   assertEquals(monthKey(new Date('2025-10-01')), 'October 2025');
@@ -91,14 +91,14 @@ Deno.test('monthKey buckets by UTC month, so a date on the 1st never slips back 
   assertEquals(monthKey(new Date('2025-12-31')), 'December 2025');
 });
 
-Deno.test('date mode: a drawing dated the 1st lands in its own month and starts the timeline', () => {
+test('date mode: a drawing dated the 1st lands in its own month and starts the timeline', () => {
   const items = [makeItem({ drawnTime: at(2025, 10, 1) })];
   const { activeData } = setup(items, '', 'date');
   assertEquals(Object.keys(activeData.value.grouped), ['October 2025']);
   assertEquals(activeData.value.sidebarItems[0].id, 'October 2025');
 });
 
-Deno.test('searchedDrawnItems: drawn only, ordered by drawnTime then sortKey', () => {
+test('searchedDrawnItems: drawn only, ordered by drawnTime then sortKey', () => {
   const items = [
     makeItem({ itemId: '010', drawnTime: at(2025, 5, 1), sortKey: 10 }),
     makeItem({ itemId: '002', drawnTime: at(2025, 2, 1), sortKey: 2 }),

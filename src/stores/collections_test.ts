@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createCollectionsStore } from './collections.ts';
@@ -52,7 +52,7 @@ async function setup() {
 
 const names = (items: readonly { commonName: string }[]) => items.map((i) => i.commonName);
 
-Deno.test('after init the first collection is active, grouped, and counted', async () => {
+test('after init the first collection is active, grouped, and counted', async () => {
   const { store, restore } = await setup();
   try {
     assertEquals(store.isInitialized.value, true);
@@ -67,7 +67,7 @@ Deno.test('after init the first collection is active, grouped, and counted', asy
   }
 });
 
-Deno.test('the query filters the grid and the counts, across name, group and id', async () => {
+test('the query filters the grid and the counts, across name, group and id', async () => {
   const { store, query, restore } = await setup();
   try {
     query.value = 'heron';
@@ -85,7 +85,7 @@ Deno.test('the query filters the grid and the counts, across name, group and id'
   }
 });
 
-Deno.test('the same query searches every loaded collection for the dropdown', async () => {
+test('the same query searches every loaded collection for the dropdown', async () => {
   const { store, query, restore } = await setup();
   try {
     query.value = 'grey';
@@ -102,7 +102,7 @@ Deno.test('the same query searches every loaded collection for the dropdown', as
   }
 });
 
-Deno.test('date view shows only drawn items, oldest first, and the viewer pages in that order', async () => {
+test('date view shows only drawn items, oldest first, and the viewer pages in that order', async () => {
   const { store, viewMode, restore } = await setup();
   try {
     viewMode.value = 'date';
@@ -115,7 +115,7 @@ Deno.test('date view shows only drawn items, oldest first, and the viewer pages 
   }
 });
 
-Deno.test('switching collection swaps the grid; the cache keeps both', async () => {
+test('switching collection swaps the grid; the cache keeps both', async () => {
   const { store, restore } = await setup();
   try {
     await store.switch('sharks');
@@ -128,7 +128,7 @@ Deno.test('switching collection swaps the grid; the cache keeps both', async () 
   }
 });
 
-Deno.test('components cannot change the loaded data: it is read-only outside the store', async () => {
+test('components cannot change the loaded data: it is read-only outside the store', async () => {
   const { store, restore } = await setup();
   const warn = console.warn;
   console.warn = () => {}; // Vue warns on the attempt; that is the behaviour under test

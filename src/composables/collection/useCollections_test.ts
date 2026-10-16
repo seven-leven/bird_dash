@@ -1,4 +1,4 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useCollections } from './useCollections.ts';
 
@@ -42,7 +42,7 @@ const list = (id: string) => ({
 const names = (items: { commonName: string }[]) => items.map((i) => i.commonName);
 const tick = () => new Promise((r) => setTimeout(r, 0));
 
-Deno.test('init: an HTTP error sets initError instead of hanging or throwing', async () => {
+test('init: an HTTP error sets initError instead of hanging or throwing', async () => {
   const { restore } = stubFetch({}); // everything 404s
   try {
     const c = useCollections();
@@ -54,7 +54,7 @@ Deno.test('init: an HTTP error sets initError instead of hanging or throwing', a
   }
 });
 
-Deno.test('init: a non-JSON response (e.g. an SPA fallback page) gets a readable message', async () => {
+test('init: a non-JSON response (e.g. an SPA fallback page) gets a readable message', async () => {
   const { restore } = stubFetch({ '/collections.json': () => new Response('<!DOCTYPE html>') });
   try {
     const c = useCollections();
@@ -66,7 +66,7 @@ Deno.test('init: a non-JSON response (e.g. an SPA fallback page) gets a readable
   }
 });
 
-Deno.test('init: an empty collection list is reported, not silently ignored', async () => {
+test('init: an empty collection list is reported, not silently ignored', async () => {
   const { restore } = stubFetch({ '/collections.json': () => json([]) });
   try {
     const c = useCollections();
@@ -78,7 +78,7 @@ Deno.test('init: an empty collection list is reported, not silently ignored', as
   }
 });
 
-Deno.test('init: loads the first collection and clears any previous error', async () => {
+test('init: loads the first collection and clears any previous error', async () => {
   const { restore } = stubFetch({
     '/collections.json': () => json([col('a'), col('b')]),
     '/lists/a.json': () => json(list('a')),
@@ -96,7 +96,7 @@ Deno.test('init: loads the first collection and clears any previous error', asyn
   }
 });
 
-Deno.test('a slow load for a collection the user left cannot overwrite the screen or the cache', async () => {
+test('a slow load for a collection the user left cannot overwrite the screen or the cache', async () => {
   const slowB = deferred<Response>();
   const { restore } = stubFetch({
     '/collections.json': () => json([col('a'), col('b'), col('c')]),
@@ -129,7 +129,7 @@ Deno.test('a slow load for a collection the user left cannot overwrite the scree
   }
 });
 
-Deno.test('a failed load for a collection the user left does not show an error', async () => {
+test('a failed load for a collection the user left does not show an error', async () => {
   const slowB = deferred<Response>();
   const { restore } = stubFetch({
     '/collections.json': () => json([col('a'), col('b')]),
@@ -150,7 +150,7 @@ Deno.test('a failed load for a collection the user left does not show an error',
   }
 });
 
-Deno.test('prefetch and an explicit switch share one request per collection', async () => {
+test('prefetch and an explicit switch share one request per collection', async () => {
   const slowB = deferred<Response>();
   const { calls, restore } = stubFetch({
     '/collections.json': () => json([col('a'), col('b')]),
@@ -170,7 +170,7 @@ Deno.test('prefetch and an explicit switch share one request per collection', as
   }
 });
 
-Deno.test('switching to an unknown collection id is a no-op', async () => {
+test('switching to an unknown collection id is a no-op', async () => {
   const { restore } = stubFetch({
     '/collections.json': () => json([col('a')]),
     '/lists/a.json': () => json(list('a')),
@@ -186,7 +186,7 @@ Deno.test('switching to an unknown collection id is a no-op', async () => {
   }
 });
 
-Deno.test('a collection whose list fails to load shows the error, and loading stops', async () => {
+test('a collection whose list fails to load shows the error, and loading stops', async () => {
   const { restore } = stubFetch({
     '/collections.json': () => json([col('a'), col('b')]),
     '/lists/a.json': () => json(list('a')),
@@ -207,7 +207,7 @@ Deno.test('a collection whose list fails to load shows the error, and loading st
   }
 });
 
-Deno.test('globalStats counts drawn and total across every loaded collection', async () => {
+test('globalStats counts drawn and total across every loaded collection', async () => {
   const { restore } = stubFetch({
     '/collections.json': () => json([col('a'), col('b')]),
     '/lists/a.json': () =>
@@ -224,7 +224,7 @@ Deno.test('globalStats counts drawn and total across every loaded collection', a
   }
 });
 
-Deno.test('link templates from collections.json become functions of the item', async () => {
+test('link templates from collections.json become functions of the item', async () => {
   const { restore } = stubFetch({
     '/collections.json': () =>
       json([{

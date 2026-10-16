@@ -10,9 +10,8 @@ import type {
   RawCollectionData,
 } from '../../types/index.ts';
 
-// Self-contained cast (not import.meta.env directly): under `deno check`, the
-// ImportMetaEnv type only resolves when vite-env.d.ts is in the same check set,
-// so keep this file independent of that ambient reference.
+// Self-contained cast (not import.meta.env directly), so this file also loads
+// where Vite has not defined import.meta.env; the base is then '/'.
 const getBase = () =>
   (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 

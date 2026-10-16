@@ -3,11 +3,11 @@
 How Wildlife Illustrated looks, and the rules that keep it looking that way. Read this before adding
 a button, a colour or an icon.
 
-![Design guide](design-guide.png)
+![Design guide](assets/design-guide.png)
 
-The picture is drawn from the real tokens and icons by `deno task design`. The tokens themselves
-live in [`src/assets/main.css`](../src/assets/main.css); that file is the source of truth, and this
-page explains how to use it.
+The picture is drawn from the real tokens and icons by `npm run design`. The tokens themselves live
+in [`src/assets/main.css`](../src/assets/main.css); that file is the source of truth, and this page
+explains how to use it.
 
 ## The one idea
 
@@ -160,7 +160,7 @@ the "reduce motion" system setting, which turns transitions and smooth scrolling
 
 ## 7. Logo
 
-![Logo](logo.png)
+![Logo](assets/logo.png)
 
 The logo is a bird perched on the open edge of an unfinished frame: a page corner with one side
 missing, and the bird looking out of it. It is drawn with the same round 2px stroke as the icons, so
@@ -168,7 +168,8 @@ the logo and the interface share one hand. The bird is an outline of a perching 
 breast, wing, legs); the `bird` icon used for the collection tab and the placeholders is the same
 bird redrawn at the 24px icon grid. The tile is the same drawing reversed onto a solid square, not a
 second design. The source is [`src/components/icons/logo.ts`](../src/components/icons/logo.ts);
-`<LogoMark />` draws it, and `deno task design` writes the files in [`docs/logo/`](logo/).
+`<LogoMark />` draws it, and `npm run design` writes the files in
+[`docs/assets/logo/`](assets/logo/).
 
 | Version               | Use it for                                             | File                              |
 | --------------------- | ------------------------------------------------------ | --------------------------------- |
@@ -190,13 +191,13 @@ Rules:
   shadow, or set the wordmark in another font or in capitals.
 
 The browser-tab icon is still one of the drawings (`public/favicon.png`). To use the logo there
-instead, replace it with `docs/logo/tile-512.png`.
+instead, replace it with `docs/assets/logo/tile-512.png`.
 
 ## 8. Icons
 
 Every icon lives in [`src/components/icons/icons.ts`](../src/components/icons/icons.ts) and is drawn
 by `<Icon name="…" />`. The only other SVG in the project is the logo, in the same folder. See
-[`icons.png`](icons.png).
+[`icons.png`](assets/icons.png).
 
 The registry is grouped by purpose, and the file, the sheet and this guide all follow the same
 order: **Collections** (bird, shark, shell), **Views** (taxonomy, calendar), **Search** (search,
@@ -220,13 +221,13 @@ To add one, match the set:
 - 24 × 24 grid, drawn to fill most of it; keep about 1.5px clear of the edge.
 - 2px stroke, round ends and joins, **no fills** (a dot is a zero-length line: `M16 7h.01`).
 - One or two bold shapes. If it needs more than about five strokes, simplify it.
-- It must still read at 16px. Check with `deno task design` and look at `docs/icons.png`.
+- It must still read at 16px. Check with `npm run design` and look at `docs/assets/icons.png`.
 - **Brand marks are the exception.** Another organisation's logo (GitHub's, in the footer) is shown
   exactly as its owner publishes it, solid fill included, and marked `filled` in the registry. Do
   not redraw a brand mark in our line style: it is not ours to change, and most brands forbid it.
   Show it in one colour, next to the brand's name.
-- Colour comes from the text colour (`currentColor`); size from `w-4 h-4` (16px) in controls or
-  `w-5 h-5`/`w-6 h-6` for standalone use.
+- Colour comes from the text colour (`currentColor`); size from `w-4 h-4` (16px) in controls or `w-5
+  h-5`/`w-6 h-6` for standalone use.
 - An icon-only button always has an `aria-label`.
 
 Collections name their icon in `public/collections.json` (`"icon": "bird"`).
@@ -240,7 +241,7 @@ An item that is not drawn yet shows its collection's icon, 512 × 512, drawn onc
 | Light | `<id>.webp`      | white                 | `#a1a1a1`             |
 | Dark  | `<id>-dark.webp` | `slate-900` (#0f172a) | `slate-600` (#475569) |
 
-`deno task placeholders` draws both from the icon set, so they never need editing by hand, and the
+`npm run placeholders` draws both from the icon set, so they never need editing by hand, and the
 contract test fails if either is missing. They are deliberately faint (about 2.5:1 against their
 background in both themes): a placeholder should recede next to a real drawing.
 
@@ -262,4 +263,4 @@ background in both themes): a placeholder should recede next to a real drawing.
 6. Does text meet 4.5:1 contrast in both themes?
 7. Does it fit at 375px wide without sideways scrolling, with 36px touch targets?
 8. Are counts worded by `formatCount.ts`, and labels in sentence case?
-9. If you added an icon or changed a token, did you run `deno task design`?
+9. If you added an icon or changed a token, did you run `npm run design`?

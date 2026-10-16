@@ -1,8 +1,8 @@
-/// <reference lib="deno.ns" />
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createAppActions } from './actions.ts';
-import { withDom } from '../../script/test/helpers/dom.ts';
+import { withDom } from '../test_helpers/with_dom.ts';
 
 /** Actions over stand-in stores, plus a tile in the fake DOM to flash. */
 function setup(active: string) {
@@ -31,7 +31,7 @@ function setup(active: string) {
   return { actions, calls, tile };
 }
 
-Deno.test('selecting a result in the open collection closes the dropdown and flashes the tile', () =>
+test('selecting a result in the open collection closes the dropdown and flashes the tile', () =>
   withDom(async () => {
     const { actions, calls, tile } = setup('birds');
     await actions.selectGlobalResult('birds', '042');
@@ -39,7 +39,7 @@ Deno.test('selecting a result in the open collection closes the dropdown and fla
     assert(tile.classList.contains('ring-2'), 'the tile was not highlighted');
   }));
 
-Deno.test('selecting a result in another collection switches first, then flashes the tile', () =>
+test('selecting a result in another collection switches first, then flashes the tile', () =>
   withDom(async () => {
     const { actions, calls, tile } = setup('birds');
     await actions.selectGlobalResult('sharks', '042');
