@@ -3,8 +3,8 @@
 ## 🚀 High Priority (Fixes & Cleanup)
 
 - [ ] **Fixes**:
-  - [x] Version numbering logic — version is now derived at build time (patch = commit count, count
-        = drawn illustrations), so it can no longer drift.
+  - [x] Version numbering logic — version is now derived at build time (patch = commit count,
+        count = drawn illustrations), so it can no longer drift.
   - [x] Date sorting — the lightbox now pages drawn items chronologically (by drawn date), not by
         id.
   - [x] Thumbnail sizing inconsistencies.

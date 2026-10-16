@@ -8,9 +8,9 @@ at the end lists where the work differed from it.
 
 ## Why
 
-- **`.vue` files get type-checked and covered.** `deno check` cannot run Volar/vue-tsc, and
-  `deno test` cannot load SFCs, so today component code is outside both the type check and the
-  coverage number (see [TESTING.md](../TESTING.md)). Under Node, `vue-tsc` and Vitest handle both.
+- **`.vue` files get type-checked and covered.** `deno check` cannot run Volar/vue-tsc, and `deno
+  test` cannot load SFCs, so today component code is outside both the type check and the coverage
+  number (see [TESTING.md](../TESTING.md)). Under Node, `vue-tsc` and Vitest handle both.
 - **One config for build and tests.** Vitest reads `vite.config.ts`, so tests resolve imports and
   compile Vue exactly as the build does. `@deno/vite-plugin` goes away.
 - **Mainstream tooling.** Editor support, Dependabot, and contributors all expect `package.json`.
@@ -103,8 +103,8 @@ from each file as it is ported; when none are left, nothing depends on Deno's gl
 - `FakeTime` → `vi.useFakeTimers()` in `useDebounce_test.ts` and `flashItem_test.ts`.
 - `withDom` (`script/test/helpers/dom.ts`) keeps working with `@happy-dom/global-registrator`.
   Alternatively set `environment: 'happy-dom'` for the `dom` tier and delete the helper. Note: Deno
-  gave every test file its own isolate; Vitest does the same by default (`pool: 'forks'`,
-  `isolate: true`), so leaked globals stay contained.
+  gave every test file its own isolate; Vitest does the same by default (`pool: 'forks'`, `isolate:
+  true`), so leaked globals stay contained.
 - Keep the tier naming (`_dom_test.ts`, `_prop_test.ts`, `_contract_test.ts`). Configure one Vitest
   project per tier with `include` globs so `vitest --project dom` replaces `deno task test:dom`.
 
@@ -144,9 +144,9 @@ Move every task from `deno.jsonc` to `package.json` `scripts` with the same name
 …) so the docs only change `deno task` → `npm run`.
 
 CI (`verify.yml`, `nightly.yml`): `actions/setup-node@v4` with `node-version-file: .nvmrc` and
-`cache: npm`, then `npm ci`, `npm run lint`, `npm run format:check`, `npm run typecheck`,
-`npm run test:coverage` (keep `TZ: America/Los_Angeles` and the timezone matrix), `npm run check`,
-`npm run build`. Keep the `test-results/` upload; it now also holds the HTML coverage report.
+`cache: npm`, then `npm ci`, `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm run
+test:coverage` (keep `TZ: America/Los_Angeles` and the timezone matrix), `npm run check`, `npm run
+build`. Keep the `test-results/` upload; it now also holds the HTML coverage report.
 
 ### 8. Remove Deno
 
@@ -179,9 +179,9 @@ All eight phases landed together on one branch rather than as separate pull requ
 result differs from the plan above:
 
 - **Formatting is dprint, not Prettier or Biome.** `deno fmt` is dprint inside, so `dprint.json`
-  uses the same plugins with Deno's presets and the switch reformatted nothing. The markdown plugin
-  is pinned to 0.22.0, the newest version that wraps lines exactly as `deno fmt` did. `.vue` files
-  stay unformatted, as before.
+  uses the same plugins with Deno's presets and the switch reformatted nothing (the markdown plugin
+  was held at 0.22.0 for that). The later upgrade to markdown 0.26.0 rewrapped a few lines, letting
+  a code span break across lines. `.vue` files stay unformatted, as before.
 - **Lint is ESLint** with the recommended ESLint, typescript-eslint and `eslint-plugin-vue`
   (`flat/essential`) rules. It found one real issue, now marked in `GalleryContent.vue`: the tile
   `v-memo` sits inside the section loop, where Vue cannot use it, so it never saves a render.

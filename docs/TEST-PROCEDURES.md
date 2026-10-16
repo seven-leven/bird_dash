@@ -25,8 +25,9 @@ Contents:
 
 You need two things installed: **Node.js 24** (it comes with npm) and **git**.
 
-1. Install Node 24: <https://nodejs.org/>. The version is pinned in `.nvmrc`, so `nvm use` (or
-   `fnm use`) picks it. Check it with `node --version` (24.2 or later).
+1. Install Node 24 (the long-term-support line): <https://nodejs.org/>. The exact version is pinned
+   in `.nvmrc` (CI uses the same file), so `nvm use` (or `fnm use`) picks it. Check it with `node
+   --version`.
 2. Clone the repository and enter it.
 3. Install the dependencies:
 
@@ -35,8 +36,8 @@ You need two things installed: **Node.js 24** (it comes with npm) and **git**.
    ```
 
    The image library (sharp) runs an install script to fetch its native binary; `package.json`
-   allows it (`allowScripts`). If the pipeline tests fail because sharp cannot load, run
-   `npm rebuild sharp`.
+   allows it (`allowScripts`). If the pipeline tests fail because sharp cannot load, run `npm
+   rebuild sharp`.
 4. Run everything once to confirm the setup:
 
    ```bash
@@ -141,9 +142,9 @@ npm test -- --fail-fast --verbose
    test and say so in the commit. If you did not, the code has a bug.
 5. **Run the whole suite** once the file passes.
 
-Vitest does not type-check: it strips the types and runs the code. A type error shows up in
-`npm run typecheck` (and fails CI), not here. If a file fails to load (a syntax error, a bad
-import), its tests are missing from the tables and the error is in the output below them.
+Vitest does not type-check: it strips the types and runs the code. A type error shows up in `npm run
+typecheck` (and fails CI), not here. If a file fails to load (a syntax error, a bad import), its
+tests are missing from the tables and the error is in the output below them.
 
 ## 6. When CI fails but your machine passes
 
@@ -286,19 +287,21 @@ a failed job: **Re-run failed jobs** on the run's page.
 
 ## 12. Maintenance
 
-| Task                           | How                                                                                                                                                                 |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Raise the coverage floor       | Edit `--min-lines` in `package.json` (three scripts). Leave a few points of headroom. Never lower                                                                   |
-| Update dependencies            | `npm outdated`, then `npm install <name>@<version>`, then the full check list in section 3. Run `npm dedupe` after, so only one copy of each `@vue/*` package ships |
-| Add a timezone to CI           | Add it to the `tz` list in `.github/workflows/verify.yml`                                                                                                           |
-| Change the weekly deep run     | `.github/workflows/nightly.yml` (schedule, zones, `FC_RUNS_MULTIPLIER`)                                                                                             |
-| Change what must pass to merge | Repository Settings → Branches → the rule for `main`. If a job is renamed in `verify.yml`, update the required check names there too, or merges will wait forever   |
-| Slow suite                     | The `slowest:` list under the tables names the three slowest tests                                                                                                  |
+| Task                           | How                                                                                                                                                                                                                                           |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Raise the coverage floor       | Edit `--min-lines` in `package.json` (three scripts). Leave a few points of headroom. Never lower                                                                                                                                             |
+| Update dependencies            | Every version is exact (no `^`; `.npmrc` sets `save-exact`). `npm outdated`, then `npm install <name>@<version>`, then the full check list in section 3. Run `npm dedupe` after, so only one copy of each `@vue/*` package ships              |
+| Update Node                    | Change `.nvmrc` (and `engines` in `package.json`), run the check list on that version                                                                                                                                                         |
+| Update a GitHub Action         | Actions are pinned to a commit, with the version in a comment. Take the commit of the new release tag (`git ls-remote https://github.com/<owner>/<action> refs/tags/<tag>^{}`), replace both, and read the release notes for breaking changes |
+| Add a timezone to CI           | Add it to the `tz` list in `.github/workflows/verify.yml`                                                                                                                                                                                     |
+| Change the weekly deep run     | `.github/workflows/nightly.yml` (schedule, zones, `FC_RUNS_MULTIPLIER`)                                                                                                                                                                       |
+| Change what must pass to merge | Repository Settings → Branches → the rule for `main`. If a job is renamed in `verify.yml`, update the required check names there too, or merges will wait forever                                                                             |
+| Slow suite                     | The `slowest:` list under the tables names the three slowest tests                                                                                                                                                                            |
 
 ## 13. Runner reference
 
-`npm test` runs [`script/test.ts`](../script/test.ts). Tier names and flags go after a `--`:
-`npm test -- unit --verbose`.
+`npm test` runs [`script/test.ts`](../script/test.ts). Tier names and flags go after a `--`: `npm
+test -- unit --verbose`.
 
 | Argument or flag  | Effect                                                            |
 | ----------------- | ----------------------------------------------------------------- |

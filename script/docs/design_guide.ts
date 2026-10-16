@@ -5,7 +5,7 @@
  *
  * The colours and the contrast maths are in ./palette.ts.
  */
-import sharp from 'sharp';
+import sharp, { type OverlayOptions } from 'sharp';
 import { ICON_GROUPS, type IconDef, ICONS } from '../../src/components/icons/icons.ts';
 import { writeLogoFiles } from './logo.ts';
 import { iconGridLayout } from './layout.ts';
@@ -103,7 +103,7 @@ function navStates(x: number, y: number, dark: boolean): string {
     item(x + 320, 'Current', current, true, true);
 }
 
-type Overlay = sharp.OverlayOptions;
+type Overlay = OverlayOptions;
 
 /** The guide as an SVG, plus the placeholder images to composite on top of it. */
 export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] }> {

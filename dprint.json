@@ -1,5 +1,5 @@
 {
-  // The same formatter engines and settings `deno fmt` used, so the switch moved no lines.
+  // dprint is the engine `deno fmt` used; the Deno presets keep its style. Plugin versions are pinned.
   "lineWidth": 100,
   "indentWidth": 2,
   "typescript": {
@@ -35,7 +35,7 @@
   "plugins": [
     "https://plugins.dprint.dev/typescript-0.96.1.wasm",
     "https://plugins.dprint.dev/json-0.25.2.wasm",
-    "https://plugins.dprint.dev/markdown-0.22.0.wasm",
+    "https://plugins.dprint.dev/markdown-0.26.0.wasm",
     "https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm",
     "https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.5.wasm",
     "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm"

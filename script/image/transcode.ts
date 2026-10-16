@@ -1,5 +1,5 @@
 import { writeFile } from 'node:fs/promises';
-import sharp from 'sharp';
+import sharp, { type OutputInfo } from 'sharp';
 import { ensureDir } from '../lib/fs.ts';
 import { errorMessage } from '../lib/error.ts';
 import type { Collection } from '../collection/registry.ts';
@@ -29,7 +29,7 @@ export type TranscodeResult =
 // ---------------------------------------------------------------------------
 
 /** Derive the thumbnail from a normalized square full image (path or buffer). */
-function writeThumb(input: string | Uint8Array, thumb: string): Promise<sharp.OutputInfo> {
+function writeThumb(input: string | Uint8Array, thumb: string): Promise<OutputInfo> {
   return sharp(input)
     .resize(THUMB_SIZE, THUMB_SIZE, { fit: 'fill' })
     .webp(WEBP_OPTS)

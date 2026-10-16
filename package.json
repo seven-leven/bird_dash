@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=24.2"
+    "node": ">=24.22.0"
   },
   "scripts": {
     "dev": "vite",
@@ -33,31 +33,31 @@
     "format:check": "dprint check"
   },
   "dependencies": {
-    "vue": "^3.5.34"
+    "vue": "3.5.44"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@happy-dom/global-registrator": "^18.0.1",
-    "@std/assert": "npm:@jsr/std__assert@^1.0.19",
-    "@tailwindcss/vite": "^4.3.0",
-    "@types/node": "^24.0.0",
-    "@vitejs/plugin-vue": "^6.0.6",
-    "@vitest/coverage-v8": "^5.0.5",
-    "dprint": "^0.63.0",
-    "eslint": "^10.13.0",
-    "eslint-plugin-vue": "^10.11.1",
-    "fast-check": "^4.10.2",
-    "globals": "^17.13.0",
-    "sharp": "0.34.5",
-    "tailwindcss": "^4.3.0",
-    "typescript": "~5.9.3",
-    "typescript-eslint": "^8.71.2",
-    "vite": "^8.0.12",
-    "vitest": "^5.0.5",
-    "vue-tsc": "^3.3.13"
+    "@eslint/js": "10.0.1",
+    "@happy-dom/global-registrator": "21.0.3",
+    "@std/assert": "npm:@jsr/std__assert@1.0.19",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/node": "24.19.2",
+    "@vitejs/plugin-vue": "6.0.10",
+    "@vitest/coverage-v8": "5.0.5",
+    "dprint": "0.63.0",
+    "eslint": "10.13.0",
+    "eslint-plugin-vue": "10.11.1",
+    "fast-check": "4.10.2",
+    "globals": "17.13.0",
+    "sharp": "0.35.5",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5",
+    "vue-tsc": "3.3.13"
   },
   "allowScripts": {
     "dprint@0.63.0": true,
-    "sharp@0.34.5": true
+    "sharp@0.35.5": true
   }
 }

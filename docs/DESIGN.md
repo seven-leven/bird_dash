@@ -226,8 +226,8 @@ To add one, match the set:
   exactly as its owner publishes it, solid fill included, and marked `filled` in the registry. Do
   not redraw a brand mark in our line style: it is not ours to change, and most brands forbid it.
   Show it in one colour, next to the brand's name.
-- Colour comes from the text colour (`currentColor`); size from `w-4 h-4` (16px) in controls or
-  `w-5 h-5`/`w-6 h-6` for standalone use.
+- Colour comes from the text colour (`currentColor`); size from `w-4 h-4` (16px) in controls or `w-5
+  h-5`/`w-6 h-6` for standalone use.
 - An icon-only button always has an `aria-label`.
 
 Collections name their icon in `public/collections.json` (`"icon": "bird"`).
