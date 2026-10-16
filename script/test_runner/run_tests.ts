@@ -106,7 +106,26 @@ function vitest(args: string[]): Promise<{ success: boolean; output: string }> {
   });
 }
 
-async function main(argv: string[]): Promise<number> {
+/** What the runner touches outside itself — replaceable, so `main` can be tested. */
+export interface RunnerDeps {
+  discoverTests: () => Promise<string[]>;
+  discoverSources: () => Promise<string[]>;
+  vitest: (args: string[]) => Promise<{ success: boolean; output: string }>;
+  env: Record<string, string | undefined>;
+  /** Where the report, the JUnit file in CI and the HTML coverage go. */
+  resultsDir: string;
+}
+
+const realDeps: RunnerDeps = {
+  discoverTests,
+  discoverSources,
+  vitest,
+  env: process.env,
+  resultsDir: 'test-results',
+};
+
+/** Run the tests for these arguments and return the process exit code. */
+export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise<number> {
   let opts: Options;
   try {
     opts = parseArgs(argv);
@@ -115,8 +134,9 @@ async function main(argv: string[]): Promise<number> {
     return 2;
   }
 
-  const inCI = process.env.GITHUB_ACTIONS === 'true';
-  const groups = groupByTier(await discoverTests());
+  const { env, resultsDir } = deps;
+  const inCI = env.GITHUB_ACTIONS === 'true';
+  const groups = groupByTier(await deps.discoverTests());
   const files = opts.tiers.flatMap((t) => groups[t]);
   if (files.length === 0) {
     console.error(`test: no test files for ${opts.tiers.join(', ')}`);
@@ -126,11 +146,11 @@ async function main(argv: string[]): Promise<number> {
   const work = await mkdtemp(join(tmpdir(), 'test-'));
   try {
     const saveReport = inCI || opts.report;
-    if (saveReport || opts.html) await mkdir('test-results', { recursive: true });
-    const junitPath = inCI ? 'test-results/junit.xml' : `${work}/junit.xml`;
+    if (saveReport || opts.html) await mkdir(resultsDir, { recursive: true });
+    const junitPath = inCI ? `${resultsDir}/junit.xml` : `${work}/junit.xml`;
     const covDir = `${work}/coverage`;
 
-    const run = await vitest([
+    const run = await deps.vitest([
       '--reporter=dot',
       '--reporter=junit',
       `--outputFile.junit=${junitPath}`,
@@ -142,7 +162,7 @@ async function main(argv: string[]): Promise<number> {
     const raw = run.output;
     const cases = parseJunit(await readFile(junitPath, 'utf8').catch(() => ''));
     const summary = summarize(cases);
-    const tz = process.env.TZ;
+    const tz = env.TZ;
     const title = `Tests${tz ? ` (TZ=${tz})` : ''} — ${opts.tiers.join(', ')}`;
 
     console.log(cases.length > 0 ? formatConsole(summary, { verbose: opts.verbose, cases }) : '');
@@ -171,7 +191,7 @@ async function main(argv: string[]): Promise<number> {
     const allTiers = opts.tiers.length === TIER_ORDER.length;
     const areas = summarizeAreas(cases, {
       coverage: cov,
-      sources: cov && allTiers ? await discoverSources() : [],
+      sources: cov && allTiers ? await deps.discoverSources() : [],
     });
     if (cases.length > 0) console.log('\n' + formatAreasConsole(areas));
     summaryMd += '\n' + formatAreasMarkdown(areas);
@@ -190,7 +210,7 @@ async function main(argv: string[]): Promise<number> {
       summaryMd += '\n' + coverageMarkdown(cov, opts.minLines, process.cwd());
 
       if (opts.html) {
-        const index = await writeHtmlCoverage(covDir, 'test-results/coverage');
+        const index = await writeHtmlCoverage(covDir, `${resultsDir}/coverage`);
         console.log(`\ncoverage report: ${index}`);
       }
 
@@ -207,11 +227,11 @@ async function main(argv: string[]): Promise<number> {
       }
     }
 
-    const summaryFile = process.env.GITHUB_STEP_SUMMARY;
+    const summaryFile = env.GITHUB_STEP_SUMMARY;
     if (summaryFile) await appendFile(summaryFile, summaryMd + '\n');
     if (saveReport) {
-      await writeFile('test-results/report.md', summaryMd + '\n');
-      if (!inCI) console.log('\nfull report: test-results/report.md');
+      await writeFile(`${resultsDir}/report.md`, summaryMd + '\n');
+      if (!inCI) console.log(`\nfull report: ${resultsDir}/report.md`);
     }
 
     return ok ? 0 : 1;

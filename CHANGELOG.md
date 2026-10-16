@@ -16,6 +16,9 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | tests: the test runner's `main` (every exit code, the coverage floor, the
+  untested-files gate, the CI output) and the placeholder command are now tested; line coverage
+  92.0% → 97.5%, branches 80.2% → 89.3%, floor raised from 91% to 96%
 - 2026-10-16 | script/: one folder per command (`build/`, `version/`, `changelog/`, `design/`,
   `placeholders/`, `test_runner/`) plus `lib/`, with file names that say what they do; the shared
   test helpers move to `src/test_helpers/`. Script names are unchanged

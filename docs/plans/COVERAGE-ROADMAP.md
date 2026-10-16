@@ -5,20 +5,20 @@ Where the tests stand, exactly what is left, and the order to close it in. Measu
 
 ## Where we are
 
-| Measure        | Now   | Covered / total | Left                              |
-| -------------- | ----- | --------------- | --------------------------------- |
-| Lines          | 96.2% | 2,598 / 2,702   | 104                               |
-| Branches       | 91.4% |                 | an untaken side on about 65 lines |
-| Functions      | 99.1% |                 | 2 (`spawnVite`, `readCoverage`)   |
-| Untested files | 0     |                 | 0                                 |
-| Tests          | 313   |                 |                                   |
+| Measure        | Now   | Covered / total | Left             |
+| -------------- | ----- | --------------- | ---------------- |
+| Lines          | 97.5% | 1,342 / 1,376   | 34               |
+| Branches       | 89.3% | 654 / 732       | 78 untaken sides |
+| Functions      | 96.8% | 391 / 404       | 13               |
+| Untested files | 0     |                 | 0                |
+| Tests          | 327   |                 |                  |
 
-Those numbers were measured under Deno. After the move to Node (16 October 2026) Vitest measures
-with V8, which counts lines differently, and it now also counts `script/test_runner/run_tests.ts`,
-which Deno never measured because of its name. Re-measured then: **92.0% of lines** (1,260 / 1,370),
-or 96.7% without `script/test_runner/run_tests.ts` (22% covered). The floor that fails CI is **91%
-of lines**. There is no floor yet for branches. The phase targets below still stand; the line
-numbers in the tables predate the move.
+Measured on 16 October 2026 with Vitest (V8 coverage), after the move to Node. The floor that fails
+CI is **96% of lines**; there is no floor yet for branches. Earlier numbers were measured under
+Deno, which counted lines differently and never measured the test runner (it took any file named
+`test.ts` for a test). The test runner's `main` and the placeholder command are now tested (they
+were the two least covered files, at 22% and 36%), so phase 3's table below is partly done; its line
+numbers predate the move.
 
 Reproduce these numbers with `npm run test:report` and open `test-results/report.md`.
 
@@ -71,12 +71,10 @@ Expected after phase 2: about **98%**. Raise the floor to 97%.
 What is left after phases 1 and 2 is almost entirely code that starts other programs or runs only
 from the command line.
 
-| File                                                             | Uncovered | What it is                                                      | Plan                                                                                                                                               |
-| ---------------------------------------------------------------- | --------- | --------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `script/placeholders/draw_placeholders.ts`                       | 37–57     | The whole command: loop over collections, write two images each | Same refactor as the design guide: `writePlaceholders(collections, dir)`; test it into a temporary folder, as `design_guide_contract_test.ts` does |
-| `script/test_runner/run_tests.ts`                                | most      | `main`, which runs `vitest run` and prints the tables           | Contract test: run the runner on one tiny passing and one failing test file in a temporary folder and check the exit code and output               |
-| `script/build/build.ts`                                          | 59–76     | `spawnVite`, which runs the real `vite build`                   | Either a contract test that runs the real build into a temporary `outDir` (adds about a second), or mark it as an accepted gap (below)             |
-| `build.ts`, `changelog.ts`, `version.ts`, `draw_design_guide.ts` | 1–5 each  | The `if (import.meta.main)` line that starts each command       | Cannot run inside a test process. Mark as an accepted gap                                                                                          |
+| File                                                             | Uncovered | What it is                                                | Plan                                                                                                                                   |
+| ---------------------------------------------------------------- | --------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `script/build/build.ts`                                          | 59–76     | `spawnVite`, which runs the real `vite build`             | Either a contract test that runs the real build into a temporary `outDir` (adds about a second), or mark it as an accepted gap (below) |
+| `build.ts`, `changelog.ts`, `version.ts`, `draw_design_guide.ts` | 1–5 each  | The `if (import.meta.main)` line that starts each command | Cannot run inside a test process. Mark as an accepted gap                                                                              |
 
 **Accepted gaps.** Vitest's V8 coverage honours two comments: `/* v8 ignore next */` skips the next
 line, and `/* v8 ignore start */` … `/* v8 ignore stop */` skips a block. Use them only for code
@@ -110,7 +108,7 @@ Work file by file, starting with the lowest: `script/lib/error.ts` (50%),
 (88%), `collectionItems.ts` (88%), `script/test_runner/areas.ts` (88%), `useLightBox.ts` (88%).
 
 The runner checks lines only. Add a branch floor with it: a `--min-branches=N` flag beside
-`--min-lines` in `script/test_runner/run_tests.ts`, starting at today's 91% and raised as each file
+`--min-lines` in `script/test_runner/run_tests.ts`, starting at today's 89% and raised as each file
 is finished.
 
 Expected after phase 4: **100% of branches**, with any remaining guard listed here with a reason.
@@ -140,7 +138,7 @@ of journeys, each with a test, kept in `docs/TESTING.md`.
 
 | After   | Lines floor | Branches floor | Tests (estimate)       |
 | ------- | ----------- | -------------- | ---------------------- |
-| Today   | 91%         | none           | 316                    |
+| Today   | 96%         | none           | 327                    |
 | Phase 1 | 96%         | none           | ~325                   |
 | Phase 2 | 97%         | none           | ~340                   |
 | Phase 3 | 100%        | none           | ~350                   |
