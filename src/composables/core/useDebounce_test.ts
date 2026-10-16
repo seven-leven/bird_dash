@@ -2,7 +2,7 @@ import { test, vi } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { nextTick, ref } from 'vue';
 import { useDebouncedRef } from './useDebounce.ts';
-import { runInScope } from '../../test_helpers/fixtures.ts';
+import { runInScope } from '../../testing/fixtures.ts';
 
 test('debounced ref trails the source by the delay', async () => {
   vi.useFakeTimers();

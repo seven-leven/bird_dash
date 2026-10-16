@@ -12,7 +12,7 @@ import {
 } from './draw_design_guide.ts';
 import { logoSheetSvg, logoSvg } from './draw_logo.ts';
 import { accentMenu } from './palette.ts';
-import { ICON_GROUPS, ICONS } from '../../src/components/icons/icons.ts';
+import { ICON_GROUPS, ICONS } from '../../src/lib/icons.ts';
 import { readJson } from '../lib/fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
 

@@ -4,7 +4,7 @@
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
-import { LOGO_MARK, LOGO_TILE, WORDMARK } from '../../src/components/icons/logo.ts';
+import { LOGO_MARK, LOGO_TILE, WORDMARK } from '../../src/lib/logo.ts';
 import { SLATE } from './palette.ts';
 
 const INK = SLATE['900'];

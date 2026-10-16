@@ -16,6 +16,11 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | src/: the styles move to `src/styles/` (`main.css`, `fonts/`), the shared test
+  helpers to `src/testing/` with camelCase names like the rest of `src/`, and the icon and logo
+  drawings to `src/lib/` (the build scripts read them, so they no longer reach into
+  `src/components/`); `useLightBox.ts` is renamed `useLightbox.ts` to match its export. No change to
+  the site
 - 2026-10-16 | docs: `docs/DECISIONS.md` (why the project is set up as it is, and when to revisit
   each choice) and `docs/WORKFLOW.md` (branch to live site, merging, deploys, upgrading pinned
   dependencies); the README now links every page in `docs/`

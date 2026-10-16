@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../test_helpers/property_runs.ts';
+import { assertProperty } from '../../testing/propertyRuns.ts';
 import { buildHash, parseHash } from './useHashRoute.ts';
 
 // ids that can legally appear in a URL segment of ours: no '/', no '#'

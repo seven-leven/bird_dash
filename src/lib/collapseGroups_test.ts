@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { COLLAPSE_AT, COLLAPSED_SIZE, collapseGroups } from './collapseGroups.ts';
-import { makeCollection, makeItem } from '../test_helpers/fixtures.ts';
+import { makeCollection, makeItem } from '../testing/fixtures.ts';
 import type { GlobalSearchCollectionGroup } from '../types/index.ts';
 
 function group(id: string, n: number): GlobalSearchCollectionGroup {

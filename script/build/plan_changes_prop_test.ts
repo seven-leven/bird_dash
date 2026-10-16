@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
-import { assertProperty } from '../../src/test_helpers/property_runs.ts';
+import { assertProperty } from '../../src/testing/propertyRuns.ts';
 import { blockingIssues, planWork } from './plan_changes.ts';
 
 // Small id pool so the four sets overlap a lot (that's where the bugs live).

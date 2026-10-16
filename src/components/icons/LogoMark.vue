@@ -6,7 +6,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { LOGO_MARK, LOGO_TILE } from './logo.ts';
+import { LOGO_MARK, LOGO_TILE } from '../../lib/logo.ts';
 
 const props = defineProps<{ tile?: boolean }>();
 const body = computed(() => (props.tile ? LOGO_TILE : LOGO_MARK));

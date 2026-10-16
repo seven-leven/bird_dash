@@ -1,8 +1,8 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useBreakpoints } from './useBreakpoints.ts';
-import { mountComposable } from '../../test_helpers/mount_composable.ts';
-import { withDom } from '../../test_helpers/with_dom.ts';
+import { mountComposable } from '../../testing/mountComposable.ts';
+import { withDom } from '../../testing/withDom.ts';
 
 /** Pretend the window is `width` pixels wide and tell the page it was resized. */
 function resizeTo(width: number) {

@@ -1,13 +1,13 @@
 /**
  * Draws the placeholder shown for items that are not drawn yet: the collection's
- * line icon (src/components/icons/icons.ts), once for the light theme (grey on
+ * line icon (src/lib/icons.ts), once for the light theme (grey on
  * white) and once for the dark theme (`<id>-dark.webp`, slate on slate).
  *
  *   node script/placeholders/draw_placeholders.ts                  write public/placeholders/<id>[-dark].webp
  *   node script/placeholders/draw_placeholders.ts --preview <dir>  write PNGs there instead
  */
 import sharp from 'sharp';
-import { ICONS, isIconName } from '../../src/components/icons/icons.ts';
+import { ICONS, isIconName } from '../../src/lib/icons.ts';
 import { readJson } from '../lib/fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
 

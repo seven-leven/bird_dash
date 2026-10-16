@@ -30,14 +30,14 @@ Tests sit next to the code they cover, and **the file name decides the tier**.
 [`script/test_runner/tiers.ts`](../script/test_runner/tiers.ts) is the one place that maps names to
 tiers.
 
-| Tier       | File name            | Use it for                                               | Helper                                             |
-| ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------------- |
-| `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `test_helpers/fixtures.ts`                         |
-| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `test_helpers/with_dom.ts` (`withDom`)             |
-| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `test_helpers/property_runs.ts` (`assertProperty`) |
-| `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                               |
+| Tier       | File name            | Use it for                                               | Helper                                       |
+| ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------- |
+| `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `testing/fixtures.ts`                        |
+| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `testing/withDom.ts` (`withDom`)             |
+| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `testing/propertyRuns.ts` (`assertProperty`) |
+| `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                         |
 
-The helpers are in [`src/test_helpers/`](../src/test_helpers/).
+The helpers are in [`src/testing/`](../src/testing/).
 
 ### Which tier?
 
@@ -56,14 +56,17 @@ Tiers say _how_ a test runs. **Areas say what it protects.** Every source file a
 belongs to one area, by its folder
 ([`script/test_runner/areas.ts`](../script/test_runner/areas.ts)):
 
-| Area                          | Folders                                                           | Protects                                                  |
-| ----------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
-| Site: data and search         | `src/lib`, `src/composables/collection`, `src/composables/search` | Loading collections, filtering, grouping, search          |
-| Site: state and routing       | `src/stores`, `src/composables/core`                              | The stores, shareable links, theme, accent                |
-| Site: viewer and interface    | `src/composables/ui`, `src/components`                            | The lightbox, scroll-spy, icons and logo                  |
-| Asset pipeline and data files | `script/pipeline`, `image`, `collection`, `placeholders`, `lib`   | Image builds, the integrity check, the files in `public/` |
-| Version and changelog         | `script/version`, `script/changelog/changelog.ts`                 | The version in the footer, the changelog task             |
-| Test harness and docs tooling | `script/test`, `script/docs`                                      | The runner and its reports, generated guide images        |
+| Area                          | Folders                                                                           | Protects                                                  |
+| ----------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Site: data and search         | `src/lib` (but the icons), `src/composables/collection`, `src/composables/search` | Loading collections, filtering, grouping, search          |
+| Site: state and routing       | `src/stores`, `src/composables/core`                                              | The stores, shareable links, theme, accent                |
+| Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`     | The lightbox, scroll-spy, icons and logo                  |
+| Asset pipeline and data files | `script/build`, `script/placeholders`, `script/lib`                               | Image builds, the integrity check, the files in `public/` |
+| Version and changelog         | `script/version`, `script/changelog`                                              | The version in the footer, the changelog task             |
+| Test harness and docs tooling | `script/test_runner`, `script/design`                                             | The runner and its reports, generated guide images        |
+
+When two areas' folders overlap, the longer path wins: `src/lib/icons.ts` is interface, the rest of
+`src/lib` is data.
 
 A new folder must be added to an area, or a contract test fails.
 

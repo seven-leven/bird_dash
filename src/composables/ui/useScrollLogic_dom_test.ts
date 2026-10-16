@@ -2,8 +2,8 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useScrollLogic } from './useScrollLogic.ts';
-import { runInScope } from '../../test_helpers/fixtures.ts';
-import { withDom } from '../../test_helpers/with_dom.ts';
+import { runInScope } from '../../testing/fixtures.ts';
+import { withDom } from '../../testing/withDom.ts';
 
 // The scroll-spy reads positions from the layout, which a fake DOM does not
 // have. So each element is given the position the test wants it to report.

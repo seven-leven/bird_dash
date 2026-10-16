@@ -5,7 +5,7 @@ import { COLLECTIONS } from './collections.ts';
 import { loadCollectionData } from './lists.ts';
 import { readJson } from './fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
-import { isIconName } from '../../src/components/icons/icons.ts';
+import { isIconName } from '../../src/lib/icons.ts';
 
 // The app is data-driven: a typo in public/*.json silently breaks routing, search
 // or the timeline rather than failing a build. These tests are that missing gate.
@@ -19,7 +19,7 @@ test('collections.json: at least one collection, unique ids', () => {
 });
 
 test('collections.json: every accent names a palette defined in main.css', async () => {
-  const css = await readFile('./src/assets/main.css', 'utf8');
+  const css = await readFile('./src/styles/main.css', 'utf8');
   const palettes = new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]));
   assert(palettes.size > 0, 'no [data-accent] palettes found in main.css');
 

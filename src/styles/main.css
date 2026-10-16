@@ -353,7 +353,7 @@
 
 @font-face {
   font-family: 'Faruma';
-  src: url('./Faruma.woff') format('woff');
+  src: url('./fonts/Faruma.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;

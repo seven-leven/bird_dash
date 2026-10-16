@@ -1,7 +1,7 @@
 import { test, vi } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { flashItem } from './flashItem.ts';
-import { withDom } from '../test_helpers/with_dom.ts';
+import { withDom } from '../testing/withDom.ts';
 
 test('flashItem scrolls the tile into view and rings it, then clears the ring', () =>
   withDom(async () => {
