@@ -3,6 +3,7 @@ import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive } from 'vue';
 import { useLightbox } from './useLightBox.ts';
 import { at, makeCollection, makeItem, runInScope } from '../../test_helpers/fixtures.ts';
+import { mountComposable } from '../../test_helpers/mount_composable.ts';
 import { withDom } from '../../test_helpers/with_dom.ts';
 import type { CollectionItem } from '../../types/index.ts';
 
@@ -423,4 +424,66 @@ test('without a dialog element the focus trap does nothing', () =>
     const e = t.key('Tab');
     assert(e.defaultPrevented); // still kept inside: there is nowhere to go
     t.stop();
+  }));
+
+test('lifting one of three fingers keeps the pinch going', () =>
+  withDom(async () => {
+    const t = setup();
+    await t.open();
+    t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
+    t.lb.handlePointerDown(pointer('pointerdown', 2, 400, 300));
+    t.lb.handlePointerDown(pointer('pointerdown', 3, 500, 500));
+    t.lb.handlePointerUp(pointer('pointerup', 3, 500, 500)); // two fingers still down
+    t.lb.handlePointerMove(pointer('pointermove', 2, 500, 300)); // 100px → 200px apart
+    assertEquals(t.lb.scale.value, 2);
+    t.stop();
+  }));
+
+test('a new item while closed does not start loading it', () =>
+  withDom(async () => {
+    const t = setup(0);
+    t.props.item = items[1];
+    await nextTick();
+    assertEquals([t.lb.loading.value, t.lb.scale.value], [false, 1]);
+    t.stop();
+  }));
+
+test('if nothing focusable had focus when it opened, closing leaves focus alone', () =>
+  withDom(async () => {
+    const t = setup();
+    // Shadow the inherited getter for the moment of opening, then remove the shadow.
+    Object.defineProperty(document, 'activeElement', { configurable: true, get: () => null });
+    try {
+      await t.open();
+    } finally {
+      delete (document as unknown as Record<string, unknown>).activeElement;
+    }
+    t.props.isOpen = false;
+    await nextTick(); // must not throw trying to focus nothing
+    assertEquals(document.body.style.overflow, '');
+    t.stop();
+  }));
+
+test('unmounting while open unlocks the page and stops listening for keys', () =>
+  withDom(async () => {
+    const props = reactive({
+      isOpen: false,
+      item: items[0] as CollectionItem | undefined,
+      drawnItems: items,
+      fullImageBaseUrl: '/full/x/',
+      collection: makeCollection('x'),
+    });
+    const emitted: string[] = [];
+    const { result: lb, unmount } = mountComposable(() =>
+      useLightbox({ props, emit: ((e: string) => emitted.push(e)) as never })
+    );
+    props.isOpen = true;
+    await nextTick();
+    assertEquals(document.body.style.overflow, 'hidden');
+
+    unmount();
+    assertEquals(document.body.style.overflow, '');
+    globalThis.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    assertEquals(emitted, []);
+    assertEquals(lb.scale.value, 1);
   }));

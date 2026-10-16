@@ -16,6 +16,9 @@ was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-16 | tests: 100% of lines, branches and functions in the `.ts` code (373 tests), with both
+  CI floors at 100%; two dead branches removed (the hash router's "clear the hash" path, a repeated
+  id check in `switchCollection`). Component (`.vue`) tests are next, in docs/plans/TODO.md
 - 2026-10-16 | tests: branch coverage 89.3% → 97.0% and lines 97.5% → 99.2%, from tests for the
   lightbox's gestures and focus trap, collection loading and the runner's edge cases; code that
   cannot run in a test is marked `/* c8 ignore */` with its reason. A branch floor joins the line

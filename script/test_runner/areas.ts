@@ -126,6 +126,8 @@ export function summarizeAreas(
 /** Every source file no test imports, across all areas. The coverage run fails if there are any. */
 export const untestedFiles = (rows: AreaSummary[]): string[] => rows.flatMap((r) => r.unloaded);
 
+// `undefined` is only a type-level case: the tables call pct only when coverage was measured.
+/* c8 ignore next 2 */
 const pct = (c: Counter | undefined): string =>
   c === undefined ? '' : c.found === 0 ? '—' : `${((c.hit / c.found) * 100).toFixed(1)}%`;
 

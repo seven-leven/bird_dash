@@ -91,6 +91,8 @@ async function runMain(argv: string[], opts: {
   tests?: string[];
   /** Raw LCOV, used instead of `coverage` (for branch counters). */
   lcovText?: string;
+  /** Vitest died before writing its JUnit file. */
+  crashed?: boolean;
 } = {}): Promise<Run> {
   const resultsDir = await mkdtemp(join(tmpdir(), 'bird_dash_runner_'));
   const lines: string[] = [];
@@ -105,7 +107,7 @@ async function runMain(argv: string[], opts: {
     vitest: async (given) => {
       args = given;
       const value = (flag: string) => given.find((a) => a.startsWith(flag))?.slice(flag.length);
-      await writeFile(value('--outputFile.junit=')!, junit(opts.cases ?? []));
+      if (!opts.crashed) await writeFile(value('--outputFile.junit=')!, junit(opts.cases ?? []));
       const covDir = value('--coverage.reportsDirectory=');
       if (covDir) {
         await mkdir(covDir, { recursive: true });
@@ -293,4 +295,11 @@ test('main: branch coverage at its floor passes', async () => {
   await cleanUp(run);
   assertEquals(run.code, 0);
   assertStringIncludes(run.out, '✓ branch coverage 90.0% (floor 90%)');
+});
+
+test('main: a Vitest crash that left no JUnit file fails with its output, not an error of our own', async () => {
+  const run = await runMain([], { crashed: true, success: false });
+  await cleanUp(run);
+  assertEquals(run.code, 1);
+  assertStringIncludes(run.out, 'FAIL  boom detail');
 });

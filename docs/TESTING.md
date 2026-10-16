@@ -150,8 +150,9 @@ assertProperty(
 ## Coverage
 
 `npm run test:coverage` prints the least-covered files and fails if total line or branch coverage is
-below its floor in `package.json` (`--min-lines`, `--min-branches`). The floors only move up: raise
-them when coverage has clearly grown, leaving a point or two of headroom.
+below its floor in `package.json` (`--min-lines`, `--min-branches`). Both floors are **100%**: every
+line, branch and function of the `.ts` code is tested, so new code needs a test (or a `c8 ignore`
+with its reason, below) before CI passes.
 
 Code that cannot run in a test is marked `/* c8 ignore next */` with a comment saying why: the `if
 (import.meta.main)` line of each command, `spawnVite` (the real build), and guards for things that

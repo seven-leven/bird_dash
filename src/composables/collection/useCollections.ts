@@ -97,7 +97,8 @@ export function useCollections() {
 
   const switchCollection = async (id: string): Promise<void> => {
     if (id === activeCollectionId.value) return;
-    if (!collections.value.some((c) => c.id === id)) return; // unknown id: ignore
+    const col = collections.value.find((c) => c.id === id);
+    if (!col) return; // unknown id: ignore
     activeCollectionId.value = id;
 
     const cached = collectionCache[id];
@@ -105,8 +106,8 @@ export function useCollections() {
       data.items = cached;
       data.error = undefined;
       data.loading = false;
-    } else if (activeCollection.value) {
-      await loadData(activeCollection.value);
+    } else {
+      await loadData(col);
     }
   };
 

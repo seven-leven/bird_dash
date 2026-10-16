@@ -106,7 +106,9 @@ function navStates(x: number, y: number, dark: boolean): string {
 type Overlay = OverlayOptions;
 
 /** The guide as an SVG, plus the placeholder images to composite on top of it. */
-export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] }> {
+export async function designGuide(
+  collections?: RawCollectionConfig[], // defaults to public/collections.json
+): Promise<{ svg: string; overlays: Overlay[] }> {
   const parts: string[] = [];
   let y = 70;
 
@@ -152,9 +154,9 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
 
   // ── Accent menu ──
   const menu = await accentMenu();
-  const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  const cols = collections ?? await readJson<RawCollectionConfig[]>('./public/collections.json');
   const usedBy = (hue: string) =>
-    collections.filter((c) => (c.accent ?? 'teal') === hue).map((c) => c.label).join(', ');
+    cols.filter((c) => (c.accent ?? 'teal') === hue).map((c) => c.label).join(', ');
   parts.push(
     text(60, y + 484, 'Accent menu', 17, INK, 700) +
       text(

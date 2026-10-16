@@ -202,12 +202,13 @@ FC_RUNS_MULTIPLIER=10 npm run test:prop
 ## 8. When coverage is below the floor
 
 ```
-✗ line coverage 97.4% is below the 98% floor
-✗ branch coverage 94.6% is below the 95% floor
+✗ line coverage 99.8% is below the 100% floor
+✗ branch coverage 99.6% is below the 100% floor
 ```
 
-There are two floors, one for lines and one for branches (both sides of every `if`, `??` and `?.`).
-Either one fails the run.
+There are two floors, one for lines and one for branches (both sides of every `if`, `??` and `?.`),
+and both are 100%: every line and branch of the `.ts` code is tested, so any new code without a test
+fails the run.
 
 1. Run `npm run test:report` and open `test-results/report.md`.
 2. Look at **least covered files** and at the **By area** table. New code you added without tests is
@@ -295,7 +296,7 @@ a failed job: **Re-run failed jobs** on the run's page.
 
 | Task                           | How                                                                                                                                                                                                                                           |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Raise the coverage floors      | Edit `--min-lines` and `--min-branches` in `package.json` (three scripts). Leave a point or two of headroom. Never lower                                                                                                                      |
+| Coverage floors                | `--min-lines` and `--min-branches` in `package.json` (three scripts), both 100. Never lower them; test the new code or mark it `c8 ignore` with the reason                                                                                    |
 | Update dependencies            | Every version is exact (no `^`; `.npmrc` sets `save-exact`). `npm outdated`, then `npm install <name>@<version>`, then the full check list in section 3. Run `npm dedupe` after, so only one copy of each `@vue/*` package ships              |
 | Update Node                    | Change `.nvmrc` (and `engines` in `package.json`), run the check list on that version                                                                                                                                                         |
 | Update a GitHub Action         | Actions are pinned to a commit, with the version in a comment. Take the commit of the new release tag (`git ls-remote https://github.com/<owner>/<action> refs/tags/<tag>^{}`), replace both, and read the release notes for breaking changes |

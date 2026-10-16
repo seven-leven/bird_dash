@@ -103,3 +103,11 @@ test('tileImage: a drawing that failed to load falls back to the themed placehol
   assertEquals(tileImage(drawn, false, true), drawn.placeholderUrl);
   assertEquals(tileImage(drawn, true, true), drawn.placeholderDarkUrl);
 });
+
+test('toCollectionItems: missing fields become empty, a non-numeric id sorts as 0, a bad date as 0', () => {
+  const [bare, odd] = toCollectionItems(col, {
+    G: [{} as never, { id: 'x1', name: 'Odd', drawn: 'not a date' }],
+  }, '/');
+  assertEquals([bare.itemId, bare.commonName, bare.scientificName], ['', '', '']);
+  assertEquals([odd.sortKey, odd.isDrawn, odd.drawnTime], [0, true, 0]);
+});

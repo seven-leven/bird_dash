@@ -39,3 +39,21 @@
 - [x] Standardize names for all types (PascalCase interfaces per domain in `src/types/`; removed the
       stray `loadingState`).
 - [ ] Responsive / higher-compression thumbnails (Lighthouse image-delivery, currently unscored).
+- [ ] **Component tests (`.vue`)**: the `.ts` code is at 100% of lines, branches and functions, but
+      no test loads the 17 components yet, so they are outside the coverage numbers. About 50–70
+      tests, roughly 2–5 per component:
+  - [ ] `ui/` — `IdBadge`, `EmptyState` (start here: small, no state)
+  - [ ] `icons/` — `Icon`, `CollectionIcon`, `LogoMark`
+  - [ ] `search/` — `GlobalSearch`, `SearchResultsList`, `SearchDropdownHeader`,
+        `SearchKeyboardHints`
+  - [ ] `gallery/` — `ItemTile`, `ItemSheet`, `GalleryContent`, `LightBox`
+  - [ ] `layout/` — `Chrome`, `TopBar`, `SideNav`
+  - [ ] `App.vue` — the loading, error and loaded screens
+  - How: mount with Vue's DOM renderer under `withDom` (Vitest already compiles `.vue` files as the
+    build does), or add `@vue/test-utils`. Test what a visitor sees and does (text, ARIA state,
+    clicks, emitted events), not the markup.
+  - Keep the 100% floors: add `.vue` files to `discoverSources` (`script/test_runner/areas.ts`) one
+    folder at a time, together with that folder's tests, so the untested-files gate and the floors
+    cover each component the moment it has tests.
+  - While in `GalleryContent.vue`: the tile `v-memo` sits inside the section loop, where Vue cannot
+    use it (marked with an ESLint comment). Move it or remove it.

@@ -18,7 +18,7 @@ it is done.
 
 | Page                                                   | Status                                           |
 | ------------------------------------------------------ | ------------------------------------------------ |
-| [plans/COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md) | In progress: what is left untested, in phases    |
+| [plans/COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md) | Done for `.ts` (100%); components are in TODO.md |
 | [plans/MIGRATION.md](plans/MIGRATION.md)               | Done: the toolchain moved from Deno to Node      |
 | [plans/SCRIPTS-LAYOUT.md](plans/SCRIPTS-LAYOUT.md)     | Done: one layout and clearer names for `script/` |
 | [plans/TODO.md](plans/TODO.md)                         | Backlog of features and fixes                    |

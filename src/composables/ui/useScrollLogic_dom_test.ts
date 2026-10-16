@@ -179,3 +179,23 @@ test('stopping the spy disconnects the observer and the scroll listener', () =>
     t.container.dispatchEvent(new Event('scroll'));
     assertEquals(t.spy.activeSection.value, 'Ducks', 'still reacting to scroll after stop');
   }));
+
+test('headers that have gone (null refs) and a container that has gone are skipped', () =>
+  withDom(() => {
+    const observer = fakeObserver();
+    const container = at(0);
+    Object.defineProperty(container, 'clientHeight', { value: 800 });
+    const scroller = ref<HTMLElement | null>(container);
+    const headers = ref<Record<string, HTMLElement | null>>({ Gone: null, Herons: at(40) });
+    const { value: spy, stop } = runInScope(() =>
+      useScrollLogic(scroller, headers as never, { isMobile: ref(false), closeSidebar: () => {} })
+    );
+    spy.updateActiveSection();
+    assertEquals(observer.log.observed.length, 1); // the null header is not observed
+    assertEquals(spy.activeSection.value, 'Herons');
+
+    scroller.value = null; // unmounted
+    observer.fire(); // a late observer callback must not throw
+    assertEquals(spy.activeSection.value, 'Herons');
+    stop();
+  }));

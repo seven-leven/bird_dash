@@ -292,3 +292,35 @@ test('a list that fails with a non-Error value shows that value as the error', a
     restore();
   }
 });
+
+test('globalStats counts a collection whose list has not arrived as empty', async () => {
+  const pending = deferred<Response>();
+  const { restore } = stubFetch({
+    '/collections.json': () => json([col('a'), col('b')]),
+    '/lists/a.json': () => json(list('a')),
+    '/lists/b.json': () => pending.promise, // never answers during the test
+  });
+  try {
+    const c = useCollections();
+    await c.init();
+    assertEquals(c.globalStats.value, { drawn: 1, total: 1 });
+  } finally {
+    restore();
+  }
+});
+
+test('init again (a retry) reuses the lists already loaded', async () => {
+  const { calls, restore } = stubFetch({
+    '/collections.json': () => json([col('a')]),
+    '/lists/a.json': () => json(list('a')),
+  });
+  try {
+    const c = useCollections();
+    await c.init();
+    await c.init();
+    assertEquals(calls.filter((u) => u === '/lists/a.json').length, 1);
+    assertEquals(names(c.data.items), ['item of a']);
+  } finally {
+    restore();
+  }
+});

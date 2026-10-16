@@ -67,3 +67,17 @@ test('blocked storage does not break the theme', () =>
     assertEquals(isDarkClass(), true);
     stop();
   }));
+
+test('a browser without matchMedia starts light', () =>
+  withDom(async () => {
+    const original = globalThis.matchMedia;
+    delete (globalThis as { matchMedia?: unknown }).matchMedia;
+    try {
+      const { value: t, stop } = runInScope(() => useTheme());
+      assertEquals(t.theme.isDark, false);
+      stop();
+      await nextTick();
+    } finally {
+      globalThis.matchMedia = original;
+    }
+  }));

@@ -1,22 +1,29 @@
 # Roadmap to 100% coverage
 
+Status: **done for the `.ts` code** (16 October 2026): 100% of lines, branches and functions, with
+both CI floors at 100%. Phase 5 (the `.vue` components) is not started; it is tracked in
+[TODO.md](TODO.md) under "Component tests". The phases below are kept as the record of the plan.
+
 Where the tests stand, exactly what is left, and the order to close it in. Measured on 14 October
 2026, with every open test pull request (#43, #44, #45) included.
 
 ## Where we are
 
-| Measure        | Now   | Covered / total | Left |
-| -------------- | ----- | --------------- | ---- |
-| Lines          | 99.2% | 1,341 / 1,352   | 11   |
-| Branches       | 97.0% | 681 / 702       | 21   |
-| Untested files | 0     |                 | 0    |
+| Measure        | Now  | Covered / total |
+| -------------- | ---- | --------------- |
+| Lines          | 100% | all             |
+| Branches       | 100% | all             |
+| Functions      | 100% | all             |
+| Untested files | 0    |                 |
+| Tests          | 373  |                 |
 
-Measured on 16 October 2026 with Vitest (V8 coverage), after the move to Node. CI fails below **98%
-of lines** or **95% of branches** (`--min-branches`, added for phase 4). Code that cannot run in a
-test is marked `/* c8 ignore next */` with its reason (the entry-point lines, `spawnVite`, and
-guards for things that cannot happen), so it is out of both totals; `grep -rn "c8 ignore" src
-script` lists every one. Earlier numbers were measured under Deno and are not comparable. The tables
-below predate the move; most of what they list is now covered.
+Measured on 16 October 2026 with Vitest (V8 coverage). CI fails below **100% of lines or branches**
+(`--min-lines`, `--min-branches`). Code that cannot run in a test is marked `/* c8 ignore */` with
+its reason (the entry-point lines, `spawnVite` and the runner's `vitest()`, which start real
+programs, and guards for things that cannot happen), so it is out of the totals; `grep -rn "c8
+ignore" src script` lists every one. Two dead branches were deleted rather than ignored (the hash
+router's "clear the hash" path, and a check in `switchCollection` that the id lookup above it
+already made).
 
 Reproduce these numbers with `npm run test:report` and open `test-results/report.md`.
 

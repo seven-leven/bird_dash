@@ -98,6 +98,8 @@ export const withoutDots = (output: string): string =>
   output.split(/\r?\n/).filter((line) => !/^[·x*-]*$/.test(line.trim())).join('\n');
 
 /** Run Vitest (with this Node, no shell) and collect its exit code and output. */
+// Starts a real Vitest, so no test calls it; main is tested with a stand-in.
+/* c8 ignore start */
 function vitest(args: string[]): Promise<{ success: boolean; output: string }> {
   return new Promise((resolve, reject) => {
     const child = spawn(process.execPath, ['node_modules/vitest/vitest.mjs', 'run', ...args], {
@@ -112,6 +114,7 @@ function vitest(args: string[]): Promise<{ success: boolean; output: string }> {
     );
   });
 }
+/* c8 ignore stop */
 
 /** What the runner touches outside itself — replaceable, so `main` can be tested. */
 export interface RunnerDeps {

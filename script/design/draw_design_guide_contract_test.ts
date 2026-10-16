@@ -134,3 +134,12 @@ test('the images in docs/ are up to date with the code that draws them', async (
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test('a collection with no accent set is listed under teal, the default', async () => {
+  const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  const unset = collections.map((c, i) =>
+    i === 0 ? { ...c, accent: undefined, label: 'Unaccented' } : c
+  );
+  const { svg } = await designGuide(unset);
+  assertMatch(svg, />[^<]*Unaccented[^<]*<\/text>/);
+});
