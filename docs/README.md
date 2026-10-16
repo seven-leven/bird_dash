@@ -13,6 +13,8 @@ it is done.
 | [DESIGN.md](DESIGN.md)                   | You add a button, a colour or an icon                                  |
 | [TESTING.md](TESTING.md)                 | You write a test or want to know what the tiers and areas mean         |
 | [TEST-PROCEDURES.md](TEST-PROCEDURES.md) | You set up a machine, a test or CI fails, or you maintain the runner   |
+| [WORKFLOW.md](WORKFLOW.md)               | You take a change from a branch to the live site, or upgrade a tool    |
+| [DECISIONS.md](DECISIONS.md)             | You wonder why something is done this way, before changing it          |
 
 ## Plans
 
