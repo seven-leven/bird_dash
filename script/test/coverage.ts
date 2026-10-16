@@ -136,25 +136,54 @@ export function parseMinLines(args: string[]): number {
   return n;
 }
 
+/** Which files the coverage numbers (and the HTML report) are about. */
+const FILTERS = [
+  '--include=^file:.*/(src|script)/',
+  // Tests, shared test helpers and type declarations. The backslashes are doubled
+  // on purpose: with single ones the dots matched any character, so `.d.ts`
+  // also swallowed every file ending in "d.ts" (record.ts, for one).
+  '--exclude=_test\\.ts$|/test/helpers/|\\.d\\.ts$',
+];
+
 /**
  * Turn the raw profile a `deno test --coverage=<dir>` run left in `dir` into
  * per-file counters for our own sources (tests, test helpers and typings excluded).
  */
 export async function readCoverage(dir: string): Promise<FileCoverage[]> {
   const { success, stdout } = await new Deno.Command(Deno.execPath(), {
-    args: [
-      'coverage',
-      dir,
-      '--lcov',
-      '--include=^file:.*/(src|script)/',
-      // Tests, shared test helpers and type declarations. The backslashes are doubled
-      // on purpose: with single ones the dots matched any character, so `.d.ts`
-      // also swallowed every file ending in "d.ts" (record.ts, for one).
-      '--exclude=_test\\.ts$|/test/helpers/|\\.d\\.ts$',
-    ],
+    args: ['coverage', dir, '--lcov', ...FILTERS],
     stdout: 'piped',
     stderr: 'inherit',
   }).output();
   if (!success) throw new Error('deno coverage failed');
   return parseLcov(new TextDecoder().decode(stdout));
+}
+
+/**
+ * Write a browsable HTML report of the same profile (same files as `readCoverage`)
+ * to `out` and return the path of its index page. Deno always writes it to
+ * `<dir>/html/` (`--output` is for LCOV only), so it is copied from there.
+ */
+export async function writeHtmlCoverage(dir: string, out: string): Promise<string> {
+  // Piped: on success Deno only prints the temporary path, which is deleted afterwards.
+  const { success, stderr } = await new Deno.Command(Deno.execPath(), {
+    args: ['coverage', dir, '--html', ...FILTERS],
+    stdout: 'piped',
+    stderr: 'piped',
+  }).output();
+  if (!success) {
+    throw new Error(`deno coverage --html failed\n${new TextDecoder().decode(stderr)}`);
+  }
+  await Deno.remove(out, { recursive: true }).catch(() => {});
+  await copyDir(`${dir}/html`, out);
+  return `${out}/index.html`;
+}
+
+async function copyDir(from: string, to: string): Promise<void> {
+  await Deno.mkdir(to, { recursive: true });
+  for await (const entry of Deno.readDir(from)) {
+    const [src, dest] = [`${from}/${entry.name}`, `${to}/${entry.name}`];
+    if (entry.isDirectory) await copyDir(src, dest);
+    else await Deno.copyFile(src, dest);
+  }
 }

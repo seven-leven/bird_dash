@@ -3,7 +3,7 @@
  * sits in a column and the columns line up from row to row. A group fills
  * consecutive cells, one empty cell separates it from the next group, and a
  * group that does not fit in what is left of the row starts a new row. Used by
- * the icon section of the design guide and by docs/icons.png.
+ * the icon section of the design guide and by docs/assets/icons.png.
  */
 export interface PlacedGroup {
   label: string;

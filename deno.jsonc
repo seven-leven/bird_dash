@@ -29,6 +29,9 @@
     // The same run, and the full report (by tier, by area, per-file coverage, files no
     // test loads) saved to test-results/report.md. CI saves it on every run.
     "test:report": "deno run -A ./script/test.ts --coverage --min-lines=94 --report",
+    // The same run, plus a browsable line-by-line coverage report: open
+    // test-results/coverage/index.html.
+    "test:html": "deno run -A ./script/test.ts --coverage --min-lines=94 --report --html",
 
     // ── Type check ────────────────────────────────────────────────────────────
     // Deno type-checks the .ts surface (scripts, composables, types, entrypoint).
@@ -49,7 +52,7 @@
     // ── Utilities ─────────────────────────────────────────────────────────────
     // Redraw public/placeholders/<id>.webp from each collection's line icon
     "placeholders": "deno run -A --node-modules-dir ./script/placeholders/generate.ts",
-    // Redraw docs/design-guide.png, docs/icons.png and the logo files (see docs/DESIGN.md)
+    // Redraw docs/assets/design-guide.png, docs/assets/icons.png and the logo files (see docs/DESIGN.md)
     "design": "deno run -A --node-modules-dir ./script/docs/design_guide.ts",
     "serve": "deno run --allow-net --allow-read jsr:@std/http/file-server dist/",
     "clean": "rm -rf dist node_modules",
@@ -74,8 +77,15 @@
   },
 
   "fmt": {
-    // docs/logo holds generated SVG files; the generator, not the formatter, owns their layout
-    "exclude": ["dist", "node_modules", "public/full", "public/thumb", "raw_png", "docs/logo"],
+    // docs/assets/logo holds generated SVG files; the generator, not the formatter, owns their layout
+    "exclude": [
+      "dist",
+      "node_modules",
+      "public/full",
+      "public/thumb",
+      "raw_png",
+      "docs/assets/logo"
+    ],
     "singleQuote": true,
     "lineWidth": 100,
     "indentWidth": 2,

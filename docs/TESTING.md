@@ -3,7 +3,7 @@
 How the tests are organised, how to run them, and how to write a new one. For step-by-step
 instructions (setting up a machine, what to do when a test or CI fails, maintenance, the runner's
 flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). How to get from today's coverage to 100% is in
-[COVERAGE-ROADMAP.md](COVERAGE-ROADMAP.md).
+[COVERAGE-ROADMAP.md](plans/COVERAGE-ROADMAP.md).
 
 ## Running them
 
@@ -16,6 +16,7 @@ flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). How to get from today's co
 | `deno task test:watch`                            | Re-run on every save                                                 |
 | `deno task test:coverage`                         | Every tier, a coverage table, and fail below the line-coverage floor |
 | `deno task test:report`                           | The same, and save the full report to `test-results/report.md`       |
+| `deno task test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`    |
 | `deno task typecheck`                             | Type-check every `.ts` file                                          |
 | `deno task check`                                 | Asset integrity: missing or orphaned images                          |
 

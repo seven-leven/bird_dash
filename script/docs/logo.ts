@@ -1,7 +1,7 @@
 /// <reference lib="deno.ns" />
 /**
- * Draws the logo sheet (docs/logo.png) and writes the logo as standalone SVG
- * files (docs/logo/). Run through `deno task design` (script/docs/design_guide.ts).
+ * Draws the logo sheet (docs/assets/logo.png) and writes the logo as standalone SVG
+ * files (docs/assets/logo/). Run through `deno task design` (script/docs/design_guide.ts).
  */
 import sharp from 'sharp';
 import { LOGO_MARK, LOGO_TILE, WORDMARK } from '../../src/components/icons/logo.ts';

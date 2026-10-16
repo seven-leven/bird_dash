@@ -1,6 +1,6 @@
 /// <reference lib="deno.ns" />
 /**
- * Draws docs/design-guide.png and docs/icons.png — the visual half of
+ * Draws docs/assets/design-guide.png and docs/assets/icons.png — the visual half of
  * docs/DESIGN.md. Run `deno task design` after changing a token in
  * src/assets/main.css or an icon in src/components/icons/icons.ts.
  *
@@ -305,7 +305,7 @@ export async function designGuide(): Promise<{ svg: string; overlays: Overlay[] 
   return { svg, overlays: placeholders };
 }
 
-/** The icon sheet (docs/icons.png) as an SVG. */
+/** The icon sheet (docs/assets/icons.png) as an SVG. */
 export function iconSheetSvg(): string {
   const width = 1000;
   const groups = iconGroups(56, 44, {
@@ -338,7 +338,7 @@ export function contrastReport(): string[] {
 }
 
 /** Draw every generated image into `dir`: the guide, the icon sheet, the logo sheet and files. */
-export async function writeDesignImages(dir = './docs'): Promise<void> {
+export async function writeDesignImages(dir = './docs/assets'): Promise<void> {
   const png = (svg: string) => sharp(new TextEncoder().encode(svg));
   const { svg, overlays } = await designGuide();
   await png(svg).composite(overlays).png().toFile(`${dir}/design-guide.png`);
@@ -348,6 +348,6 @@ export async function writeDesignImages(dir = './docs'): Promise<void> {
 
 if (import.meta.main) {
   await writeDesignImages();
-  console.log('  wrote docs/design-guide.png, docs/icons.png, docs/logo.png and docs/logo/');
+  console.log('  wrote design-guide.png, icons.png, logo.png and logo/ in docs/assets/');
   for (const line of contrastReport()) console.log(line);
 }

@@ -109,15 +109,15 @@ Deno.test('the images in docs/ are up to date with the code that draws them', as
     // The SVG files are plain text, so they must match exactly.
     for (const name of ['mark.svg', 'mark-white.svg', 'tile.svg']) {
       assertEquals(
-        await Deno.readTextFile(`./docs/logo/${name}`),
+        await Deno.readTextFile(`./docs/assets/logo/${name}`),
         await Deno.readTextFile(`${dir}/logo/${name}`),
-        `docs/logo/${name} is stale: run \`deno task design\` and commit the result`,
+        `docs/assets/logo/${name} is stale: run \`deno task design\` and commit the result`,
       );
     }
     // PNG bytes can differ between machines (fonts), so compare what is stable: the size.
     for (const name of ['design-guide.png', 'icons.png', 'logo.png']) {
       assertEquals(
-        await size(`./docs/${name}`),
+        await size(`./docs/assets/${name}`),
         await size(`${dir}/${name}`),
         `docs/${name} is stale: run \`deno task design\` and commit the result`,
       );

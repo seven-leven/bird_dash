@@ -7,6 +7,7 @@
  *   deno task test --verbose            also list every file
  *   deno task test:coverage             every tier + coverage table + line-coverage floor
  *   deno task test:report               the same, and save the full report to test-results/report.md
+ *   deno task test:html                 the same, plus an HTML coverage report in test-results/coverage/
  *
  * Deno's own per-test log is 150+ lines for a green run, so this runs the tests once
  * with the dot + JUnit reporters and prints one row per tier instead. On failure it
@@ -32,6 +33,7 @@ import {
   percent,
   readCoverage,
   totals,
+  writeHtmlCoverage,
 } from './test/coverage.ts';
 
 export interface Options {
@@ -42,6 +44,8 @@ export interface Options {
   minLines: number;
   /** Save the markdown report to test-results/report.md (always done in CI). */
   report: boolean;
+  /** Write the HTML coverage report to test-results/coverage/ (needs --coverage). */
+  html: boolean;
 }
 
 /** Positional arguments are tier names; everything else is a flag. */
@@ -55,13 +59,14 @@ export function parseArgs(args: string[]): Options {
   if (unknown.length > 0) {
     throw new Error(`unknown tier "${unknown[0]}" (available: ${TIER_ORDER.join(', ')})`);
   }
-  const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage', '--report']);
+  const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage', '--report', '--html']);
   const bad = flags.find((f) => !known.has(f) && !f.startsWith('--min-lines='));
   if (bad) throw new Error(`unknown option ${bad}`);
 
   const minLines = parseMinLines(flags);
   const coverage = flags.includes('--coverage');
   if (minLines > 0 && !coverage) throw new Error('--min-lines needs --coverage');
+  if (flags.includes('--html') && !coverage) throw new Error('--html needs --coverage');
 
   return {
     tiers: names.length > 0 ? TIER_ORDER.filter((t) => names.includes(t)) : [...TIER_ORDER],
@@ -70,6 +75,7 @@ export function parseArgs(args: string[]): Options {
     coverage,
     minLines,
     report: flags.includes('--report'),
+    html: flags.includes('--html'),
   };
 }
 
@@ -101,7 +107,7 @@ async function main(argv: string[]): Promise<number> {
   const work = await Deno.makeTempDir({ prefix: 'test-' });
   try {
     const saveReport = inCI || opts.report;
-    if (saveReport) await Deno.mkdir('test-results', { recursive: true });
+    if (saveReport || opts.html) await Deno.mkdir('test-results', { recursive: true });
     const junitPath = inCI ? 'test-results/junit.xml' : `${work}/junit.xml`;
     const covDir = `${work}/coverage`;
 
@@ -170,6 +176,11 @@ async function main(argv: string[]): Promise<number> {
         console.log(`\n✓ line coverage ${actual.toFixed(1)}% (floor ${opts.minLines}%)`);
       }
       summaryMd += '\n' + coverageMarkdown(cov, opts.minLines, Deno.cwd());
+
+      if (opts.html) {
+        const index = await writeHtmlCoverage(covDir, 'test-results/coverage');
+        console.log(`\ncoverage report: ${index}`);
+      }
 
       // A file no test imports is invisible to the percentage above, so it gets
       // its own gate: every source file must be loaded by at least one test.

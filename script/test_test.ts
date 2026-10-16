@@ -40,3 +40,9 @@ Deno.test('a bare "--" separator is ignored, so both ways of passing flags work'
   assertEquals(parseArgs(['--', '--verbose']).verbose, true);
   assertEquals(parseArgs(['unit', '--', '--fail-fast']).tiers, ['unit']);
 });
+
+Deno.test('--html asks for the HTML coverage report and needs --coverage', () => {
+  assertEquals(parseArgs([]).html, false);
+  assertEquals(parseArgs(['--coverage', '--html']).html, true);
+  assertThrows(() => parseArgs(['--html']), Error, '--html needs --coverage');
+});

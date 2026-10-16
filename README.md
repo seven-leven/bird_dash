@@ -70,7 +70,8 @@ script/                 Deno build pipeline (transcode, integrity, version, chan
   test/                 The test runner; test/helpers/ holds shared fixtures, the fake-DOM
                         setup and property-test depth. The tests themselves sit next to
                         the code they cover (see Testing)
-docs/                   Design guide, icon sheet, TODO
+docs/                   Reference guides at the top level; plans/ for work not done yet,
+                        assets/ for generated images (see docs/README.md)
 ```
 
 State flows one way: `App.vue` creates the stores in dependency order (search and ui → collections →
@@ -148,18 +149,19 @@ rendered specially; any other string fields appear in the info panel.
 
 ## Documentation
 
-| Guide                                                  | What it covers                                                    |
-| ------------------------------------------------------ | ----------------------------------------------------------------- |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)         | The three programs, the layers of the site, the stores, the rules |
-| [`docs/DATA.md`](docs/DATA.md)                         | Every field in `collections.json` and the list files; recipes     |
-| [`docs/TESTING.md`](docs/TESTING.md)                   | Tiers, writing tests, coverage, CI                                |
-| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md)   | Step by step: setup, running, failures, maintenance, the runner   |
-| [`docs/COVERAGE-ROADMAP.md`](docs/COVERAGE-ROADMAP.md) | What is left untested, and the phases to reach 100%               |
-| [`docs/DESIGN.md`](docs/DESIGN.md)                     | Colours, type, spacing, states, icons; a checklist for UI changes |
+Start at [`docs/README.md`](docs/README.md), the index. The reference guides:
 
-[`docs/design-guide.png`](docs/design-guide.png), [`docs/icons.png`](docs/icons.png) and
-[`docs/logo.png`](docs/logo.png) are drawn from the real tokens, icons and logo by
-`deno task design`, which also writes the logo files in `docs/logo/`.
+| Guide                                                | What it covers                                                    |
+| ---------------------------------------------------- | ----------------------------------------------------------------- |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)       | The three programs, the layers of the site, the stores, the rules |
+| [`docs/DATA.md`](docs/DATA.md)                       | Every field in `collections.json` and the list files; recipes     |
+| [`docs/DESIGN.md`](docs/DESIGN.md)                   | Colours, type, spacing, states, icons; a checklist for UI changes |
+| [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                |
+| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner   |
+
+Plans (the coverage roadmap, the Deno → Node migration, the `script/` layout, the backlog) live in
+[`docs/plans/`](docs/plans/). The images in [`docs/assets/`](docs/assets/) are drawn from the real
+tokens, icons and logo by `deno task design`.
 
 ## Tasks
 
@@ -175,6 +177,7 @@ rendered specially; any other string fields appear in the info panel.
 | `deno task test:watch`                            | Re-run the tests on every save                                       |
 | `deno task test:coverage`                         | Every tier + coverage table; fails below the line-coverage floor     |
 | `deno task test:report`                           | The same, saving the full report to `test-results/report.md`         |
+| `deno task test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`   |
 | `deno task typecheck`                             | Type-check the `.ts` sources (`.vue` templates are not covered)      |
 | `deno task version`                               | Print the current derived version                                    |
 | `deno task changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews) |
