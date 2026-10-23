@@ -9,18 +9,21 @@
         id.
   - [x] Thumbnail sizing inconsistencies.
 - [ ] **Found 2026-10-23** (reading `main` after the Node migration):
-  - [ ] **Weekly deep run fails.** `nightly.yml` has failed since 2026-10-19 in all three timezones:
+  - [x] **Weekly deep run fails.** `nightly.yml` has failed since 2026-10-19 in all three timezones:
         three property tests in `src/composables/collection/useCollectionData_prop_test.ts` take
         6–11s at `FC_RUNS_MULTIPLIER=25` and hit Vitest's default 5s timeout (Deno had none). Scale
         the timeout with the multiplier, e.g. `testTimeout` in `vite.config.ts` or a timeout
-        argument from `src/testing/propertyRuns.ts`. Normal CI is unaffected.
-  - [ ] **The 100% branch floor is flaky.** One of four local `npm run test:coverage` runs reported
+        argument from `src/testing/propertyRuns.ts`. Normal CI is unaffected. _Fixed:_ `testTimeout`
+        is 5s × `FC_RUNS_MULTIPLIER`.
+  - [x] **The 100% branch floor is flaky.** One of four local `npm run test:coverage` runs reported
         99.9% of branches and failed; the other three were 100%. Find the branch that is only
         sometimes taken (likely reached by some generated inputs only, or timing-dependent) and give
-        it a deterministic test, so CI cannot fail at random.
+        it a deterministic test, so CI cannot fail at random. _Fixed:_ it was the sort's tie-break
+        for two drawings on the same day (`useCollectionData.ts`), reached only when a property test
+        happened to generate equal dates; a unit test now covers it.
   - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
         24.22.0. Everything passes, but upgrade to match CI.
-  - [ ] **Stale paths in the docs.** The `CHANGELOG.md` header points to
+  - [x] **Stale paths in the docs.** The `CHANGELOG.md` header points to
         `script/version/version.json` (now `base_version.json`); the diagram in
         `docs/ARCHITECTURE.md` lists `docs/` among the scripts (now `script/design/`).
 - [ ] **Technical Debt**:

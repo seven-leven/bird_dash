@@ -126,3 +126,13 @@ test('a query narrows the drawn items the viewer pages through; no query keeps t
   assertEquals(setup(items, 'heron').searchedDrawnItems.value.map((i) => i.itemId), ['002']);
   assertEquals(setup(items, '').searchedDrawnItems.value.map((i) => i.itemId), ['001', '002']);
 });
+
+test('drawings from the same day are paged through in id order', () => {
+  const sameDay = at(2025, 4, 2);
+  const items = [
+    makeItem({ itemId: '009', sortKey: 9, drawnTime: sameDay }),
+    makeItem({ itemId: '003', sortKey: 3, drawnTime: sameDay }),
+    makeItem({ itemId: '001', sortKey: 1, drawnTime: at(2025, 4, 1) }),
+  ];
+  assertEquals(setup(items).searchedDrawnItems.value.map((i) => i.itemId), ['001', '003', '009']);
+});

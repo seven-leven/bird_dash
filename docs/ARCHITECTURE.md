@@ -13,9 +13,9 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
       │                                        │
       ▼                                        ▼
 ┌─ 1. Asset pipeline (script/) ───────────────────────────────┐
-│ build.ts → scan (read disk) → plan (pure set maths)         │
-│          → execute (sharp, write JSON) → report             │
-│ version/ · changelog.ts · placeholders/ · docs/             │
+│ build/: scan_sources (read disk) → plan_changes (pure maths)│
+│   → apply_changes (sharp, write JSON) → print_build_summary │
+│ version/ · changelog/ · placeholders/ · design/ · lib/      │
 └───────────────┬─────────────────────────────────────────────┘
                 ▼
    public/   collections.json · lists/<id>.json
@@ -26,7 +26,7 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
 │ types ← lib ← composables ← stores ← components ← App.vue   │
 └─────────────────────────────────────────────────────────────┘
 
-┌─ 3. Test harness and CI (script/test*, .github/) ───────────┐
+┌─ 3. Test harness and CI (script/test_runner/, .github/) ────┐
 │ tiers by file name → runner → JUnit → summary and coverage  │
 │ verify.yml, reused by ci.yml (PRs) and deploy.yml (main)    │
 └─────────────────────────────────────────────────────────────┘

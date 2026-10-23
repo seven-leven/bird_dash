@@ -8,14 +8,19 @@ The site deploys on every merge to `main`, so there is no "unreleased" work: any
 live.
 
 Headings such as **v0.9.0** name a _line of work_ (the `major.minor` in
-`script/version/version.json`), not a release: the patch number in the running site (e.g. `0.9.161`)
-counts commits, so it is never `.0`. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w`
-was the drawing count.
+`script/version/base_version.json`), not a release: the patch number in the running site (e.g.
+`0.9.161`) counts commits, so it is never `.0`. Entries up to v0.7 carry the old `x.y.z+w` labels,
+where `w` was the drawing count.
 
 ---
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-23 | tests: the weekly deep property run works again (its tests may take as long as 5s ×
+  `FC_RUNS_MULTIPLIER`; Vitest's 5s default stopped them since the move to Node), and the 100%
+  branch floor no longer fails at random (two drawings on the same day are now tested directly
+  instead of only when a property test generated them); stale paths fixed in the CHANGELOG header
+  and the ARCHITECTURE diagram
 - 2026-10-16 | src/: the styles move to `src/styles/` (`main.css`, `fonts/`), the shared test
   helpers to `src/testing/` with camelCase names like the rest of `src/`, and the icon and logo
   drawings to `src/lib/` (the build scripts read them, so they no longer reach into
