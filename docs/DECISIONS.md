@@ -62,11 +62,12 @@ version in a comment.
 **Why.** A build should be reproducible: the same commit builds the same site, today or in a year.
 Version tags on actions can be moved by their owner; a commit hash cannot.
 
-**Cost.** Upgrades are deliberate work (see [WORKFLOW.md](WORKFLOW.md#upgrading-dependencies)).
+**Cost.** Upgrades are deliberate work. Dependabot proposes them weekly, grouped, so they are
+reviewed rather than forgotten (see [WORKFLOW.md](WORKFLOW.md#upgrading-dependencies)).
 
 ### Node on the LTS line
 
-**Chosen:** Node 24.22.0, the latest long-term-support release, not Node 26.
+**Chosen:** Node 24 (24.22.1 in `.nvmrc`), the latest long-term-support line, not Node 26.
 
 **Why.** Node 26 was still "Current" (not LTS) when this was set. A deploy toolchain should be on a
 line that gets security fixes for years.
@@ -207,6 +208,15 @@ from `public/` it would arrive unprocessed and the site would have no styles. Th
 also gets a content hash in its name (`Faruma-<hash>.woff`), so browsers can cache it for good and
 still notice a change. The folder is called `styles/`, not `assets/`, because `public/` and
 `docs/assets/` hold the content and images.
+
+### Tailwind does not read `docs/` or `.github/`
+
+**Chosen:** `main.css` tells Tailwind to skip those folders (`@source not`).
+
+**Why.** Tailwind builds CSS for every word in the repository that looks like a class name. Text in
+the docs and the GitHub config once added `.isolate`, `.uppercase` and
+`[version-update:semver-major]` (from `dependabot.yml`) to the site's stylesheet. Classes the site
+uses are all in `src/` and `index.html`.
 
 ### The icon and logo drawings live in `src/lib/`
 

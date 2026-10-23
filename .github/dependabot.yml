@@ -1,0 +1,40 @@
+# Weekly upgrade pull requests. Every version in this repository is pinned exactly
+# (docs/DECISIONS.md, "Every version pinned exactly"), so nothing moves unless
+# something proposes it; this is that something. Merge them like any pull request:
+# CI must be green. Node itself (.nvmrc) is not covered: see docs/WORKFLOW.md.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: build
+    # One pull request a week for every minor and patch update; majors one by one,
+    # since they are the ones that can break something.
+    groups:
+      npm-minor-and-patch:
+        update-types: [minor, patch]
+    ignore:
+      # Installed from JSR's registry (.npmrc), which Dependabot does not read.
+      - dependency-name: '@std/assert'
+      # Follows the Node version in .nvmrc, not the newest Node.
+      - dependency-name: '@types/node'
+        update-types: [version-update:semver-major]
+      # typescript-eslint supports TypeScript below 6.1 only (docs/DECISIONS.md).
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+
+  # Actions are pinned to a commit with the version in a comment; Dependabot
+  # updates both together.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: build
+    groups:
+      actions:
+        patterns: ['*']

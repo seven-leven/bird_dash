@@ -149,6 +149,13 @@ git branch -d test/lightbox-keys
 Every version is pinned exactly ([why](DECISIONS.md#every-version-pinned-exactly)), so an upgrade is
 a small pull request of its own (`build:` type).
 
+**Dependabot proposes most of them.** Every Monday it opens one pull request with that week's minor
+and patch updates to the npm packages, one with the GitHub Actions updates, and one per major
+version ([`.github/dependabot.yml`](../.github/dependabot.yml)). Review and merge them like any
+other pull request once CI is green. It leaves alone: Node itself, `@std/assert` (from JSR's
+registry), `@types/node` majors (they follow `.nvmrc`) and TypeScript majors (until
+typescript-eslint supports them). Those, and anything you want sooner, are done by hand as below.
+
 **npm packages**
 
 ```bash

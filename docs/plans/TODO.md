@@ -22,7 +22,7 @@
         for two drawings on the same day (`useCollectionData.ts`), reached only when a property test
         happened to generate equal dates; a unit test now covers it.
   - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
-        24.22.0. Everything passes, but upgrade to match CI.
+        24.22.1 (raised from 24.22.0 on 2026-10-23). Everything passes, but upgrade to match CI.
   - [x] **Stale paths in the docs.** The `CHANGELOG.md` header points to
         `script/version/version.json` (now `base_version.json`); the diagram in
         `docs/ARCHITECTURE.md` lists `docs/` among the scripts (now `script/design/`).
