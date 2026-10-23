@@ -20,7 +20,8 @@ where `w` was the drawing count.
   0.64.3 and happy-dom 21.0.4; Dependabot proposes npm and GitHub Actions updates every Monday,
   grouped; the CI and nightly workflows run with a read-only token; pull requests start from a
   template with the headings docs/WORKFLOW.md asks for. Tailwind no longer reads `docs/` and
-  `.github/`, so words there stop becoming CSS on the site (four unused classes dropped)
+  `.github/`, so words there stop becoming CSS on the site (four unused classes dropped). `main` now
+  requires a pull request to be up to date with it before merging
 - 2026-10-23 | tests: the weekly deep property run works again (its tests may take as long as 5s ×
   `FC_RUNS_MULTIPLIER`; Vitest's 5s default stopped them since the move to Node), and the 100%
   branch floor no longer fails at random (two drawings on the same day are now tested directly

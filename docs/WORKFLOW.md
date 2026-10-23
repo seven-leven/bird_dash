@@ -104,6 +104,10 @@ separate and does not block merges.
   version includes merge commits.
 - **Auto-merge is turned off** in the repository settings, so someone merges by hand once the checks
   are green. No review is required.
+- **The branch must be up to date with `main`.** If `main` moved on after the checks ran (another
+  pull request merged), GitHub blocks the merge until you press **Update branch**; that merges
+  `main` into the branch and runs the checks again. Two pull requests that pass on their own can
+  still break each other; this is what catches it.
 - **Do not bypass the checks.** Admins can merge past them; a red merge deploys a broken site.
 - **Finish pushing before you merge.** Commits pushed to a branch after its pull request was merged
   are not in `main`. If that happens, open a new pull request for them from a new branch.
