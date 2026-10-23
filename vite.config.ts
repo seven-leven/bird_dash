@@ -40,6 +40,9 @@ export default defineConfig({
     // Each file in its own process (Vitest isolates files by default), so a fake DOM
     // or a stubbed global never leaks into another file.
     pool: 'forks',
+    // The nightly job runs the property tests with FC_RUNS_MULTIPLIER times more inputs
+    // (src/testing/propertyRuns.ts), so a test may take that much longer than usual.
+    testTimeout: 5_000 * (Number(process.env.FC_RUNS_MULTIPLIER) || 1),
     coverage: {
       provider: 'v8',
       // No `include`: only files a test loads are measured, so the runner can tell

@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+/* Tailwind looks for class names in every file git tracks. Words in the docs and the
+   GitHub config (e.g. `[version-update:semver-major]` in dependabot.yml) would otherwise
+   become CSS on the site. */
+@source not '../../docs';
+@source not '../../.github';
+
 /* Dark mode is class-based (.dark on <html>), driven by useTheme — not the OS. */
 @variant dark (&:where(.dark, .dark *));
 
