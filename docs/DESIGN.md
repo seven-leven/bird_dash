@@ -139,7 +139,9 @@ _P4 One way to do each thing · P5 For everyone, on every screen_
 Use the system sans-serif throughout, and Faruma for every Thaana character. Faruma heads the main
 font list but only covers Thaana, so Dhivehi is set in it wherever it appears, even typed into
 search; everything else falls through to the sans-serif. Mark a Dhivehi name with `.font-dhivehi`
-and `dir="rtl"`. The type scale has six sizes; do not add another or write pixel sizes by hand.
+and `dir="rtl"`. That class also sets a line height of 1.85: Faruma's vowel marks reach half an em
+below the baseline, and a tighter line, or a truncated one, cuts them off, so never add `leading-*`
+to Dhivehi. The type scale has six sizes; do not add another or write pixel sizes by hand.
 
 | Token        | Size | Purpose                                        |
 | ------------ | ---- | ---------------------------------------------- |

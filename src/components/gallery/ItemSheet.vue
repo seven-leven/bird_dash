@@ -12,7 +12,7 @@
       <!-- Same order as the tile: Dhivehi name first when there is one, then
            English, then scientific. -->
       <template v-if="item.meta?.dhiv_script">
-        <h2 class="font-dhivehi text-2xl font-bold viewer-title leading-tight" dir="rtl">
+        <h2 class="font-dhivehi text-2xl font-bold viewer-title" dir="rtl">
           {{ item.meta.dhiv_script }}
         </h2>
         <p class="text-base font-semibold viewer-body leading-tight mt-1">

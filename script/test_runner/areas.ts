@@ -39,7 +39,13 @@ export const AREAS: Area[] = [
     id: 'interface',
     label: 'Site: viewer and interface',
     protects: 'the lightbox, scroll-spy, icons and logo',
-    paths: ['src/composables/ui/', 'src/components/', 'src/lib/icons', 'src/lib/logo'],
+    paths: [
+      'src/composables/ui/',
+      'src/components/',
+      'src/styles/',
+      'src/lib/icons',
+      'src/lib/logo',
+    ],
   },
   {
     id: 'pipeline',

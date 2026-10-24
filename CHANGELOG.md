@@ -16,6 +16,9 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-24 | fix: Dhivehi names no longer lose the bottom of their vowel marks in tile captions
+  and search rows (Faruma's marks reach half an em below the baseline; `.font-dhivehi` now gives
+  them a 1.85 line height)
 - 2026-10-24 | site: one design, said one way. Search is counted in "matches" everywhere (the filter
   chip now reads "10 matches, 1 drawn", like the dropdown); each view has one name in the header and
   the sidebar ("Families", "Orders", "Months"); a collection's progress shows once, above the grid,
