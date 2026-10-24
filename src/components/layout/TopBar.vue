@@ -1,7 +1,7 @@
 <!-- components/layout/TopBar.vue -->
 <template>
   <!-- Below md the search drops to its own full-width row; the rest stays on row one. -->
-  <header class="flex flex-wrap items-center gap-2 min-h-12 px-4 py-2 shrink-0 z-50 transition-colors duration-slow
+  <header class="flex flex-wrap items-center gap-1 sm:gap-2 min-h-12 px-3 sm:px-4 py-2 shrink-0 z-50 transition-colors duration-fast
                  md:flex-nowrap md:py-0
                  bg-white border-b border-slate-200
                  dark:bg-slate-950 dark:border-slate-800">
@@ -18,15 +18,17 @@
       <Icon name="menu" class="w-4.5 h-4.5" />
     </button>
 
-    <!-- Wordmark -->
+    <!-- Logo: the mark from sm up, the wordmark from md up. On a phone the row has
+         room for one more thing, and the current collection's name (below) is what
+         says where you are (docs/DESIGN.md §10). -->
     <a
       v-once
       href="#"
-      class="hidden md:flex items-center gap-2 shrink-0 pr-1 select-none focus-ring rounded-control"
+      class="hidden sm:flex items-center justify-center gap-2 shrink-0 md:pr-1 select-none focus-ring rounded-control max-md:min-w-9 max-md:min-h-9"
       aria-label="Wildlife Illustrated"
     >
       <LogoMark class="w-6 h-6 text-slate-900 dark:text-white" />
-      <span class="flex items-baseline gap-1" aria-hidden="true">
+      <span class="hidden md:flex items-baseline gap-1" aria-hidden="true">
         <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
         <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>
       </span>
@@ -40,12 +42,13 @@
         v-for="col in collections"
         :key="col.id"
         @click="switchCollection(col.id)"
-        class="nav-item marker-b focus-ring flex items-center gap-1.5 px-3 py-1.5 max-md:min-h-9"
+        class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-2 sm:px-3 py-1.5 max-md:min-h-9 max-md:min-w-9"
         :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
         :aria-label="col.label"
       >
         <CollectionIcon :collection="col" class="w-4.5 h-4.5" />
-        <span class="hidden sm:inline">{{ col.label }}</span>
+        <!-- The current collection is named on every screen; the others from sm up -->
+        <span :class="col.id === activeCollection?.id ? 'inline' : 'hidden sm:inline'">{{ col.label }}</span>
       </button>
     </nav>
 
@@ -60,7 +63,7 @@
         v-for="view in views"
         :key="view.mode"
         @click="setViewMode(view.mode)"
-        class="nav-item marker-b focus-ring flex items-center gap-1.5 px-2.5 py-1.5 max-md:min-h-9"
+        class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-2 sm:px-2.5 py-1.5 max-md:min-h-9 max-md:min-w-9"
         :aria-pressed="viewMode === view.mode"
         :aria-label="`${view.label} view`"
         :title="`${view.label} view`"
@@ -70,7 +73,7 @@
       </button>
     </div>
 
-    <div class="divider-v" />
+    <div class="divider-v hidden sm:block" />
 
     <!-- Theme toggle -->
     <button

@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
-import { monthKey, useCollectionData } from './useCollectionData.ts';
+import { monthKey, monthRows, useCollectionData } from './useCollectionData.ts';
 import { at, makeItem } from '../../testing/fixtures.ts';
 import type { CollectionItem, ViewMode } from '../../types/index.ts';
 
@@ -53,7 +53,7 @@ test('group stats: total = all items, drawn = drawn count', () => {
   assertEquals(stats.value, { total: 3, filtered: 3, drawn: 1 });
 });
 
-test('date mode: buckets drawn items by month, chronological', () => {
+test('date mode: buckets drawn items by month, newest month and newest drawing first', () => {
   const items = [
     makeItem({ itemId: '001', drawnTime: at(2025, 3, 10) }),
     makeItem({ itemId: '002', drawnTime: at(2025, 1, 5) }),
@@ -63,21 +63,21 @@ test('date mode: buckets drawn items by month, chronological', () => {
   const { activeData, stats } = setup(items, '', 'date');
   const keys = Object.keys(activeData.value.grouped);
 
-  assertEquals(keys, ['January 2025', 'March 2025']);
-  assertEquals(activeData.value.grouped['January 2025'].map((i) => i.itemId), ['002', '003']);
+  assertEquals(keys, ['March 2025', 'January 2025']);
+  assertEquals(activeData.value.grouped['January 2025'].map((i) => i.itemId), ['003', '002']);
   // date mode: total counts drawn items only
   assertEquals(stats.value.total, 3);
 });
 
-test('date mode: allMonths is continuous and marks empty months disabled', () => {
+test('date mode: the months are continuous and an empty one is shown, disabled', () => {
   const items = [
     makeItem({ drawnTime: at(2025, 1, 1) }),
     makeItem({ drawnTime: at(2025, 3, 1) }),
   ];
   const { activeData } = setup(items, '', 'date');
   const labels = activeData.value.sidebarItems.map((s) => s.id);
-  // continuous run includes the empty February
-  assertEquals(labels.slice(0, 3), ['January 2025', 'February 2025', 'March 2025']);
+  // the timeline ends (oldest) with March, the empty February, then January
+  assertEquals(labels.slice(-3), ['March 2025', 'February 2025', 'January 2025']);
   const feb = activeData.value.sidebarItems.find((s) => s.id === 'February 2025')!;
   assertEquals(feb.disabled, true);
   assertEquals(feb.count, 0);
@@ -91,11 +91,11 @@ test('monthKey buckets by UTC month, so a date on the 1st never slips back a mon
   assertEquals(monthKey(new Date('2025-12-31')), 'December 2025');
 });
 
-test('date mode: a drawing dated the 1st lands in its own month and starts the timeline', () => {
+test('date mode: a drawing dated the 1st lands in its own month, the oldest end of the timeline', () => {
   const items = [makeItem({ drawnTime: at(2025, 10, 1) })];
   const { activeData } = setup(items, '', 'date');
   assertEquals(Object.keys(activeData.value.grouped), ['October 2025']);
-  assertEquals(activeData.value.sidebarItems[0].id, 'October 2025');
+  assertEquals(activeData.value.sidebarItems.at(-1)?.id, 'October 2025');
 });
 
 test('searchedDrawnItems: drawn only, ordered by drawnTime then sortKey', () => {
@@ -135,4 +135,43 @@ test('drawings from the same day are paged through in id order', () => {
     makeItem({ itemId: '001', sortKey: 1, drawnTime: at(2025, 4, 1) }),
   ];
   assertEquals(setup(items).searchedDrawnItems.value.map((i) => i.itemId), ['001', '003', '009']);
+});
+
+test('monthRows folds three or more empty months into one disabled row, but not one or two', () => {
+  const months = [
+    'May 2025',
+    'April 2025',
+    'March 2025',
+    'February 2025',
+    'January 2025',
+    'December 2024',
+  ];
+  const rows = monthRows(months, { 'May 2025': 2, 'January 2025': 1 });
+  assertEquals(rows.map((r) => [r.label, r.count, r.disabled]), [
+    ['May 2025', 2, false],
+    ['February 2025 – April 2025', 0, true],
+    ['January 2025', 1, false],
+    ['December 2024', 0, true],
+  ]);
+  assertEquals(rows.length, 4);
+  // two empty months in a row stay as they are
+  assertEquals(
+    monthRows(['March 2025', 'February 2025', 'January 2025'], { 'March 2025': 1 }).map((r) =>
+      r.id
+    ),
+    ['March 2025', 'February 2025', 'January 2025'],
+  );
+});
+
+test('family view, drawn only: undrawn items and empty groups are hidden, counts stay whole', () => {
+  const items = [
+    makeItem({ itemId: '001', group: 'A', drawnTime: at(2025, 1) }),
+    makeItem({ itemId: '002', group: 'A', isDrawn: false }),
+    makeItem({ itemId: '003', group: 'B', isDrawn: false }),
+  ];
+  const { activeData } = useCollectionData(ref(items), ref(''), ref('group'), ref(true));
+  assertEquals(Object.keys(activeData.value.grouped), ['A']);
+  assertEquals(activeData.value.grouped.A.map((i) => i.itemId), ['001']);
+  const a = activeData.value.sidebarItems[0];
+  assertEquals([a.id, a.count, a.total], ['A', 1, 2]); // "1 of 2": the hidden item still counts
 });

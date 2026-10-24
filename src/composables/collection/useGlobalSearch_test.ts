@@ -54,3 +54,32 @@ test('a collection whose list has not loaded yet is searched as empty', () => {
   const { globalResults } = useGlobalSearch(ref([birds, sharks]), cache, ref('mallard'));
   assertEquals(globalResults.value.map((g) => g.collection.id), ['birds']);
 });
+
+test('the drawn count covers every collection; a match on the group alone is recorded as such', () => {
+  const plovers = makeCollection('plovers');
+  const lists: CollectionCache = {
+    plovers: [
+      makeItem({
+        itemId: '035',
+        commonName: 'Black-bellied Plover',
+        group: 'Plovers and Lapwings',
+        drawnTime: 1,
+      }),
+      makeItem({
+        itemId: '037',
+        commonName: 'Sociable Lapwing',
+        group: 'Plovers and Lapwings',
+        isDrawn: false,
+      }),
+    ],
+  };
+  const { globalResultCount, globalDrawnCount, globalResults } = useGlobalSearch(
+    ref([plovers]),
+    lists,
+    ref('plover'),
+  );
+  assertEquals([globalResultCount.value, globalDrawnCount.value], [2, 1]);
+  const [plover, lapwing] = globalResults.value[0].results;
+  assertEquals(plover.matchedFields, ['commonName', 'group']);
+  assertEquals(lapwing.matchedFields, ['group']);
+});

@@ -43,7 +43,17 @@
           class="font-dhivehi text-xs text-muted truncate mt-0.5"
           dir="rtl"
         >{{ result.item.meta.dhiv_script }}</p>
+        <!-- Why it matched, when the names do not show it (only the group matched) -->
+        <p
+          v-if="result.matchedFields.length === 1 && result.matchedFields[0] === 'group'"
+          class="text-xs text-muted truncate mt-0.5"
+          v-html="`in ${highlight(result.item.group)}`"
+        />
       </div>
+      <span
+        v-if="!result.item.isDrawn"
+        class="shrink-0 text-micro text-muted whitespace-nowrap"
+      >Not drawn yet</span>
       <IdBadge variant="surface" class="shrink-0">
         <span v-html="highlight(`#${result.item.itemId}`)" />
       </IdBadge>

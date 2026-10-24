@@ -80,18 +80,19 @@ green are left out for being too pale at 500 (1.9 to 2.3:1); red is left out bec
 error. Pick neighbours that are easy to tell apart: not rose and pink, or violet and purple, for two
 collections that sit side by side.
 
-| Role                                 | Light               | Dark                |
-| ------------------------------------ | ------------------- | ------------------- |
-| Page background                      | `slate-50`          | `slate-950`         |
-| Surface (header, sidebar, menus)     | `white`             | `slate-950` / `900` |
-| Text                                 | `slate-900` / `800` | `slate-100`         |
-| Muted text (use `.text-muted`)       | `slate-500`         | `slate-400`         |
-| Borders and dividers                 | `slate-200` / `100` | `slate-800`         |
-| Focus ring, current marker, progress | `accent-500`        | `accent-500`        |
-| Primary button                       | `accent-700`, white | `accent-700`, white |
-| In the viewer (titles)               | `white`             | `white`             |
-| In the viewer (body), the id badge   | `white/70`          | `white/70`          |
-| In the viewer (labels)               | `white/50`          | `white/50`          |
+| Role                                 | Light                    | Dark                     |
+| ------------------------------------ | ------------------------ | ------------------------ |
+| Page background                      | `slate-50`               | `slate-950`              |
+| Surface (header, sidebar, menus)     | `white`                  | `slate-950` / `900`      |
+| Text                                 | `slate-900` / `800`      | `slate-100`              |
+| Muted text (use `.text-muted`)       | `slate-500`              | `slate-400`              |
+| Borders and dividers                 | `slate-200` / `100`      | `slate-800`              |
+| Focus ring, current marker, progress | `accent-500`             | `accent-500`             |
+| Primary button                       | `accent-700`, white      | `accent-700`, white      |
+| Viewer titles (`.viewer-title`)      | `slate-900`              | `white`                  |
+| Viewer body (`.viewer-body`)         | `slate-600`              | `white/70`               |
+| Viewer labels (`.viewer-label`)      | `slate-500`              | `white/50`               |
+| Id badge on a drawing                | `white/70` on `black/50` | `white/70` on `black/50` |
 
 Rules:
 
@@ -112,9 +113,12 @@ Rules:
   | white on `accent-700` (button)       | 5.5:1  |
   | white at 70% on black (viewer body)  | 10.0:1 |
   | white at 50% on black (viewer label) | 5.3:1  |
+  | `slate-600` on white (viewer body)   | 7.6:1  |
 
   `accent-500` on white is only 2.5:1, so it is fine for a marker or ring but **not for text**; teal
   text on a light background must be `accent-700`. `slate-400` on white also fails for text.
+- **The viewer follows the theme too** (P5): a light page opens a light viewer. Its text uses the
+  three `.viewer-*` roles, which carry both themes, never a raw `white/70`.
 - **Every colour has a dark-mode partner.** (P5) Write both (`text-slate-500 dark:text-slate-400`)
   or use a class that already does (`.text-muted`, `.btn-ghost`, `.nav-item`).
 
@@ -348,9 +352,9 @@ _Serves P2 honest progress, P3 where you are, P4 one way, P5 for everyone._
   scroll through it; there is no second label repeating it. The sticky heading always names the
   section in view, in the current view (a month in the date view, never a family left over from the
   other).
-- **On phones the header still says where you are:** (P3) the logo mark, and the current
-  collection's name beside its icon. Other collections can be icons alone (each with an
-  `aria-label`).
+- **On phones the header still says where you are:** (P3) the current collection's name beside its
+  icon; the other collections are icons alone (each with an `aria-label`). The logo mark returns
+  from 640px: at 375px the row holds only one of the two, and the name is the one that orients.
 - **The date view reads newest first:** (P2) it is where a returning visitor looks for what is new.
   Months stay continuous so the gaps show, but a run of three or more empty months folds into one
   disabled row ("Nov 2024 – Sep 2025").

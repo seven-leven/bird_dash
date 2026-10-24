@@ -102,12 +102,12 @@ test('the same query searches every loaded collection for the dropdown', async (
   }
 });
 
-test('date view shows only drawn items, oldest first, and the viewer pages in that order', async () => {
+test('date view shows only drawn items, newest first; the viewer still pages oldest to newest', async () => {
   const { store, viewMode, restore } = await setup();
   try {
     viewMode.value = 'date';
     const months = Object.keys(store.activeData.value.grouped);
-    assertEquals(months, ['January 2025', 'March 2025']);
+    assertEquals(months, ['March 2025', 'January 2025']);
     assertEquals(store.stats.value.total, 2); // undrawn items are not part of this view
     assertEquals(names(store.drawnItems.value), ['Mallard', 'Grey Heron']);
   } finally {

@@ -29,8 +29,12 @@ export function useScrollLogic(
       }
     }
 
-    if (current && current !== activeSection.value) {
-      activeSection.value = current;
+    if (current) {
+      if (current !== activeSection.value) activeSection.value = current;
+    } else if (!(activeSection.value in headerRefs.value)) {
+      // No section has reached the line yet, and the remembered one is not in this
+      // view (a family name after switching to the date view): start at the first.
+      activeSection.value = Object.keys(headerRefs.value)[0] ?? '';
     }
   };
 
@@ -91,10 +95,10 @@ export function useScrollLogic(
     const scroller = scrollContainer.value;
 
     if (el && scroller) {
-      scroller.scrollTo({
-        top: el.offsetTop - 80, // account for sticky header
-        behavior: 'smooth',
-      });
+      // Both offsets are measured from the same parent, so the difference is the
+      // section's place in the scrolled content: scrolling there puts its sticky
+      // heading at the top.
+      scroller.scrollTo({ top: el.offsetTop - scroller.offsetTop, behavior: 'smooth' });
       activeSection.value = name;
 
       if (opts.isMobile.value) opts.closeSidebar();

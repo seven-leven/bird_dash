@@ -1,65 +1,59 @@
 <template>
+  <!-- A square image with its names in a caption below it, never on top of it
+       (docs/DESIGN.md §9). A drawn tile is paper-white and opens the viewer; an
+       undrawn one stays on the interface grey and does nothing. -->
   <div
     :id="`item-${props.item.itemId}`"
-    class="group focus-ring relative aspect-square w-full overflow-hidden rounded-card
-           bg-slate-100 dark:bg-slate-900
+    class="group focus-ring flex flex-col w-full overflow-hidden rounded-card
            ring-1 ring-black/5 dark:ring-white/5
            transition-all duration-fast ease-out"
-    :class="drawn && INTERACTIVE"
+    :class="drawn ? `bg-white dark:bg-slate-900 ${INTERACTIVE}` : 'bg-slate-100 dark:bg-slate-900'"
     v-bind="buttonAttrs"
     @click="open"
     @keydown.enter="open"
     @keydown.space="onSpace"
   >
-    <!-- Illustration — above-the-fold tiles load eagerly (LCP), rest are lazy -->
-    <img
-      :src="src"
-      :alt="drawn ? props.item.commonName : `${props.item.commonName} (not drawn yet)`"
-      :loading="eager ? 'eager' : 'lazy'"
-      :fetchpriority="eager ? 'high' : 'auto'"
-      decoding="async"
-      class="absolute inset-0 w-full h-full object-contain object-center select-none"
-      draggable="false"
-      @error="onError"
-    />
+    <div class="relative aspect-square" :class="drawn ? 'bg-white' : 'bg-slate-100 dark:bg-slate-900'">
+      <!-- Illustration — above-the-fold tiles load eagerly (LCP), rest are lazy -->
+      <img
+        :src="src"
+        :alt="drawn ? props.item.commonName : `${props.item.commonName} (not drawn yet)`"
+        :loading="eager ? 'eager' : 'lazy'"
+        :fetchpriority="eager ? 'high' : 'auto'"
+        decoding="async"
+        class="absolute inset-0 w-full h-full object-contain object-center select-none"
+        draggable="false"
+        @error="onError"
+      />
 
-    <!-- Item ID badge -->
-    <IdBadge
-      :id="props.item.itemId"
-      variant="overlay"
-      class="absolute top-2.5 left-2.5 z-10"
-    />
+      <!-- The one thing allowed on the image -->
+      <IdBadge
+        :id="props.item.itemId"
+        variant="overlay"
+        class="absolute top-2.5 left-2.5 z-10"
+      />
+    </div>
 
-    <!-- Name overlay — hover deepens it and reveals the secondary line. Touch
-         screens have no hover, so there the common name is always shown. -->
-    <div class="absolute bottom-0 inset-x-0 z-10
-                bg-linear-to-t from-black/80 via-black/40 to-transparent
-                px-3 pb-3 pt-10
-                transition-colors duration-fast
-                group-hover:from-black/90 group-hover:via-black/50">
-      <h3
+    <!-- Caption: Dhivehi first, then English, both always shown -->
+    <div
+      class="min-w-0 px-3 pt-2 pb-2.5 border-t"
+      :class="drawn ? 'border-slate-100 dark:border-slate-800' : 'border-transparent'"
+    >
+      <p
         v-if="props.item.meta?.dhiv_script"
-        class="font-dhivehi text-base font-bold leading-tight text-white"
+        class="font-dhivehi text-base font-bold leading-snug truncate"
+        :class="drawn ? 'text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400'"
         dir="rtl"
       >
         {{ props.item.meta.dhiv_script }}
-      </h3>
-      <h3 v-else class="text-sm font-semibold leading-snug text-white truncate">
+      </p>
+      <h3
+        class="text-sm leading-snug truncate"
+        :class="drawn ? 'font-semibold text-slate-700 dark:text-slate-300' : 'text-slate-600 dark:text-slate-400'"
+      >
         {{ props.item.commonName }}
       </h3>
-
-      <div class="max-h-0 opacity-0 overflow-hidden transition-all duration-fast
-                  group-hover:max-h-16 group-hover:opacity-100 group-focus-visible:max-h-16 group-focus-visible:opacity-100
-                  pointer-coarse:max-h-16 pointer-coarse:opacity-100">
-        <p v-if="props.item.meta?.dhiv_script" class="mt-0.5 text-micro font-medium text-white/70 truncate">
-          {{ props.item.commonName }}
-        </p>
-        <p v-if="props.item.scientificName" class="mt-0.5 text-micro italic text-white/70 truncate pointer-coarse:hidden">
-          {{ props.item.scientificName }}
-        </p>
-      </div>
     </div>
-
   </div>
 </template>
 

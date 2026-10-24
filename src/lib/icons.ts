@@ -1,12 +1,11 @@
 // Single source for the app's line icons, grouped by purpose (see ICON_GROUPS at
 // the end of the file). Each entry is the inner SVG markup for
-// a shared 24×24 stroke wrapper (see Icon.vue). strokeWidth defaults to 2.
+// a shared 24×24 wrapper with a 2px stroke (see Icon.vue); an icon that needs a
+// heavier line sets stroke-width on that element (see `progress`).
 
 export interface IconDef {
   /** Inner SVG markup, rendered inside the shared <svg> wrapper. */
   body: string;
-  /** Override the default stroke-width of 2. */
-  strokeWidth?: number;
   /** A solid shape instead of a stroke. Only for third-party brand marks. */
   filled?: boolean;
 }

@@ -21,6 +21,7 @@ const ui = createUiStore();
 const collections = createCollectionsStore({
   query: search.debouncedQuery,
   viewMode: ui.viewMode,
+  drawnOnly: ui.drawnOnly,
 });
 const overlay = createOverlayStore({ drawnItems: collections.drawnItems });
 
@@ -82,10 +83,10 @@ onMounted(async () => {
   >
     <EmptyState title="Couldn't load the gallery" :hint="initError">
       <template #icon>
-        <Icon name="noResults" class="w-6 h-6" />
+        <Icon name="close" class="w-6 h-6" />
       </template>
       <button
-        class="focus-ring mt-3 inline-flex items-center gap-1.5 rounded-control px-3 py-1.5 text-sm font-medium bg-accent-700 text-white hover:bg-accent-600"
+        class="btn-primary focus-ring mt-3"
         @click="reload()"
       >
         <Icon name="reset" class="w-3.5 h-3.5" aria-hidden="true" />

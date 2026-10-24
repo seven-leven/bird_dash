@@ -13,6 +13,8 @@ import type { ViewMode } from '../types/index.ts';
 export function createCollectionsStore(deps: {
   query: Ref<string>; // debounced
   viewMode: Ref<ViewMode>;
+  /** Family view: drawn items only. */
+  drawnOnly?: Ref<boolean>;
 }) {
   const base = useCollections();
   const items = toRef(base.data, 'items');
@@ -21,8 +23,9 @@ export function createCollectionsStore(deps: {
     items,
     deps.query,
     deps.viewMode,
+    deps.drawnOnly,
   );
-  const { globalResults, globalResultCount } = useGlobalSearch(
+  const { globalResults, globalResultCount, globalDrawnCount } = useGlobalSearch(
     base.COLLECTIONS,
     base.collectionCache,
     deps.query,
@@ -42,6 +45,7 @@ export function createCollectionsStore(deps: {
     drawnItems: searchedDrawnItems,
     globalResults,
     globalResultCount,
+    globalDrawnCount,
     // Actions
     init: base.init,
     switch: base.switchCollection,

@@ -40,7 +40,7 @@ export interface UseScrollLogicReturn {
 // Global Search Types
 // -----------------------------------------------------------------------------
 
-export type MatchedField = 'id' | 'commonName' | 'scientificName';
+export type MatchedField = 'id' | 'commonName' | 'scientificName' | 'group';
 
 export interface GlobalSearchResult {
   item: CollectionItem;

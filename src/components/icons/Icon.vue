@@ -8,7 +8,7 @@
     viewBox="0 0 24 24"
     :fill="def.filled ? 'currentColor' : 'none'"
     :stroke="def.filled ? 'none' : 'currentColor'"
-    :stroke-width="def.strokeWidth ?? 2"
+    :stroke-width="2"
     stroke-linecap="round"
     stroke-linejoin="round"
     v-html="def.body"
