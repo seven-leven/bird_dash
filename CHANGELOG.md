@@ -16,6 +16,8 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-24 | fix: Dhivehi is set in Faruma wherever it appears, including what is typed into
+  search (Faruma now heads the site's font list, limited to Thaana characters)
 - 2026-10-24 | fix: a tile's id badge no longer paints over the sticky section heading (each tile
   keeps its layers to itself)
 - 2026-10-24 | docs: design guide polished. The image has a serif title, the principles as five
