@@ -136,3 +136,14 @@ export async function writeLogoFiles(dir = './docs'): Promise<void> {
   );
   await sharp(new TextEncoder().encode(logoSheetSvg())).png().toFile(`${dir}/logo.png`);
 }
+
+/**
+ * The browser-tab icon: the logo tile, as SVG, and as a 64px PNG for browsers
+ * that take no SVG icon. Written into `public/`, where index.html links them.
+ */
+export async function writeFavicons(dir = './public'): Promise<void> {
+  await writeFile(`${dir}/favicon.svg`, logoSvg('tile', INK) + '\n');
+  await sharp(new TextEncoder().encode(logoSvg('tile', INK, 64))).png().toFile(
+    `${dir}/favicon.png`,
+  );
+}

@@ -60,7 +60,7 @@ test('after init the first collection is active, grouped, and counted', async ()
     assertEquals(store.activeCollection.value?.id, 'birds');
 
     assertEquals(Object.keys(store.activeData.value.grouped), ['Ducks', 'Herons']);
-    assertEquals(store.stats.value, { total: 3, filtered: 3, drawn: 2 });
+    assertEquals(store.stats.value, { total: 3, filtered: 3, filteredDrawn: 2, drawn: 2 });
     assertEquals(store.globalStats.value, { drawn: 2, total: 4 }); // sharks counted too
   } finally {
     restore();

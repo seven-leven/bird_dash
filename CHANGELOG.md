@@ -16,6 +16,14 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-24 | site: one design, said one way. Search is counted in "matches" everywhere (the filter
+  chip now reads "10 matches, 1 drawn", like the dropdown); each view has one name in the header and
+  the sidebar ("Families", "Orders", "Months"); a collection's progress shows once, above the grid,
+  in both views; one id badge in two placements; two named shadows (`shadow-float`, `shadow-lift`);
+  icons in four sizes, checked by a test; the viewer's borders use slate like every other surface;
+  the logo tile is the browser-tab icon. The design guide's colours are now read from Tailwind's own
+  (oklch) palette rather than Tailwind 3's hex, which moved a few contrast figures and took cyan off
+  the accent menu (its marker shade is paler than teal's)
 - 2026-10-24 | fix: Dhivehi is set in Faruma wherever it appears, including what is typed into
   search (Faruma now heads the site's font list, limited to Thaana characters)
 - 2026-10-24 | fix: a tile's id badge no longer paints over the sticky section heading (each tile

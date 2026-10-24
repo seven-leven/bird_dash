@@ -1,7 +1,7 @@
 <!-- Single icon component. Renders one entry from the icons registry inside a
      shared 24×24 wrapper: a 2px round stroke for our own line icons, a solid fill
      for third-party brand marks. Consumers size/colour it via class, e.g.
-     <Icon name="search" class="w-4 h-4 text-muted" />. -->
+     <Icon name="search" class="size-4 text-muted" />. -->
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"

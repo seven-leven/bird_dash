@@ -6,7 +6,7 @@
     <div class="relative w-full">
       <!-- Search Icon -->
       <div class="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
-        <Icon name="search" class="h-3.5 w-3.5 text-muted" />
+        <Icon name="search" class="size-4 text-muted" />
       </div>
 
       <!-- Input -->
@@ -42,7 +42,7 @@
         aria-hidden="true"
       >
         <kbd class="kbd-hint inline-flex items-center gap-0.5">
-          <Icon v-if="isMac" name="command" class="w-2.5 h-2.5" />
+          <Icon v-if="isMac" name="command" class="size-3" />
           <template v-else>Ctrl </template>K
         </kbd>
       </div>
@@ -55,7 +55,7 @@
         tabindex="-1"
         aria-label="Clear search"
       >
-        <Icon name="close" class="h-3.5 w-3.5" />
+        <Icon name="close" class="size-4" />
       </button>
     </div>
 
@@ -67,7 +67,7 @@
       <div
         v-if="shouldShowDropdown"
         class="absolute right-0 top-full mt-1.5 w-full md:min-w-90 max-w-130
-               rounded-card border shadow-xl z-50 overflow-hidden
+               rounded-card border shadow-float z-50 overflow-hidden
                bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
       >
         <!-- Header -->
@@ -76,7 +76,7 @@
         <!-- States -->
         <EmptyState v-if="globalResultCount === 0" :title="`No matches for '${query}'`" class="py-6">
           <template #icon>
-            <Icon name="noResults" class="w-6 h-6" />
+            <Icon name="noResults" class="size-6" />
           </template>
         </EmptyState>
 
@@ -108,6 +108,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { GlobalSearchResult } from '../../types/index.ts';
+import { matches } from '../../lib/formatCount.ts';
 
 // Composables
 import { useSearchNavigation } from '../../composables/search/useSearchNavigation.ts';
@@ -190,7 +191,7 @@ const activeOptionId = computed(() =>
 const liveMessage = computed(() => {
   if (!query.value.trim()) return '';
   const n = globalResultCount.value;
-  return n === 0 ? 'No matches found' : `${n} ${n === 1 ? 'result' : 'results'}`;
+  return n === 0 ? 'No matches found' : matches(n);
 });
 
 const dropdownTransition = {

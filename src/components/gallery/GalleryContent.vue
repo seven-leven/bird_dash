@@ -25,10 +25,10 @@
       :hint="data.error"
     >
       <template #icon>
-        <Icon name="close" class="w-6 h-6" />
+        <Icon name="close" class="size-6" />
       </template>
       <button class="btn-primary focus-ring mt-3" @click="reload()">
-        <Icon name="reset" class="w-3.5 h-3.5" aria-hidden="true" />
+        <Icon name="reset" class="size-4" aria-hidden="true" />
         Try again
       </button>
     </EmptyState>
@@ -40,7 +40,7 @@
       :title="`No matches for '${query}'`"
     >
       <template #icon>
-        <Icon name="noResults" class="w-6 h-6" />
+        <Icon name="noResults" class="size-6" />
       </template>
       <button class="btn-ghost focus-ring mt-2 px-3 py-1.5 text-sm font-medium" @click="clear()">
         Clear search
@@ -55,7 +55,7 @@
       :hint="plannedLabel"
     >
       <template #icon>
-        <CollectionIcon v-if="activeCollection" :collection="activeCollection" class="w-6 h-6" />
+        <CollectionIcon v-if="activeCollection" :collection="activeCollection" class="size-6" />
       </template>
       <button
         v-if="viewMode === 'group'"
@@ -68,15 +68,19 @@
 
     <!-- Main Content -->
     <template v-else>
-      <!-- A collection with gaps says how far along it is, and can hide the gaps -->
+      <!-- The collection's one count: how far along it is (and a switch to hide the
+           gaps, while there are any), or how many drawings the date view holds -->
       <div
-        v-if="viewMode === 'group' && stats.drawn > 0 && stats.drawn < data.items.length"
-        class="flex flex-wrap items-center justify-between gap-2 -mt-1 mb-6"
+        v-if="stats.drawn > 0"
+        class="flex flex-wrap items-center justify-between gap-2 min-h-9 -mt-1 mb-6"
       >
         <p class="with-icon text-sm text-muted tabular-nums">
-          <Icon name="pencil" aria-hidden="true" />{{ drawnOf(stats.drawn, data.items.length) }}
+          <Icon name="pencil" aria-hidden="true" />{{
+            viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn)
+          }}
         </p>
         <button
+          v-if="viewMode === 'group' && stats.drawn < data.items.length"
           class="nav-item marker-b focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm max-md:min-h-9"
           :aria-pressed="drawnOnly"
           @click="toggleDrawnOnly()"
@@ -145,7 +149,7 @@
               class="focus-ring inline-flex items-center gap-1 rounded-control underline underline-offset-2
                      hover:text-slate-800 dark:hover:text-slate-200"
             >
-              <Icon name="github" class="w-3.5 h-3.5" aria-hidden="true" />
+              <Icon name="github" class="size-3" aria-hidden="true" />
               GitHub
             </a>
           </p>

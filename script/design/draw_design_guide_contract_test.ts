@@ -87,7 +87,7 @@ test('the logo sheet shows each version and the rules', () => {
 test('`npm run design` writes every image, at the expected sizes, into the folder given', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'bird_dash_design_'));
   try {
-    await writeDesignImages(dir);
+    await writeDesignImages(dir, dir);
 
     const guide = await size(`${dir}/design-guide.png`);
     assertEquals([guide.width, guide.format], [1400, 'png']);
@@ -106,6 +106,12 @@ test('`npm run design` writes every image, at the expected sizes, into the folde
       assert(svg.startsWith('<svg ') && svg.endsWith('</svg>\n'), name);
     }
     assertStringIncludes(await readFile(`${dir}/logo/mark-white.svg`, 'utf8'), '#ffffff');
+    assertEquals(await size(`${dir}/favicon.png`), { width: 64, height: 64, format: 'png' });
+    assertEquals(
+      await readFile(`${dir}/favicon.svg`, 'utf8'),
+      await readFile(`${dir}/logo/tile.svg`, 'utf8'),
+      'the tab icon is the logo tile',
+    );
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
@@ -114,7 +120,7 @@ test('`npm run design` writes every image, at the expected sizes, into the folde
 test('the images in docs/ are up to date with the code that draws them', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'bird_dash_design_'));
   try {
-    await writeDesignImages(dir);
+    await writeDesignImages(dir, dir);
     // The SVG files are plain text, so they must match exactly.
     for (const name of ['mark.svg', 'mark-white.svg', 'tile.svg']) {
       assertEquals(
@@ -123,6 +129,11 @@ test('the images in docs/ are up to date with the code that draws them', async (
         `docs/assets/logo/${name} is stale: run \`npm run design\` and commit the result`,
       );
     }
+    assertEquals(
+      await readFile('./public/favicon.svg', 'utf8'),
+      await readFile(`${dir}/favicon.svg`, 'utf8'),
+      'public/favicon.svg is stale: run `npm run design` and commit the result',
+    );
     // PNG bytes can differ between machines (fonts), so compare what is stable: the size.
     for (const name of ['design-guide.png', 'icons.png', 'logo.png']) {
       assertEquals(

@@ -186,6 +186,7 @@ export function useCollectionData(
     filtered: viewMode.value === 'group'
       ? allFilteredItems.value.length
       : searchedDrawnItems.value.length,
+    filteredDrawn: searchedDrawnItems.value.length,
     drawn: drawnItems.value.length,
   }));
 

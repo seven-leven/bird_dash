@@ -1,6 +1,14 @@
 import { test } from 'vitest';
-import { assert, assertEquals } from '@std/assert';
-import { ACCENT_HEX, accentMenu, contrast, whiteOnBlack } from './palette.ts';
+import { assert, assertEquals, assertThrows } from '@std/assert';
+import {
+  ACCENT_HEX,
+  accentMenu,
+  contrast,
+  oklchToHex,
+  SLATE,
+  TEAL,
+  whiteOnBlack,
+} from './palette.ts';
 
 test('contrast: black on white is 21:1 and the order of arguments does not matter', () => {
   assertEquals(Math.round(contrast('#000000', '#ffffff')), 21);
@@ -28,4 +36,16 @@ test('every accent on the menu in main.css passes the contrast rule', async () =
     assert(button >= 4.5, `${hue}: white on 700 is ${button.toFixed(1)}:1, below 4.5:1`);
     assert(marker >= 2.4, `${hue}: 500 on white is ${marker.toFixed(1)}:1, paler than allowed`);
   }
+});
+
+test("oklchToHex turns Tailwind's oklch colours into the hex a screen shows", () => {
+  assertEquals(oklchToHex('oklch(100% 0 0)'), '#ffffff');
+  assertEquals(oklchToHex('oklch(0% 0 0)'), '#000000');
+  assertEquals(oklchToHex('oklch(55.6% 0 none)'), '#737373'); // a grey has no hue
+  // Tailwind's published hex for these shades.
+  assertEquals([SLATE['500'], TEAL['500'], TEAL['700']], ['#62748e', '#00bba7', '#00786f']);
+});
+
+test('oklchToHex refuses anything that is not an oklch() colour', () => {
+  assertThrows(() => oklchToHex('#ffffff'), Error, 'not an oklch() colour: #ffffff');
 });

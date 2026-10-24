@@ -107,23 +107,23 @@ icons**.
 
 | Pair                       | Contrast |
 | -------------------------- | -------- |
-| `slate-900` on white       | 17.9:1   |
+| `slate-900` on white       | 17.8:1   |
 | `slate-600` on white       | 7.6:1    |
 | `slate-500` on white       | 4.8:1    |
 | `slate-100` on `slate-950` | 18.4:1   |
-| `slate-400` on `slate-950` | 7.9:1    |
-| white on `accent-700`      | 5.5:1    |
+| `slate-400` on `slate-950` | 7.7:1    |
+| white on `accent-700`      | 5.4:1    |
 | white at 70% on black      | 10.0:1   |
 | white at 50% on black      | 5.3:1    |
 
-`accent-500` on white is about 2.5:1: use it for markers and focus rings, not text. Accent-coloured
+`accent-500` on white is about 2.4:1: use it for markers and focus rings, not text. Accent-coloured
 text on a light background uses `accent-700`. `slate-400` on white also fails for text.
 
 Every hue offered to collections must pass both tests: white text on its `700` shade at least 4.5:1,
 and its `500` shade against white at least 2.4:1. A test checks the menu automatically. Amber,
-yellow, lime and green are left out because their `500` shades are too pale; red is left out because
-it reads as an error. For collections shown beside one another, choose distinct neighbours — avoid
-pairs such as rose and pink, or violet and purple.
+yellow, lime, green and cyan are left out because their `500` shades are too pale; red is left out
+because it reads as an error. For collections shown beside one another, choose distinct neighbours —
+avoid pairs such as rose and pink, or violet and purple.
 
 The viewer follows the page theme: a light page opens a light viewer. Use `.viewer-title`,
 `.viewer-body` and `.viewer-label` for its text; do not hard-code faded white. Every colour needs a
@@ -175,14 +175,23 @@ data that actually exists, and let every control explain what it does.
 
 Counts come from [`src/lib/formatCount.ts`](../src/lib/formatCount.ts); never compose them by hand.
 
-| What the view contains                     | Heading or summary                   | Sidebar pill |
-| ------------------------------------------ | ------------------------------------ | ------------ |
-| Drawn and undrawn items, grouped by family | `4 of 8 drawn` (`drawnOf`)           | `4 of 8`     |
-| Drawn items only, grouped by date          | `2 drawings` (`drawings`)            | `2`          |
-| Search results                             | `1 result`, or `10 matches, 1 drawn` | none         |
+| What the view contains                     | Summary above the grid     | Sidebar pill |
+| ------------------------------------------ | -------------------------- | ------------ |
+| Drawn and undrawn items, grouped by family | `4 of 8 drawn` (`drawnOf`) | `4 of 8`     |
+| Drawn items only, grouped by month         | `2 drawings` (`drawings`)  | `2`          |
+| Search, family view (dropdown and chip)    | `10 matches, 1 drawn`      | none         |
+| Search, month view (drawn items only)      | `4 matches` (`matches`)    | none         |
 
-The forms differ on purpose: "of 8" only makes sense when there is a total still to be drawn. Never
-show a count until it is known.
+The forms differ on purpose: "of 8" only makes sense when there is a total still to be drawn. A
+search is counted in "matches" wherever it is shown; never "results". Never show a count until it is
+known.
+
+Each count is shown once. A collection's progress sits above the grid, with the "Drawn only" switch;
+the sidebar's footer holds the total across every collection; the sidebar's title names the view and
+nothing else.
+
+A view has one name, in the header's tab and the sidebar's title alike: the collection's groups in
+the plural ("Families", "Orders"), or "Months". `src/lib/viewName.ts` makes it.
 
 Use **sentence case** for buttons, labels and headings: "Clear search", not "Clear Search".
 `.caps-label` handles the small uppercase treatment; its markup is still written in sentence case.
@@ -222,9 +231,14 @@ Related things sit closer together than unrelated things. Let spacing explain th
 
 ### Edges before effects
 
-Separate surfaces with a 1px border before reaching for a shadow. Shadows are for what genuinely
-floats above the page: menus, an open phone sidebar, a hovered tile. Tiles stay square, and images
-are never cropped: use `object-contain`.
+Separate surfaces with a 1px border before reaching for a shadow; in the dark theme that border is
+`slate-800`, as everywhere, never a faded white. There are two shadows, named for the two ways
+something leaves the page: `shadow-float` for what sits over it (menus, sheets, the open phone
+sidebar), and `shadow-lift` for what rises a little (a hovered tile, controls over a drawing). Tiles
+stay square, and images are never cropped: use `object-contain`.
+
+An id has one badge, `IdBadge`, in two placements: `overlay` over a drawing, `surface` anywhere else
+(the viewer's panel and search rows included).
 
 ---
 
@@ -302,8 +316,9 @@ Keep the mark at least 20px wide. Below that, use the tile: its solid shape surv
 frame would blur. Leave clear space of half the mark's width on every side.
 
 Do not close the frame, move the bird off its line, fill, stretch or rotate the mark, add a shadow,
-or set the wordmark in another font or in capitals. The browser-tab icon currently uses a drawing
-(`public/favicon.png`); to use the logo instead, replace it with `docs/assets/logo/tile-512.png`.
+or set the wordmark in another font or in capitals. The browser-tab icon is the tile: `npm run
+design` writes it to `public/favicon.svg`, with a 64px `favicon.png` for browsers that take no SVG
+icon.
 
 ---
 
@@ -337,9 +352,9 @@ neighbours, so icons, names and dividers line up from row to row.
 - Prefer one or two bold shapes. If an icon needs more than about five strokes, simplify it.
 - It must stay legible at **16px**. Run `npm run design` and look at `docs/assets/icons.png`.
 
-Icons take `currentColor`. Size them `w-4 h-4` (16px) in controls, `w-5 h-5` or `w-6 h-6` when they
-stand alone. Label icons sit before a label or figure at 12px, in the text colour, through
-`.with-icon`.
+Icons take `currentColor` and come in four sizes, by role: `size-3` (12px) beside a label or figure,
+`size-4` (16px) in a control, `size-5` or `size-6` (20 or 24px) standing alone. Label icons sit
+before their text through `.with-icon`, which sizes them. A test fails on any other size.
 
 Each icon has one meaning wherever it appears: `tag` is the version, `image` the drawing count,
 `commit` the build's commit, `layers` all collections together, `pencil` the illustrator or "drawn",
@@ -407,14 +422,14 @@ sections; the grid presents drawings; the viewer shows one drawing and its detai
 
 Each section gets one heading, and it stays in view while the visitor scrolls through the section.
 Do not add a second label that repeats it. The sticky heading names a section of the active view — a
-month in the date view, never a family left over from another view.
+month in the month view, never a family left over from another view.
 
 On phones the header still says where you are: the current collection's name beside its icon, the
 other collections as icons with `aria-label`s. At 375px the row has room for the logo mark or the
 collection name, not both; the name wins, because orientation matters most. The mark returns from
 640px.
 
-The date view runs newest first, because returning visitors want what's new. Months stay continuous
+The month view runs newest first, because returning visitors want what's new. Months stay continuous
 so gaps remain visible, but three or more empty months in a row fold into one disabled row, such as
 `Nov 2024 – Sep 2025`.
 
@@ -424,9 +439,10 @@ The dropdown is for jumping anywhere. It searches every collection, drawn or not
 a thumbnail or a "Not drawn yet" label, highlights the match, and names the group when the group's
 name is what matched. Its header gives both numbers: `10 matches, 1 drawn`.
 
-The page filter is narrower: it narrows the current view to drawn matches and says so in its chip:
-`1 result for 'plover'`. When search narrows what the viewer pages through, its counter says so: `1
-of 1 · matching 'plover'`.
+The page filter narrows the current view to the matches and says so in its chip, in the dropdown's
+words: `10 matches, 1 drawn for 'plover'` in the family view, which shows what is planned as well,
+and `1 match for 'plover'` in the month view, which holds drawings only. When search narrows what
+the viewer pages through, its counter says so: `1 of 1 · matching 'plover'`.
 
 ---
 
@@ -496,23 +512,23 @@ cannot drift.
 | Step  | `slate-*` | `accent-*` (teal) |
 | ----- | --------- | ----------------- |
 | `50`  | `#f8fafc` | `#f0fdfa`         |
-| `100` | `#f1f5f9` | `#ccfbf1`         |
-| `200` | `#e2e8f0` | `#99f6e4`         |
-| `300` | `#cbd5e1` | `#5eead4`         |
-| `400` | `#94a3b8` | `#2dd4bf`         |
-| `500` | `#64748b` | `#14b8a6`         |
-| `600` | `#475569` | `#0d9488`         |
-| `700` | `#334155` | `#0f766e`         |
-| `800` | `#1e293b` | `#115e59`         |
-| `900` | `#0f172a` | `#134e4a`         |
-| `950` | `#020617` | `#042f2e`         |
+| `100` | `#f1f5f9` | `#cbfbf1`         |
+| `200` | `#e2e8f0` | `#96f7e4`         |
+| `300` | `#cad5e2` | `#46ecd5`         |
+| `400` | `#90a1b9` | `#00d5be`         |
+| `500` | `#62748e` | `#00bba7`         |
+| `600` | `#45556c` | `#009689`         |
+| `700` | `#314158` | `#00786f`         |
+| `800` | `#1d293d` | `#005f5a`         |
+| `900` | `#0f172b` | `#0b4f4a`         |
+| `950` | `#020618` | `#022f2e`         |
 
 ### Placeholder files
 
 | Theme | File             | Background              | Icon                    |
 | ----- | ---------------- | ----------------------- | ----------------------- |
 | Light | `<id>.webp`      | `slate-100` (`#f1f5f9`) | `#a1a1a1`               |
-| Dark  | `<id>-dark.webp` | `slate-900` (`#0f172a`) | `slate-600` (`#475569`) |
+| Dark  | `<id>-dark.webp` | `slate-900` (`#0f172b`) | `slate-600` (`#45556c`) |
 
 ---
 

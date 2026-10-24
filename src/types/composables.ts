@@ -23,6 +23,8 @@ export interface GroupedData {
 export interface CollectionStats {
   total: number;
   filtered: number;
+  /** How many of the filtered items are drawn. */
+  filteredDrawn: number;
   drawn: number;
 }
 

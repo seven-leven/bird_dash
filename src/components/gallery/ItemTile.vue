@@ -79,8 +79,8 @@ const emit = defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
 
 // Only drawn items open the viewer. A placeholder is not a button: it gets no
 // role, tab stop or hover lift, so nothing promises an action that never happens.
-const INTERACTIVE = 'cursor-pointer hover:ring-black/15 dark:hover:ring-white/10 hover:shadow-lg ' +
-  'hover:-translate-y-0.5 active:scale-[0.98] active:shadow-sm';
+const INTERACTIVE = 'cursor-pointer hover:ring-black/15 dark:hover:ring-white/10 hover:shadow-lift ' +
+  'hover:-translate-y-0.5 active:scale-[0.98]';
 const drawn = computed(() => props.item.isDrawn);
 const buttonAttrs = computed(() =>
   drawn.value

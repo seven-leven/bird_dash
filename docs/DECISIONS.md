@@ -153,7 +153,7 @@ path such as `/birds/001` would be a 404 when reloaded or shared; a hash never r
 
 **Chosen** (October 2026): a tile's names sit in a caption under the image; only the small id badge
 is on it. Drawn and undrawn tiles look different at a glance (paper versus the interface's grey).
-See [DESIGN.md](DESIGN.md), "The one idea" and §9.
+See [DESIGN.md](DESIGN.md), P1 and §09.
 
 **Why.** The names used to sit on a dark gradient across the bottom of the image. On phones, where
 they are always shown, it covered about a third of each drawing, and on desktop the English name
@@ -162,6 +162,19 @@ gradient) looked like a sketch. A caption leaves the drawing whole, works the sa
 mouse, and lets the two kinds of tile differ.
 
 **Cost.** A tile is taller than its image by the caption's height, so fewer fit on a screen.
+
+### Colours are measured as Tailwind renders them
+
+**Chosen** (October 2026): `script/design/palette.ts` reads every colour from Tailwind's own palette
+(`tailwindcss/colors`, in oklch) and converts it to hex. The guide's swatches, every contrast figure
+in DESIGN.md, the accent menu's rule and the placeholders all use those values; a test checks the
+page's tables against them.
+
+**Why.** The file used to hold Tailwind 3's hex values, typed by hand, while the site renders
+Tailwind 4's oklch colours, which differ slightly. The figures described colours nobody saw, and the
+placeholders' grey was not quite the tile's. Measured properly, cyan's marker shade (2.37:1 on
+white) is paler than teal's (2.42:1), so cyan left the accent menu, as the rule requires. No
+collection used it.
 
 ### Composition API only
 
