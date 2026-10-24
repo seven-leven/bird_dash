@@ -16,6 +16,10 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-24 | docs: DESIGN.md rewritten as a design manifesto. Each of the five principles is
+  stated in one line, and each numbered section names the principles it serves (a contract test
+  checks both). The guide image is redrawn to match on warm paper with fine rules, and the icon
+  groups share one column grid, with a divider in the empty column between groups
 - 2026-10-24 | fix: a section's sticky heading now meets the top edge; it stopped 24px short (16px
   on phones), the scroll area's padding, and drawings showed through the gap
 - 2026-10-24 | site: follows the revised design guide. Names sit in a caption under each drawing;
