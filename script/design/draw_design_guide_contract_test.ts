@@ -51,9 +51,10 @@ test('the guide and the icon sheet both show every icon, under its group', async
 });
 
 test('the guide shows both placeholders of every collection', async () => {
-  const { overlays } = await designGuide();
+  const { placeholders: overlays, dhivehi } = await designGuide();
   const collections = await readJson<RawCollectionConfig[]>('./public/collections.json');
   assertEquals(overlays.length, collections.length * 2); // light and dark
+  assertEquals(dhivehi.length, 2); // the specimen and the type scale, drawn in Faruma
 });
 
 test('the contrast report gives a ratio for every pair the guide quotes', () => {

@@ -21,23 +21,28 @@ const W = 1400;
 const X = 80; // the left margin; the content runs from X to W - X
 const INK = SLATE['900'];
 const MUTED = SLATE['500'];
-// The guide is a document, printed on warm paper with fine rules. The site's
-// own colours are the slate and accent swatches drawn on it.
+// The guide is a document in its own voice: warm paper, fine rules, a serif for
+// statements. The site's own colours are the slate and accent swatches drawn on it.
 const PAPER = '#fbfaf7';
 const RULE = '#e2ded5';
 const FONT = 'font-family="Segoe UI, Helvetica, Arial, sans-serif"';
 const SERIF_FACE = 'font-family="Georgia, Cambria, serif"';
 const SERIF = `${SERIF_FACE} font-style="italic"`;
+// The SVG renderer cannot shape Thaana, so Dhivehi is drawn by Pango in the
+// site's own Thaana font and laid over the page.
+const FARUMA = './src/styles/fonts/Faruma.woff';
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const text = (x: number, y: number, s: string, size = 15, fill = INK, weight = 400, extra = '') =>
   `<text x="${x}" y="${y}" ${FONT} font-size="${size}" font-weight="${weight}" fill="${fill}" ${extra}>${
     esc(s)
   }</text>`;
-const caps = (x: number, y: number, s: string) =>
-  text(x, y, s.toUpperCase(), 12, MUTED, 600, 'letter-spacing="1"');
+const caps = (x: number, y: number, s: string, fill = MUTED) =>
+  text(x, y, s.toUpperCase(), 12, fill, 600, 'letter-spacing="1.5"');
 const serif = (x: number, y: number, s: string, size = 17, fill = MUTED) =>
   `<text x="${x}" y="${y}" ${SERIF} font-size="${size}" fill="${fill}">${esc(s)}</text>`;
+const statement = (x: number, y: number, s: string, size: number) =>
+  `<text x="${x}" y="${y}" ${SERIF_FACE} font-size="${size}" fill="${INK}">${esc(s)}</text>`;
 
 /** Break `s` into lines of at most `max` characters, at spaces. */
 export function wrap(s: string, max: number): string[] {
@@ -57,8 +62,8 @@ const para = (x: number, y: number, lines: string[], lead: number, attrs: string
   }</text>`;
 const rect = (x: number, y: number, w: number, h: number, fill: string, rx = 0, extra = '') =>
   `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" ${extra}/>`;
-const line = (x1: number, y1: number, x2: number, y2: number) =>
-  `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${RULE}" stroke-width="1"/>`;
+const line = (x1: number, y1: number, x2: number, y2: number, stroke = RULE) =>
+  `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="1"/>`;
 const rule = (y: number) => line(X, y, W - X, y);
 const icon = (name: keyof typeof ICONS, x: number, y: number, size: number, ink: string) => {
   const def: IconDef = ICONS[name];
@@ -68,15 +73,29 @@ const icon = (name: keyof typeof ICONS, x: number, y: number, size: number, ink:
   return `<g transform="translate(${x} ${y}) scale(${size / 24})" ${paint}>${def.body}</g>`;
 };
 
+/** Dhivehi in Faruma, `size` px, its baseline at `baseline`: an image to lay over the page. */
+async function thaana(s: string, x: number, baseline: number, size: number) {
+  const input = await sharp({
+    text: {
+      text: `<span foreground="${INK}">${s}</span>`,
+      font: `Faruma ${size}`,
+      fontfile: FARUMA,
+      rgba: true,
+      dpi: 72,
+    },
+  }).png().toBuffer();
+  return { input, left: x, top: Math.round(baseline - size * 0.95) };
+}
+
 /**
- * A numbered section as DESIGN.md has it: a fine rule, the number and title, then
- * its line in italics. Returns the markup and the y where the section's content starts.
+ * Every section has the same shape: a fine rule, a small label, a statement in
+ * the serif, then one line of specifics. Returns the markup and where the
+ * section's demonstration starts.
  */
-function section(y: number, num: string, title: string, note: string) {
-  const indent = num.length > 2 ? 112 : 64;
-  const svg = rule(y) + text(X, y + 52, num, 15, MUTED, 600, 'letter-spacing="1"') +
-    text(X + indent, y + 52, title, 26, INK, 700) + serif(X + indent, y + 84, note);
-  return { svg, top: y + 124 };
+function section(y: number, label: string, says: string, specifics: string) {
+  const svg = rule(y) + caps(X, y + 52, label) + statement(X, y + 98, says, 34) +
+    text(X, y + 132, specifics, 16, MUTED);
+  return { svg, top: y + 176 };
 }
 
 function ramp(y: number, name: string, colors: Record<string, string>): string {
@@ -137,33 +156,16 @@ function iconGroups(
   return { svg, bottom: y0 + rows * o.row };
 }
 
-/** A `.nav-item` drawn in one theme: default, hover, current. */
-function navStates(x: number, y: number, dark: boolean): string {
-  const bg = dark ? SLATE['950'] : '#ffffff';
-  const fill = dark ? SLATE['800'] : SLATE['100'];
-  const idle = dark ? SLATE['400'] : SLATE['500'];
-  const hover = dark ? SLATE['200'] : SLATE['800'];
-  const current = dark ? SLATE['100'] : SLATE['900'];
-  const item = (ix: number, label: string, color: string, filled: boolean, marker: boolean) =>
-    (filled ? rect(ix, y + 22, 132, 40, fill, 6) : '') +
-    icon('bird', ix + 14, y + 32, 20, color) + text(ix + 44, y + 48, label, 16, color, 500) +
-    (marker ? rect(ix + 10, y + 60, 112, 2.5, TEAL['500'], 2) : '');
-  return rect(x, y, 470, 84, bg, 12, `stroke="${RULE}"`) +
-    item(x + 16, 'Default', idle, false, false) + item(x + 168, 'Hover', hover, true, false) +
-    item(x + 320, 'Current', current, true, true);
-}
-
-/**
- * Where colour belongs, drawn in one theme: each role shown in its real colours
- * on a card of that theme, with its name and its tokens.
- */
-function roleCard(x: number, y: number, w: number, dark: boolean) {
-  const t = dark
+/** The colours of one theme, as the role cards and the states draw them. */
+const theme = (dark: boolean) =>
+  dark
     ? {
       card: SLATE['900'],
       page: SLATE['950'],
       surface: SLATE['950'],
+      fill: SLATE['800'],
       ink: SLATE['100'],
+      hover: SLATE['200'],
       muted: SLATE['400'],
       border: SLATE['800'],
       viewer: ['#ffffff', whiteOnBlack(0.7), whiteOnBlack(0.5)],
@@ -172,11 +174,27 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
       card: '#ffffff',
       page: SLATE['50'],
       surface: '#ffffff',
+      fill: SLATE['100'],
       ink: SLATE['900'],
+      hover: SLATE['800'],
       muted: SLATE['500'],
       border: SLATE['200'],
       viewer: [SLATE['900'], SLATE['600'], SLATE['500']],
     };
+
+/** A card in one theme's colours, labelled in the corner. */
+const themeCard = (x: number, y: number, w: number, h: number, dark: boolean) => {
+  const t = theme(dark);
+  return rect(x, y, w, h, t.card, 12, `stroke="${RULE}"`) +
+    caps(x + 24, y + 32, dark ? 'Dark theme' : 'Light theme', t.muted);
+};
+
+/**
+ * Where colour belongs, drawn in one theme: each role shown in its real colours
+ * on a card of that theme, with its name and its tokens.
+ */
+function roleCard(x: number, y: number, w: number, dark: boolean) {
+  const t = theme(dark);
   const aa = (ax: number, ay: number, fill: string, size = 18) =>
     text(ax, ay, 'Aa', size, fill, 600);
   const swatch = (fill: string, sx: number, sy: number) =>
@@ -206,83 +224,96 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
       'accent-700 + white',
       (sx, sy) => rect(sx, sy, 56, 28, TEAL['700'], 6) + aa(sx + 15, sy + 19, '#ffffff', 14),
     ],
-    ['Viewer: title, body, label', dark ? 'white 100 / 70 / 50%' : 'slate-900 / 600 / 500', (
-      sx,
-      sy,
-    ) => t.viewer.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join('')],
+    [
+      'Viewer: title, body, label',
+      dark ? 'white 100 / 70 / 50%' : 'slate-900 / 600 / 500',
+      (sx, sy) => t.viewer.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join(''),
+    ],
   ];
   const row = 46;
   const top = y + 52;
-  let svg = rect(x, y, w, 52 + roles.length * row + 12, t.card, 12, `stroke="${RULE}"`) +
-    text(
-      x + 24,
-      y + 32,
-      dark ? 'DARK THEME' : 'LIGHT THEME',
-      12,
-      t.muted,
-      600,
-      'letter-spacing="1"',
-    );
+  let svg = themeCard(x, y, w, 52 + roles.length * row + 12, dark);
   roles.forEach(([name, tokens, sample], i) => {
     const ry = top + i * row;
-    svg += line(x + 24, ry, x + w - 24, ry).replace(RULE, t.border) + sample(x + 24, ry + 9) +
+    svg += line(x + 24, ry, x + w - 24, ry, t.border) + sample(x + 24, ry + 9) +
       text(x + 100, ry + 29, name, 15, t.ink) +
       text(x + w - 24, ry + 29, tokens, 14, t.muted, 400, 'text-anchor="end"');
   });
   return { svg, bottom: top + roles.length * row + 12 };
 }
 
+/** The four states of a `.nav-item`, at one scale, in one theme. */
+function navStates(x: number, y: number, w: number, dark: boolean): string {
+  const t = theme(dark);
+  const item = (i: number, label: string, color: string, filled: boolean) => {
+    const ix = x + 24 + i * 140;
+    const iy = y + 56;
+    return (filled ? rect(ix, iy, 124, 40, t.fill, 6) : '') +
+      icon('bird', ix + 12, iy + 10, 20, color) + text(ix + 40, iy + 26, label, 16, color, 500);
+  };
+  const focusX = x + 24 + 3 * 140;
+  return themeCard(x, y, w, 128, dark) + item(0, 'Default', t.muted, false) +
+    item(1, 'Hover', t.hover, true) + item(2, 'Current', t.ink, true) +
+    rect(x + 24 + 2 * 140 + 10, y + 94, 104, 2.5, TEAL['500'], 2) +
+    item(3, 'Focus', t.muted, false) +
+    rect(focusX - 4, y + 52, 132, 48, 'none', 9, `stroke="${TEAL['500']}" stroke-width="2.5"`);
+}
+
 type Overlay = OverlayOptions;
 
-/** The guide as an SVG, plus the placeholder images to composite on top of it. */
+/**
+ * The guide as an SVG, plus the images laid over it: the placeholders, and the
+ * Dhivehi samples (which the SVG renderer cannot shape).
+ */
 export async function designGuide(
   collections?: RawCollectionConfig[], // defaults to public/collections.json
-): Promise<{ svg: string; overlays: Overlay[] }> {
+): Promise<{ svg: string; placeholders: Overlay[]; dhivehi: Overlay[] }> {
   const cols = collections ?? await readJson<RawCollectionConfig[]>('./public/collections.json');
   const parts: string[] = [];
+  const dhivehi: Overlay[] = [];
 
-  // ── Title ──
+  // ── Title: the manifesto's name, then the one idea everything follows from ──
   parts.push(
-    text(X, 110, 'Wildlife Illustrated', 44, INK, 700) +
-      text(X, 148, 'A design manifesto', 20, MUTED) +
-      serif(X, 200, 'The drawings carry the colour. Everything around them makes room.', 22, INK),
+    caps(X, 96, 'Design manifesto') + statement(X, 172, 'Wildlife Illustrated', 68) +
+      serif(X, 238, 'The drawings carry the colour.', 28, INK) +
+      serif(X, 276, 'Everything around them makes room.', 28, INK),
   );
 
   // ── The five principles, side by side: icon, number, title, and the principle ──
-  let y = 250;
+  let y = 336;
   parts.push(rule(y));
   const colW = (W - 2 * X) / PRINCIPLES.length;
   PRINCIPLES.forEach((p, i) => {
     const x = X + i * colW + (i ? 28 : 0);
     parts.push(
-      (i ? line(x - 28, y + 48, x - 28, y + 330) : '') + icon(p.icon, x, y + 48, 36, INK) +
-        text(x, y + 132, `P${i + 1}`, 14, MUTED, 600, 'letter-spacing="1"') +
-        para(x, y + 176, wrap(p.title, 15), 34, `${SERIF_FACE} font-size="28" fill="${INK}"`) +
-        para(x, y + 260, wrap(p.summary, 26), 24, `${FONT} font-size="16" fill="${MUTED}"`),
+      (i ? line(x - 28, y + 56, x - 28, y + 372) : '') + icon(p.icon, x, y + 56, 40, INK) +
+        caps(x, y + 148, `P${i + 1}`) +
+        para(x, y + 196, wrap(p.title, 15), 38, `${SERIF_FACE} font-size="30" fill="${INK}"`) +
+        para(x, y + 296, wrap(p.summary, 26), 26, `${FONT} font-size="17" fill="${MUTED}"`),
     );
   });
-  y += 380;
+  y += 440;
 
-  // ── 01 Colour ──
+  // ── Colour ──
   let s = section(
     y,
-    '01',
     'Colour',
-    'Quiet ground, clear signal: slate for surfaces and text, one accent per collection (teal shown).',
+    'Quiet ground, clear signal.',
+    'Slate for surfaces and text; one accent per collection, kept for meaning (teal shown).',
   );
   parts.push(s.svg, ramp(s.top, 'slate', SLATE), ramp(s.top + 90, 'accent', TEAL));
   const cardW = (W - 2 * X - 40) / 2;
   const card = roleCard(X, s.top + 200, cardW, false);
   parts.push(card.svg, roleCard(X + cardW + 40, s.top + 200, cardW, true).svg);
-  const ry = card.bottom + 64;
 
-  // The accent menu: every hue a collection may pick, and who has picked it.
+  // The accent menu, as a slim strip: every hue a collection may pick, and who has.
   const menu = await accentMenu();
   const usedBy = (hue: string) =>
     cols.filter((c) => (c.accent ?? 'teal') === hue).map((c) => c.label).join(', ');
+  const ry = card.bottom + 56;
   parts.push(
     caps(X, ry, 'Accent menu') +
-      serif(X + 128, ry, 'button shade above, marker shade below; picked in collections.json', 15),
+      serif(X + 132, ry, 'picked per collection in collections.json; the marker shade beneath', 15),
   );
   const sw = (W - 2 * X) / menu.length;
   menu.forEach((hue, i) => {
@@ -295,21 +326,29 @@ export async function designGuide(
     const x = X + i * sw;
     const who = usedBy(hue);
     parts.push(
-      rect(x, ry + 18, sw - 6, 44, hex[700], 8) + text(x + 10, ry + 45, hue, 14, '#ffffff', 600) +
-        rect(x, ry + 66, sw - 6, 8, hex[500], 4) +
-        text(x, ry + 94, who || 'free', 13, who ? INK : MUTED, who ? 600 : 400),
+      rect(x, ry + 16, sw - 6, 26, hex[700], 6) + text(x + 8, ry + 33, hue, 12, '#ffffff', 600) +
+        rect(x, ry + 45, sw - 6, 4, hex[500], 2) +
+        text(x, ry + 68, who || 'free', 12, who ? INK : MUTED, who ? 600 : 400),
     );
   });
-  y = ry + 140;
+  y = ry + 116;
 
-  // ── 02 Type ──
+  // ── Type: one name as the specimen, then the scale ──
   s = section(
     y,
-    '02',
     'Type',
-    'Useful, never loud: the system sans-serif, Faruma for Thaana, six sizes and no others.',
+    'Useful, never loud.',
+    'The system sans-serif, and Faruma for Thaana. Six sizes and no others.',
   );
   parts.push(s.svg);
+  const hero = s.top + 56;
+  dhivehi.push(await thaana('ރޭރު', X, hero, 48));
+  parts.push(
+    text(X, hero + 66, 'Lesser Whistling-Duck', 56, INK, 600, 'letter-spacing="-1"') +
+      text(X, hero + 104, 'Dendrocygna javanica', 22, MUTED, 400, 'font-style="italic"') +
+      text(X + 820, hero - 8, 'Dhivehi, English, scientific:', 15, MUTED) +
+      text(X + 820, hero + 16, 'the same order on tiles and in the viewer.', 15, MUTED),
+  );
   const sizes: [string, number, number, string, string][] = [
     ['text-2xl', 24, 700, 'ރޭރު', 'Dhivehi title in the viewer'],
     ['text-xl', 20, 600, 'Lesser Whistling-Duck', 'English title in the viewer'],
@@ -318,26 +357,24 @@ export async function designGuide(
     ['text-xs', 12, 400, '4 of 8 drawn · Dendrocygna javanica', 'Counts, secondary lines'],
     ['text-micro', 11, 600, 'FROM THE ILLUSTRATOR   #001', 'Labels, badges, key hints'],
   ];
-  let ty = s.top - 16;
-  sizes.forEach(([token, px, weight, sample, use], i) => {
-    const h = Math.max(46, px + 28);
-    const base = ty + h / 2 + 5;
+  let ty = hero + 168;
+  for (const [token, px, weight, sample, use] of sizes) {
+    if (token === 'text-2xl') dhivehi.push(await thaana(sample, X, ty, px));
+    else parts.push(text(X, ty, sample, px, INK, weight));
     parts.push(
-      (i ? rule(ty) : '') + text(X, base, token, 14, MUTED, 600) +
-        text(X + 120, base, `${px}px`, 14, MUTED) +
-        text(X + 200, ty + h / 2 + px / 3, sample, px, INK, weight) +
-        text(X + 780, base, use, 15, MUTED),
+      text(X + 820, ty, token, 14, INK, 600) + text(X + 920, ty, `${px}px`, 14, MUTED) +
+        text(X + 980, ty, use, 14, MUTED),
     );
-    ty += h;
-  });
-  y = ty + 40;
+    ty += 46;
+  }
+  y = ty + 30;
 
-  // ── 04 Form and 06 Motion ──
+  // ── Form and motion ──
   s = section(
     y,
-    '04 · 06',
     'Form and motion',
-    'A quiet frame for the work: three corners, steps of 4px, two speeds.',
+    'A quiet frame for the work.',
+    'Three corner treatments, spacing in steps of 4px, and two speeds.',
   );
   parts.push(s.svg);
   const sy = s.top;
@@ -362,31 +399,28 @@ export async function designGuide(
       text(X + 1040, sy + 80, 'duration-slow · 300ms', 14, INK, 600) +
       text(X + 1040, sy + 100, 'things that move', 13, MUTED),
   );
-  y = sy + 150;
+  y = sy + 156;
 
-  // ── 05 States ──
+  // ── States: default, hover, current and focus, at one scale, in both themes ──
   s = section(
     y,
-    '05',
     'States',
-    'Make interaction legible: current is a grey fill, strong text and the accent marker.',
+    'Make interaction legible.',
+    'Current is a grey fill, strong text and the accent marker; focus is always an accent ring.',
   );
-  parts.push(s.svg, navStates(X, s.top, false), navStates(X + 500, s.top, true));
   parts.push(
-    rect(X + 1040, s.top + 18, 132, 44, 'none', 9, `stroke="${TEAL['500']}" stroke-width="2.5"`) +
-      rect(X + 1046, s.top + 24, 120, 32, SLATE['100'], 6) +
-      text(X + 1074, s.top + 45, 'Focused', 15, INK, 500) +
-      text(X + 1040, s.top + 100, 'focus ring', 13, MUTED) +
-      text(X, s.top + 120, 'light', 13, MUTED) + text(X + 500, s.top + 120, 'dark', 13, MUTED),
+    s.svg,
+    navStates(X, s.top, cardW, false),
+    navStates(X + cardW + 40, s.top, cardW, true),
   );
-  y = s.top + 170;
+  y = s.top + 184;
 
-  // ── 08 Icons ──
+  // ── Icons ──
   s = section(
     y,
-    '08',
     'Icons',
-    'One family, one meaning: a 24px grid, a 2px stroke, round ends, no fills.',
+    'One family, one meaning.',
+    'A 24px grid, a 2px stroke, round ends, no fills. The groups share one column grid.',
   );
   parts.push(s.svg);
   const groups = iconGroups(X, s.top + 10, {
@@ -398,53 +432,48 @@ export async function designGuide(
     name: 11,
   }, INK);
   parts.push(groups.svg);
-  y = groups.bottom + 30;
+  y = groups.bottom + 36;
 
-  // ── 09 Tiles: the placeholders, light and dark ──
+  // ── Tiles: the placeholders, light beside dark ──
   s = section(
     y,
-    '09',
     'Tiles',
-    'Paper or possibility: an undrawn tile shows its collection icon, faint on the tile grey.',
+    'Paper or possibility.',
+    'An undrawn tile shows its collection icon, faint on the tile grey, drawn once per theme.',
   );
   parts.push(s.svg);
   const P = 120;
   const gap = 16;
+  const darkX = X + cols.length * (P + gap) + 48;
   const placeholders = await Promise.all(
-    ['', '-dark'].flatMap((suffix, theme) =>
+    ['', '-dark'].flatMap((suffix, dark) =>
       cols.map(async (c, i) => ({
         input: await sharp(`./public/placeholders/${c.id}${suffix}.webp`).resize(P).png()
           .toBuffer(),
-        left: X + theme * (cols.length * (P + gap) + 48) + i * (P + gap),
+        left: (dark ? darkX : X) + i * (P + gap),
         top: s.top + 6,
       }))
     ),
   );
   parts.push(
     caps(X, s.top - 10, 'Light'),
-    caps(X + cols.length * (P + gap) + 48, s.top - 10, 'Dark'),
+    caps(darkX, s.top - 10, 'Dark'),
     ...placeholders.map((p) =>
       rect(p.left - 1, p.top - 1, P + 2, P + 2, 'none', 0, `stroke="${RULE}"`)
     ),
   );
-  y = s.top + 6 + P + 60;
+  y = s.top + 6 + P + 110;
 
-  // ── Closing line ──
+  // ── The ending, set like the opening ──
   parts.push(
-    rule(y) +
-      serif(
-        X,
-        y + 52,
-        'Let the drawings speak. Let the interface be clear. Let the rules serve the work.',
-        20,
-        INK,
-      ),
+    rule(y) + serif(X, y + 76, 'Let the drawings speak. Let the interface be clear.', 28, INK) +
+      serif(X, y + 114, 'Let the rules serve the work.', 28, INK),
   );
-  const height = y + 96;
+  const height = y + 180;
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${height}">` +
     rect(0, 0, W, height, PAPER) + parts.join('') + '</svg>';
-  return { svg, overlays: placeholders };
+  return { svg, placeholders, dhivehi };
 }
 
 /** The icon sheet (docs/assets/icons.png) as an SVG. */
@@ -482,8 +511,8 @@ export function contrastReport(): string[] {
 /** Draw every generated image into `dir`: the guide, the icon sheet, the logo sheet and files. */
 export async function writeDesignImages(dir = './docs/assets'): Promise<void> {
   const png = (svg: string) => sharp(new TextEncoder().encode(svg));
-  const { svg, overlays } = await designGuide();
-  await png(svg).composite(overlays).png().toFile(`${dir}/design-guide.png`);
+  const { svg, placeholders, dhivehi } = await designGuide();
+  await png(svg).composite([...placeholders, ...dhivehi]).png().toFile(`${dir}/design-guide.png`);
   await png(iconSheetSvg()).png().toFile(`${dir}/icons.png`);
   await writeLogoFiles(dir);
 }

@@ -39,26 +39,26 @@
       with empty runs folded, the collection named on phones, links between drawings, and a light
       viewer. Done 2026-10-24.
 
-- [ ] **Polish the design guide** (from a review of the manifesto, 2026-10-24). The direction is
-      right, so refine rather than redesign. In order of impact:
-  - [ ] **Numbering:** the image shows 01, 02, 04 · 06, 05, 08, 09. Number its sections 1 to n in
+- [x] **Polish the design guide** (from a review of the manifesto, 2026-10-24). The direction is
+      right, so refine rather than redesign. Done 2026-10-24. In order of impact:
+  - [x] **Numbering:** the image shows 01, 02, 04 · 06, 05, 08, 09. Number its sections 1 to n in
         order, or drop the numbers and keep the titles.
-  - [ ] **Thaana in the image:** the Dhivehi type sample renders as broken glyphs, because the
+  - [x] **Thaana in the image:** the Dhivehi type sample renders as broken glyphs, because the
         renderer has no Faruma. Load the font so the sample reads.
-  - [ ] **Title:** make it the signature. A large serif "Wildlife Illustrated" under a small tracked
+  - [x] **Title:** make it the signature. A large serif "Wildlife Illustrated" under a small tracked
         "DESIGN MANIFESTO" label. Serif for statements, sans for everything functional.
-  - [ ] **Principles:** a little more vertical room, so they read as the manifesto's main statements
+  - [x] **Principles:** a little more vertical room, so they read as the manifesto's main statements
         rather than an index.
-  - [ ] **Colour weight:** keep the ramps and the two theme cards; make the accent menu a slim strip
+  - [x] **Colour weight:** keep the ramps and the two theme cards; make the accent menu a slim strip
         with smaller labels.
-  - [ ] **Type section as a specimen:** "Lesser Whistling-Duck" as the hero, Dhivehi and English
+  - [x] **Type section as a specimen:** "Lesser Whistling-Duck" as the hero, Dhivehi and English
         together, token names and sizes in a quiet side column.
-  - [ ] **One shape for the lower sections** (Form and motion, States, Icons, Tiles): a short line,
+  - [x] **One shape for the lower sections** (Form and motion, States, Icons, Tiles): a short line,
         one demonstration, the essential specs. States all at the same scale.
-  - [ ] **Ending:** more space above the closing line, set like the opening one.
-  - [ ] **DESIGN.md:** keep every rule, but move pure reference (the ramp hex table, the placeholder
+  - [x] **Ending:** more space above the closing line, set like the opening one.
+  - [x] **DESIGN.md:** keep every rule, but move pure reference (the ramp hex table, the placeholder
         files) into a short reference section at the end, so the manifesto reads first.
-  - [ ] **Test the numbers:** check the ramp and contrast tables in DESIGN.md against `palette.ts`
+  - [x] **Test the numbers:** check the ramp and contrast tables in DESIGN.md against `palette.ts`
         and `contrastReport()`, so they cannot drift.
   - Don't: add colours or illustrations, use serif everywhere, put every section in a card, or drop
     a rule only to shorten the page.
@@ -78,7 +78,7 @@
         the guide's paper. Stone keeps the contrast rules (`stone-500` on white is 4.8:1,
         `stone-400` on `stone-950` 7.8:1). Change main.css, `palette.ts`, the placeholder colours
         and DESIGN.md together; as its own commit, so it is easy to drop.
-  - [ ] **Say what the guide's own look is:** the image uses warm paper and a serif, neither of
+  - [x] **Say what the guide's own look is:** the image uses warm paper and a serif, neither of
         which is a site token. Add one line to DESIGN.md saying the guide is printed in its own
         voice and the site's tokens are the swatches on it (or, with warm paper on the site, that
         the paper is the site's own).

@@ -12,7 +12,8 @@ This document is both its point of view and its practical reference.
 
 The picture is drawn from the real tokens and icons by `npm run design`. The source of truth for the
 tokens is [`src/styles/main.css`](../src/styles/main.css); this guide explains the decisions behind
-them and how to apply them.
+them and how to apply them. The picture has a voice of its own (warm paper, a serif for statements);
+neither is a site token. The site's colours are the swatches drawn on it.
 
 ---
 
@@ -75,22 +76,6 @@ Every collection has one accent, declared as `accent` in `public/collections.jso
 visitors know where they are: Birds use teal, Sharks blue, and Shells rose. The menu of allowed hues
 lives in `src/styles/main.css`, so a new collection can choose an approved hue without changing the
 CSS.
-
-### The neutral and accent ramps
-
-| Step  | `slate-*` | `accent-*` (teal) |
-| ----- | --------- | ----------------- |
-| `50`  | `#f8fafc` | `#f0fdfa`         |
-| `100` | `#f1f5f9` | `#ccfbf1`         |
-| `200` | `#e2e8f0` | `#99f6e4`         |
-| `300` | `#cbd5e1` | `#5eead4`         |
-| `400` | `#94a3b8` | `#2dd4bf`         |
-| `500` | `#64748b` | `#14b8a6`         |
-| `600` | `#475569` | `#0d9488`         |
-| `700` | `#334155` | `#0f766e`         |
-| `800` | `#1e293b` | `#115e59`         |
-| `900` | `#0f172a` | `#134e4a`         |
-| `950` | `#020617` | `#042f2e`         |
 
 ### Where colour belongs
 
@@ -393,12 +378,8 @@ shading, shadow or hover. A grid with many gaps should feel quiet, so the finish
 out.
 
 Placeholders are 512 × 512, generated from the collection icon once per theme. Their background is
-the tile's grey, never white, so they cannot be mistaken for sketches on paper.
-
-| Theme | File             | Background              | Icon                    |
-| ----- | ---------------- | ----------------------- | ----------------------- |
-| Light | `<id>.webp`      | `slate-100` (`#f1f5f9`) | `#a1a1a1`               |
-| Dark  | `<id>-dark.webp` | `slate-900` (`#0f172a`) | `slate-600` (`#475569`) |
+the tile's grey, never white, so they cannot be mistaken for sketches on paper. Their files and
+colours are in the [reference](#reference) below.
 
 `npm run placeholders` draws both from the icon set; do not edit them by hand. A contract test
 checks that both exist. At about 2.4:1 against their background, they are faint on purpose.
@@ -500,6 +481,35 @@ A short review of whether a change still belongs to the same design.
 - [ ] Does it work with the keyboard alone, with a visible focus ring and a label on every icon-only
       button?
 - [ ] Does text meet 4.5:1 in both themes, with no meaning carried by colour or hover alone?
+
+## Reference
+
+The exact values behind the rules above. Tests check these tables against the code that draws and
+measures them (`script/design/palette.ts`, `script/placeholders/draw_placeholders.ts`), so they
+cannot drift.
+
+### Ramps
+
+| Step  | `slate-*` | `accent-*` (teal) |
+| ----- | --------- | ----------------- |
+| `50`  | `#f8fafc` | `#f0fdfa`         |
+| `100` | `#f1f5f9` | `#ccfbf1`         |
+| `200` | `#e2e8f0` | `#99f6e4`         |
+| `300` | `#cbd5e1` | `#5eead4`         |
+| `400` | `#94a3b8` | `#2dd4bf`         |
+| `500` | `#64748b` | `#14b8a6`         |
+| `600` | `#475569` | `#0d9488`         |
+| `700` | `#334155` | `#0f766e`         |
+| `800` | `#1e293b` | `#115e59`         |
+| `900` | `#0f172a` | `#134e4a`         |
+| `950` | `#020617` | `#042f2e`         |
+
+### Placeholder files
+
+| Theme | File             | Background              | Icon                    |
+| ----- | ---------------- | ----------------------- | ----------------------- |
+| Light | `<id>.webp`      | `slate-100` (`#f1f5f9`) | `#a1a1a1`               |
+| Dark  | `<id>-dark.webp` | `slate-900` (`#0f172a`) | `slate-600` (`#475569`) |
 
 ---
 
