@@ -16,6 +16,8 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-24 | fix: a section's sticky heading now meets the top edge; it stopped 24px short (16px on
+  phones), the scroll area's padding, and drawings showed through the gap
 - 2026-10-24 | site: follows the revised design guide. Names sit in a caption under each drawing;
   undrawn tiles are flat grey (light placeholders redrawn on grey); "x of y drawn" and a "Drawn
   only" switch above the grid, and "Nothing drawn yet" for an empty collection; each section's
