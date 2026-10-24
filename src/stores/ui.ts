@@ -15,6 +15,8 @@ import type { ViewMode } from '../types/index.ts';
 export function createUiStore() {
   const sidebarOpen = ref(false);
   const viewMode = ref<ViewMode>('group');
+  // Family view: show only what has been drawn (docs/DESIGN.md §11, a collection that is mostly gaps).
+  const drawnOnly = ref(false);
   const { theme, toggleTheme } = useTheme();
   const { isMobile } = useBreakpoints(1024);
 
@@ -23,6 +25,10 @@ export function createUiStore() {
   };
   const closeSidebar = (): void => {
     sidebarOpen.value = false;
+  };
+  const toggleDrawnOnly = (): void => {
+    drawnOnly.value = !drawnOnly.value;
+    nextTick(updateActiveSection); // the set of sections changes
   };
 
   // Scroll-spy targets — Chrome binds the scroll container, GalleryContent
@@ -61,6 +67,7 @@ export function createUiStore() {
   return {
     sidebarOpen: readonly(sidebarOpen),
     viewMode: readonly(viewMode),
+    drawnOnly: readonly(drawnOnly),
     theme,
     isMobile: readonly(isMobile),
     activeSection: readonly(activeSection),
@@ -69,6 +76,7 @@ export function createUiStore() {
     toggleSidebar,
     closeSidebar,
     toggleTheme,
+    toggleDrawnOnly,
     setViewMode,
     goToSection,
     updateActiveSection,

@@ -71,10 +71,10 @@
                bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
       >
         <!-- Header -->
-        <SearchDropdownHeader :count="globalResultCount" />
+        <SearchDropdownHeader :count="globalResultCount" :drawn="globalDrawnCount" />
 
         <!-- States -->
-        <EmptyState v-if="globalResultCount === 0" title="No matches found" class="py-6">
+        <EmptyState v-if="globalResultCount === 0" :title="`No matches for '${query}'`" class="py-6">
           <template #icon>
             <Icon name="noResults" class="w-6 h-6" />
           </template>
@@ -131,7 +131,7 @@ import SearchKeyboardHints from './SearchKeyboardHints.vue';
 // STORES
 // ---------------------------------------------------------------------------
 const { query, dropdownOpen, setQuery, setDropdown } = useSearch();
-const { globalResults, globalResultCount } = useCollectionsStore();
+const { globalResults, globalResultCount, globalDrawnCount } = useCollectionsStore();
 const { selectGlobalResult } = useActions();
 
 // ---------------------------------------------------------------------------

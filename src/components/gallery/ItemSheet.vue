@@ -1,28 +1,28 @@
 <template>
-  <div class="bg-slate-900/95 backdrop-blur-xl rounded-card p-6 w-full max-w-sm
-              border border-white/8 shadow-2xl flex flex-col gap-5">
+  <div class="bg-white/95 border-slate-200 dark:bg-slate-900/95 dark:border-white/8
+              backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-2xl flex flex-col gap-5">
 
     <!-- Header: ID badge + group + names -->
     <div>
       <div class="flex items-center gap-2 mb-3">
         <IdBadge :id="item.itemId" variant="panel" />
-        <span class="text-white/50 text-xs">{{ item.group }}</span>
+        <span class="viewer-label text-xs">{{ item.group }}</span>
       </div>
 
       <!-- Same order as the tile: Dhivehi name first when there is one, then
            English, then scientific. -->
       <template v-if="item.meta?.dhiv_script">
-        <h2 class="font-dhivehi text-2xl font-bold text-white leading-tight" dir="rtl">
+        <h2 class="font-dhivehi text-2xl font-bold viewer-title leading-tight" dir="rtl">
           {{ item.meta.dhiv_script }}
         </h2>
-        <p class="text-base font-semibold text-white/70 leading-tight mt-1">
+        <p class="text-base font-semibold viewer-body leading-tight mt-1">
           {{ item.commonName }}
         </p>
       </template>
-      <h2 v-else class="text-xl font-semibold text-white leading-tight tracking-tight">
+      <h2 v-else class="text-xl font-semibold viewer-title leading-tight tracking-tight">
         {{ item.commonName }}
       </h2>
-      <p class="text-white/50 italic text-sm mt-0.5">
+      <p class="viewer-label italic text-sm mt-0.5">
         {{ item.scientificName }}
       </p>
     </div>
@@ -30,34 +30,43 @@
     <!-- Meta fields -->
     <div v-if="item.meta?.dhiv || Object.keys(otherMeta).length" class="space-y-4">
       <div v-if="item.meta?.dhiv">
-        <p class="caps-label with-icon text-white/50 mb-1">
+        <p class="caps-label with-icon viewer-label mb-1">
           <Icon name="languages" aria-hidden="true" />Dhivehi name (romanised)
         </p>
-        <p class="text-sm text-white/70">{{ item.meta.dhiv }}</p>
+        <p class="text-sm viewer-body">{{ item.meta.dhiv }}</p>
       </div>
 
       <!-- Other meta -->
       <div v-for="(value, key) in otherMeta" :key="key">
-        <p class="caps-label text-white/50 mb-1">
+        <p class="caps-label viewer-label mb-1">
           {{ formatMetaKey(key) }}
         </p>
-        <p class="text-sm text-white/70">{{ value }}</p>
+        <p class="text-sm viewer-body">{{ value }}</p>
       </div>
     </div>
 
     <!-- Illustrator note -->
     <div v-if="item.illustratorNote">
-      <p class="caps-label with-icon text-white/50 mb-2">
+      <p class="caps-label with-icon viewer-label mb-2">
         <Icon name="pencil" aria-hidden="true" />From the illustrator
       </p>
-      <blockquote class="pl-3 border-l border-white/20">
-        <p class="text-white/70 text-sm leading-relaxed italic">{{ item.illustratorNote }}</p>
+      <blockquote class="pl-3 border-l border-slate-200 dark:border-white/20">
+        <p class="viewer-body text-sm leading-relaxed italic">
+          <template v-for="(part, i) in noteParts" :key="i">
+            <a
+              v-if="part.href"
+              :href="part.href"
+              class="focus-ring rounded-control not-italic font-medium viewer-title underline underline-offset-2 hover:opacity-80"
+            >{{ part.text }}</a>
+            <template v-else>{{ part.text }}</template>
+          </template>
+        </p>
       </blockquote>
     </div>
 
     <!-- External links -->
     <div v-if="links.length">
-      <p class="caps-label with-icon text-white/50 mb-2.5">
+      <p class="caps-label with-icon viewer-label mb-2.5">
         <Icon name="book" aria-hidden="true" />Learn more
       </p>
       <div class="flex flex-wrap gap-2">
@@ -68,9 +77,9 @@
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-control
-                 border border-white/15 text-white/70 text-xs font-medium
-                 transition-colors duration-fast
-                 hover:text-white hover:border-white/30 hover:bg-white/5"
+                 border text-xs font-medium transition-colors duration-fast viewer-body
+                 border-slate-200 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50
+                 dark:border-white/15 dark:hover:viewer-title dark:hover:border-white/30 dark:hover:bg-white/5"
         >
           {{ link.label }}
           <Icon name="externalLink" class="w-3 h-3 opacity-60" />
@@ -84,12 +93,18 @@
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import Icon from '../icons/Icon.vue';
+import { noteSegments } from '../../lib/noteLinks.ts';
 import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 
 const props = defineProps<{
   item:       CollectionItem;
   collection: CollectionConfig;
 }>();
+
+// "#11" in a note links to that drawing (docs/DESIGN.md §3).
+const noteParts = computed(() =>
+  noteSegments(props.item.illustratorNote ?? '', props.collection.id, props.item.itemId.length)
+);
 
 // Links come straight from the collection config
 const links = computed(() => props.collection.links || []);

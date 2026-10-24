@@ -149,3 +149,17 @@ test('on a phone, jumping to a section closes the sidebar', () =>
     assertEquals(ui.activeSection.value, 'Ducks');
     unmount();
   }));
+
+test('"Drawn only" starts off and toggles, rebuilding the scroll-spy for the new set of sections', () =>
+  withDom(async () => {
+    const { ui, unmount, observers } = setup();
+    ui.bindScrollContainer(document.createElement('div'));
+    assertEquals(ui.drawnOnly.value, false);
+    ui.toggleDrawnOnly();
+    assertEquals(ui.drawnOnly.value, true);
+    await nextTick();
+    assertEquals(observers.created, 1);
+    ui.toggleDrawnOnly();
+    assertEquals(ui.drawnOnly.value, false);
+    unmount();
+  }));

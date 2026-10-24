@@ -13,7 +13,7 @@
         aria-modal="true"
         :aria-label="currentItem ? `${currentItem.commonName}, #${currentItem.itemId}` : 'Image viewer'"
         tabindex="-1"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/95 outline-none"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-50/95 dark:bg-black/95 outline-none"
         @click="handleBackdropClick"
       >
 
@@ -31,15 +31,15 @@
             <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
               <Icon name="reset" class="w-4 h-4" />
             </button>
-            <span class="ml-2 text-micro font-mono text-white/50 tabular-nums">{{ Math.round(scale * 100) }}%</span>
+            <span class="ml-2 text-micro font-mono viewer-label tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
           <!-- Position in the timeline -->
           <span
             v-if="position"
-            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-white/70"
+            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums viewer-body"
             aria-live="polite"
-          >{{ position }}</span>
+          >{{ position }}<template v-if="query"> · matching '{{ query }}'</template></span>
 
           <!-- Close -->
           <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
@@ -102,7 +102,7 @@
                   cursor: isDragging ? 'grabbing' : (scale > 1 ? 'grab' : 'default'),
                   transition: isDragging ? 'none' : 'transform 0.15s ease-out',
                 }"
-                class="max-w-full max-h-full object-contain select-none"
+                class="max-w-full max-h-full object-contain select-none shadow-sm ring-1 ring-slate-200 dark:shadow-none dark:ring-0"
                 @load="handleImageLoad"
                 @error="handleImageError"
                 draggable="false"
@@ -111,11 +111,11 @@
 
             <!-- Loading spinner -->
             <div v-if="loading" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-8 h-8 border-2 border-white/15 border-t-white/50 rounded-full animate-spin" />
+              <div class="w-8 h-8 border-2 border-slate-300 border-t-slate-500 dark:border-white/15 dark:border-t-white/50 rounded-full animate-spin" />
             </div>
 
             <!-- Error -->
-            <p v-if="error" class="text-white/50 text-sm">Could not load image</p>
+            <p v-if="error" class="viewer-label text-sm">Could not load image</p>
           </div>
           </div>
 
@@ -139,6 +139,10 @@ import ItemSheet from './ItemSheet.vue';
 import Icon from '../icons/Icon.vue';
 import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 import { useLightbox } from '../../composables/ui/useLightbox.ts';
+import { useSearch } from '../../stores/search.ts';
+
+// When a search narrows what the viewer pages through, the counter says so.
+const { query } = useSearch();
 
 const props = defineProps<{
   isOpen:           boolean;

@@ -23,14 +23,14 @@
       <!-- Main content -->
       <main class="relative flex flex-1 flex-col overflow-hidden">
 
-        <!-- Active section label + active filter chip -->
+        <!-- Active search filter. The section in view is named by its own sticky
+             heading (GalleryContent), so this bar only appears while searching. -->
         <div
-          v-if="!data.loading && !data.error && (activeSection || query)"
+          v-if="!data.loading && !data.error && query"
           class="shrink-0 flex items-center gap-3 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
                  bg-white/95 border-slate-100 text-slate-500
                  dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-400"
         >
-          <span class="truncate">{{ activeSection }}</span>
           <button
             v-if="query"
             @click="clear()"
@@ -90,6 +90,6 @@ const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 const { data, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
 // The scroll container is handed to the ui store (for the scroll-spy) as a function ref.
-const { isMobile, sidebarOpen, activeSection, bindScrollContainer, closeSidebar } = useUi();
+const { isMobile, sidebarOpen, bindScrollContainer, closeSidebar } = useUi();
 const { expandedImage, drawnItems, close, update } = useOverlayStore();
 </script>

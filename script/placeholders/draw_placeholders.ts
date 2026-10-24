@@ -13,9 +13,11 @@ import type { RawCollectionConfig } from '../../src/types/data.ts';
 
 /** One image per theme. Light keeps the palette of the silhouettes these replaced. */
 export const THEMES = {
-  light: { suffix: '', background: '#ffffff', ink: '#a1a1a1' },
+  // slate-100: the undrawn tile's grey, never white, so a placeholder cannot pass for a
+  // sketch on paper (docs/DESIGN.md §9).
+  light: { suffix: '', background: '#f1f5f9', ink: '#a1a1a1' },
   // slate-900 with slate-600: the dark tile colour, and an icon about as faint
-  // against it as the light one is against white.
+  // against it as the light one is against its grey.
   dark: { suffix: '-dark', background: '#0f172a', ink: '#475569' },
 } as const;
 export type Theme = keyof typeof THEMES;

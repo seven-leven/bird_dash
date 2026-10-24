@@ -28,7 +28,7 @@ const variantClass = computed(() => {
     case 'overlay':
       return 'bg-black/50 text-white/70 backdrop-blur-sm';
     case 'panel':
-      return 'bg-white/10 text-white/70';
+      return 'bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-white/70';
     default:
       return 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
   }

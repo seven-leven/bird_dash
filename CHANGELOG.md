@@ -16,12 +16,24 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
-- 2026-10-24 | design guide: rules for what a walk through the site found missing. Nothing is laid
-  over a drawing (names move to a caption) and drawn and undrawn tiles must differ at a glance;
-  light placeholders sit on grey, not white; one heading per section; one set of empty, loading and
-  error states; how the two parts of search report their counts; the date view newest first; the
-  phone header names the collection; and which count format goes where. The code follows in three
-  pull requests, listed in docs/plans/TODO.md
+- 2026-10-24 | site: follows the revised design guide. Names sit in a caption under each drawing;
+  undrawn tiles are flat grey (light placeholders redrawn on grey); "x of y drawn" and a "Drawn
+  only" switch above the grid, and "Nothing drawn yet" for an empty collection; each section's
+  heading sticks to the top (and a family name no longer lingers in the date view); one set of
+  empty, loading and error states, the sidebar agreeing with the main area; search says "10 matches,
+  1 drawn", marks undrawn results and names the group when that is what matched; the date view reads
+  newest first with long empty runs folded; phones name the current collection; "#11" in a note
+  links to that drawing; and the viewer has a light theme. First component tests (ItemTile,
+  EmptyState, IdBadge, Icon); 400 tests, still 100%
+- 2026-10-24 | design guide: rebuilt around five principles (P1 drawings first, P2 show progress
+  honestly, P3 always say where you are, P4 one way to do each thing, P5 for everyone, on every
+  screen), each with its own icon; every rule now names the principle it comes from, the checklist
+  is grouped by them, and the guide image opens with them. Also new rules for what a walk through
+  the site found missing. Nothing is laid over a drawing (names move to a caption) and drawn and
+  undrawn tiles must differ at a glance; light placeholders sit on grey, not white; one heading per
+  section; one set of empty, loading and error states; how the two parts of search report their
+  counts; the date view newest first; the phone header names the collection; and which count format
+  goes where. The code follows in three pull requests, listed in docs/plans/TODO.md
 - 2026-10-23 | upkeep: Node 24.22.1 (an LTS patch), Vite 8.3.5, typescript-eslint 8.72.0, dprint
   0.64.3 and happy-dom 21.0.4; Dependabot proposes npm and GitHub Actions updates every Monday,
   grouped; the CI and nightly workflows run with a read-only token; pull requests start from a

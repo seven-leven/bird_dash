@@ -77,11 +77,36 @@ test('the active section is the last header that has passed the line near the to
     t.stop();
   }));
 
-test('with every header still below the line, the previous section is kept', () =>
+test('with every header still below the line, the first section is the current one', () =>
   withDom(() => {
     const t = setup({ Ducks: 300, Herons: 700 });
     t.spy.updateActiveSection();
-    assertEquals(t.spy.activeSection.value, '', 'nothing has reached the top yet');
+    assertEquals(t.spy.activeSection.value, 'Ducks', 'nothing has reached the top yet');
+    t.stop();
+  }));
+
+test('a remembered section that is still in the view is kept while none has reached the line', () =>
+  withDom(() => {
+    const t = setup({ Ducks: 0, Herons: 500 });
+    t.spy.updateActiveSection(); // starts watching
+    t.spy.goToSection('Herons');
+    t.tops.Ducks = 300; // scrolled back up: nothing at the line now
+    t.tops.Herons = 700;
+    t.observer.fire();
+    assertEquals(t.spy.activeSection.value, 'Herons');
+    t.stop();
+  }));
+
+test('a section from the other view is replaced, not shown (the stale-label bug)', () =>
+  withDom(() => {
+    const t = setup({ Ducks: 0, Herons: 500 });
+    t.spy.goToSection('Herons');
+    // the view changes: the headers are now months, none at the line yet
+    for (const name of Object.keys(t.els)) delete t.els[name];
+    t.els['March 2025'] = at(300);
+    t.els['January 2025'] = at(700);
+    t.spy.updateActiveSection();
+    assertEquals(t.spy.activeSection.value, 'March 2025');
     t.stop();
   }));
 
@@ -128,12 +153,12 @@ test('fast scrolling is caught by the scroll listener, at most once per 100ms', 
     t.stop();
   }));
 
-test('jumping to a section scrolls just above it and marks it active at once', () =>
+test('jumping to a section scrolls to it and marks it active at once', () =>
   withDom(() => {
     const t = setup({ Ducks: 0, Herons: 500 });
     Object.defineProperty(t.els.Herons, 'offsetTop', { value: 1280 });
     t.spy.goToSection('Herons');
-    assertEquals(t.scrolls, [{ top: 1200, behavior: 'smooth' }]);
+    assertEquals(t.scrolls, [{ top: 1280, behavior: 'smooth' }]); // container at offset 0
     assertEquals(t.spy.activeSection.value, 'Herons');
     assertEquals(t.closed(), 0, 'on a wide screen the sidebar stays open');
     t.stop();

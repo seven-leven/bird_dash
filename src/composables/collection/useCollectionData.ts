@@ -1,4 +1,4 @@
-import { computed, type ComputedRef, type Ref } from 'vue';
+import { computed, type ComputedRef, type Ref, ref } from 'vue';
 import { normalizeQuery } from '../../lib/normalizeQuery.ts';
 import type {
   CollectionItem,
@@ -16,10 +16,54 @@ export const monthKey = (d: Date) =>
 
 const firstOfMonthUTC = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
 
+/** A run of this many empty months or more is folded into one sidebar row. */
+export const FOLD_EMPTY_MONTHS = 3;
+
+/**
+ * The date view's sidebar rows, newest first: one per month, except that a run of
+ * FOLD_EMPTY_MONTHS or more empty months becomes one disabled row naming the range
+ * ("November 2024 – September 2025"), so a long gap does not fill the list.
+ */
+export function monthRows(
+  monthsNewestFirst: string[],
+  counts: Record<string, number>,
+): SidebarItem[] {
+  const rows: SidebarItem[] = [];
+  let run: string[] = [];
+  const flush = () => {
+    if (run.length >= FOLD_EMPTY_MONTHS) {
+      const [newest, oldest] = [run[0], run[run.length - 1]];
+      rows.push({
+        id: `${oldest} – ${newest}`,
+        label: `${oldest} – ${newest}`,
+        count: 0,
+        total: 0,
+        disabled: true,
+      });
+    } else {
+      for (const m of run) rows.push({ id: m, label: m, count: 0, total: 0, disabled: true });
+    }
+    run = [];
+  };
+  for (const month of monthsNewestFirst) {
+    const count = counts[month] ?? 0;
+    if (count === 0) {
+      run.push(month);
+      continue;
+    }
+    flush();
+    rows.push({ id: month, label: month, count, total: 0, disabled: false });
+  }
+  flush();
+  return rows;
+}
+
 export function useCollectionData(
   items: Ref<CollectionItem[]>,
   searchQuery: Ref<string>,
   viewMode: Ref<ViewMode>,
+  /** Family view: show drawn items only (and only the groups that have some). */
+  drawnOnly: Ref<boolean> = ref(false),
 ) {
   // =============================================================================
   // FILTERING LOGIC
@@ -55,6 +99,19 @@ export function useCollectionData(
       grouped[item.group].push(item);
     });
 
+    // The sidebar counts every item of a group ("4 of 8"), even when only the drawn
+    // ones are shown, so what is hidden is still accounted for.
+    const totals: Record<string, { drawn: number; total: number }> = {};
+    for (const [g, list] of Object.entries(grouped)) {
+      totals[g] = { drawn: list.filter((i) => i.isDrawn).length, total: list.length };
+    }
+    if (drawnOnly.value) {
+      for (const g of Object.keys(grouped)) {
+        grouped[g] = grouped[g].filter((i) => i.isDrawn);
+        if (grouped[g].length === 0) delete grouped[g];
+      }
+    }
+
     Object.keys(grouped).forEach((g) => {
       grouped[g].sort((a, b) => {
         if (a.isDrawn !== b.isDrawn) return a.isDrawn ? -1 : 1;
@@ -64,12 +121,13 @@ export function useCollectionData(
 
     return {
       grouped,
-      sidebarItems: Object.keys(grouped).map((g): SidebarItem => {
-        const list = grouped[g];
-        let drawnCount = 0;
-        for (const i of list) if (i.isDrawn) drawnCount++;
-        return { id: g, label: g, count: drawnCount, total: list.length, disabled: false };
-      }),
+      sidebarItems: Object.keys(grouped).map((g): SidebarItem => ({
+        id: g,
+        label: g,
+        count: totals[g].drawn,
+        total: totals[g].total,
+        disabled: false,
+      })),
     };
   });
 
@@ -96,25 +154,23 @@ export function useCollectionData(
     return months;
   });
 
+  // The date view reads newest first: it is where a returning visitor looks for what
+  // is new (docs/DESIGN.md §10). The viewer still pages in time order.
   const dateData: ComputedRef<GroupedData> = computed(() => {
-    // searchedDrawnItems is already in (drawnTime, sortKey) order.
+    // searchedDrawnItems is in (drawnTime, sortKey) order; walk it backwards.
     const grouped: Record<string, CollectionItem[]> = {};
-    searchedDrawnItems.value.forEach((i) => {
-      if (!i.drawnTime) return;
+    for (let n = searchedDrawnItems.value.length - 1; n >= 0; n--) {
+      const i = searchedDrawnItems.value[n];
+      if (!i.drawnTime) continue;
       const key = monthKey(new Date(i.drawnTime));
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(i);
-    });
+    }
+    const counts = Object.fromEntries(Object.entries(grouped).map(([m, list]) => [m, list.length]));
 
     return {
       grouped,
-      sidebarItems: allMonths.value.map((month): SidebarItem => ({
-        id: month,
-        label: month,
-        count: grouped[month]?.length || 0,
-        total: 0,
-        disabled: !grouped[month] || grouped[month].length === 0,
-      })),
+      sidebarItems: monthRows([...allMonths.value].reverse(), counts),
     };
   });
 

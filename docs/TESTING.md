@@ -132,6 +132,19 @@ Conventions:
 - **A test must be able to fail.** After writing one, break the code it covers on purpose and
   confirm the test goes red.
 
+### Component tests
+
+A `.vue` component is tested by mounting it into a fake DOM and checking what a visitor would get:
+its text, roles and labels, what a click or a key does, what it emits. See
+[`ItemTile_dom_test.ts`](../src/components/gallery/ItemTile_dom_test.ts):
+
+- Start the file with `// @vitest-environment happy-dom`. Vue's DOM renderer looks up `document`
+  when it is first imported, which happens before `withDom` could set one up.
+- Mount with `createApp({ render: () => h(Component, props) }).mount(host)` and unmount after each
+  test.
+- A component a test loads counts toward coverage at once, so cover every branch of its template
+  (both sides of each `v-if` and `:class` choice).
+
 ### Property tests
 
 ```ts

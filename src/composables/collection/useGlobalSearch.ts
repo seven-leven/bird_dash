@@ -18,6 +18,9 @@ function matchedFields(item: CollectionItem, ql: string): MatchedField[] {
   if (item.itemId.toLowerCase().includes(ql)) fields.push('id');
   if (item.commonName.toLowerCase().includes(ql)) fields.push('commonName');
   if (item.scientificName.toLowerCase().includes(ql)) fields.push('scientificName');
+  // A match on the group alone highlights nothing in the names, so the result row
+  // names the group instead (docs/DESIGN.md §10).
+  if (item.group.toLowerCase().includes(ql)) fields.push('group');
   return fields;
 }
 
@@ -57,5 +60,10 @@ export function useGlobalSearch(
     globalResults.value.reduce((n, g) => n + g.count, 0)
   );
 
-  return { globalResults, globalResultCount };
+  /** How many of the matches are drawn, for "10 matches, 1 drawn". */
+  const globalDrawnCount: ComputedRef<number> = computed(() =>
+    globalResults.value.reduce((n, g) => n + g.results.filter((r) => r.item.isDrawn).length, 0)
+  );
+
+  return { globalResults, globalResultCount, globalDrawnCount };
 }

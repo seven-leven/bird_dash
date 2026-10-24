@@ -1,0 +1,118 @@
+// @vitest-environment happy-dom
+// Vue's DOM renderer looks up `document` when it is first imported, so component
+// tests run in Vitest's happy-dom environment rather than inside withDom().
+import { afterEach, test } from 'vitest';
+import { assert, assertEquals, assertStringIncludes } from '@std/assert';
+import { createApp, h } from 'vue';
+import ItemTile from './ItemTile.vue';
+import { at, makeItem } from '../../testing/fixtures.ts';
+import type { CollectionItem } from '../../types/index.ts';
+
+const drawn = makeItem({
+  itemId: '042',
+  commonName: 'Greater Sand-Plover',
+  drawnTime: at(2025, 10, 1),
+  imageUrl: '/thumb/birds/042.webp',
+  meta: { dhiv_script: 'ވަލު ބޮނޑަނަ' },
+});
+const undrawn = makeItem({ itemId: '005', commonName: 'Green-winged Teal', isDrawn: false });
+
+let cleanup: (() => void) | undefined;
+afterEach(() => cleanup?.());
+
+/** Mount a tile and record what it emits. */
+function mount(props: { item: CollectionItem; dark?: boolean; eager?: boolean }) {
+  const host = document.createElement('div');
+  document.body.append(host);
+  const clicked: CollectionItem[] = [];
+  const app = createApp({
+    render: () =>
+      h(ItemTile, { ...props, onCardClick: (item: CollectionItem) => clicked.push(item) }),
+  });
+  app.mount(host);
+  cleanup = () => {
+    app.unmount();
+    host.remove();
+  };
+  const tile = host.querySelector<HTMLElement>(`#item-${props.item.itemId}`)!;
+  return { tile, clicked, img: tile.querySelector('img')! };
+}
+
+const key = (el: HTMLElement, k: string) => {
+  const e = new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true });
+  el.dispatchEvent(e);
+  return e;
+};
+
+test('a drawn tile is a button named after the drawing, and opens it by click, Enter or Space', () => {
+  const { tile, clicked } = mount({ item: drawn });
+  assertEquals(tile.getAttribute('role'), 'button');
+  assertEquals(tile.getAttribute('tabindex'), '0');
+  assertEquals(tile.getAttribute('aria-label'), 'Greater Sand-Plover, #042');
+
+  tile.click();
+  key(tile, 'Enter');
+  const space = key(tile, ' ');
+  assert(space.defaultPrevented, 'Space must not also scroll the page');
+  assertEquals(clicked.map((i) => i.itemId), ['042', '042', '042']);
+});
+
+test('the caption sits under the image: Dhivehi first, then English, both shown', () => {
+  const { tile, img } = mount({ item: drawn });
+  const caption = tile.lastElementChild as HTMLElement;
+  assert(!caption.contains(img), 'the names are not laid over the drawing');
+  const [dhivehi, english] = [...caption.children] as HTMLElement[];
+  assertEquals(dhivehi.textContent?.trim(), 'ވަލު ބޮނޑަނަ');
+  assertEquals(dhivehi.getAttribute('dir'), 'rtl');
+  assertEquals(english.textContent?.trim(), 'Greater Sand-Plover');
+  assertStringIncludes(tile.className, 'bg-white'); // paper
+});
+
+test('an undrawn tile is not a button, says so to screen readers, and does nothing', () => {
+  const { tile, clicked, img } = mount({ item: undrawn });
+  assertEquals(tile.getAttribute('role'), null);
+  assertEquals(tile.getAttribute('tabindex'), null);
+  assertEquals(img.getAttribute('alt'), 'Green-winged Teal (not drawn yet)');
+  assertStringIncludes(img.getAttribute('src')!, '/placeholders/');
+  assertStringIncludes(tile.className, 'bg-slate-100'); // the interface grey, not paper
+
+  tile.click();
+  const space = key(tile, ' ');
+  assert(!space.defaultPrevented);
+  assertEquals(clicked, []);
+});
+
+test('without a Dhivehi name the English name is the only line', () => {
+  for (const item of [undrawn, { ...undrawn, meta: { family: 'Anatidae' } }]) {
+    const { tile } = mount({ item });
+    const caption = tile.lastElementChild as HTMLElement;
+    assertEquals(caption.children.length, 1);
+    assertEquals(caption.textContent?.trim(), 'Green-winged Teal');
+    cleanup?.();
+  }
+});
+
+test('the dark theme shows the dark placeholder; eager tiles load first', () => {
+  const dark = mount({ item: undrawn, dark: true });
+  assertStringIncludes(dark.img.getAttribute('src')!, '-dark.webp');
+  assertEquals(dark.img.getAttribute('loading'), 'lazy');
+  cleanup?.();
+
+  const eager = mount({ item: drawn, eager: true });
+  assertEquals(eager.img.getAttribute('loading'), 'eager');
+  assertEquals(eager.img.getAttribute('fetchpriority'), 'high');
+});
+
+test('a drawing that fails to load falls back to the placeholder', async () => {
+  const { img } = mount({ item: drawn });
+  assertStringIncludes(img.getAttribute('src')!, '/thumb/birds/042.webp');
+  img.dispatchEvent(new Event('error'));
+  await Promise.resolve();
+  assertStringIncludes(img.getAttribute('src')!, '/placeholders/');
+});
+
+test("an undrawn tile's names are muted, Dhivehi included", () => {
+  const { tile } = mount({ item: { ...undrawn, meta: { dhiv_script: 'ސަޓު' } } });
+  const [dhivehi, english] = [...(tile.lastElementChild as HTMLElement).children];
+  for (const line of [dhivehi, english]) assertStringIncludes(line.className, 'text-slate-600');
+});

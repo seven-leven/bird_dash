@@ -112,11 +112,12 @@ script` lists every marker; each should still be true when you read it.
 ### Components outside the totals until they have tests
 
 **Chosen:** `.vue` files are not on the untested-files list (`discoverSources` in
-`script/test_runner/areas.ts`), so the 17 components, which no test loads yet, do not count.
+`script/test_runner/areas.ts`). A component counts toward coverage once a test loads it, and must
+then be at 100% like everything else; one that no test loads yet does not count.
 
-**Why.** Adding them all at once would drop coverage far below the 100% floor and block CI until
-every component had tests. They join folder by folder, each with its tests (see
-[plans/TODO.md](plans/TODO.md)).
+**Why.** Adding all 17 at once would drop coverage far below the 100% floor and block CI until every
+component had tests. They join one by one, each with its tests (see [plans/TODO.md](plans/TODO.md)).
+`ItemTile`, `EmptyState`, `IdBadge` and `Icon` have.
 
 ### Tiers by file name, and a runner on top of Vitest
 

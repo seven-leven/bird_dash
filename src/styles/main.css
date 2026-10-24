@@ -245,6 +245,11 @@
 
 @layer components {
   /* Neutral icon/text button used across the chrome (header, sidebar). */
+  /* The one primary action on a screen (accent-700 with white, 5.5:1). */
+  .btn-primary {
+    @apply inline-flex items-center gap-1.5 rounded-control px-3 py-1.5 text-sm font-medium
+      bg-accent-700 text-white transition-colors duration-fast hover:bg-accent-600;
+  }
   .btn-ghost {
     @apply rounded-control text-slate-500 transition-colors duration-fast
       hover:bg-slate-100 hover:text-slate-800
@@ -285,18 +290,33 @@
   }
 
   /* Icon button layered over imagery (lightbox controls). */
+  /* The viewer follows the theme like the rest of the page (docs/DESIGN.md section 1):
+     its three text roles, light first. On white: 17.9, 7.6 and 4.8:1; on black: 21,
+     10.0 and 5.3:1. */
+  .viewer-title {
+    @apply text-slate-900 dark:text-white;
+  }
+  .viewer-body {
+    @apply text-slate-600 dark:text-white/70;
+  }
+  .viewer-label {
+    @apply text-slate-500 dark:text-white/50;
+  }
   .icon-btn-overlay {
     @apply flex items-center justify-center w-8 h-8 rounded-control
-      text-white/50 transition-colors duration-fast
-      hover:text-white/70 hover:bg-white/10
+      text-slate-500 transition-colors duration-fast
+      hover:text-slate-800 hover:bg-slate-900/5
+      dark:text-white/50 dark:hover:text-white/70 dark:hover:bg-white/10
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400;
   }
 
   /* Previous/next arrows beside the lightbox image. */
   .nav-btn-overlay {
     @apply absolute top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10
-      rounded-control bg-black/40 text-white/70 transition-colors duration-fast
-      hover:bg-black/60 hover:text-white
+      rounded-control bg-white/80 text-slate-700 shadow-sm ring-1 ring-slate-200
+      transition-colors duration-fast hover:bg-white hover:text-slate-900
+      dark:bg-black/40 dark:text-white/70 dark:shadow-none dark:ring-0
+      dark:hover:bg-black/60 dark:hover:text-white
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400;
   }
 

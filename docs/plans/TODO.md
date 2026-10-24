@@ -33,35 +33,11 @@
   - [x] Scroll-spy via `IntersectionObserver` (with a throttled scroll fallback) — no per-event
         layout reads, and `content-visibility` virtualization can now be re-introduced safely.
 
-- [ ] **Bring the UI in line with DESIGN.md** (the guide was revised on 2026-10-24 after a walk
-      through the site; these are the places the code does not follow it yet). Three pull requests:
-  - [ ] **Tiles and states** (DESIGN.md §9, "The one idea"):
-    - [ ] Names move from the shaded overlay into a caption under the image; Dhivehi and English
-          always shown (English is hover-only on desktop today). `ItemTile.vue`.
-    - [ ] Undrawn tiles: grey surface, no shading or shadow, muted caption (`slate-600` in light).
-    - [ ] Light placeholders drawn on `slate-100`, not white: change `THEMES` in
-          `script/placeholders/draw_placeholders.ts`, run `npm run placeholders` and `npm run
-          design`.
-    - [ ] A collection that is mostly gaps: "15 of 204 drawn" above the grid and a "Drawn only"
-          switch; one with none drawn shows "Nothing drawn yet" (Sharks is 42 identical icons).
-  - [ ] **Headings, empty and loading states** (§10, §11, §6):
-    - [ ] One heading per section: the sticky bar repeats the section heading below it.
-    - [ ] Bug: in the date view the sticky bar keeps the family name from the other view.
-    - [ ] Empty states: one wording per situation, sidebar and main area agreeing (today "No items
-          found" beside "No drawings found"); `noResults` only for searches (it is used for errors
-          and empty collections too); "Couldn't load data" names the collection and offers "Try
-          again".
-    - [ ] Loading: placeholder rows in the sidebar instead of "0 of 0 drawn".
-    - [ ] The header's colour transition uses `duration-slow`; colour changes are `duration-fast`.
-  - [ ] **Search, the date view, phones and the viewer** (§3, §10):
-    - [ ] Search dropdown: thumbnails or a "not drawn yet" mark, the group named when that is what
-          matched, and "10 matches, 1 drawn" in its header.
-    - [ ] Date view newest first; runs of three or more empty months fold into one row.
-    - [ ] Phone header: the logo mark and the current collection's name.
-    - [ ] Viewer: "#11"-style references in notes link to the drawing; the counter says when a
-          search narrows it ("1 of 1 · matching 'plover'").
-  - Each is a good place for the first component tests (TODO below): `ItemTile` and `EmptyState` are
-    rewritten anyway.
+- [x] **Bring the UI in line with DESIGN.md** (revised 2026-10-24): captions under the drawings,
+      grey placeholders, "Drawn only" and "Nothing drawn yet", one sticky heading per section, one
+      set of empty and loading states, search counts and match reasons, the date view newest first
+      with empty runs folded, the collection named on phones, links between drawings, and a light
+      viewer. Done 2026-10-24.
 
 ## 🏗️ Architecture & Features
 
@@ -87,21 +63,19 @@
 - [x] Standardize names for all types (PascalCase interfaces per domain in `src/types/`; removed the
       stray `loadingState`).
 - [ ] Responsive / higher-compression thumbnails (Lighthouse image-delivery, currently unscored).
-- [ ] **Component tests (`.vue`)**: the `.ts` code is at 100% of lines, branches and functions, but
-      no test loads the 17 components yet, so they are outside the coverage numbers. About 50–70
-      tests, roughly 2–5 per component:
-  - [ ] `ui/` — `IdBadge`, `EmptyState` (start here: small, no state)
-  - [ ] `icons/` — `Icon`, `CollectionIcon`, `LogoMark`
+- [ ] **Component tests (`.vue`)**: the `.ts` code is at 100% of lines, branches and functions. A
+      component counts toward coverage once a test loads it; four do so far (at 100%). About 40–60
+      tests to go, roughly 2–5 per component:
+  - [x] `ui/` — `IdBadge`, `EmptyState`
+  - [ ] `icons/` — `Icon` (done), `CollectionIcon`, `LogoMark`
   - [ ] `search/` — `GlobalSearch`, `SearchResultsList`, `SearchDropdownHeader`,
         `SearchKeyboardHints`
-  - [ ] `gallery/` — `ItemTile`, `ItemSheet`, `GalleryContent`, `LightBox`
+  - [ ] `gallery/` — `ItemTile` (done), `ItemSheet`, `GalleryContent`, `LightBox`
   - [ ] `layout/` — `Chrome`, `TopBar`, `SideNav`
   - [ ] `App.vue` — the loading, error and loaded screens
-  - How: mount with Vue's DOM renderer under `withDom` (Vitest already compiles `.vue` files as the
-    build does), or add `@vue/test-utils`. Test what a visitor sees and does (text, ARIA state,
-    clicks, emitted events), not the markup.
+  - How: see `ItemTile_dom_test.ts` — a `// @vitest-environment happy-dom` line, then mount with
+    Vue's `createApp` (Vitest compiles `.vue` files as the build does). Test what a visitor sees and
+    does (text, ARIA state, clicks, emitted events), not the markup.
   - Keep the 100% floors: add `.vue` files to `discoverSources` (`script/test_runner/areas.ts`) one
     folder at a time, together with that folder's tests, so the untested-files gate and the floors
     cover each component the moment it has tests.
-  - While in `GalleryContent.vue`: the tile `v-memo` sits inside the section loop, where Vue cannot
-    use it (marked with an ESLint comment). Move it or remove it.

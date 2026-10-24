@@ -77,7 +77,7 @@ test('property: sidebar counts add up to the drawn items in every view', () => {
   );
 });
 
-test('property: date mode puts each drawn item in its UTC month, in time order', () => {
+test('property: date mode puts each drawn item in its UTC month, newest month first', () => {
   assertProperty(
     fc.property(collection, query, (specs, q) => {
       const { list, data } = run(specs, q, 'date');
@@ -89,9 +89,13 @@ test('property: date mode puts each drawn item in its UTC month, in time order',
       const expected = list.filter((i) => i.isDrawn && i.searchText.includes(norm(q))).length;
       assertEquals(Object.values(grouped).flat().length, expected);
 
-      // buckets appear oldest-first
-      const firstTimes = Object.values(grouped).map((b) => Math.min(...b.map((i) => i.drawnTime)));
-      assertEquals(firstTimes, [...firstTimes].sort((a, b) => a - b));
+      // buckets appear newest-first, and within a bucket the newest drawing leads
+      const newest = Object.values(grouped).map((b) => Math.max(...b.map((i) => i.drawnTime)));
+      assertEquals(newest, [...newest].sort((a, b) => b - a));
+      for (const bucket of Object.values(grouped)) {
+        const times = bucket.map((i) => i.drawnTime);
+        assertEquals(times, [...times].sort((a, b) => b - a));
+      }
     }),
     { numRuns: 300 },
   );
