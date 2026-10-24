@@ -93,8 +93,10 @@
         :ref="el => registerHeader(String(groupName), el)"
         class="mb-12"
       >
+        <!-- A stuck element stays clear of its scroll container's padding (p-4 / sm:p-6 in
+             Chrome.vue), so the negative top cancels it and the heading meets the top edge. -->
         <h2
-          class="sticky top-0 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-4 text-base font-semibold
+          class="sticky -top-4 sm:-top-6 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-4 text-base font-semibold
                  flex items-center justify-between gap-3 border-b transition-colors duration-fast
                  bg-slate-50/95 text-slate-800 border-slate-200 backdrop-blur-sm
                  dark:bg-slate-950/95 dark:text-slate-100 dark:border-slate-800"
