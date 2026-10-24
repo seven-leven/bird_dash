@@ -136,8 +136,10 @@ existing class such as `.text-muted`, `.btn-ghost` or `.nav-item`.
 
 _P4 One way to do each thing · P5 For everyone, on every screen_
 
-Use the system sans-serif throughout, and Faruma for Thaana through `.font-dhivehi` with
-`dir="rtl"`. The type scale has six sizes; do not add another or write pixel sizes by hand.
+Use the system sans-serif throughout, and Faruma for every Thaana character. Faruma heads the main
+font list but only covers Thaana, so Dhivehi is set in it wherever it appears, even typed into
+search; everything else falls through to the sans-serif. Mark a Dhivehi name with `.font-dhivehi`
+and `dir="rtl"`. The type scale has six sizes; do not add another or write pixel sizes by hand.
 
 | Token        | Size | Purpose                                        |
 | ------------ | ---- | ---------------------------------------------- |
