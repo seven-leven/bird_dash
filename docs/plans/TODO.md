@@ -39,6 +39,30 @@
       with empty runs folded, the collection named on phones, links between drawings, and a light
       viewer. Done 2026-10-24.
 
+- [ ] **Polish the design guide** (from a review of the manifesto, 2026-10-24). The direction is
+      right, so refine rather than redesign. In order of impact:
+  - [ ] **Numbering:** the image shows 01, 02, 04 · 06, 05, 08, 09. Number its sections 1 to n in
+        order, or drop the numbers and keep the titles.
+  - [ ] **Thaana in the image:** the Dhivehi type sample renders as broken glyphs, because the
+        renderer has no Faruma. Load the font so the sample reads.
+  - [ ] **Title:** make it the signature. A large serif "Wildlife Illustrated" under a small tracked
+        "DESIGN MANIFESTO" label. Serif for statements, sans for everything functional.
+  - [ ] **Principles:** a little more vertical room, so they read as the manifesto's main statements
+        rather than an index.
+  - [ ] **Colour weight:** keep the ramps and the two theme cards; make the accent menu a slim strip
+        with smaller labels.
+  - [ ] **Type section as a specimen:** "Lesser Whistling-Duck" as the hero, Dhivehi and English
+        together, token names and sizes in a quiet side column.
+  - [ ] **One shape for the lower sections** (Form and motion, States, Icons, Tiles): a short line,
+        one demonstration, the essential specs. States all at the same scale.
+  - [ ] **Ending:** more space above the closing line, set like the opening one.
+  - [ ] **DESIGN.md:** keep every rule, but move pure reference (the ramp hex table, the placeholder
+        files) into a short reference section at the end, so the manifesto reads first.
+  - [ ] **Test the numbers:** check the ramp and contrast tables in DESIGN.md against `palette.ts`
+        and `contrastReport()`, so they cannot drift.
+  - Don't: add colours or illustrations, use serif everywhere, put every section in a card, or drop
+    a rule only to shorten the page.
+
 ## 🏗️ Architecture & Features
 
 - [x] **Search**: Global search (ID, common/scientific name, Dhivehi name + Thaana script) with
