@@ -16,6 +16,15 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-24 | docs: design guide polished. The image has a serif title, the principles as five
+  columns, colour roles as light and dark cards, a slim accent strip, a type specimen with the
+  Dhivehi drawn in Faruma (it rendered as broken glyphs before), and every section in one shape:
+  label, statement, specifics, one demonstration. DESIGN.md moves the ramp and placeholder tables to
+  a reference at the end, and a test checks them, and the contrast table, against the palette
+- 2026-10-24 | docs: DESIGN.md rewritten as a design manifesto. Each of the five principles is
+  stated in one line, and each numbered section names the principles it serves (a contract test
+  checks both). The guide image is redrawn to match on warm paper with fine rules, and the icon
+  groups share one column grid, with a divider in the empty column between groups
 - 2026-10-24 | fix: a section's sticky heading now meets the top edge; it stopped 24px short (16px
   on phones), the scroll area's padding, and drawings showed through the gap
 - 2026-10-24 | site: follows the revised design guide. Names sit in a caption under each drawing;

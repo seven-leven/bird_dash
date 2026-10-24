@@ -28,7 +28,7 @@ test('a group that exactly fills the rest of the row stays on it', () => {
 });
 
 test('the real icon set stays inside the grid at both sizes the docs use', () => {
-  for (const cols of [10, 7]) {
+  for (const cols of [15, 7]) {
     const placed = iconGridLayout(ICON_GROUPS, cols);
     assertEquals(placed.length, ICON_GROUPS.length);
     for (const group of placed) {

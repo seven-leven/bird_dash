@@ -7,16 +7,31 @@ import { ICON_GROUPS, ICONS } from '../../src/lib/icons.ts';
 
 const page = () => readFile('./docs/DESIGN.md', 'utf8');
 
-test('DESIGN.md has a heading for each principle, with the same titles in the same order', async () => {
-  const headings = [...(await page()).matchAll(/^### P(\d)\. (.+)$/gm)].map((m) => [m[1], m[2]]);
-  assertEquals(headings, PRINCIPLES.map((p, i) => [String(i + 1), p.title]));
+test('DESIGN.md states each principle under its heading, in the same order', async () => {
+  const md = await page();
+  const headings = [...md.matchAll(/^### P(\d) — (.+)\n\n\*\*(.+)\*\*$/gm)];
+  assertEquals(
+    headings.map((m) => [m[1], m[2], m[3]]),
+    PRINCIPLES.map((p, i) => [String(i + 1), p.title, p.summary]),
+  );
 });
 
-test('every rule in DESIGN.md names the principle it comes from', async () => {
-  const rules = (await page()).split('\n').filter((line) => /^\s*- \*\*/.test(line));
-  assert(rules.length > 40, 'expected the guide to have its rules as bold-led bullets');
-  const untagged = rules.filter((line) => !/\(P[1-5]\)/.test(line));
-  assertEquals(untagged, [], 'each rule needs a (P1)–(P5) tag on its first line');
+test('every numbered section of DESIGN.md names the principles it serves', async () => {
+  const sections = (await page()).split(/^## (?=\d\d\. )/m).slice(1);
+  assert(sections.length >= 10, 'expected the numbered sections 01 to 11');
+  for (const section of sections) {
+    const [heading, , ...rest] = section.split('\n');
+    // The italic line under the heading, which dprint may wrap.
+    const line = rest.join('\n').split('\n\n')[0].replace(/\n/g, ' ');
+    assert(/^_.+_$/.test(line), `${heading}: no line naming its principles`);
+    const named = line.slice(1, -1).split(' · ');
+    assert(named.length > 0);
+    for (const name of named) {
+      const m = /^P(\d) (.+)$/.exec(name);
+      assert(m, `${heading}: "${name}" is not "P<n> <title>"`);
+      assertEquals(m[2], PRINCIPLES[Number(m[1]) - 1]?.title, `${heading}: ${name}`);
+    }
+  }
 });
 
 test('each principle has its own icon, in the Principles group of the registry', () => {
@@ -27,10 +42,12 @@ test('each principle has its own icon, in the Principles group of the registry',
 });
 
 test('the design guide image shows every principle, numbered P1 to P5', async () => {
-  const { svg } = await designGuide();
+  // Titles and summaries wrap onto several <tspan> lines; join them back up.
+  const svg = (await designGuide()).svg.replace(/<\/tspan><tspan[^>]*>/g, ' ');
   PRINCIPLES.forEach((p, i) => {
-    assertStringIncludes(svg, `>P${i + 1} · ${p.title}</text>`);
-    assertStringIncludes(svg, `>${p.summary}</text>`);
+    assertStringIncludes(svg, `>P${i + 1}</text>`);
+    assertStringIncludes(svg, `>${p.title}</tspan>`);
+    assertStringIncludes(svg, `>${p.summary}</tspan>`);
     assertStringIncludes(svg, ICONS[p.icon].body);
   });
 });

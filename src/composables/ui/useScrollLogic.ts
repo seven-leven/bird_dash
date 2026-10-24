@@ -1,5 +1,6 @@
 import { onScopeDispose, type Ref, ref } from 'vue';
 import type { UseScrollLogicReturn } from '../../types/index.ts';
+import { scrollBehavior } from '../../lib/scrollBehavior.ts';
 
 export function useScrollLogic(
   scrollContainer: Ref<HTMLElement | null>,
@@ -98,7 +99,7 @@ export function useScrollLogic(
       // Both offsets are measured from the same parent, so the difference is the
       // section's place in the scrolled content: scrolling there puts its sticky
       // heading at the top.
-      scroller.scrollTo({ top: el.offsetTop - scroller.offsetTop, behavior: 'smooth' });
+      scroller.scrollTo({ top: el.offsetTop - scroller.offsetTop, behavior: scrollBehavior() });
       activeSection.value = name;
 
       if (opts.isMobile.value) opts.closeSidebar();

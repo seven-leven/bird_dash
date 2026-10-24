@@ -39,6 +39,50 @@
       with empty runs folded, the collection named on phones, links between drawings, and a light
       viewer. Done 2026-10-24.
 
+- [x] **Polish the design guide** (from a review of the manifesto, 2026-10-24). The direction is
+      right, so refine rather than redesign. Done 2026-10-24. In order of impact:
+  - [x] **Numbering:** the image shows 01, 02, 04 · 06, 05, 08, 09. Number its sections 1 to n in
+        order, or drop the numbers and keep the titles.
+  - [x] **Thaana in the image:** the Dhivehi type sample renders as broken glyphs, because the
+        renderer has no Faruma. Load the font so the sample reads.
+  - [x] **Title:** make it the signature. A large serif "Wildlife Illustrated" under a small tracked
+        "DESIGN MANIFESTO" label. Serif for statements, sans for everything functional.
+  - [x] **Principles:** a little more vertical room, so they read as the manifesto's main statements
+        rather than an index.
+  - [x] **Colour weight:** keep the ramps and the two theme cards; make the accent menu a slim strip
+        with smaller labels.
+  - [x] **Type section as a specimen:** "Lesser Whistling-Duck" as the hero, Dhivehi and English
+        together, token names and sizes in a quiet side column.
+  - [x] **One shape for the lower sections** (Form and motion, States, Icons, Tiles): a short line,
+        one demonstration, the essential specs. States all at the same scale.
+  - [x] **Ending:** more space above the closing line, set like the opening one.
+  - [x] **DESIGN.md:** keep every rule, but move pure reference (the ramp hex table, the placeholder
+        files) into a short reference section at the end, so the manifesto reads first.
+  - [x] **Test the numbers:** check the ramp and contrast tables in DESIGN.md against `palette.ts`
+        and `contrastReport()`, so they cannot drift.
+  - Don't: add colours or illustrations, use serif everywhere, put every section in a card, or drop
+    a rule only to shorten the page.
+
+- [ ] **Simplify the design system** (proposed 2026-10-24, on hold while the manifesto settled).
+      Each one removes a rule from DESIGN.md; update the guide and its image along with the code.
+  - [ ] **One set of text roles:** `.text-strong`, `.text-body` and `.text-muted`, each with its
+        light and dark value, replace `.viewer-title/-body/-label` (main.css, `LightBox`,
+        `ItemSheet`), so the viewer and the page share one vocabulary.
+  - [ ] **Placeholders as icons:** draw an undrawn tile (and a failed load, and a search row) as
+        `CollectionIcon` in the muted colour on the tile grey, instead of a generated image. Then
+        remove `public/placeholders/`, `script/placeholders/` and its tests, `npm run placeholders`,
+        `tileImage`'s placeholder URLs, and the guide's overlays and their checks.
+  - [ ] **Five type sizes:** drop `text-micro` (11px) and use `text-xs` for `.caps-label`,
+        `.count-pill` and `.kbd-hint`. Check that they still fit at 375px.
+  - [ ] **Warm paper on the site:** swap the neutral ramp from slate to stone, so the site matches
+        the guide's paper. Stone keeps the contrast rules (`stone-500` on white is 4.8:1,
+        `stone-400` on `stone-950` 7.8:1). Change main.css, `palette.ts`, the placeholder colours
+        and DESIGN.md together; as its own commit, so it is easy to drop.
+  - [x] **Say what the guide's own look is:** the image uses warm paper and a serif, neither of
+        which is a site token. Add one line to DESIGN.md saying the guide is printed in its own
+        voice and the site's tokens are the swatches on it (or, with warm paper on the site, that
+        the paper is the site's own).
+
 ## 🏗️ Architecture & Features
 
 - [x] **Search**: Global search (ID, common/scientific name, Dhivehi name + Thaana script) with
