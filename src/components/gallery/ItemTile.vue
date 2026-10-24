@@ -42,7 +42,7 @@
     >
       <p
         v-if="props.item.meta?.dhiv_script"
-        class="font-dhivehi text-base font-bold leading-snug truncate"
+        class="font-dhivehi text-base font-bold truncate"
         :class="drawn ? 'text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400'"
         dir="rtl"
       >

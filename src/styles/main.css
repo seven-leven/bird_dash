@@ -405,6 +405,11 @@
   }
 }
 
+/* Faruma's vowel marks (fili) reach up to 0.5em below the baseline, more than
+   twice what the font declares, so a tight or clipped (truncate) line cuts them
+   off. A line height of 1.85 leaves them 0.59em; measured over every name on the
+   site, the deepest needs 0.5. Unlayered, so it wins over any leading-* utility. */
 .font-dhivehi {
   font-family: 'Faruma', 'Arial Unicode MS', 'FreeSerif', sans-serif;
+  line-height: 1.85;
 }
