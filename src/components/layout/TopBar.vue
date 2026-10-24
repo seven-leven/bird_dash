@@ -11,7 +11,7 @@
       v-if="isMobile"
       @click="toggleSidebar()"
       class="btn-ghost focus-ring lg:hidden p-2.5 rounded-control shrink-0"
-      aria-label="Toggle sidebar"
+      :aria-label="sidebarOpen ? 'Hide sections' : 'Show sections'"
       aria-controls="appSidebar"
       :aria-expanded="sidebarOpen"
     >

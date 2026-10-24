@@ -102,7 +102,7 @@
                   cursor: isDragging ? 'grabbing' : (scale > 1 ? 'grab' : 'default'),
                   transition: isDragging ? 'none' : 'transform 0.15s ease-out',
                 }"
-                class="max-w-full max-h-full object-contain select-none shadow-sm ring-1 ring-slate-200 dark:shadow-none dark:ring-0"
+                class="max-w-full max-h-full object-contain select-none ring-1 ring-slate-200 dark:ring-0"
                 @load="handleImageLoad"
                 @error="handleImageError"
                 draggable="false"

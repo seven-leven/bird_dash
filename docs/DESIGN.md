@@ -250,7 +250,8 @@ itself from those attributes, so what is seen and what assistive technology anno
 If it looks clickable, it must do something. Undrawn tiles are not buttons: no pointer cursor, no
 hover lift, no tab stop. Never remove a focus ring without replacing it.
 
-On phones, touch targets are at least **36px**, with **8px** between neighbouring targets.
+On phones, touch targets are at least **36px**. At that size they need no extra space between them
+(WCAG 2.5.8 asks for 24px), so a tight row such as the phone header can keep its small gaps.
 
 ---
 

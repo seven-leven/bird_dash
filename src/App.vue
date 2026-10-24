@@ -95,11 +95,20 @@ onMounted(async () => {
     </EmptyState>
   </div>
 
-  <div
-    v-else
-    class="flex flex-col items-center justify-center gap-3 min-h-screen bg-slate-50 dark:bg-slate-950"
-  >
-    <div class="w-8 h-8 border-2 border-slate-200 border-t-accent-500 rounded-full animate-spin dark:border-slate-800 dark:border-t-accent-500" />
-    <p class="text-xs font-medium text-muted">Loading collections…</p>
+  <!-- Loading: the page's own shape in grey (a header, then tiles), and no message
+       on screen; screen readers are told what is happening. -->
+  <div v-else class="min-h-screen bg-slate-50 dark:bg-slate-950" aria-busy="true">
+    <div class="h-12 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950" />
+    <div class="tile-grid p-4 sm:p-6">
+      <div
+        v-for="n in 10"
+        :key="n"
+        class="rounded-card overflow-hidden animate-pulse bg-slate-200 dark:bg-slate-800"
+      >
+        <div class="aspect-square" />
+        <div class="h-14" />
+      </div>
+    </div>
+    <p class="sr-only" role="status">Loading the gallery</p>
   </div>
 </template>
