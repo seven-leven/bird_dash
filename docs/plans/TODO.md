@@ -63,6 +63,18 @@
   - Don't: add colours or illustrations, use serif everywhere, put every section in a card, or drop
     a rule only to shorten the page.
 
+- [ ] **Simplify the design system** (proposed 2026-10-24, on hold while the manifesto settled).
+      Each one removes a rule from DESIGN.md; update the guide and its image along with the code.
+  - [ ] **One set of text roles:** `.text-strong`, `.text-body` and `.text-muted`, each with its
+        light and dark value, replace `.viewer-title/-body/-label` (main.css, `LightBox`,
+        `ItemSheet`), so the viewer and the page share one vocabulary.
+  - [ ] **Placeholders as icons:** draw an undrawn tile (and a failed load, and a search row) as
+        `CollectionIcon` in the muted colour on the tile grey, instead of a generated image. Then
+        remove `public/placeholders/`, `script/placeholders/` and its tests, `npm run placeholders`,
+        `tileImage`'s placeholder URLs, and the guide's overlays and their checks.
+  - [ ] **Five type sizes:** drop `text-micro` (11px) and use `text-xs` for `.caps-label`,
+        `.count-pill` and `.kbd-hint`. Check that they still fit at 375px.
+
 ## 🏗️ Architecture & Features
 
 - [x] **Search**: Global search (ID, common/scientific name, Dhivehi name + Thaana script) with
