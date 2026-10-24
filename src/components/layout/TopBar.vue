@@ -15,7 +15,7 @@
       aria-controls="appSidebar"
       :aria-expanded="sidebarOpen"
     >
-      <Icon name="menu" class="w-4.5 h-4.5" />
+      <Icon name="menu" class="size-4" />
     </button>
 
     <!-- Logo: the mark from sm up, the wordmark from md up. On a phone the row has
@@ -27,7 +27,7 @@
       class="hidden sm:flex items-center justify-center gap-2 shrink-0 md:pr-1 select-none focus-ring rounded-control max-md:min-w-9 max-md:min-h-9"
       aria-label="Wildlife Illustrated"
     >
-      <LogoMark class="w-6 h-6 text-slate-900 dark:text-white" />
+      <LogoMark class="size-6 text-slate-900 dark:text-white" />
       <span class="hidden md:flex items-baseline gap-1" aria-hidden="true">
         <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
         <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>
@@ -46,7 +46,7 @@
         :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
         :aria-label="col.label"
       >
-        <CollectionIcon :collection="col" class="w-4.5 h-4.5" />
+        <CollectionIcon :collection="col" class="size-4" />
         <!-- The current collection is named on every screen; the others from sm up -->
         <span :class="col.id === activeCollection?.id ? 'inline' : 'hidden sm:inline'">{{ col.label }}</span>
       </button>
@@ -68,7 +68,7 @@
         :aria-label="`${view.label} view`"
         :title="`${view.label} view`"
       >
-        <Icon :name="view.icon" class="w-4 h-4" />
+        <Icon :name="view.icon" class="size-4" />
         <span class="hidden lg:inline">{{ view.label }}</span>
       </button>
     </div>
@@ -81,8 +81,8 @@
       class="btn-ghost focus-ring flex items-center justify-center w-9 h-9 md:w-8 md:h-8 shrink-0"
       :aria-label="theme.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
     >
-      <Icon v-if="theme.isDark" name="sun" class="w-4 h-4" />
-      <Icon v-else name="moon" class="w-4 h-4" />
+      <Icon v-if="theme.isDark" name="sun" class="size-4" />
+      <Icon v-else name="moon" class="size-4" />
     </button>
   </header>
 </template>
@@ -97,6 +97,7 @@ import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useActions } from '../../stores/actions.ts';
 import { useSearch } from '../../stores/search.ts';
+import { viewName } from '../../lib/viewName.ts';
 
 const { list: collections, activeCollection } = useCollectionsStore();
 const { isMobile, sidebarOpen, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
@@ -104,7 +105,11 @@ const { switchCollection } = useActions();
 const { dropdownOpen } = useSearch();
 
 const views = computed(() => [
-  { mode: 'group' as const, icon: 'taxonomy' as const, label: activeCollection.value?.groupLabel ?? 'Group' },
-  { mode: 'date' as const, icon: 'calendar' as const, label: 'Date' },
+  {
+    mode: 'group' as const,
+    icon: 'taxonomy' as const,
+    label: viewName('group', activeCollection.value?.groupLabel ?? 'Group'),
+  },
+  { mode: 'date' as const, icon: 'calendar' as const, label: viewName('date', '') },
 ]);
 </script>

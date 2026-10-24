@@ -7,7 +7,7 @@
  */
 import sharp, { type OverlayOptions } from 'sharp';
 import { ICON_GROUPS, type IconDef, ICONS } from '../../src/lib/icons.ts';
-import { writeLogoFiles } from './draw_logo.ts';
+import { writeFavicons, writeLogoFiles } from './draw_logo.ts';
 import { iconGridLayout } from './icon_grid.ts';
 import { PRINCIPLES } from './principles.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
@@ -508,19 +508,28 @@ export function contrastReport(): string[] {
   return pairs.map(([label, a, b]) => `  ${contrast(a, b).toFixed(1)}:1  ${label}`);
 }
 
-/** Draw every generated image into `dir`: the guide, the icon sheet, the logo sheet and files. */
-export async function writeDesignImages(dir = './docs/assets'): Promise<void> {
+/**
+ * Draw every generated image: the guide, the icon sheet, the logo sheet and files
+ * into `dir`, and the favicons into `publicDir`.
+ */
+export async function writeDesignImages(
+  dir = './docs/assets',
+  publicDir = './public',
+): Promise<void> {
   const png = (svg: string) => sharp(new TextEncoder().encode(svg));
   const { svg, placeholders, dhivehi } = await designGuide();
   await png(svg).composite([...placeholders, ...dhivehi]).png().toFile(`${dir}/design-guide.png`);
   await png(iconSheetSvg()).png().toFile(`${dir}/icons.png`);
   await writeLogoFiles(dir);
+  await writeFavicons(publicDir);
 }
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */
 if (import.meta.main) {
   await writeDesignImages();
-  console.log('  wrote design-guide.png, icons.png, logo.png and logo/ in docs/assets/');
+  console.log(
+    '  wrote design-guide.png, icons.png, logo.png and logo/ in docs/assets/, favicons in public/',
+  );
   for (const line of contrastReport()) console.log(line);
 }

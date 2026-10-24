@@ -40,8 +40,8 @@
                    transition-colors duration-fast"
             :aria-label="`Clear filter ${query}`"
           >
-            <span class="max-w-48 truncate tabular-nums">{{ plural(stats.filtered, 'result') }} for &ldquo;{{ query }}&rdquo;</span>
-            <Icon name="close" class="w-3 h-3" />
+            <span class="max-w-48 truncate tabular-nums">{{ viewMode === 'group' ? matchesDrawn(stats.filtered, stats.filteredDrawn) : matches(stats.filtered) }} for &ldquo;{{ query }}&rdquo;</span>
+            <Icon name="close" class="size-3" />
           </button>
         </div>
 
@@ -81,7 +81,7 @@ import { useCollectionsStore } from '../../stores/collections.ts';
 import { useSearch } from '../../stores/search.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useOverlayStore } from '../../stores/overlay.ts';
-import { plural } from '../../lib/formatCount.ts';
+import { matches, matchesDrawn } from '../../lib/formatCount.ts';
 
 // Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)
 // are only needed after the first tile click, so keep them out of first paint.
@@ -90,6 +90,6 @@ const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 const { data, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
 // The scroll container is handed to the ui store (for the scroll-spy) as a function ref.
-const { isMobile, sidebarOpen, bindScrollContainer, closeSidebar } = useUi();
+const { isMobile, sidebarOpen, viewMode, bindScrollContainer, closeSidebar } = useUi();
 const { expandedImage, drawnItems, close, update } = useOverlayStore();
 </script>

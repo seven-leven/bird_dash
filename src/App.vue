@@ -83,13 +83,13 @@ onMounted(async () => {
   >
     <EmptyState title="Couldn't load the gallery" :hint="initError">
       <template #icon>
-        <Icon name="close" class="w-6 h-6" />
+        <Icon name="close" class="size-6" />
       </template>
       <button
         class="btn-primary focus-ring mt-3"
         @click="reload()"
       >
-        <Icon name="reset" class="w-3.5 h-3.5" aria-hidden="true" />
+        <Icon name="reset" class="size-4" aria-hidden="true" />
         Try again
       </button>
     </EmptyState>

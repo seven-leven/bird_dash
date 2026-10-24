@@ -51,18 +51,18 @@ test('Icon draws line icons with a stroke and brand marks filled', () => {
   ]);
 });
 
-test('IdBadge prints the id, or its slot, in the style for where it sits', () => {
+test('IdBadge prints the id, or its slot, on a surface or over a drawing', () => {
   const host = mount(() =>
     h('div', [
       h(IdBadge, { id: '042' }),
       h(IdBadge, { id: '042', variant: 'overlay' }),
-      h(IdBadge, { variant: 'panel' }, () => 'custom'),
+      h(IdBadge, null, () => 'custom'),
     ])
   );
-  const [surface, overlay, panel] = [...host.querySelectorAll('span')];
+  const [surface, overlay, slotted] = [...host.querySelectorAll('span')];
   assertEquals(surface.textContent, '#042');
   assertEquals(surface.className.includes('bg-slate-100'), true);
   assertEquals(overlay.className.includes('bg-black/50'), true);
-  assertEquals(panel.textContent, 'custom');
-  assertEquals(panel.className.includes('dark:bg-white/10'), true);
+  assertEquals(slotted.textContent, 'custom');
+  assertEquals(slotted.className, surface.className); // one style for every surface
 });

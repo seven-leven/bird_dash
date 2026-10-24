@@ -14,11 +14,10 @@ const props = withDefaults(
   defineProps<{
     id?: string;
     /**
-     * overlay — on top of imagery (dark scrim, white text)
-     * surface — on light/dark app surfaces
-     * panel   — inside the dark info panel
+     * overlay — on top of a drawing (dark scrim, white text)
+     * surface — on any interface surface, the viewer's panel included
      */
-    variant?: 'overlay' | 'surface' | 'panel';
+    variant?: 'overlay' | 'surface';
   }>(),
   { variant: 'surface' },
 );
@@ -27,8 +26,6 @@ const variantClass = computed(() => {
   switch (props.variant) {
     case 'overlay':
       return 'bg-black/50 text-white/70 backdrop-blur-sm';
-    case 'panel':
-      return 'bg-slate-100 text-slate-500 dark:bg-white/10 dark:text-white/70';
     default:
       return 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400';
   }

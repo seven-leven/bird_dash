@@ -1,11 +1,11 @@
 <template>
-  <div class="bg-white/95 border-slate-200 dark:bg-slate-900/95 dark:border-white/8
-              backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-2xl flex flex-col gap-5">
+  <div class="bg-white/95 border-slate-200 dark:bg-slate-900/95 dark:border-slate-800
+              backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
     <!-- Header: ID badge + group + names -->
     <div>
       <div class="flex items-center gap-2 mb-3">
-        <IdBadge :id="item.itemId" variant="panel" />
+        <IdBadge :id="item.itemId" />
         <span class="viewer-label text-xs">{{ item.group }}</span>
       </div>
 
@@ -50,7 +50,7 @@
       <p class="caps-label with-icon viewer-label mb-2">
         <Icon name="pencil" aria-hidden="true" />From the illustrator
       </p>
-      <blockquote class="pl-3 border-l border-slate-200 dark:border-white/20">
+      <blockquote class="pl-3 border-l border-slate-200 dark:border-slate-700">
         <p class="viewer-body text-sm leading-relaxed italic">
           <template v-for="(part, i) in noteParts" :key="i">
             <a
@@ -79,10 +79,10 @@
           class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-control
                  border text-xs font-medium transition-colors duration-fast viewer-body
                  border-slate-200 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50
-                 dark:border-white/15 dark:hover:viewer-title dark:hover:border-white/30 dark:hover:bg-white/5"
+                 dark:border-slate-800 dark:hover:text-white dark:hover:border-slate-700 dark:hover:bg-slate-800"
         >
           {{ link.label }}
-          <Icon name="externalLink" class="w-3 h-3 opacity-60" />
+          <Icon name="externalLink" class="size-3 opacity-60" />
         </a>
       </div>
     </div>

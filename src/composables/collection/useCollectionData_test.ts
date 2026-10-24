@@ -50,7 +50,7 @@ test('group stats: total = all items, drawn = drawn count', () => {
     makeItem({ isDrawn: false }),
   ];
   const { stats } = setup(items);
-  assertEquals(stats.value, { total: 3, filtered: 3, drawn: 1 });
+  assertEquals(stats.value, { total: 3, filtered: 3, filteredDrawn: 1, drawn: 1 });
 });
 
 test('date mode: buckets drawn items by month, newest month and newest drawing first', () => {

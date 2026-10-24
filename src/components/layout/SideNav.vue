@@ -7,22 +7,17 @@
            lg:static lg:translate-x-0
            bg-white border-slate-200
            dark:bg-slate-950 dark:border-slate-800"
-    :class="sidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'"
+    :class="sidebarOpen ? 'translate-x-0 shadow-float' : '-translate-x-full'"
     :inert="isMobile && !sidebarOpen"
     @keydown.escape="closeSidebar()"
   >
     <!-- Header -->
     <div class="sticky top-0 z-10 px-5 pt-5 pb-4 border-b border-slate-100 dark:border-slate-800/60">
+      <!-- Named as the header's tab names it. The collection's count is above the grid,
+           so it is not repeated here. -->
       <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
-        {{ viewMode === 'group'
-            ? `${activeCollection?.groupLabel ?? ''} Groups`
-            : 'Timeline' }}
+        {{ viewName(viewMode, activeCollection?.groupLabel ?? 'Group') }}
       </h1>
-      <!-- No count until it is known: "0 of 0 drawn" would read as a real answer. -->
-      <p v-if="data.loading" class="h-3 w-24 mt-1.5 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
-      <p v-else class="text-xs text-muted mt-0.5 tabular-nums">
-        {{ viewMode === 'group' ? drawnOf(stats.drawn, stats.total) : drawings(stats.filtered) }}
-      </p>
     </div>
 
     <!-- List -->
@@ -87,9 +82,10 @@ import Icon from '../icons/Icon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useSearch } from '../../stores/search.ts';
-import { drawings, drawnOf, ratio } from '../../lib/formatCount.ts';
+import { drawnOf, ratio } from '../../lib/formatCount.ts';
+import { viewName } from '../../lib/viewName.ts';
 
-const { activeCollection, data, activeData, stats, globalStats } = useCollectionsStore();
+const { activeCollection, data, activeData, globalStats } = useCollectionsStore();
 // Off-screen on small screens until opened: `inert` keeps it out of the tab order.
 const { sidebarOpen, isMobile, viewMode, activeSection, goToSection, closeSidebar } = useUi();
 const { query } = useSearch();

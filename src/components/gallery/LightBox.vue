@@ -23,13 +23,13 @@
           <!-- Zoom controls -->
           <div class="flex items-center gap-1 pointer-events-auto">
             <button @click="zoomIn"    class="icon-btn-overlay" aria-label="Zoom in">
-              <Icon name="zoomIn" class="w-4 h-4" />
+              <Icon name="zoomIn" class="size-4" />
             </button>
             <button @click="zoomOut"   class="icon-btn-overlay" aria-label="Zoom out">
-              <Icon name="zoomOut" class="w-4 h-4" />
+              <Icon name="zoomOut" class="size-4" />
             </button>
             <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
-              <Icon name="reset" class="w-4 h-4" />
+              <Icon name="reset" class="size-4" />
             </button>
             <span class="ml-2 text-micro font-mono viewer-label tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
@@ -43,7 +43,7 @@
 
           <!-- Close -->
           <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
-            <Icon name="close" class="w-4.5 h-4.5" />
+            <Icon name="close" class="size-5" />
           </button>
         </div>
 
@@ -65,7 +65,7 @@
               class="nav-btn-overlay left-1"
               aria-label="Previous"
             >
-              <Icon name="chevronLeft" class="w-5 h-5" />
+              <Icon name="chevronLeft" class="size-5" />
             </button>
             <button
               v-if="hasNext"
@@ -73,7 +73,7 @@
               class="nav-btn-overlay right-1"
               aria-label="Next"
             >
-              <Icon name="chevronRight" class="w-5 h-5" />
+              <Icon name="chevronRight" class="size-5" />
             </button>
 
           <!-- Image area -->
@@ -111,7 +111,7 @@
 
             <!-- Loading spinner -->
             <div v-if="loading" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-8 h-8 border-2 border-slate-300 border-t-slate-500 dark:border-white/15 dark:border-t-white/50 rounded-full animate-spin" />
+              <div class="w-8 h-8 border-2 border-slate-300 border-t-slate-500 dark:border-slate-700 dark:border-t-slate-400 rounded-full animate-spin" />
             </div>
 
             <!-- Error -->

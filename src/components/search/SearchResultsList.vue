@@ -12,7 +12,7 @@
       aria-hidden="true"
     >
       <div class="flex items-center gap-2">
-        <CollectionIcon :collection="group.collection" class="w-3.5 h-3.5 text-muted" />
+        <CollectionIcon :collection="group.collection" class="size-3 text-muted" />
         <span class="caps-label text-muted">{{ group.collection.label }}</span>
       </div>
       <span class="count-pill">{{ group.count }}</span>
@@ -54,7 +54,7 @@
         v-if="!result.item.isDrawn"
         class="shrink-0 text-micro text-muted whitespace-nowrap"
       >Not drawn yet</span>
-      <IdBadge variant="surface" class="shrink-0">
+      <IdBadge class="shrink-0">
         <span v-html="highlight(`#${result.item.itemId}`)" />
       </IdBadge>
     </button>

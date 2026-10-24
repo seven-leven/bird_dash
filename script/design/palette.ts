@@ -1,53 +1,54 @@
 /**
  * The colours the design guide draws, and the contrast maths behind the rules
- * in docs/DESIGN.md. Hex values are Tailwind's (the site uses the colours by
- * name; these exist to draw swatches and to measure contrast).
+ * in docs/DESIGN.md. Every value is read from Tailwind's own palette, the one
+ * the site renders, and converted from oklch to hex here, so the guide, the
+ * contrast figures and the placeholders measure the colours visitors see.
  */
 
 import { readFile } from 'node:fs/promises';
+import colors from 'tailwindcss/colors';
 
-export const SLATE: Record<string, string> = {
-  '50': '#f8fafc',
-  '100': '#f1f5f9',
-  '200': '#e2e8f0',
-  '300': '#cbd5e1',
-  '400': '#94a3b8',
-  '500': '#64748b',
-  '600': '#475569',
-  '700': '#334155',
-  '800': '#1e293b',
-  '900': '#0f172a',
-  '950': '#020617',
-};
-export const TEAL: Record<string, string> = {
-  '50': '#f0fdfa',
-  '100': '#ccfbf1',
-  '200': '#99f6e4',
-  '300': '#5eead4',
-  '400': '#2dd4bf',
-  '500': '#14b8a6',
-  '600': '#0d9488',
-  '700': '#0f766e',
-  '800': '#115e59',
-  '900': '#134e4a',
-  '950': '#042f2e',
-};
+/**
+ * `#rrggbb` for a CSS `oklch(L% C H)` colour, as an sRGB screen shows it: through
+ * OKLab and linear sRGB, then clamped into range.
+ */
+export function oklchToHex(css: string): string {
+  // A grey has no hue, which CSS writes as `none`.
+  const m = /^oklch\(([\d.]+)% ([\d.]+) ([\d.]+|none)\)$/.exec(css);
+  if (!m) throw new Error(`not an oklch() colour: ${css}`);
+  const hue = m[3] === 'none' ? 0 : Number(m[3]);
+  const [L, C, h] = [Number(m[1]) / 100, Number(m[2]), (hue * Math.PI) / 180];
+  const [a, b] = [C * Math.cos(h), C * Math.sin(h)];
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const mm = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  const linear = [
+    4.0767416621 * l - 3.3077115913 * mm + 0.2309699292 * s,
+    -1.2684380046 * l + 2.6097574011 * mm - 0.3413193965 * s,
+    -0.0041960863 * l - 0.7034186147 * mm + 1.707614701 * s,
+  ];
+  return '#' + linear.map((x) => {
+    const v = x <= 0.0031308 ? 12.92 * x : 1.055 * x ** (1 / 2.4) - 0.055;
+    return Math.round(Math.min(1, Math.max(0, v)) * 255).toString(16).padStart(2, '0');
+  }).join('');
+}
 
-/** The 500 and 700 shades of every hue an accent may use (Tailwind's values). */
-export const ACCENT_HEX: Record<string, { 500: string; 700: string }> = {
-  teal: { 500: '#14b8a6', 700: '#0f766e' },
-  emerald: { 500: '#10b981', 700: '#047857' },
-  cyan: { 500: '#06b6d4', 700: '#0e7490' },
-  sky: { 500: '#0ea5e9', 700: '#0369a1' },
-  blue: { 500: '#3b82f6', 700: '#1d4ed8' },
-  indigo: { 500: '#6366f1', 700: '#4338ca' },
-  violet: { 500: '#8b5cf6', 700: '#6d28d9' },
-  purple: { 500: '#a855f7', 700: '#7e22ce' },
-  fuchsia: { 500: '#d946ef', 700: '#a21caf' },
-  pink: { 500: '#ec4899', 700: '#be185d' },
-  rose: { 500: '#f43f5e', 700: '#be123c' },
-  orange: { 500: '#f97316', 700: '#c2410c' },
-};
+type Ramp = Record<string, string>;
+const tailwind = colors as unknown as Record<string, Ramp | string>;
+const ramp = (hue: string): Ramp =>
+  Object.fromEntries(Object.entries(tailwind[hue] as Ramp).map(([k, v]) => [k, oklchToHex(v)]));
+
+export const SLATE: Ramp = ramp('slate');
+export const TEAL: Ramp = ramp('teal');
+
+/** The 500 and 700 shades of every Tailwind hue, any of which an accent may use. */
+export const ACCENT_HEX: Record<string, { 500: string; 700: string }> = Object.fromEntries(
+  Object.entries(tailwind)
+    .filter(([, v]) => typeof v === 'object' && '500' in v && '700' in v)
+    .map((
+      [hue, v],
+    ) => [hue, { 500: oklchToHex((v as Ramp)['500']), 700: oklchToHex((v as Ramp)['700']) }]),
+);
 
 /** The accent hues on offer: the `[data-accent='…']` palettes in main.css, in file order. */
 export async function accentMenu(): Promise<string[]> {
