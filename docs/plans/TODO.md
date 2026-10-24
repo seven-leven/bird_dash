@@ -74,6 +74,14 @@
         `tileImage`'s placeholder URLs, and the guide's overlays and their checks.
   - [ ] **Five type sizes:** drop `text-micro` (11px) and use `text-xs` for `.caps-label`,
         `.count-pill` and `.kbd-hint`. Check that they still fit at 375px.
+  - [ ] **Warm paper on the site:** swap the neutral ramp from slate to stone, so the site matches
+        the guide's paper. Stone keeps the contrast rules (`stone-500` on white is 4.8:1,
+        `stone-400` on `stone-950` 7.8:1). Change main.css, `palette.ts`, the placeholder colours
+        and DESIGN.md together; as its own commit, so it is easy to drop.
+  - [ ] **Say what the guide's own look is:** the image uses warm paper and a serif, neither of
+        which is a site token. Add one line to DESIGN.md saying the guide is printed in its own
+        voice and the site's tokens are the swatches on it (or, with warm paper on the site, that
+        the paper is the site's own).
 
 ## 🏗️ Architecture & Features
 
