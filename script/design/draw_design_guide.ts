@@ -26,7 +26,8 @@ const MUTED = SLATE['500'];
 const PAPER = '#fbfaf7';
 const RULE = '#e2ded5';
 const FONT = 'font-family="Segoe UI, Helvetica, Arial, sans-serif"';
-const SERIF = 'font-family="Georgia, Cambria, serif" font-style="italic"';
+const SERIF_FACE = 'font-family="Georgia, Cambria, serif"';
+const SERIF = `${SERIF_FACE} font-style="italic"`;
 
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 const text = (x: number, y: number, s: string, size = 15, fill = INK, weight = 400, extra = '') =>
@@ -37,6 +38,23 @@ const caps = (x: number, y: number, s: string) =>
   text(x, y, s.toUpperCase(), 12, MUTED, 600, 'letter-spacing="1"');
 const serif = (x: number, y: number, s: string, size = 17, fill = MUTED) =>
   `<text x="${x}" y="${y}" ${SERIF} font-size="${size}" fill="${fill}">${esc(s)}</text>`;
+
+/** Break `s` into lines of at most `max` characters, at spaces. */
+export function wrap(s: string, max: number): string[] {
+  const lines: string[] = [];
+  for (const word of s.split(' ')) {
+    const last = lines.at(-1);
+    if (last !== undefined && `${last} ${word}`.length <= max) {
+      lines[lines.length - 1] += ` ${word}`;
+    } else lines.push(word);
+  }
+  return lines;
+}
+/** Several lines of text, `lead` apart, as one <text> of <tspan>s. */
+const para = (x: number, y: number, lines: string[], lead: number, attrs: string) =>
+  `<text x="${x}" y="${y}" ${attrs}>${
+    lines.map((l, i) => `<tspan x="${x}" dy="${i ? lead : 0}">${esc(l)}</tspan>`).join('')
+  }</text>`;
 const rect = (x: number, y: number, w: number, h: number, fill: string, rx = 0, extra = '') =>
   `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" ${extra}/>`;
 const line = (x1: number, y1: number, x2: number, y2: number) =>
@@ -135,6 +153,85 @@ function navStates(x: number, y: number, dark: boolean): string {
     item(x + 320, 'Current', current, true, true);
 }
 
+/**
+ * Where colour belongs, drawn in one theme: each role shown in its real colours
+ * on a card of that theme, with its name and its tokens.
+ */
+function roleCard(x: number, y: number, w: number, dark: boolean) {
+  const t = dark
+    ? {
+      card: SLATE['900'],
+      page: SLATE['950'],
+      surface: SLATE['950'],
+      ink: SLATE['100'],
+      muted: SLATE['400'],
+      border: SLATE['800'],
+      viewer: ['#ffffff', whiteOnBlack(0.7), whiteOnBlack(0.5)],
+    }
+    : {
+      card: '#ffffff',
+      page: SLATE['50'],
+      surface: '#ffffff',
+      ink: SLATE['900'],
+      muted: SLATE['500'],
+      border: SLATE['200'],
+      viewer: [SLATE['900'], SLATE['600'], SLATE['500']],
+    };
+  const aa = (ax: number, ay: number, fill: string, size = 18) =>
+    text(ax, ay, 'Aa', size, fill, 600);
+  const swatch = (fill: string, sx: number, sy: number) =>
+    rect(sx, sy, 56, 28, fill, 6, `stroke="${t.border}"`);
+  // Each sample is drawn in a 56 × 28 box whose top-left corner is (sx, sy).
+  const roles: [string, string, (sx: number, sy: number) => string][] = [
+    ['Page', dark ? 'slate-950' : 'slate-50', (sx, sy) => swatch(t.page, sx, sy)],
+    [
+      'Surface: header, sidebar, menus',
+      dark ? 'slate-950 / 900' : 'white',
+      (sx, sy) => swatch(t.surface, sx, sy),
+    ],
+    ['Text', dark ? 'slate-100' : 'slate-900 / 800', (sx, sy) => aa(sx + 2, sy + 21, t.ink)],
+    ['Muted text', dark ? 'slate-400' : 'slate-500', (sx, sy) => aa(sx + 2, sy + 21, t.muted)],
+    [
+      'Borders and dividers',
+      dark ? 'slate-800' : 'slate-200 / 100',
+      (sx, sy) => rect(sx, sy, 56, 28, 'none', 6, `stroke="${t.border}" stroke-width="2"`),
+    ],
+    [
+      'Focus, current marker, progress',
+      'accent-500',
+      (sx, sy) => rect(sx, sy + 12, 56, 4, TEAL['500'], 2),
+    ],
+    [
+      'Primary button',
+      'accent-700 + white',
+      (sx, sy) => rect(sx, sy, 56, 28, TEAL['700'], 6) + aa(sx + 15, sy + 19, '#ffffff', 14),
+    ],
+    ['Viewer: title, body, label', dark ? 'white 100 / 70 / 50%' : 'slate-900 / 600 / 500', (
+      sx,
+      sy,
+    ) => t.viewer.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join('')],
+  ];
+  const row = 46;
+  const top = y + 52;
+  let svg = rect(x, y, w, 52 + roles.length * row + 12, t.card, 12, `stroke="${RULE}"`) +
+    text(
+      x + 24,
+      y + 32,
+      dark ? 'DARK THEME' : 'LIGHT THEME',
+      12,
+      t.muted,
+      600,
+      'letter-spacing="1"',
+    );
+  roles.forEach(([name, tokens, sample], i) => {
+    const ry = top + i * row;
+    svg += line(x + 24, ry, x + w - 24, ry).replace(RULE, t.border) + sample(x + 24, ry + 9) +
+      text(x + 100, ry + 29, name, 15, t.ink) +
+      text(x + w - 24, ry + 29, tokens, 14, t.muted, 400, 'text-anchor="end"');
+  });
+  return { svg, bottom: top + roles.length * row + 12 };
+}
+
 type Overlay = OverlayOptions;
 
 /** The guide as an SVG, plus the placeholder images to composite on top of it. */
@@ -151,19 +248,20 @@ export async function designGuide(
       serif(X, 200, 'The drawings carry the colour. Everything around them makes room.', 22, INK),
   );
 
-  // ── The five principles: icon, number, title, and the principle in one line ──
+  // ── The five principles, side by side: icon, number, title, and the principle ──
   let y = 250;
-  parts.push(rule(y) + text(X, y + 52, 'The five principles', 26, INK, 700));
+  parts.push(rule(y));
+  const colW = (W - 2 * X) / PRINCIPLES.length;
   PRINCIPLES.forEach((p, i) => {
-    const ry = y + 84 + i * 60;
+    const x = X + i * colW + (i ? 28 : 0);
     parts.push(
-      (i ? rule(ry) : '') + icon(p.icon, X, ry + 16, 28, INK) +
-        text(X + 64, ry + 38, `P${i + 1}`, 15, MUTED, 600, 'letter-spacing="1"') +
-        text(X + 112, ry + 38, p.title, 19, INK, 700) +
-        serif(X + 480, ry + 38, p.summary, 18, INK),
+      (i ? line(x - 28, y + 48, x - 28, y + 330) : '') + icon(p.icon, x, y + 48, 36, INK) +
+        text(x, y + 132, `P${i + 1}`, 14, MUTED, 600, 'letter-spacing="1"') +
+        para(x, y + 176, wrap(p.title, 15), 34, `${SERIF_FACE} font-size="28" fill="${INK}"`) +
+        para(x, y + 260, wrap(p.summary, 26), 24, `${FONT} font-size="16" fill="${MUTED}"`),
     );
   });
-  y += 84 + PRINCIPLES.length * 60 + 40;
+  y += 380;
 
   // ── 01 Colour ──
   let s = section(
@@ -173,26 +271,10 @@ export async function designGuide(
     'Quiet ground, clear signal: slate for surfaces and text, one accent per collection (teal shown).',
   );
   parts.push(s.svg, ramp(s.top, 'slate', SLATE), ramp(s.top + 90, 'accent', TEAL));
-  const roles = [
-    ['Page', 'slate-50', 'slate-950'],
-    ['Surface (header, sidebar, menus)', 'white', 'slate-950 / 900'],
-    ['Text', 'slate-900 / 800', 'slate-100'],
-    ['Muted text', 'slate-500', 'slate-400'],
-    ['Borders', 'slate-200 / 100', 'slate-800'],
-    ['Accent: focus ring, current marker, progress', 'accent-500', 'accent-500'],
-    ['Accent: primary button', 'accent-700 + white', 'accent-700 + white'],
-    ['Viewer: title, body, label', 'slate-900 / 600 / 500', 'white at 100 / 70 / 50%'],
-  ];
-  let ry = s.top + 214;
-  parts.push(caps(X, ry, 'Role') + caps(X + 480, ry, 'Light') + caps(X + 780, ry, 'Dark'));
-  roles.forEach(([role, light, dark], i) => {
-    const rowY = ry + 14 + i * 34;
-    parts.push(
-      rule(rowY) + text(X, rowY + 23, role, 15) + text(X + 480, rowY + 23, light, 15) +
-        text(X + 780, rowY + 23, dark, 15),
-    );
-  });
-  ry += 14 + roles.length * 34 + 56;
+  const cardW = (W - 2 * X - 40) / 2;
+  const card = roleCard(X, s.top + 200, cardW, false);
+  parts.push(card.svg, roleCard(X + cardW + 40, s.top + 200, cardW, true).svg);
+  const ry = card.bottom + 64;
 
   // The accent menu: every hue a collection may pick, and who has picked it.
   const menu = await accentMenu();

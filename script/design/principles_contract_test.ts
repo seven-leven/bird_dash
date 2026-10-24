@@ -42,11 +42,12 @@ test('each principle has its own icon, in the Principles group of the registry',
 });
 
 test('the design guide image shows every principle, numbered P1 to P5', async () => {
-  const { svg } = await designGuide();
+  // Titles and summaries wrap onto several <tspan> lines; join them back up.
+  const svg = (await designGuide()).svg.replace(/<\/tspan><tspan[^>]*>/g, ' ');
   PRINCIPLES.forEach((p, i) => {
     assertStringIncludes(svg, `>P${i + 1}</text>`);
-    assertStringIncludes(svg, `>${p.title}</text>`);
-    assertStringIncludes(svg, `>${p.summary}</text>`);
+    assertStringIncludes(svg, `>${p.title}</tspan>`);
+    assertStringIncludes(svg, `>${p.summary}</tspan>`);
     assertStringIncludes(svg, ICONS[p.icon].body);
   });
 });
