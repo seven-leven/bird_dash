@@ -33,6 +33,36 @@
   - [x] Scroll-spy via `IntersectionObserver` (with a throttled scroll fallback) — no per-event
         layout reads, and `content-visibility` virtualization can now be re-introduced safely.
 
+- [ ] **Bring the UI in line with DESIGN.md** (the guide was revised on 2026-10-24 after a walk
+      through the site; these are the places the code does not follow it yet). Three pull requests:
+  - [ ] **Tiles and states** (DESIGN.md §9, "The one idea"):
+    - [ ] Names move from the shaded overlay into a caption under the image; Dhivehi and English
+          always shown (English is hover-only on desktop today). `ItemTile.vue`.
+    - [ ] Undrawn tiles: grey surface, no shading or shadow, muted caption (`slate-600` in light).
+    - [ ] Light placeholders drawn on `slate-100`, not white: change `THEMES` in
+          `script/placeholders/draw_placeholders.ts`, run `npm run placeholders` and `npm run
+          design`.
+    - [ ] A collection that is mostly gaps: "15 of 204 drawn" above the grid and a "Drawn only"
+          switch; one with none drawn shows "Nothing drawn yet" (Sharks is 42 identical icons).
+  - [ ] **Headings, empty and loading states** (§10, §11, §6):
+    - [ ] One heading per section: the sticky bar repeats the section heading below it.
+    - [ ] Bug: in the date view the sticky bar keeps the family name from the other view.
+    - [ ] Empty states: one wording per situation, sidebar and main area agreeing (today "No items
+          found" beside "No drawings found"); `noResults` only for searches (it is used for errors
+          and empty collections too); "Couldn't load data" names the collection and offers "Try
+          again".
+    - [ ] Loading: placeholder rows in the sidebar instead of "0 of 0 drawn".
+    - [ ] The header's colour transition uses `duration-slow`; colour changes are `duration-fast`.
+  - [ ] **Search, the date view, phones and the viewer** (§3, §10):
+    - [ ] Search dropdown: thumbnails or a "not drawn yet" mark, the group named when that is what
+          matched, and "10 matches, 1 drawn" in its header.
+    - [ ] Date view newest first; runs of three or more empty months fold into one row.
+    - [ ] Phone header: the logo mark and the current collection's name.
+    - [ ] Viewer: "#11"-style references in notes link to the drawing; the counter says when a
+          search narrows it ("1 of 1 · matching 'plover'").
+  - Each is a good place for the first component tests (TODO below): `ItemTile` and `EmptyState` are
+    rewritten anyway.
+
 ## 🏗️ Architecture & Features
 
 - [x] **Search**: Global search (ID, common/scientific name, Dhivehi name + Thaana script) with
