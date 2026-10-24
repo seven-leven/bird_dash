@@ -15,6 +15,14 @@ explains how to use it.
 with a single teal accent, so a drawing is always the most colourful thing on the screen. When a
 choice is unclear, pick the option that draws less attention to the interface.
 
+Two rules follow from it, and most of this page is detail on them:
+
+- **Nothing is laid over a drawing** except its small id badge. Names, counts and controls sit
+  beside or below it, never across it.
+- **A drawing and a gap never look alike.** What has been drawn is shown on paper (white); what has
+  not is shown on the interface's own grey, faint and plain. A visitor should see at a glance how
+  much of a collection is done.
+
 ## 1. Colour
 
 Two ramps and nothing else: **slate** for every neutral, and **accent** for emphasis. Use the names
@@ -47,18 +55,18 @@ green are left out for being too pale at 500 (1.9 to 2.3:1); red is left out bec
 error. Pick neighbours that are easy to tell apart: not rose and pink, or violet and purple, for two
 collections that sit side by side.
 
-| Role                                  | Light               | Dark                |
-| ------------------------------------- | ------------------- | ------------------- |
-| Page background                       | `slate-50`          | `slate-950`         |
-| Surface (header, sidebar, menus)      | `white`             | `slate-950` / `900` |
-| Text                                  | `slate-900` / `800` | `slate-100`         |
-| Muted text (use `.text-muted`)        | `slate-500`         | `slate-400`         |
-| Borders and dividers                  | `slate-200` / `100` | `slate-800`         |
-| Focus ring, current marker, progress  | `accent-500`        | `accent-500`        |
-| Primary button                        | `accent-700`, white | `accent-700`, white |
-| On imagery and in the viewer (titles) | `white`             | `white`             |
-| On imagery and in the viewer (body)   | `white/70`          | `white/70`          |
-| On imagery and in the viewer (labels) | `white/50`          | `white/50`          |
+| Role                                 | Light               | Dark                |
+| ------------------------------------ | ------------------- | ------------------- |
+| Page background                      | `slate-50`          | `slate-950`         |
+| Surface (header, sidebar, menus)     | `white`             | `slate-950` / `900` |
+| Text                                 | `slate-900` / `800` | `slate-100`         |
+| Muted text (use `.text-muted`)       | `slate-500`         | `slate-400`         |
+| Borders and dividers                 | `slate-200` / `100` | `slate-800`         |
+| Focus ring, current marker, progress | `accent-500`        | `accent-500`        |
+| Primary button                       | `accent-700`, white | `accent-700`, white |
+| In the viewer (titles)               | `white`             | `white`             |
+| In the viewer (body), the id badge   | `white/70`          | `white/70`          |
+| In the viewer (labels)               | `white/50`          | `white/50`          |
 
 Rules:
 
@@ -94,8 +102,8 @@ script. Six sizes; do not add another or write a pixel size by hand.
 | ------------ | ---- | ---------------------------------------------- |
 | `text-2xl`   | 24px | Dhivehi title in the viewer                    |
 | `text-xl`    | 20px | English title in the viewer                    |
-| `text-base`  | 16px | Section headings, sidebar title                |
-| `text-sm`    | 14px | Controls, body text, tile titles               |
+| `text-base`  | 16px | Section headings, sidebar title, Dhivehi names |
+| `text-sm`    | 14px | Controls, body text, English names on tiles    |
 | `text-xs`    | 12px | Counts, secondary lines                        |
 | `text-micro` | 11px | Labels (`.caps-label`), badges, keyboard hints |
 
@@ -107,12 +115,27 @@ Rules:
 - **Scientific names are italic.** Ids are monospace (`IdBadge`).
 - **Name order is fixed:** Dhivehi name first when there is one, then English, then scientific — on
   tiles and in the viewer. Search results lead with English, because that is what is typed.
+- **Names are always visible.** A tile shows its Dhivehi and English names on every device; nothing
+  needed to identify a drawing is hidden behind hover, which touch screens do not have. The
+  scientific name can wait for the viewer.
+- **Thaana is set one step larger** than the English beside it (`text-base` next to `text-sm`):
+  Faruma reads small at the same size.
 - **Long names truncate** (`truncate`) instead of wrapping and pushing the layout around.
 
 ## 3. Wording
 
-- **Counts** come from [`src/lib/formatCount.ts`](../src/lib/formatCount.ts): "15 of 204 drawn", "4
-  of 8", "18 drawings", "1 result". Do not write a count by hand.
+- **Counts** come from [`src/lib/formatCount.ts`](../src/lib/formatCount.ts); do not write one by
+  hand. Which form depends on what the view holds:
+
+  | The view holds                      | Heading or summary                 | Sidebar pill |
+  | ----------------------------------- | ---------------------------------- | ------------ |
+  | Drawn and undrawn items (by family) | "4 of 8 drawn" (`drawnOf`)         | "4 of 8"     |
+  | Only drawn items (by date)          | "2 drawings" (`drawings`)          | "2"          |
+  | Search results                      | "1 result" / "10 matches, 1 drawn" | none         |
+
+  The forms differ on purpose: "of 8" only means something where there is a total to be drawn.
+- **A reference to another drawing is a link to it.** "See note for #11 (Greater Flamingo)" links to
+  `#birds/011`, so it opens that drawing like any deep link.
 - **Sentence case** for buttons, labels and headings ("Clear search", not "Clear Search"). The small
   uppercase labels are styled that way by `.caps-label`; write them in sentence case in the markup.
 - **Say what a control does** in its `aria-label` and tooltip ("Switch to dark mode"), especially
@@ -155,8 +178,10 @@ Rules:
 ## 6. Motion
 
 Two speeds: `duration-fast` (150ms) for hover and colour changes, `duration-slow` (300ms) for things
-that move, such as the sidebar. Motion should explain a change, not decorate it. The site honours
-the "reduce motion" system setting, which turns transitions and smooth scrolling off.
+that move, such as the sidebar. **A theme switch is a colour change:** every part of the page,
+header included, changes together at `duration-fast`, so no region lags behind the rest. Motion
+should explain a change, not decorate it. The site honours the "reduce motion" system setting, which
+turns transitions and smooth scrolling off.
 
 ## 7. Logo
 
@@ -231,17 +256,36 @@ To add one, match the set:
 
 Collections name their icon in `public/collections.json` (`"icon": "bird"`).
 
-## 9. Placeholders
+## 9. Tiles and placeholders
 
-An item that is not drawn yet shows its collection's icon, 512 × 512, drawn once per theme:
+A tile is a square image with its names in a **caption below it**, never on top of it. The two kinds
+of tile differ in every respect that can be seen at a glance:
+
+|                   | Drawn                                            | Not drawn yet                                    |
+| ----------------- | ------------------------------------------------ | ------------------------------------------------ |
+| Image             | The drawing, on white paper                      | The collection's icon, faint, on the tile's grey |
+| Tile surface      | White (light), white paper on `slate-900` (dark) | `slate-100` (light), `slate-900` (dark)          |
+| Caption           | Dhivehi then English, in text colours            | The same names in muted text                     |
+| Hover, focus, tab | Lifts, ring, is a button (opens the viewer)      | None: it is not interactive                      |
+
+- **The caption sits under the image**, Dhivehi name first, English below, both always shown and
+  truncated rather than wrapped. On an undrawn tile in the light theme the muted name is
+  `slate-600`, because `slate-500` on `slate-100` (4.3:1) falls short of 4.5:1.
+- **The id badge** (`IdBadge`, top-left) is the one thing allowed on the image.
+- **Undrawn tiles recede:** no shading, no shadow, no hover. A grid that is mostly gaps should look
+  quiet, with the few drawings standing out.
+
+An item that is not drawn yet shows its collection's icon, 512 × 512, drawn once per theme. The
+background is the tile's grey, **not white**, so a placeholder can never be mistaken for a sketch on
+paper:
 
 | Theme | File             | Background            | Icon                  |
 | ----- | ---------------- | --------------------- | --------------------- |
-| Light | `<id>.webp`      | white                 | `#a1a1a1`             |
+| Light | `<id>.webp`      | `slate-100` (#f1f5f9) | `#a1a1a1`             |
 | Dark  | `<id>-dark.webp` | `slate-900` (#0f172a) | `slate-600` (#475569) |
 
 `npm run placeholders` draws both from the icon set, so they never need editing by hand, and the
-contract test fails if either is missing. They are deliberately faint (about 2.5:1 against their
+contract test fails if either is missing. They are deliberately faint (about 2.4:1 against their
 background in both themes): a placeholder should recede next to a real drawing.
 
 ## 10. Layout
@@ -251,6 +295,40 @@ background in both themes): a placeholder should recede next to a real drawing.
 - **Design the phone layout first,** then let it widen. Nothing may scroll sideways; check at 375px.
 - **One job per region:** the header switches collection, view and theme; the sidebar jumps between
   sections; the grid shows drawings; the viewer shows one drawing and its details.
+- **One heading per section.** A section's heading is also what sticks to the top while you scroll
+  through it; there is no second label repeating it. The sticky heading always names the section in
+  view, in the current view (a month in the date view, never a family left over from the other).
+- **On phones the header still says where you are:** the logo mark, and the current collection's
+  name beside its icon. Other collections can be icons alone (each with an `aria-label`).
+- **The date view reads newest first:** it is where a returning visitor looks for what is new.
+  Months stay continuous so the gaps show, but a run of three or more empty months folds into one
+  disabled row ("Nov 2024 – Sep 2025").
+- **Search has two parts with two jobs,** and their counts must not be confused:
+  - the **dropdown** jumps anywhere: every collection, drawn or not. Each result shows the drawing's
+    thumbnail, or marks it "not drawn yet", and highlights what matched; a match on the group name
+    names the group. Its header gives both numbers ("10 matches, 1 drawn").
+  - the **page filter** narrows the current view to drawn matches, and says so in its chip ("1
+    result for 'plover'").
+- **The viewer says what it is paging through.** When a search narrows it, the counter says so ("1
+  of 1 · matching 'plover'").
+
+## 11. Empty, loading and error states
+
+One component (`EmptyState`) and four situations, each always worded and drawn the same way. The
+sidebar and the main area show the same situation, never two different messages.
+
+| Situation                             | Icon                  | Title                                                                     | Then                          |
+| ------------------------------------- | --------------------- | ------------------------------------------------------------------------- | ----------------------------- |
+| A collection or view with no drawings | the collection's icon | "Nothing drawn yet"                                                       | "42 planned", from the counts |
+| A search that matches nothing         | `noResults`           | "No matches for 'x'"                                                      | a "Clear search" button       |
+| Data that failed to load              | `close`               | "Couldn't load the gallery" (or "Couldn't load Birds" for one collection) | the reason, and "Try again"   |
+| Still loading                         | none                  | none: grey placeholder rows and tiles                                     | —                             |
+
+- **Never show a count before it is known.** While loading, the sidebar shows placeholder rows like
+  the grid does; "0 of 0 drawn" is a real answer and must not appear as a stand-in.
+- **`noResults` means a search** and nothing else. An empty collection is not a failed search.
+- **A collection that is mostly gaps** says so above the grid ("15 of 204 drawn") and offers to show
+  drawn items only; a collection with none shows "Nothing drawn yet" instead of a wall of icons.
 
 ## Checklist for a UI change
 
@@ -263,3 +341,7 @@ background in both themes): a placeholder should recede next to a real drawing.
 7. Does it fit at 375px wide without sideways scrolling, with 36px touch targets?
 8. Are counts worded by `formatCount.ts`, and labels in sentence case?
 9. If you added an icon or changed a token, did you run `npm run design`?
+10. Is anything laid over a drawing other than its id badge?
+11. Can a visitor tell drawn from not-drawn at a glance, in both themes?
+12. Does every view have its empty and loading state from section 11, the same in the sidebar and
+    the main area?

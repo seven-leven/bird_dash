@@ -148,6 +148,20 @@ Windows ignores `TZ`, so this can only be reproduced on macOS, Linux or in CI.
 **Why.** The site is static files on GitHub Pages, which cannot send every path to `index.html`. A
 path such as `/birds/001` would be a 404 when reloaded or shared; a hash never reaches the server.
 
+### Names beside a drawing, never on it
+
+**Chosen** (October 2026): a tile's names sit in a caption under the image; only the small id badge
+is on it. Drawn and undrawn tiles look different at a glance (paper versus the interface's grey).
+See [DESIGN.md](DESIGN.md), "The one idea" and §9.
+
+**Why.** The names used to sit on a dark gradient across the bottom of the image. On phones, where
+they are always shown, it covered about a third of each drawing, and on desktop the English name
+appeared only on hover. In the light theme a placeholder (a grey icon on white, with the same
+gradient) looked like a sketch. A caption leaves the drawing whole, works the same with touch and a
+mouse, and lets the two kinds of tile differ.
+
+**Cost.** A tile is taller than its image by the caption's height, so fewer fit on a screen.
+
 ### Composition API only
 
 **Chosen:** `<script setup>` and composables throughout; `__VUE_OPTIONS_API__` is `false` in
