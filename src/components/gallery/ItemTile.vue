@@ -1,10 +1,11 @@
 <template>
   <!-- A square image with its names in a caption below it, never on top of it
        (docs/DESIGN.md §9). A drawn tile is paper-white and opens the viewer; an
-       undrawn one stays on the interface grey and does nothing. -->
+       undrawn one stays on the interface grey and does nothing. `isolate` keeps the
+       id badge's z-index inside the tile, so a sticky section heading covers it. -->
   <div
     :id="`item-${props.item.itemId}`"
-    class="group focus-ring flex flex-col w-full overflow-hidden rounded-card
+    class="group isolate focus-ring flex flex-col w-full overflow-hidden rounded-card
            ring-1 ring-black/5 dark:ring-white/5
            transition-all duration-fast ease-out"
     :class="drawn ? `bg-white dark:bg-slate-900 ${INTERACTIVE}` : 'bg-slate-100 dark:bg-slate-900'"

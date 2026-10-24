@@ -116,3 +116,11 @@ test("an undrawn tile's names are muted, Dhivehi included", () => {
   const [dhivehi, english] = [...(tile.lastElementChild as HTMLElement).children];
   for (const line of [dhivehi, english]) assertStringIncludes(line.className, 'text-slate-600');
 });
+
+test("the id badge's layer stays inside its tile, under the sticky section heading", () => {
+  // The badge is z-10 to sit over the drawing; the heading is z-10 too. Without
+  // its own stacking context the tile would let the badge paint over the heading.
+  const { tile } = mount({ item: drawn });
+  assertStringIncludes(tile.className, 'isolate');
+  assertStringIncludes(tile.querySelector('img')!.parentElement!.innerHTML, 'z-10');
+});

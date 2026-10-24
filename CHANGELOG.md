@@ -16,6 +16,8 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-24 | fix: a tile's id badge no longer paints over the sticky section heading (each tile
+  keeps its layers to itself)
 - 2026-10-24 | docs: design guide polished. The image has a serif title, the principles as five
   columns, colour roles as light and dark cards, a slim accent strip, a type specimen with the
   Dhivehi drawn in Faruma (it rendered as broken glyphs before), and every section in one shape:
