@@ -127,6 +127,33 @@ export const ICONS = {
   },
 
   // ── Brand — third-party marks, shown exactly as their owners publish them ──
+  // ── Principles — one per design principle (docs/DESIGN.md), drawn in the design guide ──
+  // 1. Drawings first: a canvas on an easel.
+  easel: {
+    body:
+      '<rect x="4" y="3" width="16" height="11" rx="1.5"/><path d="M8 14 6 21"/><path d="M16 14 18 21"/><path d="M12 14v3"/>',
+  },
+  // 2. Show progress honestly: a bar, partly filled (the fill is a thick stroke, so it
+  // still reads as "done so far" at 16px instead of as a second outline).
+  progress: {
+    body: '<rect x="2" y="7" width="20" height="10" rx="3"/><path d="M6.5 12h6" stroke-width="4"/>',
+  },
+  // 3. Always say where you are: a map pin.
+  pin: {
+    body:
+      '<path d="M12 21.5s-6.5-5.7-6.5-11a6.5 6.5 0 0 1 13 0c0 5.3-6.5 11-6.5 11Z"/><circle cx="12" cy="10.5" r="2.5"/>',
+  },
+  // 4. One way to do each thing: four identical tiles.
+  grid: {
+    body:
+      '<rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/>',
+  },
+  // 5. For everyone, on every screen: the accessibility figure.
+  person: {
+    body:
+      '<circle cx="12" cy="4.5" r="1.75"/><path d="M5 8.5 12 10l7-1.5"/><path d="M12 10v4.5"/><path d="m8.5 21 3.5-6.5 3.5 6.5"/>',
+  },
+
   // The one exception to "stroke only, no fills": a brand's logo is not ours to
   // redraw. The path is GitHub's own mark (16px grid, scaled to the 24px wrapper).
   github: {
@@ -156,5 +183,6 @@ export const ICON_GROUPS: { label: string; icons: IconName[] }[] = [
   { label: 'Theme', icons: ['sun', 'moon'] },
   { label: 'Labels', icons: ['tag', 'image', 'commit', 'layers', 'pencil', 'languages', 'book'] },
   { label: 'Keyboard', icons: ['arrowsUpDown', 'enter', 'command'] },
+  { label: 'Principles', icons: ['easel', 'progress', 'pin', 'grid', 'person'] },
   { label: 'Brand', icons: ['github'] },
 ];

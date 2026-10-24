@@ -9,6 +9,7 @@ import sharp, { type OverlayOptions } from 'sharp';
 import { ICON_GROUPS, type IconDef, ICONS } from '../../src/lib/icons.ts';
 import { writeLogoFiles } from './draw_logo.ts';
 import { iconGridLayout } from './icon_grid.ts';
+import { PRINCIPLES } from './principles.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
@@ -117,11 +118,23 @@ export async function designGuide(
     text(
       60,
       y + 32,
-      'The illustrations carry the colour. Everything around them stays quiet, consistent and easy to read.',
+      'Five principles, and every rule in docs/DESIGN.md follows from one of them.',
       17,
       MUTED,
     ),
   );
+
+  // ── Principles: one row each, icon, number and title, then the one-line summary ──
+  PRINCIPLES.forEach((p, i) => {
+    const ry = y + 76 + i * 52;
+    parts.push(
+      rect(60, ry, W - 120, 44, i % 2 ? '#ffffff' : SLATE['50'], 10) +
+        icon(p.icon, 76, ry + 9, 26, INK) +
+        text(120, ry + 28, `P${i + 1} · ${p.title}`, 18, INK, 700) +
+        text(470, ry + 28, p.summary, 15, MUTED),
+    );
+  });
+  y += 76 + PRINCIPLES.length * 52 - 60;
 
   // ── Colour ──
   y += 100;
