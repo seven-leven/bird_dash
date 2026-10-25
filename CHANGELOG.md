@@ -16,6 +16,20 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | site: the header is one row at every width. Below 768px (or with more than four
+  collections) the collection tabs become one menu button naming the current collection; search
+  shares the row, and below 420px folds into a button that opens across it. The collection's count
+  and "Drawn only" sit beside the view's name in the sidebar from 1024px, above the grid below it.
+  New `chevronDown` icon
+- 2026-10-25 | docs: the guide is legible at its real size: no text under 13px but the type scale's
+  own samples, small labels a step darker, larger swatch labels, more room between each principle's
+  heading and its description, and more space between icon rows. The type table now says `text-xl`
+  is the English title only when no Dhivehi name heads it (as the viewer does). site: the viewer's
+  eBird, BirdLife and Wiki links show the accent focus ring like every other control
+- 2026-10-25 | docs: the design guide's final refinement pass. A shorter, quieter accent menu; more
+  room in the principle columns; one specimen of a name in its three languages (Dhivehi largest,
+  English, then the scientific name), each named at its own baseline; more air in the icon groups,
+  with softer dividers beside the icons only; more space above the closing line
 - 2026-10-24 | fix: Dhivehi names no longer lose the bottom of their vowel marks in tile captions
   and search rows (Faruma's marks reach half an em below the baseline; `.font-dhivehi` now gives
   them a 1.85 line height)

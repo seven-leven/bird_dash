@@ -68,11 +68,12 @@
 
     <!-- Main Content -->
     <template v-else>
-      <!-- The collection's one count: how far along it is (and a switch to hide the
-           gaps, while there are any), or how many drawings the date view holds -->
+      <!-- The collection's count, and a switch to hide the gaps while there are any. From
+           lg they sit beside the view's name in the sidebar; below it the sidebar is a
+           drawer, so they are here. -->
       <div
         v-if="stats.drawn > 0"
-        class="flex flex-wrap items-center justify-between gap-2 min-h-9 -mt-1 mb-6"
+        class="lg:hidden flex flex-wrap items-center justify-between gap-2 min-h-9 -mt-1 mb-6"
       >
         <p class="with-icon text-sm text-muted tabular-nums">
           <Icon name="pencil" aria-hidden="true" />{{

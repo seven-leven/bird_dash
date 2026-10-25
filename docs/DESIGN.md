@@ -143,14 +143,14 @@ and `dir="rtl"`. That class also sets a line height of 1.85: Faruma's vowel mark
 below the baseline, and a tighter line, or a truncated one, cuts them off, so never add `leading-*`
 to Dhivehi. The type scale has six sizes; do not add another or write pixel sizes by hand.
 
-| Token        | Size | Purpose                                        |
-| ------------ | ---- | ---------------------------------------------- |
-| `text-2xl`   | 24px | Dhivehi title in the viewer                    |
-| `text-xl`    | 20px | English title in the viewer                    |
-| `text-base`  | 16px | Section headings, sidebar title, Dhivehi names |
-| `text-sm`    | 14px | Controls, body text, English names on tiles    |
-| `text-xs`    | 12px | Counts and secondary lines                     |
-| `text-micro` | 11px | `.caps-label`, `.count-pill`, keyboard hints   |
+| Token        | Size | Purpose                                                    |
+| ------------ | ---- | ---------------------------------------------------------- |
+| `text-2xl`   | 24px | Dhivehi title in the viewer                                |
+| `text-xl`    | 20px | English title in the viewer, when no Dhivehi name heads it |
+| `text-base`  | 16px | Section headings, sidebar title, Dhivehi names             |
+| `text-sm`    | 14px | Controls, body text, English names on tiles                |
+| `text-xs`    | 12px | Counts and secondary lines                                 |
+| `text-micro` | 11px | `.caps-label`, `.count-pill`, keyboard hints               |
 
 Weight carries hierarchy: `font-semibold` for titles and headings, `font-medium` for controls, and
 regular weight for everything else. Use `tabular-nums` for changing or aligned numbers such as
@@ -188,9 +188,10 @@ The forms differ on purpose: "of 8" only makes sense when there is a total still
 search is counted in "matches" wherever it is shown; never "results". Never show a count until it is
 known.
 
-Each count is shown once. A collection's progress sits above the grid, with the "Drawn only" switch;
-the sidebar's footer holds the total across every collection; the sidebar's title names the view and
-nothing else.
+Each count is shown once on a screen. A collection's progress and its "Drawn only" switch sit beside
+the view's name, at the top of the sidebar: what you are looking at, and how much of it is done.
+Below 1024px the sidebar is a drawer, so they sit above the grid instead. The sidebar's footer holds
+the total across every collection.
 
 A view has one name, in the header's tab and the sidebar's title alike: the collection's groups in
 the plural ("Families", "Orders"), or "Months". `src/lib/viewName.ts` makes it.
@@ -335,7 +336,7 @@ name="…" />`; the logo is the only other SVG in the project. The registry, the
 - **Collections:** `bird`, `shark`, `shell`
 - **Views:** `taxonomy`, `calendar`
 - **Search:** `search`, `noResults`
-- **Navigation:** `menu`, `chevronLeft`, `chevronRight`, `close`, `externalLink`
+- **Navigation:** `menu`, `chevronLeft`, `chevronRight`, `chevronDown`, `close`, `externalLink`
 - **Viewer:** `zoomIn`, `zoomOut`, `reset`
 - **Theme:** `sun`, `moon`
 - **Labels:** `tag`, `image`, `commit`, `layers`, `pencil`, `languages`, `book`
@@ -413,11 +414,13 @@ everyone, on every screen_
 
 Design for the phone first, then let the layout widen. Nothing scrolls sideways; check at **375px**.
 
-| Screen               | Behaviour                                |
-| -------------------- | ---------------------------------------- |
-| Phone, below 640px   | Two-column grid; search gets its own row |
-| Tablet, from 768px   | Header fits on one row                   |
-| Desktop, from 1024px | Sidebar stays visible                    |
+| Screen               | Behaviour                                                               |
+| -------------------- | ----------------------------------------------------------------------- |
+| Below 420px          | Search is a button; opened, it takes the header row until closed        |
+| Phone, below 640px   | Two-column grid                                                         |
+| Below 768px          | Collections are one menu button; search shares the row                  |
+| Tablet, from 768px   | Collection tabs (up to four), logo and wordmark                         |
+| Desktop, from 1024px | Sidebar stays visible, with the count and "Drawn only" beside its title |
 
 Each region has one job: the header switches collection, view and theme; the sidebar jumps between
 sections; the grid presents drawings; the viewer shows one drawing and its details.
@@ -426,10 +429,19 @@ Each section gets one heading, and it stays in view while the visitor scrolls th
 Do not add a second label that repeats it. The sticky heading names a section of the active view — a
 month in the month view, never a family left over from another view.
 
-On phones the header still says where you are: the current collection's name beside its icon, the
-other collections as icons with `aria-label`s. At 375px the row has room for the logo mark or the
-collection name, not both; the name wins, because orientation matters most. The mark returns from
-640px.
+The header is one row at every width. As it narrows, things give way in a fixed order, so the
+current collection is always named:
+
+1. **Collections become one menu.** Below 768px, or whenever there are more than four collections,
+   the tabs become one button that names the current collection (its icon, its name, `chevronDown`)
+   and opens the list of all of them. Escape or a press outside closes it.
+2. **The logo goes.** Below 640px the row keeps the collection's name over the logo mark, because
+   orientation matters most.
+3. **Search folds into a button.** Below 420px an inline field would be too narrow to type in, so
+   search is a button; opened, it takes the whole row, with a close button, until closed or left
+   empty.
+
+The view switch and the theme toggle never give way: they are icons, 36px each.
 
 The month view runs newest first, because returning visitors want what's new. Months stay continuous
 so gaps remain visible, but three or more empty months in a row fold into one disabled row, such as
@@ -463,9 +475,9 @@ state and never contradict each other.
 | Data is loading                      | none            | Grey placeholder rows and tiles                      | No count, no message            |
 
 `0 of 0 drawn` is not a loading state: it claims to know what is not yet known. `noResults` belongs
-to search, not to empty collections. A mostly unfinished collection says how much is done above the
-grid — `15 of 204 drawn` — and offers a "Drawn only" switch. A collection with no drawings says
-"Nothing drawn yet" rather than showing a wall of icons.
+to search, not to empty collections. A mostly unfinished collection says how much is done — `15 of
+204 drawn` — and offers a "Drawn only" switch, beside the view's name (above the grid below 1024px).
+A collection with no drawings says "Nothing drawn yet" rather than showing a wall of icons.
 
 ---
 
