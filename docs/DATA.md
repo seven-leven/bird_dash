@@ -10,6 +10,7 @@ on every pull request.
 public/
   collections.json            the list of collections
   lists/<id>.json             the items of one collection, grouped
+  stats.json                  the archive's numbers, worked out from the lists (generated)
   full/<id>/<item>.webp       full-size drawing (generated)
   thumb/<id>/<item>.webp      grid thumbnail (generated)
   placeholders/<id>.webp      shown for undrawn items, light theme (generated)
@@ -101,6 +102,18 @@ Do not edit these by hand; run the task that makes them.
 | `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run build:assets` | `raw_png/<id>/*.png`                 |
 | `placeholders/<id>[-dark].webp`         | `npm run placeholders` | the collection's `icon`              |
 | `drawn` dates on newly added items      | `npm run build:assets` | a new PNG whose item has no date yet |
+| `stats.json`                            | `npm run build:assets` | every `lists/<id>.json`              |
+
+### `stats.json`
+
+The numbers a page such as the About page shows, so none of them is typed by hand: for each
+collection its `total` species, how many are `drawn`, its number of `groups`, and the dates of its
+`firstDrawn` and `lastDrawn` drawing (`null` while nothing is drawn); the `drawn` and `total` across
+every collection; and the `newest` eight drawings across all of them, newest first (on the same day,
+in collection order, then by id), each with its collection, id, name, Dhivehi name if any, and date.
+[`script/build/collection_stats.ts`](../script/build/collection_stats.ts) writes it as the last step
+of the asset build. It holds no build time, so the same lists always write the same file. A new
+collection appears in it with no other change.
 
 ## What the checks enforce
 
@@ -117,7 +130,8 @@ Do not edit these by hand; run the task that makes them.
 
 - an item is marked drawn but its full or thumbnail image is missing;
 - an image exists for an item that is not marked drawn (an orphan);
-- a source PNG exists for an item that has no `drawn` date yet (run `build:assets`).
+- a source PNG exists for an item that has no `drawn` date yet (run `build:assets`);
+- `stats.json` does not match the lists, as after a hand edit to a list (run `build:assets`).
 
 ## Recipes
 

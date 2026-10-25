@@ -16,6 +16,10 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | build: the asset build writes `public/stats.json`, the archive's numbers worked out
+  from the lists (each collection's total, drawn, groups, first and latest drawing; the totals; the
+  eight newest drawings across every collection), so a page that shows them, such as a coming About
+  page, never has them typed by hand. `npm run check` fails when the file is stale
 - 2026-10-25 | fix: birds with two Dhivehi names (12 of them, such as the Watercock, "ވަލު ކުކުޅު / ކުލީ
   ކުކުޅު") no longer shatter the viewer's title. Each name gets its own line with its own romanisation,
   the second smaller and marked "also"; a gloss that does not fit wraps under its name

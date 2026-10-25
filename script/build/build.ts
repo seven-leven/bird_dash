@@ -13,6 +13,7 @@ import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { scanCollection } from './scan_sources.ts';
 import { blockingIssues, planWork } from './plan_changes.ts';
 import { executeWork } from './apply_changes.ts';
+import { STATS_PATH, statsAreCurrent, writeStats } from './collection_stats.ts';
 import { printCheckReport, printSummary, reportWarnings } from './print_build_summary.ts';
 import { computeVersion, describeVersion } from '../version/version.ts';
 import { errorMessage } from '../lib/error.ts';
@@ -22,7 +23,10 @@ import type { CollectionSummary } from './print_build_summary.ts';
 // Assets build
 // ---------------------------------------------------------------------------
 
-export async function buildAssets(collections: Collection[] = COLLECTIONS): Promise<void> {
+export async function buildAssets(
+  collections: Collection[] = COLLECTIONS,
+  statsPath = STATS_PATH,
+): Promise<void> {
   const start = Date.now();
   const date = new Date().toISOString().split('T')[0];
   const summaries: CollectionSummary[] = [];
@@ -49,6 +53,10 @@ export async function buildAssets(collections: Collection[] = COLLECTIONS): Prom
   if (failed.length > 0) {
     throw new Error(`asset build failed:\n${failed.map((f) => `  ${f}`).join('\n')}`);
   }
+
+  // The archive's numbers, from the lists as they now stand (new drawings dated above).
+  const stats = await writeStats(collections, statsPath);
+  console.log(`  stats: ${stats.drawn} of ${stats.total} drawn → ${statsPath}`);
 }
 
 // ---------------------------------------------------------------------------
@@ -82,7 +90,10 @@ export async function buildVite(spawn: () => Promise<number> = spawnVite): Promi
 // ---------------------------------------------------------------------------
 
 /** Prints the integrity report and returns how many blocking issues it found. */
-export async function checkIntegrity(collections: Collection[] = COLLECTIONS): Promise<number> {
+export async function checkIntegrity(
+  collections: Collection[] = COLLECTIONS,
+  statsPath = STATS_PATH,
+): Promise<number> {
   const version = await computeVersion();
   const rows: Array<{
     col: Collection;
@@ -97,7 +108,14 @@ export async function checkIntegrity(collections: Collection[] = COLLECTIONS): P
   }
 
   printCheckReport(rows, describeVersion(version));
-  return rows.reduce((n, r) => n + blockingIssues(r.plan), 0);
+  // A list changed without a build would leave the published numbers wrong.
+  const statsCurrent = await statsAreCurrent(collections, statsPath);
+  console.log(
+    statsCurrent
+      ? `  ✓ ${statsPath} matches the lists`
+      : `  ✗ ${statsPath} is stale: run \`npm run build:assets\` to rewrite it`,
+  );
+  return rows.reduce((n, r) => n + blockingIssues(r.plan), 0) + (statsCurrent ? 0 : 1);
 }
 
 // ---------------------------------------------------------------------------

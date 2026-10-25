@@ -98,7 +98,8 @@ type Item = { id: string; name: string; drawn?: string };
 async function withCollection(
   items: Item[],
   raw: string[],
-  fn: (col: Collection) => Promise<void>,
+  /** The collection, and where its stats go (a temporary file, never public/stats.json). */
+  fn: (col: Collection, stats: string) => Promise<void>,
 ): Promise<void> {
   const dir = await mkdtemp(join(tmpdir(), 'bird_dash_build_'));
   const col: Collection = {
@@ -121,47 +122,54 @@ async function withCollection(
       await sharp({ create: { width: 40, height: 40, channels: 3, background: '#3366cc' } })
         .png().toFile(`${col.paths.raw}${id}.png`);
     }
-    await fn(col);
+    await fn(col, `${dir}/stats.json`);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
 }
 
 test('buildAssets builds a collection, prints the summary, and leaves the check clean', () =>
-  withCollection([{ id: '001', name: 'New drawing' }], ['001'], async (col) => {
+  withCollection([{ id: '001', name: 'New drawing' }], ['001'], async (col, stats) => {
     let issuesBefore = -1;
     await captured(async () => {
-      issuesBefore = await checkIntegrity([col]);
+      issuesBefore = await checkIntegrity([col], stats);
     });
     assert(issuesBefore > 0, 'an unregistered PNG should be an issue before the build');
 
-    const output = await captured(() => buildAssets([col]));
+    const output = await captured(() => buildAssets([col], stats));
+    assert(output.includes('stats: 1 of 1 drawn'), output);
     assert(output.includes('registered') && output.includes('New drawing (001)'));
     assert(output.includes('1 drawn') && output.includes('+1 new'), output);
     assert(/\d+\.\d+\.\d+ · \d+ drawings?/.test(output), 'the summary ends with the version');
 
     let issuesAfter = -1;
     const report = await captured(async () => {
-      issuesAfter = await checkIntegrity([col]);
+      issuesAfter = await checkIntegrity([col], stats);
     });
     assertEquals(issuesAfter, 0);
     assert(report.includes('✓'));
   }));
 
 test('buildAssets fails, naming the item, when a drawing cannot be converted', () =>
-  withCollection([{ id: '007', name: 'No source', drawn: '2025-01-01' }], [], async (col) => {
-    await captured(() =>
-      assertRejects(() => buildAssets([col]), Error, 'asset build failed:\n  x/007:')
-    );
-  }));
+  withCollection(
+    [{ id: '007', name: 'No source', drawn: '2025-01-01' }],
+    [],
+    async (col, stats) => {
+      await captured(() =>
+        assertRejects(() => buildAssets([col], stats), Error, 'asset build failed:\n  x/007:')
+      );
+    },
+  ));
 
 test('checkIntegrity counts the blocking issues across collections', () =>
-  withCollection([{ id: '001', name: 'A', drawn: '2025-01-01' }], [], async (col) => {
+  withCollection([{ id: '001', name: 'A', drawn: '2025-01-01' }], [], async (col, stats) => {
     let issues = -1;
     const report = await captured(async () => {
-      issues = await checkIntegrity([col, col]);
+      issues = await checkIntegrity([col, col], stats);
     });
-    assertEquals(issues, 2); // one missing full image, seen in each of the two entries
+    // One missing full image, seen in each of the two entries, and stats never written.
+    assertEquals(issues, 3);
+    assert(report.includes('is stale'));
     assert(report.includes('missing full WebP     001'));
   }));
 
