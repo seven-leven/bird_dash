@@ -16,6 +16,11 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | docs: the guide is legible at its real size: no text under 13px but the type scale's
+  own samples, small labels a step darker, larger swatch labels, more room between each principle's
+  heading and its description, and more space between icon rows. The type table now says `text-xl`
+  is the English title only when no Dhivehi name heads it (as the viewer does). site: the viewer's
+  eBird, BirdLife and Wiki links show the accent focus ring like every other control
 - 2026-10-25 | docs: the design guide's final refinement pass. A shorter, quieter accent menu; more
   room in the principle columns; one specimen of a name in its three languages (Dhivehi largest,
   English, then the scientific name), each named at its own baseline; more air in the icon groups,

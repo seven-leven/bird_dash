@@ -21,6 +21,10 @@ const W = 1400;
 const X = 80; // the left margin; the content runs from X to W - X
 const INK = SLATE['900'];
 const MUTED = SLATE['500'];
+// Small labels (caps, icon names, swatch notes) one step darker than muted text, so
+// they stay legible at the size the guide is read at. No guide text is below 13px
+// except the type scale's own 12 and 11px samples.
+const LABEL = SLATE['600'];
 // The guide is a document in its own voice: warm paper, fine rules, a serif for
 // statements. The site's own colours are the slate and accent swatches drawn on it.
 const PAPER = '#fbfaf7';
@@ -38,8 +42,8 @@ const text = (x: number, y: number, s: string, size = 15, fill = INK, weight = 4
   `<text x="${x}" y="${y}" ${FONT} font-size="${size}" font-weight="${weight}" fill="${fill}" ${extra}>${
     esc(s)
   }</text>`;
-const caps = (x: number, y: number, s: string, fill = MUTED) =>
-  text(x, y, s.toUpperCase(), 12, fill, 600, 'letter-spacing="1.5"');
+const caps = (x: number, y: number, s: string, fill = LABEL) =>
+  text(x, y, s.toUpperCase(), 13, fill, 600, 'letter-spacing="1.5"');
 const serif = (x: number, y: number, s: string, size = 17, fill = MUTED) =>
   `<text x="${x}" y="${y}" ${SERIF} font-size="${size}" fill="${fill}">${esc(s)}</text>`;
 const statement = (x: number, y: number, s: string, size: number) =>
@@ -113,7 +117,7 @@ function ramp(y: number, name: string, colors: Record<string, string>): string {
     const on = contrast(hex, '#ffffff') > 3 ? '#ffffff' : INK;
     const x = X + i * w;
     return rect(x, y, w - 6, 78, hex, 8, `stroke="${RULE}"`) +
-      text(x + 10, y + 26, `${name}-${step}`, 14, on, 600) + text(x + 10, y + 48, hex, 13, on);
+      text(x + 10, y + 30, `${name}-${step}`, 16, on, 600) + text(x + 10, y + 56, hex, 14, on);
   }).join('');
 }
 
@@ -152,7 +156,7 @@ function iconGroups(
       y,
       group.label.toUpperCase(),
       o.label,
-      MUTED,
+      LABEL,
       600,
       'letter-spacing="1"',
     );
@@ -164,7 +168,7 @@ function iconGroups(
           y + gap + o.size + o.name + 8,
           name,
           o.name,
-          MUTED,
+          LABEL,
           400,
           'text-anchor="middle"',
         );
@@ -304,13 +308,13 @@ export async function designGuide(
   PRINCIPLES.forEach((p, i) => {
     const x = X + i * colW + (i ? 28 : 0);
     parts.push(
-      (i ? line(x - 28, y + 72, x - 28, y + 420) : '') + icon(p.icon, x, y + 72, 36, INK) +
+      (i ? line(x - 28, y + 72, x - 28, y + 452) : '') + icon(p.icon, x, y + 72, 36, INK) +
         caps(x, y + 164, `P${i + 1}`) +
         para(x, y + 214, wrap(p.title, 15), 38, `${SERIF_FACE} font-size="30" fill="${INK}"`) +
-        para(x, y + 320, wrap(p.summary, 24), 30, `${FONT} font-size="18" fill="${MUTED}"`),
+        para(x, y + 336, wrap(p.summary, 24), 32, `${FONT} font-size="18" fill="${LABEL}"`),
     );
   });
-  y += 492;
+  y += 524;
 
   // ── Colour ──
   let s = section(
@@ -331,7 +335,7 @@ export async function designGuide(
   const ry = card.bottom + 48;
   parts.push(
     caps(X, ry, 'Accent menu') +
-      serif(X + 132, ry, 'picked per collection in collections.json; the marker shade beneath', 15),
+      serif(X + 156, ry, 'picked per collection in collections.json; the marker shade beneath', 15),
   );
   const sw = (W - 2 * X) / menu.length;
   menu.forEach((hue, i) => {
@@ -344,12 +348,12 @@ export async function designGuide(
     const x = X + i * sw;
     const who = usedBy(hue);
     parts.push(
-      rect(x, ry + 14, sw - 6, 20, hex[700], 5) + text(x + 8, ry + 28, hue, 11, '#ffffff', 600) +
-        rect(x, ry + 37, sw - 6, 3, hex[500], 1.5) +
-        text(x, ry + 56, who || 'free', 11, MUTED, who ? 600 : 400),
+      rect(x, ry + 14, sw - 6, 24, hex[700], 5) + text(x + 8, ry + 31, hue, 13, '#ffffff', 600) +
+        rect(x, ry + 41, sw - 6, 3, hex[500], 1.5) +
+        text(x, ry + 62, who || 'free', 13, who ? INK : LABEL, who ? 600 : 400),
     );
   });
-  y = ry + 96;
+  y = ry + 104;
 
   // ── Type: one name as the specimen, then the scale ──
   s = section(
@@ -372,13 +376,13 @@ export async function designGuide(
     text(X, hero + 64, 'Lesser Whistling-Duck', 44, INK, 600, 'letter-spacing="-0.5"') +
       text(X, hero + 102, 'Dendrocygna javanica', 20, MUTED, 400, 'font-style="italic"') +
       names.map(([label, base, note]) =>
-        caps(X + 820, base, label) + text(X + 920, base, note, 14, MUTED)
+        caps(X + 820, base, label) + text(X + 950, base, note, 14, LABEL)
       )
         .join(''),
   );
   const sizes: [string, number, number, string, string][] = [
     ['text-2xl', 24, 700, 'ރޭރު', 'Dhivehi title in the viewer'],
-    ['text-xl', 20, 600, 'Lesser Whistling-Duck', 'English title in the viewer'],
+    ['text-xl', 20, 600, 'Lesser Whistling-Duck', 'English title, with no Dhivehi name'],
     ['text-base', 16, 600, 'Ducks, Geese, and Swans', 'Section headings, sidebar title'],
     ['text-sm', 14, 500, 'Search all collections…', 'Controls, body text, tile titles'],
     ['text-xs', 12, 400, '4 of 8 drawn · Dendrocygna javanica', 'Counts, secondary lines'],
@@ -407,7 +411,7 @@ export async function designGuide(
   const sy = s.top;
   const corner = (x: number, rx: number, h: number, name: string, use: string) =>
     rect(x, sy + (52 - h) / 2, 150, h, '#ffffff', rx, `stroke="${SLATE['300']}"`) +
-    text(x, sy + 80, name, 14, INK, 600) + text(x, sy + 100, use, 13, MUTED);
+    text(x, sy + 80, name, 14, INK, 600) + text(x, sy + 100, use, 14, LABEL);
   parts.push(
     corner(X, 6, 52, 'rounded-control · 6px', 'buttons, inputs, badges') +
       corner(X + 200, 12, 52, 'rounded-card · 12px', 'tiles, panels, menus') +
@@ -419,12 +423,12 @@ export async function designGuide(
       rect(x, sy + 52 - px, px, px, TEAL['500'], 2) + text(x, sy + 80, `${px}`, 14, INK, 600),
     );
   });
-  parts.push(text(X + 640, sy + 100, 'spacing steps (px)', 13, MUTED));
+  parts.push(text(X + 640, sy + 100, 'spacing steps (px)', 14, LABEL));
   parts.push(
     text(X + 1040, sy + 20, 'duration-fast · 150ms', 14, INK, 600) +
-      text(X + 1040, sy + 40, 'hover, colour', 13, MUTED) +
+      text(X + 1040, sy + 40, 'hover, colour', 14, LABEL) +
       text(X + 1040, sy + 80, 'duration-slow · 300ms', 14, INK, 600) +
-      text(X + 1040, sy + 100, 'things that move', 13, MUTED),
+      text(X + 1040, sy + 100, 'things that move', 14, LABEL),
   );
   y = sy + 156;
 
@@ -454,10 +458,10 @@ export async function designGuide(
     cols: 15,
     size: 30,
     cell: 82,
-    row: 132,
-    label: 11,
+    row: 148,
+    label: 13,
     name: 12,
-    gap: 26,
+    gap: 30,
   }, INK);
   parts.push(groups.svg);
   y = groups.bottom + 36;

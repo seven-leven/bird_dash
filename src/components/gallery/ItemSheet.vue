@@ -76,7 +76,7 @@
           :href="link.url(item)"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-control
+          class="focus-ring inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-control
                  border text-xs font-medium transition-colors duration-fast viewer-body
                  border-slate-200 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50
                  dark:border-slate-800 dark:hover:text-white dark:hover:border-slate-700 dark:hover:bg-slate-800"

@@ -143,14 +143,14 @@ and `dir="rtl"`. That class also sets a line height of 1.85: Faruma's vowel mark
 below the baseline, and a tighter line, or a truncated one, cuts them off, so never add `leading-*`
 to Dhivehi. The type scale has six sizes; do not add another or write pixel sizes by hand.
 
-| Token        | Size | Purpose                                        |
-| ------------ | ---- | ---------------------------------------------- |
-| `text-2xl`   | 24px | Dhivehi title in the viewer                    |
-| `text-xl`    | 20px | English title in the viewer                    |
-| `text-base`  | 16px | Section headings, sidebar title, Dhivehi names |
-| `text-sm`    | 14px | Controls, body text, English names on tiles    |
-| `text-xs`    | 12px | Counts and secondary lines                     |
-| `text-micro` | 11px | `.caps-label`, `.count-pill`, keyboard hints   |
+| Token        | Size | Purpose                                                    |
+| ------------ | ---- | ---------------------------------------------------------- |
+| `text-2xl`   | 24px | Dhivehi title in the viewer                                |
+| `text-xl`    | 20px | English title in the viewer, when no Dhivehi name heads it |
+| `text-base`  | 16px | Section headings, sidebar title, Dhivehi names             |
+| `text-sm`    | 14px | Controls, body text, English names on tiles                |
+| `text-xs`    | 12px | Counts and secondary lines                                 |
+| `text-micro` | 11px | `.caps-label`, `.count-pill`, keyboard hints               |
 
 Weight carries hierarchy: `font-semibold` for titles and headings, `font-medium` for controls, and
 regular weight for everything else. Use `tabular-nums` for changing or aligned numbers such as
