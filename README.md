@@ -175,26 +175,26 @@ run design`.
 
 ## Tasks
 
-| Task                                            | Description                                                          |
-| ----------------------------------------------- | -------------------------------------------------------------------- |
-| `npm run dev`                                   | Start the Vite dev server                                            |
-| `npm run build`                                 | Full build: transcode assets, then bundle the frontend               |
-| `npm run build:assets`                          | Transcode images and register new items only                         |
-| `npm run build:vite`                            | Bundle the frontend only (assumes assets are built)                  |
-| `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems       |
-| `npm test`                                      | Every test tier, one summary row per tier (`npm test -- unit dom`)   |
-| `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                       |
-| `npm run test:watch`                            | Re-run the tests on every save                                       |
-| `npm run test:coverage`                         | Every tier + coverage table; fails below the line or branch floor    |
-| `npm run test:report`                           | The same, saving the full report to `test-results/report.md`         |
-| `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`   |
-| `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)     |
-| `npm run version`                               | Print the current derived version                                    |
-| `npm run changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews) |
-| `npm run placeholders`                          | Redraw the placeholder images from each collection's icon            |
-| `npm run design`                                | Redraw the design guide image and the icon sheet                     |
-| `npm run preview`                               | Preview the production build locally                                 |
-| `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks        |
+| Task                                            | Description                                                                                    |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `npm run dev`                                   | Start the Vite dev server                                                                      |
+| `npm run build`                                 | Full build: transcode assets, then bundle the frontend                                         |
+| `npm run build:assets`                          | Transcode images and register new items only                                                   |
+| `npm run build:vite`                            | Bundle the frontend only (assumes assets are built)                                            |
+| `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems                                 |
+| `npm test`                                      | Every test tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                                 |
+| `npm run test:watch`                            | Re-run the tests on every save                                                                 |
+| `npm run test:coverage`                         | Every tier + coverage table; fails below the line or branch floor                              |
+| `npm run test:report`                           | The same, saving the full report to `test-results/report.md`                                   |
+| `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`                             |
+| `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)                               |
+| `npm run version`                               | Print the current derived version                                                              |
+| `npm run changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews)                           |
+| `npm run placeholders`                          | Redraw the placeholder images from each collection's icon                                      |
+| `npm run design`                                | Redraw the design guide image and the icon sheet                                               |
+| `npm run preview`                               | Preview the production build locally                                                           |
+| `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks                                  |
 
 ## Testing
 

@@ -16,6 +16,11 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | tests: `mountComponent` mounts a component (with typed stand-in stores) and unmounts
+  it after each test; one test file per component. `npm test -- interface` or `-- src/components`
+  runs one area or folder. Coverage names every file short of 100%, `.vue` included, with the lines
+  missed; CI leads its summary with a one-line verdict and marks each gap on its file in the pull
+  request (TESTING.md, "What the runner reports"). The unused `languages` icon is gone
 - 2026-10-25 | fix: with "Drawn only" on, opening a collection with nothing drawn and pressing "Show
   what's planned" showed an empty page with no way out. The setting no longer applies where nothing
   is drawn; it still filters every collection that has drawings

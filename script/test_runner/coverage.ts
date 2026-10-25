@@ -18,9 +18,21 @@ export interface FileCoverage {
   lines: Counter;
   branches: Counter;
   functions: Counter;
+  /** Lines no test ran, and lines holding a branch no test took (ascending, no repeats). */
+  missedLines?: number[];
+  missedBranches?: number[];
 }
 
 const empty = (): Counter => ({ found: 0, hit: 0 });
+/** A path made relative to `cwd`, with forward slashes; left whole when there is no `cwd`. */
+const relativeTo = (cwd: string) => (file: string) => {
+  const f = file.replaceAll('\\', '/');
+  return cwd ? f.replace(cwd.replaceAll('\\', '/') + '/', '') : f;
+};
+
+const addLine = (list: number[], line: number) => {
+  if (!list.includes(line)) list.push(line);
+};
 
 /** Parse LCOV text (Vitest's `lcovonly` reporter) into per-file counters. */
 export function parseLcov(text: string): FileCoverage[] {
@@ -35,8 +47,29 @@ export function parseLcov(text: string): FileCoverage[] {
 
     switch (key) {
       case 'SF':
-        current = { file: value, lines: empty(), branches: empty(), functions: empty() };
+        current = {
+          file: value,
+          lines: empty(),
+          branches: empty(),
+          functions: empty(),
+          missedLines: [],
+          missedBranches: [],
+        };
         break;
+      // DA:<line>,<hits>
+      case 'DA': {
+        const [ln, hits] = value.split(',');
+        if (current && Number(hits) === 0) addLine(current.missedLines!, Number(ln));
+        break;
+      }
+      // BRDA:<line>,<block>,<branch>,<taken> — taken is "-" when the block never ran
+      case 'BRDA': {
+        const [ln, , , taken] = value.split(',');
+        if (current && (taken === '-' || Number(taken) === 0)) {
+          addLine(current.missedBranches!, Number(ln));
+        }
+        break;
+      }
       case 'LF':
         if (current) current.lines.found = Number(value);
         break;
@@ -56,7 +89,11 @@ export function parseLcov(text: string): FileCoverage[] {
         if (current) current.functions.hit = Number(value);
         break;
       case 'end_of_record':
-        if (current) files.push(current);
+        if (current) {
+          current.missedLines!.sort((a, b) => a - b);
+          current.missedBranches!.sort((a, b) => a - b);
+          files.push(current);
+        }
         current = undefined;
         break;
     }
@@ -82,13 +119,64 @@ export function totals(files: FileCoverage[]): Omit<FileCoverage, 'file'> {
 
 const pct = (c: Counter) => percent(c).toFixed(1).padStart(5);
 
+/** "3–5, 9": sorted line numbers, runs collapsed. */
+export function lineRanges(lines: number[]): string {
+  const out: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const start = lines[i];
+    while (lines[i + 1] === lines[i] + 1) i++;
+    out.push(start === lines[i] ? `${start}` : `${start}–${lines[i]}`);
+  }
+  return out.join(', ');
+}
+
+/**
+ * Files that miss any line or branch, measured exactly (99.95% is a miss, though it
+ * prints as 100.0%), worst first. `.vue` files count like any other once a test loads them.
+ */
+export function notFullyCovered(files: FileCoverage[]): FileCoverage[] {
+  const missing = (c: Counter) => c.found - c.hit;
+  return files
+    .filter((f) => missing(f.lines) > 0 || missing(f.branches) > 0)
+    .sort((a, b) =>
+      Math.min(percent(a.lines), percent(a.branches)) -
+      Math.min(percent(b.lines), percent(b.branches))
+    );
+}
+
+/**
+ * One block per file that misses something: the file, how much it misses, and the
+ * line numbers to look at, so a dropped floor names its cause in the terminal.
+ */
+export function formatGaps(files: FileCoverage[], cwd = ''): string {
+  const rel = relativeTo(cwd);
+  return files.map((f) => {
+    const parts = [`  ${rel(f.file)}`];
+    if (f.lines.hit < f.lines.found) {
+      parts.push(
+        `    lines ${f.lines.hit}/${f.lines.found}, missed: ${lineRanges(f.missedLines ?? [])}`,
+      );
+    }
+    if (f.branches.hit < f.branches.found) {
+      parts.push(
+        `    branches ${f.branches.hit}/${f.branches.found}, missed on: ${
+          lineRanges(f.missedBranches ?? [])
+        }`,
+      );
+    }
+    return parts.join('\n');
+  }).join('\n');
+}
+
 /**
  * Fixed-width table for the terminal, lowest line coverage first. `limit` shows only
  * the N least-covered files (the total row always covers every file).
  */
 export function formatTable(files: FileCoverage[], cwd = '', limit = Infinity): string {
-  const rel = (f: string) => f.replaceAll('\\', '/').replace(cwd.replaceAll('\\', '/') + '/', '');
-  const rows = [...files].sort((a, b) => percent(a.lines) - percent(b.lines)).slice(0, limit);
+  const rel = relativeTo(cwd);
+  // Worst first by whichever measure is lower, so a file short only on branches still shows.
+  const worst = (f: FileCoverage) => Math.min(percent(f.lines), percent(f.branches));
+  const rows = [...files].sort((a, b) => worst(a) - worst(b)).slice(0, limit);
   const width = Math.max(4, ...rows.map((r) => rel(r.file).length));
   const head = `${'File'.padEnd(width)}  ${'Lines'.padStart(6)}  ${'Branch'.padStart(6)}  ${
     'Funcs'.padStart(6)
@@ -109,13 +197,19 @@ export function formatMarkdown(
   cwd = '',
   minBranches = 0,
 ): string {
-  const rel = (f: string) => f.replaceAll('\\', '/').replace(cwd.replaceAll('\\', '/') + '/', '');
+  const rel = relativeTo(cwd);
   const t = totals(files);
-  const rows = [...files].sort((a, b) => percent(a.lines) - percent(b.lines)).map((r) =>
+  const worst = (f: FileCoverage) => Math.min(percent(f.lines), percent(f.branches));
+  const rows = [...files].sort((a, b) => worst(a) - worst(b)).map((r) =>
     `| \`${rel(r.file)}\` | ${percent(r.lines).toFixed(1)}% | ${
       percent(r.branches).toFixed(1)
     }% | ${percent(r.functions).toFixed(1)}% |`
   );
+  // What needs attention comes first and in the terminal's words; the full table folds away.
+  const gaps = notFullyCovered(files);
+  const gapLines = gaps.length > 0
+    ? [`**Not fully covered (${gaps.length}):**`, '', '```', formatGaps(gaps, cwd), '```', '']
+    : [];
   return [
     '### Coverage',
     '',
@@ -123,7 +217,8 @@ export function formatMarkdown(
       percent(t.branches).toFixed(1)
     }% of branches** (floor: ${minBranches}%) in the files tests load.`,
     '',
-    `<details><summary>Per-file coverage (${files.length} files, least covered first)</summary>`,
+    ...gapLines,
+    `<details><summary>Every file (${files.length}, least covered first)</summary>`,
     '',
     '| File | Lines | Branches | Functions |',
     '| --- | ---: | ---: | ---: |',
@@ -132,6 +227,35 @@ export function formatMarkdown(
     '</details>',
     '',
   ].join('\n');
+}
+
+const escapeData = (s: string) =>
+  s.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
+const escapeProp = (s: string) => escapeData(s).replaceAll(':', '%3A').replaceAll(',', '%2C');
+
+/**
+ * GitHub workflow commands that mark each gap on its file in the pull request: one per
+ * file, on its first missed line, listing the rest. `error` when the run fails for it
+ * (below a floor), `warning` when it is only a report.
+ */
+export function coverageAnnotations(
+  files: FileCoverage[],
+  cwd = '',
+  level: 'error' | 'warning' = 'warning',
+): string[] {
+  const rel = relativeTo(cwd);
+  return files.map((f) => {
+    const lines = f.missedLines ?? [];
+    const branches = f.missedBranches ?? [];
+    const first = Math.min(...lines, ...branches);
+    const said = [
+      lines.length > 0 ? `lines ${lineRanges(lines)} never run` : '',
+      branches.length > 0 ? `a branch on ${lineRanges(branches)} never taken` : '',
+    ].filter(Boolean).join('; ');
+    return `::${level} file=${escapeProp(rel(f.file))}${
+      Number.isFinite(first) ? `,line=${first}` : ''
+    },title=${escapeProp('Not covered by any test')}::${escapeData(said || 'not fully covered')}`;
+  });
 }
 
 /** Read a percentage floor such as `--min-lines=N` from the arguments (default 0 = report only). */

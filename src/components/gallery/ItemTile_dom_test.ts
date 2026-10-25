@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
 // Vue's DOM renderer looks up `document` when it is first imported, so component
 // tests run in Vitest's happy-dom environment rather than inside withDom().
-import { afterEach, test } from 'vitest';
+import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
-import { createApp, h } from 'vue';
+import { h } from 'vue';
 import ItemTile from './ItemTile.vue';
 import { at, makeItem } from '../../testing/fixtures.ts';
+import { mountComponent } from '../../testing/mountComponent.ts';
 import type { CollectionItem } from '../../types/index.ts';
 
 const drawn = makeItem({
@@ -17,23 +18,12 @@ const drawn = makeItem({
 });
 const undrawn = makeItem({ itemId: '005', commonName: 'Green-winged Teal', isDrawn: false });
 
-let cleanup: (() => void) | undefined;
-afterEach(() => cleanup?.());
-
 /** Mount a tile and record what it emits. */
 function mount(props: { item: CollectionItem; dark?: boolean; eager?: boolean }) {
-  const host = document.createElement('div');
-  document.body.append(host);
   const clicked: CollectionItem[] = [];
-  const app = createApp({
-    render: () =>
-      h(ItemTile, { ...props, onCardClick: (item: CollectionItem) => clicked.push(item) }),
-  });
-  app.mount(host);
-  cleanup = () => {
-    app.unmount();
-    host.remove();
-  };
+  const host = mountComponent(() =>
+    h(ItemTile, { ...props, onCardClick: (item: CollectionItem) => clicked.push(item) })
+  );
   const tile = host.querySelector<HTMLElement>(`#item-${props.item.itemId}`)!;
   return { tile, clicked, img: tile.querySelector('img')! };
 }
@@ -88,7 +78,6 @@ test('without a Dhivehi name the English name is the only line', () => {
     const caption = tile.lastElementChild as HTMLElement;
     assertEquals(caption.children.length, 1);
     assertEquals(caption.textContent?.trim(), 'Green-winged Teal');
-    cleanup?.();
   }
 });
 
@@ -96,7 +85,6 @@ test('the dark theme shows the dark placeholder; eager tiles load first', () => 
   const dark = mount({ item: undrawn, dark: true });
   assertStringIncludes(dark.img.getAttribute('src')!, '-dark.webp');
   assertEquals(dark.img.getAttribute('loading'), 'lazy');
-  cleanup?.();
 
   const eager = mount({ item: drawn, eager: true });
   assertEquals(eager.img.getAttribute('loading'), 'eager');
