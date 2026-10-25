@@ -20,6 +20,9 @@ where `w` was the drawing count.
   from the lists (each collection's total, drawn, groups, first and latest drawing; the totals; the
   eight newest drawings across every collection), so a page that shows them, such as a coming About
   page, never has them typed by hand. `npm run check` fails when the file is stale
+- 2026-10-25 | fix: birds with two Dhivehi names (12 of them, such as the Watercock, "ވަލު ކުކުޅު / ކުލީ
+  ކުކުޅު") no longer shatter the viewer's title. Each name gets its own line with its own romanisation,
+  the second smaller and marked "also"; a gloss that does not fit wraps under its name
 - 2026-10-25 | site: the viewer card has one language per line. "Reyru" now sits after the Thaana on
   the Dhivehi line, so it can no longer read as part of the English title below it; the section
   labels drop their icons, and the `book` icon, used only there, leaves the set

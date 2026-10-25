@@ -167,9 +167,12 @@ In the viewer the names are one block, aligned to one edge, one language per lin
 largest (`text-3xl`) with how to say it after it on the same line, small and muted (`ރޭރު Reyru`);
 then the English; then the scientific name. The romanisation is part of the Dhivehi name, never a
 separate field, and never on a line of its own beside the English, where "Reyru Cotton Pygmy-Goose"
-would read as one title. Above the block, one line says where the drawing sits and when: its id, its
-group (a link that shows that group in the grid) and the month it was drawn, in the month view's
-words.
+would read as one title. A bird with more than one Dhivehi name gets a line for each: the first as
+the title, each other a step smaller with "also" before its romanisation, every Thaana name beside
+its own (`dhivehiNames` pairs them). Never set two names of unknown length side by side in one line:
+each row wraps its gloss under the name rather than splitting either. Above the block, one line says
+where the drawing sits and when: its id, its group (a link that shows that group in the grid) and
+the month it was drawn, in the month view's words.
 
 Nothing essential hides behind hover. Tiles show Dhivehi and English names on every device. Long
 names truncate with `truncate` rather than wrapping and shifting the layout.

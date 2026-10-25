@@ -22,15 +22,27 @@
     <!-- The names, as one block in the tile's order: Dhivehi first and largest, then
          English, then scientific (docs/DESIGN.md §02). One language per line: how to say
          the Dhivehi sits on its own line, after the Thaana, so it can neither read as part
-         of the English title below nor share a line with the Latin. -->
+         of the English title below nor share a line with the Latin. A bird with more than
+         one Dhivehi name gets a line per name: the first as the title, each other smaller,
+         "also …", every Thaana name with its own romanisation. A gloss that does not fit
+         beside its name wraps under it instead of splitting it. -->
     <div>
-      <template v-if="item.meta?.dhiv_script">
-        <div class="flex items-baseline gap-3">
-          <h2 class="font-dhivehi text-3xl font-bold viewer-title" dir="rtl">
-            {{ item.meta.dhiv_script }}
-          </h2>
-          <span v-if="item.meta.dhiv" lang="dv-Latn" class="text-sm viewer-label">
-            {{ item.meta.dhiv }}
+      <template v-if="dhivehi.length">
+        <div
+          v-for="(name, n) in dhivehi"
+          :key="n"
+          class="flex flex-wrap items-baseline gap-x-3 gap-y-1"
+        >
+          <component
+            :is="n === 0 ? 'h2' : 'p'"
+            class="font-dhivehi font-bold viewer-title text-left"
+            :class="n === 0 ? 'text-3xl' : 'text-xl'"
+            dir="rtl"
+          >
+            {{ name.script }}
+          </component>
+          <span v-if="name.roman" class="text-sm viewer-label">
+            <template v-if="n > 0">also </template><span lang="dv-Latn">{{ name.roman }}</span>
           </span>
         </div>
         <p class="text-base font-semibold viewer-title leading-tight mt-1">
@@ -121,6 +133,7 @@ import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import Icon from '../icons/Icon.vue';
 import { noteSegments } from '../../lib/noteLinks.ts';
+import { dhivehiNames } from '../../lib/dhivehiNames.ts';
 import { monthKey } from '../../composables/collection/useCollectionData.ts';
 import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 
@@ -137,6 +150,11 @@ const emit = defineEmits<{
 // "October 2024", as the month view heads it; nothing for an undated drawing.
 const drawnMonth = computed(() =>
   props.item.drawnTime ? monthKey(new Date(props.item.drawnTime)) : ''
+);
+
+// Each Dhivehi name, paired with how to say it (some birds have two).
+const dhivehi = computed(() =>
+  dhivehiNames(props.item.meta?.dhiv_script ?? '', props.item.meta?.dhiv ?? '')
 );
 
 const note = computed(() => props.item.illustratorNote ?? '');
