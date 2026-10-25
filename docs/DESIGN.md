@@ -163,11 +163,13 @@ Search results lead with English, because that is what visitors type. When a Dhi
 is always shown, one step larger than the English beside it, because Faruma reads small at the same
 nominal size. Scientific names can wait for the viewer.
 
-In the viewer the names are one block, aligned to one edge: the Dhivehi name largest (`text-3xl`),
-how to say it directly under it in small muted text ("Reyru"), then the English and the scientific
-name. The romanisation is part of the name, never a separate field. Above the block, one line says
-where the drawing sits and when: its id, its group (a link that shows that group in the grid) and
-the month it was drawn, in the month view's words.
+In the viewer the names are one block, aligned to one edge, one language per line: the Dhivehi name
+largest (`text-3xl`) with how to say it after it on the same line, small and muted (`ރޭރު Reyru`);
+then the English; then the scientific name. The romanisation is part of the Dhivehi name, never a
+separate field, and never on a line of its own beside the English, where "Reyru Cotton Pygmy-Goose"
+would read as one title. Above the block, one line says where the drawing sits and when: its id, its
+group (a link that shows that group in the grid) and the month it was drawn, in the month view's
+words.
 
 Nothing essential hides behind hover. Tiles show Dhivehi and English names on every device. Long
 names truncate with `truncate` rather than wrapping and shifting the layout.
@@ -362,7 +364,7 @@ name="…" />`; the logo is the only other SVG in the project. The registry, the
 - **Navigation:** `menu`, `chevronLeft`, `chevronRight`, `chevronDown`, `close`, `externalLink`
 - **Viewer:** `zoomIn`, `zoomOut`, `reset`
 - **Theme:** `sun`, `moon`
-- **Labels:** `tag`, `image`, `commit`, `layers`, `pencil`, `book`
+- **Labels:** `tag`, `image`, `commit`, `layers`, `pencil`
 - **Keyboard:** `arrowsUpDown`, `enter`, `command`
 - **Principles:** `easel`, `progress`, `pin`, `grid`, `person`
 - **Brand:** `github`
@@ -385,9 +387,10 @@ emblem at the top of the sidebar, `size-10` (40px) in the accent, the biggest ic
 the only one of its size. A test fails on any other size, or a second emblem.
 
 Each icon has one meaning wherever it appears: `tag` is the version, `image` the drawing count,
-`commit` the build's commit, `layers` all collections together, `pencil` the illustrator or "drawn",
-and `book` further reading. Icons support words; they do not replace them. Decorative icons are
-hidden from screen readers.
+`commit` the build's commit, `layers` all collections together, and `pencil` the illustrator or
+"drawn". Icons support words; they do not replace them. Decorative icons are hidden from screen
+readers. A small-caps section label ("From the illustrator", "Learn more") needs no icon: the type
+already says it is a label, and an icon beside it would only repeat the words.
 
 Use drawn icons instead of Unicode symbols for arrows, return, ticks and crosses (`↑ ↓ ↵ ✓ ✕`),
 because their look varies by font and device. Plain text on a key cap, such as `esc` or `Ctrl K`,

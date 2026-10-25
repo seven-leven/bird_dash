@@ -35,14 +35,17 @@ function mount(start: CollectionItem) {
   return { host, item, groups };
 }
 
-test('the names are one block: Dhivehi first and largest, how to say it, English, scientific', () => {
+test('the names are one block, one language per line: Dhivehi (and how to say it), English, scientific', () => {
   const { host } = mount(goose);
-  const block = host.querySelector('h2')!.parentElement!;
-  const [dhivehi, romanised, english, scientific] = [...block.children] as HTMLElement[];
+  const dhivehiLine = host.querySelector('h2')!.parentElement!;
+  const [dhivehi, romanised] = [...dhivehiLine.children] as HTMLElement[];
   assertEquals(dhivehi.textContent?.trim(), 'ރޭރު');
   assertStringIncludes(dhivehi.className, 'text-3xl');
   assertEquals(dhivehi.getAttribute('dir'), 'rtl');
+  // "Reyru" shares the Thaana's line, so it cannot read as part of the English title.
   assertEquals(romanised.textContent?.trim(), 'Reyru');
+  assertEquals(romanised.getAttribute('lang'), 'dv-Latn');
+  const [, english, scientific] = [...dhivehiLine.parentElement!.children] as HTMLElement[];
   assertEquals(english.textContent?.trim(), 'Cotton Pygmy-Goose');
   assertEquals(scientific.textContent?.trim(), 'Nettapus coromandelianus');
   // The romanised name is not repeated as a field of its own; other facts are.
@@ -123,4 +126,18 @@ test('links within the site are in the accent; links that leave it are not', () 
   for (const el of [group, noteLink, more]) assertStringIncludes(el.className, 'text-accent-700');
   const external = host.querySelector('a[target="_blank"]')!;
   assert(!external.className.includes('accent'), 'an external link stays neutral');
+});
+
+test('section labels are words alone, without icons', () => {
+  const { host } = mount(goose);
+  const labels = [...host.querySelectorAll('.caps-label')].filter((p) =>
+    /illustrator|Learn more/i.test(p.textContent ?? '')
+  );
+  assertEquals(labels.length, 2);
+  for (const label of labels) assertEquals(label.querySelector('svg'), null);
+});
+
+test('a Dhivehi name without a romanisation is the Thaana alone', () => {
+  const { host } = mount({ ...goose, meta: { dhiv_script: 'ރޭރު' } });
+  assertEquals(host.querySelector('h2')!.parentElement!.children.length, 1);
 });
