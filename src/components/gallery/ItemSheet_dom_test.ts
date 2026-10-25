@@ -44,7 +44,7 @@ test('the names are one block, one language per line: Dhivehi (and how to say it
   assertEquals(dhivehi.getAttribute('dir'), 'rtl');
   // "Reyru" shares the Thaana's line, so it cannot read as part of the English title.
   assertEquals(romanised.textContent?.trim(), 'Reyru');
-  assertEquals(romanised.getAttribute('lang'), 'dv-Latn');
+  assertEquals(romanised.querySelector('[lang="dv-Latn"]')?.textContent, 'Reyru');
   const [, english, scientific] = [...dhivehiLine.parentElement!.children] as HTMLElement[];
   assertEquals(english.textContent?.trim(), 'Cotton Pygmy-Goose');
   assertEquals(scientific.textContent?.trim(), 'Nettapus coromandelianus');
@@ -140,4 +140,25 @@ test('section labels are words alone, without icons', () => {
 test('a Dhivehi name without a romanisation is the Thaana alone', () => {
   const { host } = mount({ ...goose, meta: { dhiv_script: 'ރޭރު' } });
   assertEquals(host.querySelector('h2')!.parentElement!.children.length, 1);
+});
+
+test('a bird with two Dhivehi names gets a line for each, each with its own romanisation', () => {
+  const { host } = mount({
+    ...goose,
+    commonName: 'Watercock',
+    meta: { dhiv_script: 'ވަލު ކުކުޅު / ކުލީ ކުކުޅު', dhiv: 'Valu Kukulhu / Kulhee Kukulhu' },
+  });
+  const title = host.querySelector('h2')!;
+  const block = title.parentElement!.parentElement!;
+  const [first, second, english] = [...block.children] as HTMLElement[];
+  assertEquals(title.textContent?.trim(), 'ވަލު ކުކުޅު');
+  const parts = (row: HTMLElement) =>
+    [...row.children].map((c) => c.textContent?.replace(/\s+/g, ' ').trim());
+  assertEquals(parts(first), ['ވަލު ކުކުޅު', 'Valu Kukulhu']);
+  // The alternative is smaller, not a second title, and says it is an alternative.
+  const alt = second.firstElementChild as HTMLElement;
+  assertEquals(alt.tagName, 'P');
+  assertStringIncludes(alt.className, 'text-xl');
+  assertEquals(parts(second), ['ކުލީ ކުކުޅު', 'also Kulhee Kukulhu']);
+  assertEquals(english.textContent?.trim(), 'Watercock');
 });
