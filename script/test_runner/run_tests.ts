@@ -23,6 +23,8 @@ import { discoverTests, groupByTier, isTier, type Tier, TIER_ORDER } from './tie
 import { parseJunit } from './junit.ts';
 import { annotations, formatConsole, formatMarkdown, summarize } from './test_summary.ts';
 import {
+  areaOf,
+  AREAS,
   discoverSources,
   formatAreasConsole,
   formatAreasMarkdown,
@@ -30,9 +32,12 @@ import {
   untestedFiles,
 } from './areas.ts';
 import {
+  coverageAnnotations,
   coverageArgs,
+  formatGaps,
   formatMarkdown as coverageMarkdown,
   formatTable,
+  notFullyCovered,
   parseMinBranches,
   parseMinLines,
   percent,
@@ -43,6 +48,9 @@ import {
 
 export interface Options {
   tiers: Tier[];
+  /** Area ids (`interface`, `data`…) and path prefixes (`src/components`) to narrow the run to. */
+  areas: string[];
+  paths: string[];
   verbose: boolean;
   failFast: boolean;
   coverage: boolean;
@@ -54,16 +62,31 @@ export interface Options {
   html: boolean;
 }
 
-/** Positional arguments are tier names; everything else is a flag. */
+const AREA_IDS = AREAS.map((a) => a.id);
+/** A positional argument that names a folder or file rather than a tier or an area. */
+const isPath = (arg: string) => arg.includes('/') || arg.includes('\\') || arg.endsWith('.ts');
+
+/**
+ * Positional arguments are tier names, area ids or path prefixes; everything else is
+ * a flag. `npm test -- dom interface` runs the interface area's DOM tests;
+ * `npm test -- src/components` runs the tests under that folder.
+ */
 export function parseArgs(args: string[]): Options {
   // A bare `--` (as in `npm test -- -- --verbose`) is a separator, not an option.
   args = args.filter((a) => a !== '--');
   const flags = args.filter((a) => a.startsWith('-'));
-  const names = args.filter((a) => !a.startsWith('-'));
+  const positional = args.filter((a) => !a.startsWith('-'));
+  const names = positional.filter((n) => isTier(n));
+  const areas = positional.filter((n) => AREA_IDS.includes(n));
+  const paths = positional.filter(isPath).map((p) => p.replaceAll('\\', '/').replace(/^\.\//, ''));
 
-  const unknown = names.filter((n) => !isTier(n));
+  const unknown = positional.filter((n) => !isTier(n) && !AREA_IDS.includes(n) && !isPath(n));
   if (unknown.length > 0) {
-    throw new Error(`unknown tier "${unknown[0]}" (available: ${TIER_ORDER.join(', ')})`);
+    throw new Error(
+      `unknown tier or area "${unknown[0]}" (tiers: ${TIER_ORDER.join(', ')}; areas: ${
+        AREA_IDS.join(', ')
+      }; or a path such as src/components)`,
+    );
   }
   const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage', '--report', '--html']);
   const bad = flags.find((f) =>
@@ -77,9 +100,15 @@ export function parseArgs(args: string[]): Options {
   const minBranches = parseMinBranches(flags);
   if (minBranches > 0 && !coverage) throw new Error('--min-branches needs --coverage');
   if (flags.includes('--html') && !coverage) throw new Error('--html needs --coverage');
+  // A floor is a promise about the whole suite; part of it would fail for files it skipped.
+  if ((minLines > 0 || minBranches > 0) && (areas.length > 0 || paths.length > 0)) {
+    throw new Error('coverage floors apply to the whole suite, not to an area or a path');
+  }
 
   return {
     tiers: names.length > 0 ? TIER_ORDER.filter((t) => names.includes(t)) : [...TIER_ORDER],
+    areas,
+    paths,
     verbose: flags.includes('--verbose') || flags.includes('-v'),
     failFast: flags.includes('--fail-fast'),
     coverage,
@@ -147,9 +176,15 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
   const { env, resultsDir } = deps;
   const inCI = env.GITHUB_ACTIONS === 'true';
   const groups = groupByTier(await deps.discoverTests());
-  const files = opts.tiers.flatMap((t) => groups[t]);
+  const narrowed = opts.areas.length > 0 || opts.paths.length > 0;
+  const wanted = (file: string) => {
+    const f = file.replaceAll('\\', '/');
+    return opts.areas.includes(areaOf(f)?.id ?? '') || opts.paths.some((p) => f.startsWith(p));
+  };
+  const files = opts.tiers.flatMap((t) => groups[t]).filter((f) => !narrowed || wanted(f));
   if (files.length === 0) {
-    console.error(`test: no test files for ${opts.tiers.join(', ')}`);
+    const what = [...opts.tiers, ...opts.areas, ...opts.paths].join(', ');
+    console.error(`test: no test files for ${what}`);
     return 2;
   }
 
@@ -188,6 +223,16 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
 
     let summaryMd = formatMarkdown(summary, title);
     let ok = run.success;
+    // The verdict, built up as the run is judged: the first line of the job summary and
+    // the last line in the terminal (docs/TESTING.md, "What the runner reports").
+    const tests = (n: number) => `${n} test${n === 1 ? '' : 's'}`;
+    const verdictParts = [
+      cases.length === 0 && !run.success
+        ? 'the run stopped before any test reported'
+        : summary.total.failed > 0
+        ? `${summary.total.failed} of ${tests(summary.total.tests)} failed`
+        : `${tests(summary.total.tests)} passed`,
+    ];
 
     // Coverage paths come back absolute; areas work on repo-relative ones.
     const cwd = process.cwd().replaceAll('\\', '/') + '/';
@@ -197,31 +242,49 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
       : undefined;
 
     // The second view of the same run: by area (what is protected) rather than tier.
-    // "Untested files" only means something when every tier ran.
-    const allTiers = opts.tiers.length === TIER_ORDER.length;
+    // "Untested files" only means something when the whole suite ran.
+    const allTiers = opts.tiers.length === TIER_ORDER.length && !narrowed;
     const areas = summarizeAreas(cases, {
       coverage: cov,
       sources: cov && allTiers ? await deps.discoverSources() : [],
     });
-    if (cases.length > 0) console.log('\n' + formatAreasConsole(areas));
-    summaryMd += '\n' + formatAreasMarkdown(areas);
+    // A narrowed run reports the areas it ran, not a row of "no tests" for the rest.
+    const shown = narrowed ? areas.filter((a) => a.tests > 0) : areas;
+    if (cases.length > 0) console.log('\n' + formatAreasConsole(shown));
+    summaryMd += '\n' + formatAreasMarkdown(shown);
 
     if (cov) {
       const total = totals(cov);
-      console.log('\nleast covered files:\n' + formatTable(cov, process.cwd(), 8));
+      // Name what is missing, exactly and with line numbers, rather than a rounded table
+      // where 99.95% reads as 100.0% and a .vue file short on branches sorts out of view.
+      const gaps = notFullyCovered(cov);
+      console.log(
+        gaps.length > 0
+          ? `\nnot fully covered (${gaps.length}):\n` + formatGaps(gaps, process.cwd())
+          : '\nleast covered files:\n' + formatTable(cov, process.cwd(), 8),
+      );
       const floors = [
         ['line', percent(total.lines), opts.minLines],
         ['branch', percent(total.branches), opts.minBranches],
       ] as const;
+      let belowFloor = false;
       for (const [measure, actual, floor] of floors) {
         if (actual < floor) {
           console.error(
             `\n✗ ${measure} coverage ${actual.toFixed(1)}% is below the ${floor}% floor`,
           );
+          verdictParts.push(`${measure} coverage ${actual.toFixed(1)}% (floor ${floor}%)`);
           ok = false;
+          belowFloor = true;
         } else {
           console.log(`\n✓ ${measure} coverage ${actual.toFixed(1)}% (floor ${floor}%)`);
+          verdictParts.push(`${measure} coverage ${actual.toFixed(1)}%`);
         }
+      }
+      // Each gap marked on its file in the pull request, where it can be fixed.
+      if (inCI) {
+        const level = belowFloor ? 'error' : 'warning';
+        for (const line of coverageAnnotations(gaps, process.cwd(), level)) console.log(line);
       }
       summaryMd += '\n' +
         coverageMarkdown(cov, opts.minLines, process.cwd(), opts.minBranches);
@@ -240,9 +303,14 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
             untested.map((f) => `    ${f}`).join('\n') +
             '\n  Add a test for each (docs/TEST-PROCEDURES.md, section 9).',
         );
+        verdictParts.push(`${untested.length} source file(s) no test loads`);
         ok = false;
       }
     }
+
+    const verdict = `${ok ? '✅' : '❌'} ${verdictParts.join(' · ')}`;
+    console.log(`\n${verdict}`);
+    summaryMd = `**${verdict}**\n\n` + summaryMd;
 
     const summaryFile = env.GITHUB_STEP_SUMMARY;
     if (summaryFile) await appendFile(summaryFile, summaryMd + '\n');

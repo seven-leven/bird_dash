@@ -362,7 +362,7 @@ name="…" />`; the logo is the only other SVG in the project. The registry, the
 - **Navigation:** `menu`, `chevronLeft`, `chevronRight`, `chevronDown`, `close`, `externalLink`
 - **Viewer:** `zoomIn`, `zoomOut`, `reset`
 - **Theme:** `sun`, `moon`
-- **Labels:** `tag`, `image`, `commit`, `layers`, `pencil`, `languages`, `book`
+- **Labels:** `tag`, `image`, `commit`, `layers`, `pencil`, `book`
 - **Keyboard:** `arrowsUpDown`, `enter`, `command`
 - **Principles:** `easel`, `progress`, `pin`, `grid`, `person`
 - **Brand:** `github`
@@ -386,8 +386,8 @@ the only one of its size. A test fails on any other size, or a second emblem.
 
 Each icon has one meaning wherever it appears: `tag` is the version, `image` the drawing count,
 `commit` the build's commit, `layers` all collections together, `pencil` the illustrator or "drawn",
-`languages` a name in another language, and `book` further reading. Icons support words; they do not
-replace them. Decorative icons are hidden from screen readers.
+and `book` further reading. Icons support words; they do not replace them. Decorative icons are
+hidden from screen readers.
 
 Use drawn icons instead of Unicode symbols for arrows, return, ticks and crosses (`↑ ↓ ↵ ✓ ✕`),
 because their look varies by font and device. Plain text on a key cap, such as `esc` or `Ctrl K`,

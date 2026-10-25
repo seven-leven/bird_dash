@@ -1,13 +1,11 @@
 // @vitest-environment happy-dom
-import { afterEach, test } from 'vitest';
+import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
-import { createApp, h, nextTick, ref } from 'vue';
+import { h, nextTick, ref } from 'vue';
 import ItemSheet from './ItemSheet.vue';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
 import type { CollectionItem } from '../../types/index.ts';
-
-let cleanup: (() => void) | undefined;
-afterEach(() => cleanup?.());
+import { mountComponent } from '../../testing/mountComponent.ts';
 
 const birds = makeCollection('birds', {
   label: 'Birds',
@@ -27,23 +25,14 @@ const goose = makeItem({
 function mount(start: CollectionItem) {
   const item = ref(start);
   const groups: string[] = [];
-  const host = document.createElement('div');
-  document.body.append(host);
-  const app = createApp({
-    render: () =>
-      h(ItemSheet, {
-        item: item.value,
-        collection: birds,
-        'onGo-to-group': (g: string) => groups.push(g),
-      }),
-  });
-  app.mount(host);
-  cleanup = () => {
-    app.unmount();
-    host.remove();
-  };
-  const text = (sel: string) => host.querySelector(sel)?.textContent?.replace(/\s+/g, ' ').trim();
-  return { host, item, groups, text };
+  const host = mountComponent(() =>
+    h(ItemSheet, {
+      item: item.value,
+      collection: birds,
+      'onGo-to-group': (g: string) => groups.push(g),
+    })
+  );
+  return { host, item, groups };
 }
 
 test('the names are one block: Dhivehi first and largest, how to say it, English, scientific', () => {
@@ -113,7 +102,6 @@ test('a long note opens folded, in paragraphs, and "Read more" unfolds it', asyn
 test('three short paragraphs also fold; no note means no section', () => {
   const three = mount({ ...goose, illustratorNote: 'One.\n\nTwo.\n\nThree.' });
   assertStringIncludes(three.host.querySelector('#illustrator-note')!.className, 'max-h-36');
-  cleanup?.();
 
   const none = mount({ ...goose, illustratorNote: undefined, meta: undefined });
   assertEquals(none.host.querySelector('#illustrator-note'), null);

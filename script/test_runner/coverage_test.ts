@@ -1,8 +1,12 @@
 import { test } from 'vitest';
-import { assertEquals, assertStringIncludes, assertThrows } from '@std/assert';
+import { assert, assertEquals, assertStringIncludes, assertThrows } from '@std/assert';
 import {
+  coverageAnnotations,
+  formatGaps,
   formatMarkdown,
   formatTable,
+  lineRanges,
+  notFullyCovered,
   parseLcov,
   parseMinBranches,
   parseMinLines,
@@ -69,7 +73,11 @@ test('formatMarkdown leads with the total and folds the per-file table away', ()
   assertStringIncludes(md, '**75.0% of lines**');
   assertStringIncludes(md, 'floor: 70%');
   assertStringIncludes(md, 'of branches** (floor: 0%)');
-  assertStringIncludes(md, '<details><summary>Per-file coverage (2 files');
+  // What needs attention first, in the terminal's words; every file folded underneath.
+  assertStringIncludes(md, '**Not fully covered (1):**');
+  assertStringIncludes(md, '  src/a.ts\n    lines');
+  assert(md.indexOf('Not fully covered') < md.indexOf('<details>'));
+  assertStringIncludes(md, '<details><summary>Every file (2, least covered first)');
   const rows = md.split('\n').filter((l) => l.startsWith('| `'));
   assertStringIncludes(rows[0], 'src/a.ts'); // least covered first, relative path
   assertStringIncludes(rows[1], 'src/b.ts');
@@ -89,6 +97,8 @@ test('parseLcov ignores counters that come before any SF line', () => {
       lines: { found: 2, hit: 1 },
       branches: { found: 0, hit: 0 },
       functions: { found: 0, hit: 0 },
+      missedLines: [],
+      missedBranches: [],
     },
   ]);
 });
@@ -101,4 +111,70 @@ test('parseMinBranches reads its own flag, independent of --min-lines', () => {
 
 test('formatMarkdown shows the branch total and its floor', () => {
   assertStringIncludes(formatMarkdown(parseLcov(LCOV), 70, '', 80), 'of branches** (floor: 80%)');
+});
+
+test('parseLcov records the lines and branches no test reached', () => {
+  const [f] = parseLcov(
+    'SF:C:/proj/src/x.vue\nDA:3,1\nDA:4,0\nDA:5,0\nDA:9,0\nLF:4\nLH:1\n' +
+      'BRDA:7,0,0,1\nBRDA:7,0,1,0\nBRDA:12,1,0,-\nBRF:3\nBRH:1\nend_of_record\n',
+  );
+  assertEquals(f.missedLines, [4, 5, 9]);
+  assertEquals(f.missedBranches, [7, 12]);
+});
+
+test('lineRanges collapses runs of line numbers', () => {
+  assertEquals(lineRanges([]), '');
+  assertEquals(lineRanges([4]), '4');
+  assertEquals(lineRanges([4, 5, 6, 9, 11, 12]), '4–6, 9, 11–12');
+});
+
+test('notFullyCovered finds every miss exactly, worst first, branches as well as lines', () => {
+  const file = (name: string, lines: [number, number], branches: [number, number]) => ({
+    file: name,
+    lines: { found: lines[0], hit: lines[1] },
+    branches: { found: branches[0], hit: branches[1] },
+    functions: { found: 0, hit: 0 },
+  });
+  const nearly = file('nearly.ts', [2000, 1999], [0, 0]); // 99.95%: prints as 100.0%
+  const vue = file('x.vue', [10, 10], [4, 2]); // every line run, two branches not
+  const whole = file('whole.ts', [5, 5], [2, 2]);
+  assertEquals(notFullyCovered([nearly, whole, vue]).map((f) => f.file), ['x.vue', 'nearly.ts']);
+});
+
+test('formatGaps names each file and the lines to look at', () => {
+  const [f] = parseLcov(
+    'SF:C:/proj/src/x.vue\nDA:4,0\nDA:5,0\nLF:6\nLH:4\nBRDA:7,0,1,0\nBRF:2\nBRH:1\nend_of_record\n',
+  );
+  assertEquals(
+    formatGaps([f], 'C:/proj'),
+    '  src/x.vue\n    lines 4/6, missed: 4–5\n    branches 1/2, missed on: 7',
+  );
+  const onlyBranches = { ...f, lines: { found: 6, hit: 6 }, missedLines: undefined };
+  assertEquals(
+    formatGaps([onlyBranches], 'C:/proj'),
+    '  src/x.vue\n    branches 1/2, missed on: 7',
+  );
+  const onlyLines = { ...f, branches: { found: 2, hit: 2 }, missedBranches: undefined };
+  assertEquals(formatGaps([onlyLines], 'C:/proj'), '  src/x.vue\n    lines 4/6, missed: 4–5');
+  const noLists = { ...f, missedLines: undefined, missedBranches: undefined };
+  assertEquals(formatGaps([noLists]).split('\n').length, 3);
+});
+
+test('coverageAnnotations marks each file on its first missed line, listing the rest', () => {
+  const [f] = parseLcov(
+    'SF:C:/proj/src/x.vue\nDA:9,0\nDA:10,0\nLF:6\nLH:4\nBRDA:7,0,1,0\nBRF:2\nBRH:1\nend_of_record\n',
+  );
+  assertEquals(coverageAnnotations([f], 'C:/proj', 'error'), [
+    '::error file=src/x.vue,line=7,title=Not covered by any test::' +
+    'lines 9–10 never run; a branch on 7 never taken',
+  ]);
+  const bare = { ...f, missedLines: undefined, missedBranches: undefined };
+  assertEquals(coverageAnnotations([bare]), [
+    '::warning file=C%3A/proj/src/x.vue,title=Not covered by any test::not fully covered',
+  ]);
+});
+
+test('parseLcov lists a line once, however many of its branches were missed', () => {
+  const [f] = parseLcov('SF:a.ts\nBRDA:7,0,0,0\nBRDA:7,0,1,-\nBRF:2\nBRH:0\nend_of_record\n');
+  assertEquals(f.missedBranches, [7]);
 });

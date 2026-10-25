@@ -7,18 +7,20 @@ the `.vue` components are next, in [TODO.md](plans/TODO.md).
 
 ## Running them
 
-| Command                                         | What it does                                                      |
-| ----------------------------------------------- | ----------------------------------------------------------------- |
-| `npm test`                                      | Every tier, one summary row per tier                              |
-| `npm test -- unit dom`                          | Just the tiers you name                                           |
-| `npm run test:unit` (`dom`, `prop`, `contract`) | One tier                                                          |
-| `npm test -- --verbose`                         | Also list every file                                              |
-| `npm run test:watch`                            | Re-run on every save                                              |
-| `npm run test:coverage`                         | Every tier, a coverage table, and fail below a coverage floor     |
-| `npm run test:report`                           | The same, and save the full report to `test-results/report.md`    |
-| `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/` |
-| `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)        |
-| `npm run check`                                 | Asset integrity: missing or orphaned images                       |
+| Command                                         | What it does                                                                   |
+| ----------------------------------------------- | ------------------------------------------------------------------------------ |
+| `npm test`                                      | Every tier, one summary row per tier                                           |
+| `npm test -- unit dom`                          | Just the tiers you name                                                        |
+| `npm test -- interface`                         | Just one area (`data`, `state`, `interface`, `pipeline`, `release`, `tooling`) |
+| `npm test -- src/components`                    | Just the tests under a folder (or one file); combines with tiers               |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | One tier                                                                       |
+| `npm test -- --verbose`                         | Also list every file                                                           |
+| `npm run test:watch`                            | Re-run on every save                                                           |
+| `npm run test:coverage`                         | Every tier, a coverage table, and fail below a coverage floor                  |
+| `npm run test:report`                           | The same, and save the full report to `test-results/report.md`                 |
+| `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`              |
+| `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)                     |
+| `npm run check`                                 | Asset integrity: missing or orphaned images                                    |
 
 A passing run prints about ten lines. A failing run lists the failed tests first (file and message)
 and then Vitest's full output, with the diff and the failing line. The tests run on
@@ -140,8 +142,15 @@ its text, roles and labels, what a click or a key does, what it emits. See
 
 - Start the file with `// @vitest-environment happy-dom`. Vue's DOM renderer looks up `document`
   when it is first imported, which happens before `withDom` could set one up.
-- Mount with `createApp({ render: () => h(Component, props) }).mount(host)` and unmount after each
-  test.
+- Mount with `mountComponent(() => h(Component, props))` from
+  [`src/testing/mountComponent.ts`](../src/testing/mountComponent.ts). It returns the host element,
+  and everything it mounts is unmounted after each test. A component that injects stores gets typed
+  stand-ins: `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with
+  only the members it reads.
+- One test file per component, named after it (`DrawnFilter.vue` → `DrawnFilter_dom_test.ts`), so a
+  failure says which component broke.
+- happy-dom is not a full browser: it does not support the `~` sibling selector, so walk
+  `parentElement.children` instead.
 - A component a test loads counts toward coverage at once, so cover every branch of its template
   (both sides of each `v-if` and `:class` choice).
 
@@ -165,10 +174,21 @@ assertProperty(
 
 ## Coverage
 
-`npm run test:coverage` prints the least-covered files and fails if total line or branch coverage is
-below its floor in `package.json` (`--min-lines`, `--min-branches`). Both floors are **100%**: every
-line, branch and function of the `.ts` code is tested, so new code needs a test (or a `c8 ignore`
-with its reason, below) before CI passes.
+`npm run test:coverage` fails if total line or branch coverage is below its floor in `package.json`
+(`--min-lines`, `--min-branches`). Any file that misses a single line or branch is named, `.vue`
+files included, with the lines to look at:
+
+```
+not fully covered (1):
+  src/components/gallery/ItemSheet.vue
+    branches 21/23, missed on: 141, 152
+```
+
+Measured exactly: a file at 99.95% is a miss, though it would print as 100.0%. When nothing is
+missed it prints the least-covered files instead. A floor applies to the whole suite, so asking for
+one on an area or a path is an error. Both floors are **100%**: every line, branch and function of
+the `.ts` code is tested, so new code needs a test (or a `c8 ignore` with its reason, below) before
+CI passes.
 
 Code that cannot run in a test is marked `/* c8 ignore next */` with a comment saying why: the `if
 (import.meta.main)` line of each command, `spawnVite` (the real build), and guards for things that
@@ -180,10 +200,9 @@ Two things the number does not tell you:
 - **Only files a test imports are counted,** so the percentage alone could hide a file with no tests
   at all. To close that gap, `npm run test:coverage` also fails if any source file is not imported
   by at least one test, and names it.
-- **`.vue` files count only once a test imports one.** No test does yet, so components are checked
-  by hand in the browser, and the untested-files gate covers `.ts` files only. Vitest compiles
-  `.vue` files exactly as the build does, so a component test is now possible; until there are some,
-  logic that matters should live in `.ts` files.
+- **`.vue` files count only once a test imports one,** and then must be at 100% like any other file.
+  The untested-files gate covers `.ts` files only; components without a test yet are listed in
+  [plans/TODO.md](plans/TODO.md).
 
 ## In CI
 
@@ -196,9 +215,24 @@ Every pull request and every push to `main` runs the same workflow,
 3. Asset integrity, then the production build.
 4. In parallel, all tiers again in `UTC`, `Asia/Kolkata` and `Pacific/Kiritimati` (UTC+14).
 
-The run writes a summary table to the job page, annotates failures on the changed lines, and keeps
-the JUnit file as an artifact. `main` is protected: a pull request cannot be merged until these
-checks pass, and the site deploys only after they pass again on `main`.
+### What the runner reports
+
+The same rules as the site's own design (DESIGN.md), applied to its test output:
+
+1. **Lead with the verdict.** The job summary opens, and the terminal ends, with one line that says
+   whether the run passed and every reason it did not: `❌ 431 tests passed · line coverage 100.0% ·
+   branch coverage 99.8% (floor 100%)`.
+2. **Name the cause where it lives.** A failing test is marked on its file in the pull request; so
+   is every coverage gap, on its first missed line (an error when it fails the run, a warning when
+   it is only a report).
+3. **Show only what needs attention.** Files short of 100% come first with their line numbers; the
+   table of every file is folded away. A run narrowed to an area lists only the areas it ran.
+4. **The same words everywhere.** The terminal, the job summary and the annotations say "not fully
+   covered", "missed", "below the floor" alike.
+5. **Never round a miss into a pass.** Coverage gaps are counted, not rounded.
+
+The run also keeps the JUnit file as an artifact. `main` is protected: a pull request cannot be
+merged until these checks pass, and the site deploys only after they pass again on `main`.
 
 A weekly job ([`nightly.yml`](../.github/workflows/nightly.yml)) runs the property tests at 25 times
 their normal depth in three timezones. If it fails, the seed is in the log.

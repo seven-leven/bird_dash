@@ -1,14 +1,10 @@
 // @vitest-environment happy-dom
-import { afterEach, test } from 'vitest';
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
-import { computed, createApp, defineComponent, h, nextTick, ref } from 'vue';
+import { computed, h, nextTick, ref } from 'vue';
 import CollectionMenu from './CollectionMenu.vue';
-import { provideCollections } from '../../stores/collections.ts';
-import { provideActions } from '../../stores/actions.ts';
 import { makeCollection } from '../../testing/fixtures.ts';
-
-let cleanup: (() => void) | undefined;
-afterEach(() => cleanup?.());
+import { mountComponent } from '../../testing/mountComponent.ts';
 
 /** Mount the menu over three collections, Birds current; record what it switches to. */
 function mount() {
@@ -19,30 +15,20 @@ function mount() {
   ]);
   const activeId = ref('birds');
   const switched: string[] = [];
-  const Host = defineComponent({
-    setup() {
-      // Only what the menu reads; the stores' other members are not needed here.
-      provideCollections({
+  const host = mountComponent(() => h(CollectionMenu), {
+    stores: {
+      collections: {
         list,
         activeCollection: computed(() => list.value.find((c) => c.id === activeId.value)),
-      } as never);
-      provideActions({
-        switchCollection: (id: string) => {
+      },
+      actions: {
+        switchCollection: async (id: string) => {
           switched.push(id);
           activeId.value = id;
         },
-      } as never);
-      return () => h(CollectionMenu);
+      },
     },
   });
-  const host = document.createElement('div');
-  document.body.append(host);
-  const app = createApp(Host);
-  app.mount(host);
-  cleanup = () => {
-    app.unmount();
-    host.remove();
-  };
   const button = host.querySelector<HTMLButtonElement>('[aria-controls="collection-menu"]')!;
   const items = () => [...host.querySelectorAll<HTMLButtonElement>('#collection-menu button')];
   return { host, button, items, switched };
