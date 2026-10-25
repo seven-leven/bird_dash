@@ -177,23 +177,24 @@ data that actually exists, and let every control explain what it does.
 
 Counts come from [`src/lib/formatCount.ts`](../src/lib/formatCount.ts); never compose them by hand.
 
-| What the view contains                     | Summary above the grid     | Sidebar pill |
-| ------------------------------------------ | -------------------------- | ------------ |
-| Drawn and undrawn items, grouped by family | `4 of 8 drawn` (`drawnOf`) | `4 of 8`     |
-| Drawn items only, grouped by month         | `2 drawings` (`drawings`)  | `2`          |
-| Search, family view (dropdown and chip)    | `10 matches, 1 drawn`      | none         |
-| Search, month view (drawn items only)      | `4 matches` (`matches`)    | none         |
+| What the view contains                    | Under the collection's name         | Sidebar pill |
+| ----------------------------------------- | ----------------------------------- | ------------ |
+| A collection with gaps, grouped by family | `All 204` · `Drawn 15` (the filter) | `4 of 8`     |
+| A collection with none, grouped by family | `30 of 30 drawn` (`drawnOf`)        | `4 of 8`     |
+| Drawn items only, grouped by month        | `2 drawings` (`drawings`)           | `2`          |
+| Search, family view (dropdown and chip)   | `10 matches, 1 drawn`               | none         |
+| Search, month view (drawn items only)     | `4 matches` (`matches`)             | none         |
 
 The forms differ on purpose: "of 8" only makes sense when there is a total still to be drawn. A
 search is counted in "matches" wherever it is shown; never "results". Never show a count until it is
 known.
 
 Each count is shown once on a screen, and sits under the name of what it counts. The sidebar opens
-with the collection's name, its progress under it (`3 of 30 drawn` under "Shells" can only mean
-shells), and the "Drawn only" switch beside it; the view's name then labels the list below. Never
-put a collection's count under a view's name: under "Groups", "30" reads as thirty groups. Below
-1024px the sidebar is a drawer, so the progress and the switch sit above the grid instead. The
-sidebar's footer holds the total across every collection.
+in three levels, largest first: the collection's emblem, its name, then its count, so `All 30 ·
+Drawn 3` under "Shells" can only mean shells. The view's name then labels the list below. Never put
+a collection's count under a view's name: under "Groups", "30" reads as thirty groups. Below 1024px
+the sidebar is a drawer, so the count sits above the grid instead. The sidebar's footer holds the
+total across every collection.
 
 A view has one name, in the header's tab and over the sidebar's list alike: the collection's groups
 in the plural ("Families", "Orders"), or "Months". `src/lib/viewName.ts` makes it.
@@ -265,10 +266,11 @@ Use the shared classes rather than restyling each control: `.btn-ghost` for icon
 `.btn-primary` for the one primary action, `.nav-item` for a choice among several, `.count-pill`,
 `.kbd-hint` and `.caps-label`.
 
-A setting that is on or off, such as "Drawn only", is a switch (`DrawnOnlySwitch`): a small track
-and knob beside its words, grey when off and the accent when on, so it reads as something to press
-before anyone tries it. Underneath it is a button with `aria-pressed`. Never set an on/off setting
-as bare text.
+Where a count can also filter, the count is the control: `DrawnFilter` sets "All 204" and "Drawn 15"
+as two tabs, drawn like the header's view switch (`.nav-item` with the accent marker under the
+current one), so they read as a choice and say how far along the collection is at once. Do not add a
+separate switch beside a count; it competes with the name above it. Each tab is a button with
+`aria-pressed`, in a group labelled "Show".
 
 "Current" is semantic, not just visual. Set `aria-current` or `aria-pressed`; `.nav-item` styles
 itself from those attributes, so what is seen and what assistive technology announces agree.
@@ -364,7 +366,9 @@ neighbours, so icons, names and dividers line up from row to row.
 
 Icons take `currentColor` and come in four sizes, by role: `size-3` (12px) beside a label or figure,
 `size-4` (16px) in a control, `size-5` or `size-6` (20 or 24px) standing alone. Label icons sit
-before their text through `.with-icon`, which sizes them. A test fails on any other size.
+before their text through `.with-icon`, which sizes them. One icon is larger: the collection's
+emblem at the top of the sidebar, `size-10` (40px) in the accent, the biggest icon on the page and
+the only one of its size. A test fails on any other size, or a second emblem.
 
 Each icon has one meaning wherever it appears: `tag` is the version, `image` the drawing count,
 `commit` the build's commit, `layers` all collections together, `pencil` the illustrator or "drawn",
@@ -421,13 +425,13 @@ everyone, on every screen_
 
 Design for the phone first, then let the layout widen. Nothing scrolls sideways; check at **375px**.
 
-| Screen               | Behaviour                                                                |
-| -------------------- | ------------------------------------------------------------------------ |
-| Below 420px          | Search is a button; opened, it takes the header row until closed         |
-| Phone, below 640px   | Two-column grid                                                          |
-| Below 768px          | Collections are one menu button; search shares the row                   |
-| Tablet, from 768px   | Collection tabs (up to four), logo and wordmark                          |
-| Desktop, from 1024px | Sidebar stays visible: the collection, its count and "Drawn only" on top |
+| Screen               | Behaviour                                                             |
+| -------------------- | --------------------------------------------------------------------- |
+| Below 420px          | Search is a button; opened, it takes the header row until closed      |
+| Phone, below 640px   | Two-column grid                                                       |
+| Below 768px          | Collections are one menu button; search shares the row                |
+| Tablet, from 768px   | Collection tabs (up to four), logo and wordmark                       |
+| Desktop, from 1024px | Sidebar stays visible: the collection's emblem, name and count on top |
 
 Each region has one job: the header switches collection, view and theme; the sidebar jumps between
 sections; the grid presents drawings; the viewer shows one drawing and its details.
@@ -483,8 +487,9 @@ state and never contradict each other.
 
 `0 of 0 drawn` is not a loading state: it claims to know what is not yet known. `noResults` belongs
 to search, not to empty collections. A mostly unfinished collection says how much is done — `15 of
-204 drawn` — under its name, with a "Drawn only" switch (above the grid below 1024px). A collection
-with no drawings says "Nothing drawn yet" rather than showing a wall of icons.
+204 drawn`, set as `All 204 · Drawn 15` — under its name, and the count is the filter (above the
+grid below 1024px). A collection with no drawings says "Nothing drawn yet" rather than showing a
+wall of icons.
 
 ---
 

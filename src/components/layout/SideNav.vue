@@ -13,27 +13,37 @@
   >
     <!-- Header -->
     <div class="sticky top-0 z-10 px-5 pt-5 pb-4 border-b border-slate-100 dark:border-slate-800/60">
-      <!-- The collection, how much of it is drawn, and the switch to hide the rest. The
-           count sits under the collection's name so it can only be counting its items
-           (not the groups listed below). Below lg the sidebar is a drawer, so the grid
-           repeats them there. -->
-      <div class="flex items-center justify-between gap-2">
-        <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
-          {{ activeCollection?.label }}
-        </h1>
-        <DrawnOnlySwitch
-          v-if="!data.loading && viewMode === 'group' && stats.drawn > 0 && stats.drawn < data.items.length"
-          :on="drawnOnly"
-          @toggle="toggleDrawnOnly()"
+      <!-- Three levels, largest first: the collection's emblem (the biggest icon on the
+           page, in the accent that marks where you are), its name, then its count. The
+           count sits under the name so it can only be counting the collection's items,
+           never the groups listed below. Where there are gaps the count is also the
+           filter: "All 204 · Drawn 15". Below lg the sidebar is a drawer, so the grid
+           repeats the count there. -->
+      <div class="flex items-center gap-3">
+        <CollectionIcon
+          v-if="activeCollection"
+          :collection="activeCollection"
+          class="size-10 shrink-0 text-accent-600 dark:text-accent-400"
         />
+        <div class="min-w-0">
+          <h1 class="text-base font-semibold tracking-tight truncate text-slate-800 dark:text-slate-100">
+            {{ activeCollection?.label }}
+          </h1>
+          <!-- No count until it is known: "0 of 0 drawn" would read as a real answer. -->
+          <p v-if="data.loading" class="h-3 w-24 mt-2 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
+          <DrawnFilter
+            v-else-if="viewMode === 'group' && stats.drawn > 0 && stats.drawn < data.items.length"
+            class="-ml-2.5 mt-0.5"
+            :drawn="stats.drawn"
+            :total="data.items.length"
+            :drawn-only="drawnOnly"
+            @choose="(only) => only !== drawnOnly && toggleDrawnOnly()"
+          />
+          <p v-else-if="stats.drawn > 0" class="mt-0.5 text-xs text-muted tabular-nums">
+            {{ viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn) }}
+          </p>
+        </div>
       </div>
-      <!-- No count until it is known: "0 of 0 drawn" would read as a real answer. -->
-      <p v-if="data.loading" class="h-3 w-24 mt-1.5 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
-      <p v-else-if="stats.drawn > 0" class="with-icon mt-1 text-xs text-muted tabular-nums">
-        <Icon name="pencil" aria-hidden="true" />{{
-          viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn)
-        }}
-      </p>
     </div>
 
     <!-- List, labelled with the view's name as the header's tab says it -->
@@ -97,7 +107,8 @@
 
 <script setup lang="ts">
 import EmptyState from '../ui/EmptyState.vue';
-import DrawnOnlySwitch from '../ui/DrawnOnlySwitch.vue';
+import DrawnFilter from '../ui/DrawnFilter.vue';
+import CollectionIcon from '../icons/CollectionIcon.vue';
 import Icon from '../icons/Icon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';

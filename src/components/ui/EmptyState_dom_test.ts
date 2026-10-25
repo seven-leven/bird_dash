@@ -6,7 +6,7 @@ import EmptyState from './EmptyState.vue';
 import IdBadge from './IdBadge.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
-import DrawnOnlySwitch from './DrawnOnlySwitch.vue';
+import DrawnFilter from './DrawnFilter.vue';
 
 let cleanup: (() => void) | undefined;
 afterEach(() => cleanup?.());
@@ -81,21 +81,26 @@ test('CollectionIcon draws the named line icon, or the emoji when the name is no
   assertEquals([...host.querySelectorAll('span')].map((s) => s.textContent), ['🦄', '🐚']);
 });
 
-test('DrawnOnlySwitch is a toggle button that says whether it is on, and asks to be toggled', async () => {
-  const toggles: boolean[] = [];
-  const on = ref(false);
+test('DrawnFilter is the count and the filter: All and Drawn, the current one pressed', async () => {
+  const chosen: boolean[] = [];
+  const drawnOnly = ref(false);
   const host = mount(() =>
-    h(DrawnOnlySwitch, { on: on.value, onToggle: () => toggles.push(on.value = !on.value) })
+    h(DrawnFilter, {
+      drawn: 15,
+      total: 204,
+      drawnOnly: drawnOnly.value,
+      onChoose: (only: boolean) => chosen.push(drawnOnly.value = only),
+    })
   );
-  const button = host.querySelector('button')!;
-  assertEquals(button.textContent?.trim(), 'Drawn only');
-  assertEquals(button.getAttribute('aria-pressed'), 'false');
-  const knob = button.querySelector('span > span')!;
-  assertEquals(knob.className.includes('translate-x-3'), false);
+  const [all, drawn] = [...host.querySelectorAll('button')];
+  assertEquals(
+    [all, drawn].map((b) => b.textContent?.replace(/\s+/g, ' ').trim()),
+    ['All 204', 'Drawn 15'],
+  );
+  assertEquals([all, drawn].map((b) => b.getAttribute('aria-pressed')), ['true', 'false']);
 
-  button.click();
+  drawn.click();
   await nextTick();
-  assertEquals(toggles, [true]);
-  assertEquals(button.getAttribute('aria-pressed'), 'true');
-  assertEquals(knob.className.includes('translate-x-3'), true); // the knob slides across
+  assertEquals(chosen, [true]);
+  assertEquals([all, drawn].map((b) => b.getAttribute('aria-pressed')), ['false', 'true']);
 });

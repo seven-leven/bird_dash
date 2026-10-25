@@ -68,23 +68,21 @@
 
     <!-- Main Content -->
     <template v-else>
-      <!-- The collection's count, and a switch to hide the gaps while there are any. From
-           lg they sit beside the view's name in the sidebar; below it the sidebar is a
-           drawer, so they are here. -->
-      <div
-        v-if="stats.drawn > 0"
-        class="lg:hidden flex flex-wrap items-center justify-between gap-2 min-h-9 -mt-1 mb-6"
-      >
-        <p class="with-icon text-sm text-muted tabular-nums">
-          <Icon name="pencil" aria-hidden="true" />{{
-            viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn)
-          }}
-        </p>
-        <DrawnOnlySwitch
+      <!-- The collection's count, which is also the filter while there are gaps. From lg it
+           sits under the collection's name in the sidebar; below it the sidebar is a
+           drawer, so it is here. -->
+      <div v-if="stats.drawn > 0" class="lg:hidden flex items-center min-h-9 -mt-1 mb-6">
+        <DrawnFilter
           v-if="viewMode === 'group' && stats.drawn < data.items.length"
-          :on="drawnOnly"
-          @toggle="toggleDrawnOnly()"
+          class="-ml-2.5"
+          :drawn="stats.drawn"
+          :total="data.items.length"
+          :drawn-only="drawnOnly"
+          @choose="(only) => only !== drawnOnly && toggleDrawnOnly()"
         />
+        <p v-else class="text-sm text-muted tabular-nums">
+          {{ viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn) }}
+        </p>
       </div>
 
       <!-- Grouped Sections. The section is what the scroll-spy watches; its heading
@@ -161,7 +159,7 @@
 import { computed, ref, watch } from 'vue';
 import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
-import DrawnOnlySwitch from '../ui/DrawnOnlySwitch.vue';
+import DrawnFilter from '../ui/DrawnFilter.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
