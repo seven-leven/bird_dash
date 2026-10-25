@@ -7,7 +7,7 @@
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs viewer-label">
       <IdBadge :id="item.itemId" />
       <button
-        class="focus-ring rounded-control hover:underline underline-offset-2 hover:text-slate-900 dark:hover:text-white"
+        class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
         :title="`Show ${item.group} in the grid`"
         @click="emit('go-to-group', item.group)"
       >
@@ -66,7 +66,7 @@
               <a
                 v-if="part.href"
                 :href="part.href"
-                class="focus-ring rounded-control font-medium viewer-title underline underline-offset-2 hover:opacity-80"
+                class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 underline underline-offset-2 hover:opacity-80"
               >{{ part.text }}</a>
               <template v-else>{{ part.text }}</template>
             </template>
@@ -74,7 +74,7 @@
         </div>
         <button
           v-if="isLong"
-          class="focus-ring rounded-control mt-2 text-xs font-medium viewer-title hover:underline underline-offset-2"
+          class="focus-ring rounded-control mt-2 text-xs font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
           aria-controls="illustrator-note"
           :aria-expanded="!folded"
           @click="expanded = !expanded"
@@ -84,7 +84,9 @@
       </blockquote>
     </div>
 
-    <!-- External links: plain links in a row, the least important thing in the panel -->
+    <!-- External links: plain links in a row, the least important thing in the panel. They
+         leave the site, so they stay neutral; links within it (the group, "#11", Read more)
+         are in the accent (docs/DESIGN.md §01). -->
     <div v-if="links.length">
       <p class="caps-label with-icon viewer-label mb-2">
         <Icon name="book" aria-hidden="true" />Learn more

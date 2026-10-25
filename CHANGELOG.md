@@ -23,7 +23,9 @@ where `w` was the drawing count.
   largest, at the new `text-3xl`, with "Reyru" under it as part of the name, then English and
   scientific); the top line adds the month drawn, and its group is a link that shows the group in
   the grid; the illustrator's note is in regular text, in paragraphs, and a long one opens folded
-  with "Read more"; the "Learn more" links are plain links. The romanised-name field is gone
+  with "Read more"; the "Learn more" links are plain links. The romanised-name field is gone. Links
+  that move you within the site (the group, "#11", "Read more") are in the collection's accent;
+  links that leave it stay neutral
 - 2026-10-25 | site: the header is one row at every width. Below 768px (or with more than four
   collections) the collection tabs become one menu button naming the current collection; search
   shares the row, and below 420px folds into a button that opens across it. The sidebar opens with

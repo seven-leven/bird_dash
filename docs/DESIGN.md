@@ -94,8 +94,10 @@ CSS.
 | Drawing id badge (over an image) | white at 70% on black at 50% | the same                     |
 
 The accent is a signal, not decoration. Reserve it for keyboard focus, the current item, progress,
-search matches and the primary action. If it appears in lots of places at once, it has stopped
-communicating.
+search matches, the primary action, and links that move you within the site (in the viewer: the
+group, "#11" in a note, "Read more"), in `accent-700` so they read as text. Links that leave the
+site stay neutral, with `externalLink`. If the accent appears in lots of places at once, it has
+stopped communicating.
 
 Never make colour carry meaning alone. A current tab also has a fill and stronger text; colour
 reinforces the state rather than being the only clue.
