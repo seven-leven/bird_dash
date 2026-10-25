@@ -16,6 +16,9 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | site: the viewer card has one language per line. "Reyru" now sits after the Thaana on
+  the Dhivehi line, so it can no longer read as part of the English title below it; the section
+  labels drop their icons, and the `book` icon, used only there, leaves the set
 - 2026-10-25 | tests: `mountComponent` mounts a component (with typed stand-in stores) and unmounts
   it after each test; one test file per component. `npm test -- interface` or `-- src/components`
   runs one area or folder. Coverage names every file short of 100%, `.vue` included, with the lines

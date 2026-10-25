@@ -104,10 +104,6 @@ export const ICONS = {
     body:
       '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
   },
-  book: {
-    body:
-      '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/>',
-  },
 
   // ── Keyboard — key hints under the search results ──
   arrowsUpDown: {
@@ -180,7 +176,7 @@ export const ICON_GROUPS: { label: string; icons: IconName[] }[] = [
   },
   { label: 'Viewer', icons: ['zoomIn', 'zoomOut', 'reset'] },
   { label: 'Theme', icons: ['sun', 'moon'] },
-  { label: 'Labels', icons: ['tag', 'image', 'commit', 'layers', 'pencil', 'book'] },
+  { label: 'Labels', icons: ['tag', 'image', 'commit', 'layers', 'pencil'] },
   { label: 'Keyboard', icons: ['arrowsUpDown', 'enter', 'command'] },
   { label: 'Principles', icons: ['easel', 'progress', 'pin', 'grid', 'person'] },
   { label: 'Brand', icons: ['github'] },

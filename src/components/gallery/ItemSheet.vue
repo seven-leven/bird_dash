@@ -19,15 +19,21 @@
       </template>
     </div>
 
-    <!-- The names, as one block in the tile's order: Dhivehi first and largest (with how
-         to say it), then English, then scientific (docs/DESIGN.md §02). -->
+    <!-- The names, as one block in the tile's order: Dhivehi first and largest, then
+         English, then scientific (docs/DESIGN.md §02). One language per line: how to say
+         the Dhivehi sits on its own line, after the Thaana, so it can neither read as part
+         of the English title below nor share a line with the Latin. -->
     <div>
       <template v-if="item.meta?.dhiv_script">
-        <h2 class="font-dhivehi text-3xl font-bold viewer-title text-left" dir="rtl">
-          {{ item.meta.dhiv_script }}
-        </h2>
-        <p v-if="item.meta.dhiv" class="text-xs viewer-label -mt-1 mb-2">{{ item.meta.dhiv }}</p>
-        <p class="text-base font-semibold viewer-title leading-tight">
+        <div class="flex items-baseline gap-3">
+          <h2 class="font-dhivehi text-3xl font-bold viewer-title" dir="rtl">
+            {{ item.meta.dhiv_script }}
+          </h2>
+          <span v-if="item.meta.dhiv" lang="dv-Latn" class="text-sm viewer-label">
+            {{ item.meta.dhiv }}
+          </span>
+        </div>
+        <p class="text-base font-semibold viewer-title leading-tight mt-1">
           {{ item.commonName }}
         </p>
       </template>
@@ -52,8 +58,8 @@
     <!-- Illustrator note: the illustrator's own words, marked by the rule beside them. A
          long one opens folded to its first lines; the panel itself scrolls. -->
     <div v-if="paragraphs.length">
-      <p class="caps-label with-icon viewer-label mb-2">
-        <Icon name="pencil" aria-hidden="true" />From the illustrator
+      <p class="caps-label viewer-label mb-2">
+        From the illustrator
       </p>
       <blockquote class="pl-3 border-l border-slate-200 dark:border-slate-700">
         <div
@@ -88,8 +94,8 @@
          leave the site, so they stay neutral; links within it (the group, "#11", Read more)
          are in the accent (docs/DESIGN.md §01). -->
     <div v-if="links.length">
-      <p class="caps-label with-icon viewer-label mb-2">
-        <Icon name="book" aria-hidden="true" />Learn more
+      <p class="caps-label viewer-label mb-2">
+        Learn more
       </p>
       <div class="flex flex-wrap gap-x-4 gap-y-1">
         <a
