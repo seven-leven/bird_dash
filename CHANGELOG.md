@@ -16,6 +16,9 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | fix: with "Drawn only" on, opening a collection with nothing drawn and pressing "Show
+  what's planned" showed an empty page with no way out. The setting no longer applies where nothing
+  is drawn; it still filters every collection that has drawings
 - 2026-10-25 | site: the viewer's panel is calmer. The names are one block (the Dhivehi name
   largest, at the new `text-3xl`, with "Reyru" under it as part of the name, then English and
   scientific); the top line adds the month drawn, and its group is a link that shows the group in

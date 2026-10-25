@@ -175,3 +175,20 @@ test('family view, drawn only: undrawn items and empty groups are hidden, counts
   const a = activeData.value.sidebarItems[0];
   assertEquals([a.id, a.count, a.total], ['A', 1, 2]); // "1 of 2": the hidden item still counts
 });
+
+test('drawn only does not apply to a collection with nothing drawn: what is planned still shows', () => {
+  // The setting is shared by every collection. Carried into one with no drawings, it
+  // would hide everything, and "Show what's planned" would show an empty page.
+  const items = [
+    makeItem({ itemId: '001', group: 'A', isDrawn: false }),
+    makeItem({ itemId: '002', group: 'B', isDrawn: false }),
+  ];
+  const drawnOnly = ref(true);
+  const { activeData } = useCollectionData(ref(items), ref(''), ref('group'), drawnOnly);
+  assertEquals(Object.keys(activeData.value.grouped), ['A', 'B']);
+
+  // Once something is drawn, the same setting filters again.
+  items[0] = makeItem({ itemId: '001', group: 'A', drawnTime: at(2025, 1) });
+  const again = useCollectionData(ref(items), ref(''), ref('group'), drawnOnly);
+  assertEquals(Object.keys(again.activeData.value.grouped), ['A']);
+});

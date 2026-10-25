@@ -105,7 +105,10 @@ export function useCollectionData(
     for (const [g, list] of Object.entries(grouped)) {
       totals[g] = { drawn: list.filter((i) => i.isDrawn).length, total: list.length };
     }
-    if (drawnOnly.value) {
+    // "Drawn only" is one setting for every collection. In a collection with nothing
+    // drawn it could only empty the page (and "Show what's planned" with it), so there
+    // it does not apply; it filters again wherever something is drawn.
+    if (drawnOnly.value && drawnItems.value.length > 0) {
       for (const g of Object.keys(grouped)) {
         grouped[g] = grouped[g].filter((i) => i.isDrawn);
         if (grouped[g].length === 0) delete grouped[g];
