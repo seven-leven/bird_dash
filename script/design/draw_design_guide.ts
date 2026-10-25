@@ -381,7 +381,7 @@ export async function designGuide(
         .join(''),
   );
   const sizes: [string, number, number, string, string][] = [
-    ['text-2xl', 24, 700, 'ރޭރު', 'Dhivehi title in the viewer'],
+    ['text-3xl', 30, 700, 'ރޭރު', 'Dhivehi title in the viewer'],
     ['text-xl', 20, 600, 'Lesser Whistling-Duck', 'English title, with no Dhivehi name'],
     ['text-base', 16, 600, 'Ducks, Geese, and Swans', 'Section headings, sidebar title'],
     ['text-sm', 14, 500, 'Search all collections…', 'Controls, body text, tile titles'],
@@ -390,7 +390,7 @@ export async function designGuide(
   ];
   let ty = hero + 176;
   for (const [token, px, weight, sample, use] of sizes) {
-    if (token === 'text-2xl') dhivehi.push(await thaana(sample, X, ty, px));
+    if (token === 'text-3xl') dhivehi.push(await thaana(sample, X, ty, px));
     else parts.push(text(X, ty, sample, px, INK, weight));
     parts.push(
       text(X + 820, ty, token, 14, INK, 600) + text(X + 920, ty, `${px}px`, 14, MUTED) +

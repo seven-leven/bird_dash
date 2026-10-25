@@ -66,13 +66,14 @@
       :collection="activeCollection"
       @close="close()"
       @update:item="update($event)"
+      @go-to-group="showGroup"
     />
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue';
+import { defineAsyncComponent, nextTick } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
@@ -90,6 +91,17 @@ const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
 const { data, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
 // The scroll container is handed to the ui store (for the scroll-spy) as a function ref.
-const { isMobile, sidebarOpen, viewMode, bindScrollContainer, closeSidebar } = useUi();
+const { isMobile, sidebarOpen, viewMode, bindScrollContainer, closeSidebar, setViewMode, goToSection } =
+  useUi();
 const { expandedImage, drawnItems, close, update } = useOverlayStore();
+
+// "Ducks, Geese, and Swans" in the viewer: close it and show that group in the grid,
+// switching to the family view first if the month view is showing.
+async function showGroup(group: string): Promise<void> {
+  close();
+  setViewMode('group');
+  await nextTick();
+  await nextTick(); // the family view's sections mount, then register
+  goToSection(group);
+}
 </script>

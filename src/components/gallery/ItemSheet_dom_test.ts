@@ -1,0 +1,128 @@
+// @vitest-environment happy-dom
+import { afterEach, test } from 'vitest';
+import { assert, assertEquals, assertStringIncludes } from '@std/assert';
+import { createApp, h, nextTick, ref } from 'vue';
+import ItemSheet from './ItemSheet.vue';
+import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
+import type { CollectionItem } from '../../types/index.ts';
+
+let cleanup: (() => void) | undefined;
+afterEach(() => cleanup?.());
+
+const birds = makeCollection('birds', {
+  label: 'Birds',
+  links: [{ label: 'eBird', color: '', url: () => 'https://ebird.org/x' }],
+});
+const goose = makeItem({
+  itemId: '002',
+  commonName: 'Cotton Pygmy-Goose',
+  scientificName: 'Nettapus coromandelianus',
+  group: 'Ducks, Geese, and Swans',
+  drawnTime: at(2024, 10, 10),
+  meta: { dhiv: 'Reyru', dhiv_script: 'ރޭރު', habitat: 'Wetlands' },
+  illustratorNote: 'Experimented with markers. Compare #1.',
+});
+
+/** Mount the panel for `item` (reactive, so a test can swap the drawing). */
+function mount(start: CollectionItem) {
+  const item = ref(start);
+  const groups: string[] = [];
+  const host = document.createElement('div');
+  document.body.append(host);
+  const app = createApp({
+    render: () =>
+      h(ItemSheet, {
+        item: item.value,
+        collection: birds,
+        'onGo-to-group': (g: string) => groups.push(g),
+      }),
+  });
+  app.mount(host);
+  cleanup = () => {
+    app.unmount();
+    host.remove();
+  };
+  const text = (sel: string) => host.querySelector(sel)?.textContent?.replace(/\s+/g, ' ').trim();
+  return { host, item, groups, text };
+}
+
+test('the names are one block: Dhivehi first and largest, how to say it, English, scientific', () => {
+  const { host } = mount(goose);
+  const block = host.querySelector('h2')!.parentElement!;
+  const [dhivehi, romanised, english, scientific] = [...block.children] as HTMLElement[];
+  assertEquals(dhivehi.textContent?.trim(), 'ރޭރު');
+  assertStringIncludes(dhivehi.className, 'text-3xl');
+  assertEquals(dhivehi.getAttribute('dir'), 'rtl');
+  assertEquals(romanised.textContent?.trim(), 'Reyru');
+  assertEquals(english.textContent?.trim(), 'Cotton Pygmy-Goose');
+  assertEquals(scientific.textContent?.trim(), 'Nettapus coromandelianus');
+  // The romanised name is not repeated as a field of its own; other facts are.
+  assert(!host.textContent!.includes('romanised'));
+  assertStringIncludes(host.textContent!, 'Habitat');
+});
+
+test('without a Dhivehi name, the English name is the title', () => {
+  const { host } = mount({ ...goose, meta: {} });
+  assertEquals(host.querySelector('h2')?.textContent?.trim(), 'Cotton Pygmy-Goose');
+  assertStringIncludes(host.querySelector('h2')!.className, 'text-xl');
+});
+
+test('the top line says where it sits and when: id, group (a link back), month drawn', () => {
+  const { host, groups } = mount(goose);
+  assertStringIncludes(host.textContent!, '#002');
+  assertStringIncludes(host.textContent!, 'Drawn October 2024');
+  const group = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Ducks'))!;
+  group.click();
+  assertEquals(groups, ['Ducks, Geese, and Swans']);
+});
+
+test('an undated drawing has no month', () => {
+  const { host } = mount({ ...goose, drawnTime: 0 });
+  assert(!host.textContent!.includes('Drawn '));
+});
+
+test('a short note is shown whole, with "#1" a link to that drawing', () => {
+  const { host } = mount(goose);
+  const note = host.querySelector('#illustrator-note')!;
+  assert(!note.className.includes('max-h-36'), 'a short note is not folded');
+  assertEquals(note.querySelector('a')?.getAttribute('href'), '#birds/001');
+  assert(![...host.querySelectorAll('button')].some((b) => b.textContent?.includes('Read more')));
+});
+
+test('a long note opens folded, in paragraphs, and "Read more" unfolds it', async () => {
+  const long = 'A first thought about the pen.\n\n' + 'Long. '.repeat(80) + '\n\nAnd a last one.';
+  const { host, item } = mount({ ...goose, illustratorNote: long });
+  const note = host.querySelector('#illustrator-note')!;
+  assertEquals(note.querySelectorAll('p').length, 3);
+  assertStringIncludes(note.className, 'max-h-36');
+
+  const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
+  assertEquals(more.getAttribute('aria-expanded'), 'false');
+  more.click();
+  await nextTick();
+  assert(!note.className.includes('max-h-36'));
+  assertEquals(more.getAttribute('aria-expanded'), 'true');
+  assertEquals(more.textContent?.trim(), 'Show less');
+
+  // The next drawing's note starts folded again.
+  item.value = { ...goose, id: 'birds-003', itemId: '003', illustratorNote: long };
+  await nextTick();
+  assertStringIncludes(host.querySelector('#illustrator-note')!.className, 'max-h-36');
+});
+
+test('three short paragraphs also fold; no note means no section', () => {
+  const three = mount({ ...goose, illustratorNote: 'One.\n\nTwo.\n\nThree.' });
+  assertStringIncludes(three.host.querySelector('#illustrator-note')!.className, 'max-h-36');
+  cleanup?.();
+
+  const none = mount({ ...goose, illustratorNote: undefined, meta: undefined });
+  assertEquals(none.host.querySelector('#illustrator-note'), null);
+});
+
+test('the links are plain links that say they open a new tab', () => {
+  const { host } = mount(goose);
+  const link = host.querySelector<HTMLAnchorElement>('a[target="_blank"]')!;
+  assertEquals(link.getAttribute('href'), 'https://ebird.org/x');
+  assertStringIncludes(link.textContent!, 'opens in a new tab');
+  assert(!link.className.includes('border'), 'links, not bordered buttons');
+});

@@ -125,7 +125,7 @@
             class="w-full max-h-[45%] overflow-y-auto rounded-card shrink-0
                    lg:w-auto lg:max-w-xs lg:max-h-full lg:self-center xl:max-w-sm"
           >
-            <ItemSheet :item="currentItem" :collection="collection" />
+            <ItemSheet :item="currentItem" :collection="collection" @go-to-group="emit('go-to-group', $event)" />
           </div>
         </div>
 
@@ -154,6 +154,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void;
+  (e: 'go-to-group', group: string): void;
   (e: 'update:item', item: CollectionItem): void;
 }>();
 
