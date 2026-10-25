@@ -16,6 +16,10 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | docs: the design guide's final refinement pass. A shorter, quieter accent menu; more
+  room in the principle columns; one specimen of a name in its three languages (Dhivehi largest,
+  English, then the scientific name), each named at its own baseline; more air in the icon groups,
+  with softer dividers beside the icons only; more space above the closing line
 - 2026-10-24 | fix: Dhivehi names no longer lose the bottom of their vowel marks in tile captions
   and search rows (Faruma's marks reach half an em below the baseline; `.font-dhivehi` now gives
   them a 1.85 line height)

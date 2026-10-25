@@ -25,6 +25,7 @@ const MUTED = SLATE['500'];
 // statements. The site's own colours are the slate and accent swatches drawn on it.
 const PAPER = '#fbfaf7';
 const RULE = '#e2ded5';
+const RULE_SOFT = '#ebe8e1'; // the icon groups' dividers: present, never louder than the icons
 const FONT = 'font-family="Segoe UI, Helvetica, Arial, sans-serif"';
 const SERIF_FACE = 'font-family="Georgia, Cambria, serif"';
 const SERIF = `${SERIF_FACE} font-style="italic"`;
@@ -73,8 +74,13 @@ const icon = (name: keyof typeof ICONS, x: number, y: number, size: number, ink:
   return `<g transform="translate(${x} ${y}) scale(${size / 24})" ${paint}>${def.body}</g>`;
 };
 
-/** Dhivehi in Faruma, `size` px, its baseline at `baseline`: an image to lay over the page. */
-async function thaana(s: string, x: number, baseline: number, size: number) {
+/**
+ * Dhivehi in Faruma, `size` px, its baseline at `baseline`: an image to lay over the
+ * page. The rendered image is cropped to the ink, so it is placed by its bottom edge:
+ * `descent` is how far the text's lowest mark reaches below the baseline, in ems
+ * (ރޭރު reaches 0.06, measured in the browser).
+ */
+async function thaana(s: string, x: number, baseline: number, size: number, descent = 0.06) {
   const input = await sharp({
     text: {
       text: `<span foreground="${INK}">${s}</span>`,
@@ -84,7 +90,8 @@ async function thaana(s: string, x: number, baseline: number, size: number) {
       dpi: 72,
     },
   }).png().toBuffer();
-  return { input, left: x, top: Math.round(baseline - size * 0.95) };
+  const { height = 0 } = await sharp(input).metadata();
+  return { input, left: x, top: Math.round(baseline + descent * size - height) };
 }
 
 /**
@@ -118,16 +125,27 @@ function ramp(y: number, name: string, colors: Record<string, string>): string {
 function iconGroups(
   x0: number,
   y0: number,
-  o: { cols: number; size: number; cell: number; row: number; label: number; name: number },
+  o: {
+    cols: number;
+    size: number;
+    cell: number;
+    row: number;
+    label: number;
+    name: number;
+    /** Space between a group's label and its icons. */
+    gap?: number;
+  },
   ink: string,
 ): { svg: string; bottom: number } {
   const layout = iconGridLayout(ICON_GROUPS, o.cols);
+  const gap = o.gap ?? 16;
   let svg = '';
   for (const group of layout) {
     const y = y0 + group.row * o.row;
     if (group.col > 0) {
+      // Beside the icons only, not the labels: the grouping shows without a cage of lines.
       const x = x0 + (group.col - 1) * o.cell + o.size / 2;
-      svg += line(x, y - o.label, x, y + 16 + o.size + o.name + 8);
+      svg += line(x, y + gap, x, y + gap + o.size + o.name + 8, RULE_SOFT);
     }
     svg += text(
       x0 + group.col * o.cell,
@@ -140,10 +158,10 @@ function iconGroups(
     );
     for (const { name, col } of group.icons) {
       const x = x0 + col * o.cell;
-      svg += icon(name as keyof typeof ICONS, x, y + 16, o.size, ink) +
+      svg += icon(name as keyof typeof ICONS, x, y + gap, o.size, ink) +
         text(
           x + o.size / 2,
-          y + 16 + o.size + o.name + 8,
+          y + gap + o.size + o.name + 8,
           name,
           o.name,
           MUTED,
@@ -286,13 +304,13 @@ export async function designGuide(
   PRINCIPLES.forEach((p, i) => {
     const x = X + i * colW + (i ? 28 : 0);
     parts.push(
-      (i ? line(x - 28, y + 56, x - 28, y + 372) : '') + icon(p.icon, x, y + 56, 40, INK) +
-        caps(x, y + 148, `P${i + 1}`) +
-        para(x, y + 196, wrap(p.title, 15), 38, `${SERIF_FACE} font-size="30" fill="${INK}"`) +
-        para(x, y + 296, wrap(p.summary, 26), 26, `${FONT} font-size="17" fill="${MUTED}"`),
+      (i ? line(x - 28, y + 72, x - 28, y + 420) : '') + icon(p.icon, x, y + 72, 36, INK) +
+        caps(x, y + 164, `P${i + 1}`) +
+        para(x, y + 214, wrap(p.title, 15), 38, `${SERIF_FACE} font-size="30" fill="${INK}"`) +
+        para(x, y + 320, wrap(p.summary, 24), 30, `${FONT} font-size="18" fill="${MUTED}"`),
     );
   });
-  y += 440;
+  y += 492;
 
   // ── Colour ──
   let s = section(
@@ -310,7 +328,7 @@ export async function designGuide(
   const menu = await accentMenu();
   const usedBy = (hue: string) =>
     cols.filter((c) => (c.accent ?? 'teal') === hue).map((c) => c.label).join(', ');
-  const ry = card.bottom + 56;
+  const ry = card.bottom + 48;
   parts.push(
     caps(X, ry, 'Accent menu') +
       serif(X + 132, ry, 'picked per collection in collections.json; the marker shade beneath', 15),
@@ -326,12 +344,12 @@ export async function designGuide(
     const x = X + i * sw;
     const who = usedBy(hue);
     parts.push(
-      rect(x, ry + 16, sw - 6, 26, hex[700], 6) + text(x + 8, ry + 33, hue, 12, '#ffffff', 600) +
-        rect(x, ry + 45, sw - 6, 4, hex[500], 2) +
-        text(x, ry + 68, who || 'free', 12, who ? INK : MUTED, who ? 600 : 400),
+      rect(x, ry + 14, sw - 6, 20, hex[700], 5) + text(x + 8, ry + 28, hue, 11, '#ffffff', 600) +
+        rect(x, ry + 37, sw - 6, 3, hex[500], 1.5) +
+        text(x, ry + 56, who || 'free', 11, MUTED, who ? 600 : 400),
     );
   });
-  y = ry + 116;
+  y = ry + 96;
 
   // ── Type: one name as the specimen, then the scale ──
   s = section(
@@ -341,13 +359,22 @@ export async function designGuide(
     'The system sans-serif, and Faruma for Thaana. Six sizes and no others.',
   );
   parts.push(s.svg);
-  const hero = s.top + 56;
-  dhivehi.push(await thaana('ރޭރު', X, hero, 48));
+  // One name in its three languages, in the order and proportions the site uses:
+  // Dhivehi first and largest, English second, the scientific name small and italic.
+  const hero = s.top + 64;
+  const names: [string, number, string][] = [
+    ['Dhivehi', hero, 'first, and one step larger: Faruma reads small'],
+    ['English', hero + 64, 'second; what search results lead with'],
+    ['Scientific', hero + 102, 'last, italic; it can wait for the viewer'],
+  ];
+  dhivehi.push(await thaana('ރޭރު', X, hero, 76));
   parts.push(
-    text(X, hero + 66, 'Lesser Whistling-Duck', 56, INK, 600, 'letter-spacing="-1"') +
-      text(X, hero + 104, 'Dendrocygna javanica', 22, MUTED, 400, 'font-style="italic"') +
-      text(X + 820, hero - 8, 'Dhivehi, English, scientific:', 15, MUTED) +
-      text(X + 820, hero + 16, 'the same order on tiles and in the viewer.', 15, MUTED),
+    text(X, hero + 64, 'Lesser Whistling-Duck', 44, INK, 600, 'letter-spacing="-0.5"') +
+      text(X, hero + 102, 'Dendrocygna javanica', 20, MUTED, 400, 'font-style="italic"') +
+      names.map(([label, base, note]) =>
+        caps(X + 820, base, label) + text(X + 920, base, note, 14, MUTED)
+      )
+        .join(''),
   );
   const sizes: [string, number, number, string, string][] = [
     ['text-2xl', 24, 700, 'ރޭރު', 'Dhivehi title in the viewer'],
@@ -357,7 +384,7 @@ export async function designGuide(
     ['text-xs', 12, 400, '4 of 8 drawn · Dendrocygna javanica', 'Counts, secondary lines'],
     ['text-micro', 11, 600, 'FROM THE ILLUSTRATOR   #001', 'Labels, badges, key hints'],
   ];
-  let ty = hero + 168;
+  let ty = hero + 176;
   for (const [token, px, weight, sample, use] of sizes) {
     if (token === 'text-2xl') dhivehi.push(await thaana(sample, X, ty, px));
     else parts.push(text(X, ty, sample, px, INK, weight));
@@ -427,9 +454,10 @@ export async function designGuide(
     cols: 15,
     size: 30,
     cell: 82,
-    row: 112,
+    row: 132,
     label: 11,
-    name: 11,
+    name: 12,
+    gap: 26,
   }, INK);
   parts.push(groups.svg);
   y = groups.bottom + 36;
@@ -462,7 +490,7 @@ export async function designGuide(
       rect(p.left - 1, p.top - 1, P + 2, P + 2, 'none', 0, `stroke="${RULE}"`)
     ),
   );
-  y = s.top + 6 + P + 110;
+  y = s.top + 6 + P + 150;
 
   // ── The ending, set like the opening ──
   parts.push(
