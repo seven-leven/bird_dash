@@ -80,14 +80,11 @@
             viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn)
           }}
         </p>
-        <button
+        <DrawnOnlySwitch
           v-if="viewMode === 'group' && stats.drawn < data.items.length"
-          class="nav-item marker-b focus-ring flex items-center gap-1.5 px-3 py-1.5 text-sm max-md:min-h-9"
-          :aria-pressed="drawnOnly"
-          @click="toggleDrawnOnly()"
-        >
-          Drawn only
-        </button>
+          :on="drawnOnly"
+          @toggle="toggleDrawnOnly()"
+        />
       </div>
 
       <!-- Grouped Sections. The section is what the scroll-spy watches; its heading
@@ -164,6 +161,7 @@
 import { computed, ref, watch } from 'vue';
 import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
+import DrawnOnlySwitch from '../ui/DrawnOnlySwitch.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';

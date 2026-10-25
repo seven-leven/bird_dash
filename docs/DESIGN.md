@@ -265,6 +265,11 @@ Use the shared classes rather than restyling each control: `.btn-ghost` for icon
 `.btn-primary` for the one primary action, `.nav-item` for a choice among several, `.count-pill`,
 `.kbd-hint` and `.caps-label`.
 
+A setting that is on or off, such as "Drawn only", is a switch (`DrawnOnlySwitch`): a small track
+and knob beside its words, grey when off and the accent when on, so it reads as something to press
+before anyone tries it. Underneath it is a button with `aria-pressed`. Never set an on/off setting
+as bare text.
+
 "Current" is semantic, not just visual. Set `aria-current` or `aria-pressed`; `.nav-item` styles
 itself from those attributes, so what is seen and what assistive technology announces agree.
 

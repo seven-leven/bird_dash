@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
 import { afterEach, test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { createApp, h } from 'vue';
+import { createApp, h, nextTick, ref } from 'vue';
 import EmptyState from './EmptyState.vue';
 import IdBadge from './IdBadge.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
+import DrawnOnlySwitch from './DrawnOnlySwitch.vue';
 
 let cleanup: (() => void) | undefined;
 afterEach(() => cleanup?.());
@@ -78,4 +79,23 @@ test('CollectionIcon draws the named line icon, or the emoji when the name is no
   );
   assertEquals(host.querySelectorAll('svg').length, 1);
   assertEquals([...host.querySelectorAll('span')].map((s) => s.textContent), ['🦄', '🐚']);
+});
+
+test('DrawnOnlySwitch is a toggle button that says whether it is on, and asks to be toggled', async () => {
+  const toggles: boolean[] = [];
+  const on = ref(false);
+  const host = mount(() =>
+    h(DrawnOnlySwitch, { on: on.value, onToggle: () => toggles.push(on.value = !on.value) })
+  );
+  const button = host.querySelector('button')!;
+  assertEquals(button.textContent?.trim(), 'Drawn only');
+  assertEquals(button.getAttribute('aria-pressed'), 'false');
+  const knob = button.querySelector('span > span')!;
+  assertEquals(knob.className.includes('translate-x-3'), false);
+
+  button.click();
+  await nextTick();
+  assertEquals(toggles, [true]);
+  assertEquals(button.getAttribute('aria-pressed'), 'true');
+  assertEquals(knob.className.includes('translate-x-3'), true); // the knob slides across
 });

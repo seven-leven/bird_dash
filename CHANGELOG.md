@@ -21,7 +21,8 @@ where `w` was the drawing count.
   shares the row, and below 420px folds into a button that opens across it. The sidebar opens with
   the collection's name, its count under it and "Drawn only" beside it (so "3 of 30 drawn" cannot
   read as thirty groups); the view's name labels the list. Below 1024px the count sits above the
-  grid. New `chevronDown` icon
+  grid. "Drawn only" is a switch now (a track and knob, the accent when on), so it reads as
+  something to press. New `chevronDown` icon
 - 2026-10-25 | docs: the guide is legible at its real size: no text under 13px but the type scale's
   own samples, small labels a step darker, larger swatch labels, more room between each principle's
   heading and its description, and more space between icon rows. The type table now says `text-xl`

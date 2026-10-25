@@ -21,14 +21,11 @@
         <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
           {{ activeCollection?.label }}
         </h1>
-        <button
+        <DrawnOnlySwitch
           v-if="!data.loading && viewMode === 'group' && stats.drawn > 0 && stats.drawn < data.items.length"
-          class="nav-item marker-b focus-ring shrink-0 px-2 py-1 text-xs max-md:min-h-9"
-          :aria-pressed="drawnOnly"
-          @click="toggleDrawnOnly()"
-        >
-          Drawn only
-        </button>
+          :on="drawnOnly"
+          @toggle="toggleDrawnOnly()"
+        />
       </div>
       <!-- No count until it is known: "0 of 0 drawn" would read as a real answer. -->
       <p v-if="data.loading" class="h-3 w-24 mt-1.5 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
@@ -100,6 +97,7 @@
 
 <script setup lang="ts">
 import EmptyState from '../ui/EmptyState.vue';
+import DrawnOnlySwitch from '../ui/DrawnOnlySwitch.vue';
 import Icon from '../icons/Icon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
