@@ -16,6 +16,11 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | site: the header is one row at every width. Below 768px (or with more than four
+  collections) the collection tabs become one menu button naming the current collection; search
+  shares the row, and below 420px folds into a button that opens across it. The collection's count
+  and "Drawn only" sit beside the view's name in the sidebar from 1024px, above the grid below it.
+  New `chevronDown` icon
 - 2026-10-25 | docs: the guide is legible at its real size: no text under 13px but the type scale's
   own samples, small labels a step darker, larger swatch labels, more room between each principle's
   heading and its description, and more space between icon rows. The type table now says `text-xl`

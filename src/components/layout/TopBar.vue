@@ -1,14 +1,17 @@
 <!-- components/layout/TopBar.vue -->
 <template>
-  <!-- Below md the search drops to its own full-width row; the rest stays on row one. -->
-  <header class="flex flex-wrap items-center gap-1 sm:gap-2 min-h-12 px-3 sm:px-4 py-2 shrink-0 z-50 transition-colors duration-fast
-                 md:flex-nowrap md:py-0
+  <!-- One row at every width (docs/DESIGN.md §10). What gives way as it narrows: the
+       collection tabs become one menu button below md (or whenever there are more than
+       TABS_FIT collections), and below 420px the search becomes a button that opens it
+       across the row. -->
+  <header class="flex items-center gap-1 sm:gap-2 h-12 px-3 sm:px-4 shrink-0 z-50 transition-colors duration-fast
                  bg-white border-b border-slate-200
                  dark:bg-slate-950 dark:border-slate-800">
 
     <!-- Mobile sidebar toggle -->
     <button
       v-if="isMobile"
+      :class="searchOpen && 'max-[419px]:hidden'"
       @click="toggleSidebar()"
       class="btn-ghost focus-ring lg:hidden p-2.5 rounded-control shrink-0"
       :aria-label="sidebarOpen ? 'Hide sections' : 'Show sections'"
@@ -36,29 +39,54 @@
 
     <div class="divider-v hidden md:block" />
 
-    <!-- Collection tabs -->
-    <nav class="flex items-center gap-0.5 shrink-0" aria-label="Collections">
-      <button
-        v-for="col in collections"
-        :key="col.id"
-        @click="switchCollection(col.id)"
-        class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-2 sm:px-3 py-1.5 max-md:min-h-9 max-md:min-w-9"
-        :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
-        :aria-label="col.label"
-      >
-        <CollectionIcon :collection="col" class="size-4" />
-        <!-- The current collection is named on every screen; the others from sm up -->
-        <span :class="col.id === activeCollection?.id ? 'inline' : 'hidden sm:inline'">{{ col.label }}</span>
-      </button>
+    <!-- Collections: tabs while they fit, otherwise one button naming the current
+         collection that opens the list. Either way the current one is named. -->
+    <nav :class="searchOpen && 'max-[419px]:hidden'" class="flex items-center gap-0.5 shrink-0" aria-label="Collections">
+      <div v-if="tabsFit" class="hidden md:flex items-center gap-0.5">
+        <button
+          v-for="col in collections"
+          :key="col.id"
+          @click="switchCollection(col.id)"
+          class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-3 py-1.5"
+          :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
+        >
+          <CollectionIcon :collection="col" class="size-4" />
+          {{ col.label }}
+        </button>
+      </div>
+      <CollectionMenu :class="tabsFit && 'md:hidden'" />
     </nav>
 
+    <!-- Below 420px the search is a button; opened, it takes the row until closed. -->
+    <button
+      v-if="!searchOpen"
+      class="btn-ghost focus-ring min-[420px]:hidden ml-auto flex items-center justify-center size-9 shrink-0"
+      aria-label="Search all collections"
+      @click="openSearch()"
+    >
+      <Icon name="search" class="size-4" />
+    </button>
+
     <GlobalSearch
-      class="order-last basis-full md:order-0 md:basis-auto md:flex-1 md:ml-auto"
-      :class="dropdownOpen ? 'md:max-w-96' : 'md:max-w-72'"
+      ref="searchRef"
+      class="flex-1 min-w-0 md:ml-auto"
+      :class="[
+        dropdownOpen ? 'md:max-w-96' : 'md:max-w-72',
+        searchOpen ? '' : 'max-[419px]:hidden',
+      ]"
+      @focusout="onSearchFocusOut"
     />
+    <button
+      v-if="searchOpen"
+      class="btn-ghost focus-ring min-[420px]:hidden flex items-center justify-center size-9 shrink-0"
+      aria-label="Close search"
+      @click="searchOpen = false"
+    >
+      <Icon name="close" class="size-4" />
+    </button>
 
     <!-- View switch: both views are always shown; the current one is marked. -->
-    <div class="flex items-center gap-0.5 shrink-0 max-md:ml-auto" role="group" aria-label="View">
+    <div :class="searchOpen && 'max-[419px]:hidden'" class="flex items-center gap-0.5 shrink-0" role="group" aria-label="View">
       <button
         v-for="view in views"
         :key="view.mode"
@@ -73,10 +101,11 @@
       </button>
     </div>
 
-    <div class="divider-v hidden sm:block" />
+    <div :class="searchOpen && 'max-[419px]:hidden'" class="divider-v hidden sm:block" />
 
     <!-- Theme toggle -->
     <button
+      :class="searchOpen && 'max-[419px]:hidden'"
       @click="toggleTheme()"
       class="btn-ghost focus-ring flex items-center justify-center w-9 h-9 md:w-8 md:h-8 shrink-0"
       :aria-label="theme.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
@@ -88,8 +117,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import GlobalSearch from '../search/GlobalSearch.vue';
+import CollectionMenu from './CollectionMenu.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import LogoMark from '../icons/LogoMark.vue';
@@ -102,7 +132,26 @@ import { viewName } from '../../lib/viewName.ts';
 const { list: collections, activeCollection } = useCollectionsStore();
 const { isMobile, sidebarOpen, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
 const { switchCollection } = useActions();
-const { dropdownOpen } = useSearch();
+const { dropdownOpen, query } = useSearch();
+
+// Tabs from md up while there are this many collections or fewer; beyond that, or on
+// a narrower screen, the collections are one menu (docs/DESIGN.md §10).
+const TABS_FIT = 4;
+const tabsFit = computed(() => collections.value.length <= TABS_FIT);
+
+// Below 420px: is the search open across the row?
+const searchOpen = ref(false);
+const searchRef = ref<InstanceType<typeof GlobalSearch> | null>(null);
+async function openSearch(): Promise<void> {
+  searchOpen.value = true;
+  await nextTick();
+  (searchRef.value?.$el as HTMLElement | undefined)?.querySelector('input')?.focus();
+}
+// Leaving an empty search closes it again; one with a query stays, as the filter it is.
+function onSearchFocusOut(e: FocusEvent): void {
+  const wrapper = searchRef.value?.$el as HTMLElement | undefined;
+  if (!query.value && !wrapper?.contains(e.relatedTarget as Node)) searchOpen.value = false;
+}
 
 const views = computed(() => [
   {

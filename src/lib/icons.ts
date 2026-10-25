@@ -53,6 +53,7 @@ export const ICONS = {
   },
   chevronLeft: { body: '<polyline points="15,18 9,12 15,6"/>' },
   chevronRight: { body: '<polyline points="9,18 15,12 9,6"/>' },
+  chevronDown: { body: '<polyline points="6,9 12,15 18,9"/>' },
   close: {
     body: '<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
   },
@@ -177,7 +178,10 @@ export const ICON_GROUPS: { label: string; icons: IconName[] }[] = [
   { label: 'Collections', icons: ['bird', 'shark', 'shell'] },
   { label: 'Views', icons: ['taxonomy', 'calendar'] },
   { label: 'Search', icons: ['search', 'noResults'] },
-  { label: 'Navigation', icons: ['menu', 'chevronLeft', 'chevronRight', 'close', 'externalLink'] },
+  {
+    label: 'Navigation',
+    icons: ['menu', 'chevronLeft', 'chevronRight', 'chevronDown', 'close', 'externalLink'],
+  },
   { label: 'Viewer', icons: ['zoomIn', 'zoomOut', 'reset'] },
   { label: 'Theme', icons: ['sun', 'moon'] },
   { label: 'Labels', icons: ['tag', 'image', 'commit', 'layers', 'pencil', 'languages', 'book'] },

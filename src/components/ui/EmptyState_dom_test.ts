@@ -5,6 +5,7 @@ import { createApp, h } from 'vue';
 import EmptyState from './EmptyState.vue';
 import IdBadge from './IdBadge.vue';
 import Icon from '../icons/Icon.vue';
+import CollectionIcon from '../icons/CollectionIcon.vue';
 
 let cleanup: (() => void) | undefined;
 afterEach(() => cleanup?.());
@@ -65,4 +66,16 @@ test('IdBadge prints the id, or its slot, on a surface or over a drawing', () =>
   assertEquals(overlay.className.includes('bg-black/50'), true);
   assertEquals(slotted.textContent, 'custom');
   assertEquals(slotted.className, surface.className); // one style for every surface
+});
+
+test('CollectionIcon draws the named line icon, or the emoji when the name is not an icon', () => {
+  const host = mount(() =>
+    h('div', [
+      h(CollectionIcon, { collection: { icon: 'shark', emoji: '🦈' } }),
+      h(CollectionIcon, { collection: { icon: 'unicorn', emoji: '🦄' } }),
+      h(CollectionIcon, { collection: { emoji: '🐚' } }),
+    ])
+  );
+  assertEquals(host.querySelectorAll('svg').length, 1);
+  assertEquals([...host.querySelectorAll('span')].map((s) => s.textContent), ['🦄', '🐚']);
 });

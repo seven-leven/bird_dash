@@ -13,11 +13,29 @@
   >
     <!-- Header -->
     <div class="sticky top-0 z-10 px-5 pt-5 pb-4 border-b border-slate-100 dark:border-slate-800/60">
-      <!-- Named as the header's tab names it. The collection's count is above the grid,
-           so it is not repeated here. -->
-      <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
-        {{ viewName(viewMode, activeCollection?.groupLabel ?? 'Group') }}
-      </h1>
+      <!-- The view's name (as the header's tab says it), with the collection's count and
+           the "Drawn only" switch beside it: what you are looking at, and how much of it
+           is done. Below lg the sidebar is a drawer, so the grid repeats them there. -->
+      <div class="flex items-center justify-between gap-2">
+        <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
+          {{ viewName(viewMode, activeCollection?.groupLabel ?? 'Group') }}
+        </h1>
+        <button
+          v-if="!data.loading && viewMode === 'group' && stats.drawn > 0 && stats.drawn < data.items.length"
+          class="nav-item marker-b focus-ring shrink-0 px-2 py-1 text-xs max-md:min-h-9"
+          :aria-pressed="drawnOnly"
+          @click="toggleDrawnOnly()"
+        >
+          Drawn only
+        </button>
+      </div>
+      <!-- No count until it is known: "0 of 0 drawn" would read as a real answer. -->
+      <p v-if="data.loading" class="h-3 w-24 mt-1.5 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
+      <p v-else-if="stats.drawn > 0" class="with-icon mt-1 text-xs text-muted tabular-nums">
+        <Icon name="pencil" aria-hidden="true" />{{
+          viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn)
+        }}
+      </p>
     </div>
 
     <!-- List -->
@@ -82,12 +100,21 @@ import Icon from '../icons/Icon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useSearch } from '../../stores/search.ts';
-import { drawnOf, ratio } from '../../lib/formatCount.ts';
+import { drawings, drawnOf, ratio } from '../../lib/formatCount.ts';
 import { viewName } from '../../lib/viewName.ts';
 
-const { activeCollection, data, activeData, globalStats } = useCollectionsStore();
+const { activeCollection, data, activeData, stats, globalStats } = useCollectionsStore();
 // Off-screen on small screens until opened: `inert` keeps it out of the tab order.
-const { sidebarOpen, isMobile, viewMode, activeSection, goToSection, closeSidebar } = useUi();
+const {
+  sidebarOpen,
+  isMobile,
+  viewMode,
+  activeSection,
+  drawnOnly,
+  goToSection,
+  closeSidebar,
+  toggleDrawnOnly,
+} = useUi();
 const { query } = useSearch();
 
 </script>
