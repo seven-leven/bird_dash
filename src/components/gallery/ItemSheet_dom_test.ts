@@ -126,3 +126,13 @@ test('the links are plain links that say they open a new tab', () => {
   assertStringIncludes(link.textContent!, 'opens in a new tab');
   assert(!link.className.includes('border'), 'links, not bordered buttons');
 });
+
+test('links within the site are in the accent; links that leave it are not', () => {
+  const { host } = mount({ ...goose, illustratorNote: 'See #1.\n\n' + 'Long. '.repeat(80) });
+  const group = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Ducks'))!;
+  const noteLink = host.querySelector('#illustrator-note a')!;
+  const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
+  for (const el of [group, noteLink, more]) assertStringIncludes(el.className, 'text-accent-700');
+  const external = host.querySelector('a[target="_blank"]')!;
+  assert(!external.className.includes('accent'), 'an external link stays neutral');
+});
