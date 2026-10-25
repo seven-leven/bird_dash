@@ -18,9 +18,12 @@ where `w` was the drawing count.
 
 - 2026-10-25 | site: the header is one row at every width. Below 768px (or with more than four
   collections) the collection tabs become one menu button naming the current collection; search
-  shares the row, and below 420px folds into a button that opens across it. The collection's count
-  and "Drawn only" sit beside the view's name in the sidebar from 1024px, above the grid below it.
-  New `chevronDown` icon
+  shares the row, and below 420px folds into a button that opens across it. The sidebar opens with
+  the collection's name, its count under it and "Drawn only" beside it (so "3 of 30 drawn" cannot
+  read as thirty groups); the view's name labels the list. Below 1024px the count sits above the
+  grid. The sidebar opens in three levels: the collection's emblem (its icon at 40px in the accent,
+  the largest on the page), its name, then its count as the filter, "All 204 · Drawn 15", drawn like
+  the view tabs. New `chevronDown` icon
 - 2026-10-25 | docs: the guide is legible at its real size: no text under 13px but the type scale's
   own samples, small labels a step darker, larger swatch labels, more room between each principle's
   heading and its description, and more space between icon rows. The type table now says `text-xl`

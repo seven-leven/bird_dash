@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
 import { afterEach, test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { createApp, h } from 'vue';
+import { createApp, h, nextTick, ref } from 'vue';
 import EmptyState from './EmptyState.vue';
 import IdBadge from './IdBadge.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
+import DrawnFilter from './DrawnFilter.vue';
 
 let cleanup: (() => void) | undefined;
 afterEach(() => cleanup?.());
@@ -78,4 +79,28 @@ test('CollectionIcon draws the named line icon, or the emoji when the name is no
   );
   assertEquals(host.querySelectorAll('svg').length, 1);
   assertEquals([...host.querySelectorAll('span')].map((s) => s.textContent), ['🦄', '🐚']);
+});
+
+test('DrawnFilter is the count and the filter: All and Drawn, the current one pressed', async () => {
+  const chosen: boolean[] = [];
+  const drawnOnly = ref(false);
+  const host = mount(() =>
+    h(DrawnFilter, {
+      drawn: 15,
+      total: 204,
+      drawnOnly: drawnOnly.value,
+      onChoose: (only: boolean) => chosen.push(drawnOnly.value = only),
+    })
+  );
+  const [all, drawn] = [...host.querySelectorAll('button')];
+  assertEquals(
+    [all, drawn].map((b) => b.textContent?.replace(/\s+/g, ' ').trim()),
+    ['All 204', 'Drawn 15'],
+  );
+  assertEquals([all, drawn].map((b) => b.getAttribute('aria-pressed')), ['true', 'false']);
+
+  drawn.click();
+  await nextTick();
+  assertEquals(chosen, [true]);
+  assertEquals([all, drawn].map((b) => b.getAttribute('aria-pressed')), ['false', 'true']);
 });
