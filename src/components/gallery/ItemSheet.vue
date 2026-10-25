@@ -2,20 +2,32 @@
   <div class="bg-white/95 border-slate-200 dark:bg-slate-900/95 dark:border-slate-800
               backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
-    <!-- Header: ID badge + group + names -->
-    <div>
-      <div class="flex items-center gap-2 mb-3">
-        <IdBadge :id="item.itemId" />
-        <span class="viewer-label text-xs">{{ item.group }}</span>
-      </div>
+    <!-- Where it sits: its id, its group (a link back to it in the grid), and when it
+         was drawn, in the month view's words. -->
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs viewer-label">
+      <IdBadge :id="item.itemId" />
+      <button
+        class="focus-ring rounded-control hover:underline underline-offset-2 hover:text-slate-900 dark:hover:text-white"
+        :title="`Show ${item.group} in the grid`"
+        @click="emit('go-to-group', item.group)"
+      >
+        {{ item.group }}
+      </button>
+      <template v-if="drawnMonth">
+        <span aria-hidden="true">·</span>
+        <span>Drawn {{ drawnMonth }}</span>
+      </template>
+    </div>
 
-      <!-- Same order as the tile: Dhivehi name first when there is one, then
-           English, then scientific. -->
+    <!-- The names, as one block in the tile's order: Dhivehi first and largest (with how
+         to say it), then English, then scientific (docs/DESIGN.md §02). -->
+    <div>
       <template v-if="item.meta?.dhiv_script">
-        <h2 class="font-dhivehi text-2xl font-bold viewer-title" dir="rtl">
+        <h2 class="font-dhivehi text-3xl font-bold viewer-title text-left" dir="rtl">
           {{ item.meta.dhiv_script }}
         </h2>
-        <p class="text-base font-semibold viewer-body leading-tight mt-1">
+        <p v-if="item.meta.dhiv" class="text-xs viewer-label -mt-1 mb-2">{{ item.meta.dhiv }}</p>
+        <p class="text-base font-semibold viewer-title leading-tight">
           {{ item.commonName }}
         </p>
       </template>
@@ -27,16 +39,8 @@
       </p>
     </div>
 
-    <!-- Meta fields -->
-    <div v-if="item.meta?.dhiv || Object.keys(otherMeta).length" class="space-y-4">
-      <div v-if="item.meta?.dhiv">
-        <p class="caps-label with-icon viewer-label mb-1">
-          <Icon name="languages" aria-hidden="true" />Dhivehi name (romanised)
-        </p>
-        <p class="text-sm viewer-body">{{ item.meta.dhiv }}</p>
-      </div>
-
-      <!-- Other meta -->
+    <!-- Any other facts the list carries -->
+    <div v-if="Object.keys(otherMeta).length" class="space-y-4">
       <div v-for="(value, key) in otherMeta" :key="key">
         <p class="caps-label viewer-label mb-1">
           {{ formatMetaKey(key) }}
@@ -45,44 +49,59 @@
       </div>
     </div>
 
-    <!-- Illustrator note -->
-    <div v-if="item.illustratorNote">
+    <!-- Illustrator note: the illustrator's own words, marked by the rule beside them. A
+         long one opens folded to its first lines; the panel itself scrolls. -->
+    <div v-if="paragraphs.length">
       <p class="caps-label with-icon viewer-label mb-2">
         <Icon name="pencil" aria-hidden="true" />From the illustrator
       </p>
       <blockquote class="pl-3 border-l border-slate-200 dark:border-slate-700">
-        <p class="viewer-body text-sm leading-relaxed italic">
-          <template v-for="(part, i) in noteParts" :key="i">
-            <a
-              v-if="part.href"
-              :href="part.href"
-              class="focus-ring rounded-control not-italic font-medium viewer-title underline underline-offset-2 hover:opacity-80"
-            >{{ part.text }}</a>
-            <template v-else>{{ part.text }}</template>
-          </template>
-        </p>
+        <div
+          id="illustrator-note"
+          class="space-y-2"
+          :class="folded && 'max-h-36 overflow-hidden [mask-image:linear-gradient(to_bottom,black_60%,transparent)]'"
+        >
+          <p v-for="(parts, n) in paragraphs" :key="n" class="viewer-body text-sm leading-relaxed">
+            <template v-for="(part, i) in parts" :key="i">
+              <a
+                v-if="part.href"
+                :href="part.href"
+                class="focus-ring rounded-control font-medium viewer-title underline underline-offset-2 hover:opacity-80"
+              >{{ part.text }}</a>
+              <template v-else>{{ part.text }}</template>
+            </template>
+          </p>
+        </div>
+        <button
+          v-if="isLong"
+          class="focus-ring rounded-control mt-2 text-xs font-medium viewer-title hover:underline underline-offset-2"
+          aria-controls="illustrator-note"
+          :aria-expanded="!folded"
+          @click="expanded = !expanded"
+        >
+          {{ folded ? 'Read more' : 'Show less' }}
+        </button>
       </blockquote>
     </div>
 
-    <!-- External links -->
+    <!-- External links: plain links in a row, the least important thing in the panel -->
     <div v-if="links.length">
-      <p class="caps-label with-icon viewer-label mb-2.5">
+      <p class="caps-label with-icon viewer-label mb-2">
         <Icon name="book" aria-hidden="true" />Learn more
       </p>
-      <div class="flex flex-wrap gap-2">
+      <div class="flex flex-wrap gap-x-4 gap-y-1">
         <a
           v-for="link in links"
           :key="link.label"
           :href="link.url(item)"
           target="_blank"
           rel="noopener noreferrer"
-          class="focus-ring inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-control
-                 border text-xs font-medium transition-colors duration-fast viewer-body
-                 border-slate-200 hover:text-slate-900 hover:border-slate-300 hover:bg-slate-50
-                 dark:border-slate-800 dark:hover:text-white dark:hover:border-slate-700 dark:hover:bg-slate-800"
+          class="focus-ring rounded-control inline-flex items-center gap-1 text-sm font-medium viewer-body
+                 hover:underline underline-offset-2 transition-colors duration-fast"
         >
           {{ link.label }}
           <Icon name="externalLink" class="size-3 opacity-60" />
+          <span class="sr-only">(opens in a new tab)</span>
         </a>
       </div>
     </div>
@@ -90,10 +109,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import Icon from '../icons/Icon.vue';
 import { noteSegments } from '../../lib/noteLinks.ts';
+import { monthKey } from '../../composables/collection/useCollectionData.ts';
 import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 
 const props = defineProps<{
@@ -101,15 +121,43 @@ const props = defineProps<{
   collection: CollectionConfig;
 }>();
 
-// "#11" in a note links to that drawing (docs/DESIGN.md §3).
-const noteParts = computed(() =>
-  noteSegments(props.item.illustratorNote ?? '', props.collection.id, props.item.itemId.length)
+const emit = defineEmits<{
+  /** Show this group in the grid (the viewer closes to do it). */
+  'go-to-group': [group: string];
+}>();
+
+// "October 2024", as the month view heads it; nothing for an undated drawing.
+const drawnMonth = computed(() =>
+  props.item.drawnTime ? monthKey(new Date(props.item.drawnTime)) : ''
 );
 
-// Links come straight from the collection config
-const links = computed(() => props.collection.links || []);
+const note = computed(() => props.item.illustratorNote ?? '');
 
-// All meta keys except the ones we render specially
+// The note in paragraphs (split at blank lines); "#11" in it links to that drawing
+// (docs/DESIGN.md §03).
+const paragraphs = computed(() =>
+  note.value
+    .split(/\n\s*\n/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => noteSegments(p, props.collection.id, props.item.itemId.length))
+);
+
+// A note longer than this (or of more than two paragraphs) opens folded to its first
+// lines, with "Read more"; a short one is shown whole.
+const LONG_NOTE = 320;
+const isLong = computed(() =>
+  note.value.length > LONG_NOTE || paragraphs.value.length > 2
+);
+const expanded = ref(false);
+const folded = computed(() => isLong.value && !expanded.value);
+// Each drawing's note starts folded.
+watch(() => props.item.id, () => (expanded.value = false));
+
+// Links come straight from the collection config
+const links = computed(() => props.collection.links);
+
+// All meta keys except the names, which the name block shows
 const SPECIAL_META_KEYS = new Set(['dhiv', 'dhiv_script']);
 
 const otherMeta = computed(() => {

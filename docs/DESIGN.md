@@ -145,7 +145,7 @@ to Dhivehi. The type scale has six sizes; do not add another or write pixel size
 
 | Token        | Size | Purpose                                                    |
 | ------------ | ---- | ---------------------------------------------------------- |
-| `text-2xl`   | 24px | Dhivehi title in the viewer                                |
+| `text-3xl`   | 30px | Dhivehi title in the viewer                                |
 | `text-xl`    | 20px | English title in the viewer, when no Dhivehi name heads it |
 | `text-base`  | 16px | Section headings, sidebar title, Dhivehi names             |
 | `text-sm`    | 14px | Controls, body text, English names on tiles                |
@@ -160,6 +160,12 @@ Name order is the same everywhere: **Dhivehi, English, scientific** on tiles and
 Search results lead with English, because that is what visitors type. When a Dhivehi name exists it
 is always shown, one step larger than the English beside it, because Faruma reads small at the same
 nominal size. Scientific names can wait for the viewer.
+
+In the viewer the names are one block, aligned to one edge: the Dhivehi name largest (`text-3xl`),
+how to say it directly under it in small muted text ("Reyru"), then the English and the scientific
+name. The romanisation is part of the name, never a separate field. Above the block, one line says
+where the drawing sits and when: its id, its group (a link that shows that group in the grid) and
+the month it was drawn, in the month view's words.
 
 Nothing essential hides behind hover. Tiles show Dhivehi and English names on every device. Long
 names truncate with `truncate` rather than wrapping and shifting the layout.
@@ -207,6 +213,12 @@ dark mode", not "Moon".
 
 A reference to another drawing is a real link. "See note for #11 (Greater Flamingo)" links to
 `#birds/011` and opens that drawing like any other deep link.
+
+The illustrator's note is their own words, so it is set as they wrote it: in regular text (not
+italic, which is hard to read at length), split into paragraphs at blank lines, marked by a rule at
+its side. A long note (over about 320 characters, or more than two paragraphs) opens folded to its
+first lines with "Read more"; each drawing's note starts folded; the panel scrolls if it is still
+taller than the screen.
 
 ---
 
