@@ -16,6 +16,9 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-25 | fix: birds with two Dhivehi names (12 of them, such as the Watercock, "ވަލު ކުކުޅު / ކުލީ
+  ކުކުޅު") no longer shatter the viewer's title. Each name gets its own line with its own romanisation,
+  the second smaller and marked "also"; a gloss that does not fit wraps under its name
 - 2026-10-25 | site: the viewer card has one language per line. "Reyru" now sits after the Thaana on
   the Dhivehi line, so it can no longer read as part of the English title below it; the section
   labels drop their icons, and the `book` icon, used only there, leaves the set
