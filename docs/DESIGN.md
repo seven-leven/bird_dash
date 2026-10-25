@@ -188,13 +188,15 @@ The forms differ on purpose: "of 8" only makes sense when there is a total still
 search is counted in "matches" wherever it is shown; never "results". Never show a count until it is
 known.
 
-Each count is shown once on a screen. A collection's progress and its "Drawn only" switch sit beside
-the view's name, at the top of the sidebar: what you are looking at, and how much of it is done.
-Below 1024px the sidebar is a drawer, so they sit above the grid instead. The sidebar's footer holds
-the total across every collection.
+Each count is shown once on a screen, and sits under the name of what it counts. The sidebar opens
+with the collection's name, its progress under it (`3 of 30 drawn` under "Shells" can only mean
+shells), and the "Drawn only" switch beside it; the view's name then labels the list below. Never
+put a collection's count under a view's name: under "Groups", "30" reads as thirty groups. Below
+1024px the sidebar is a drawer, so the progress and the switch sit above the grid instead. The
+sidebar's footer holds the total across every collection.
 
-A view has one name, in the header's tab and the sidebar's title alike: the collection's groups in
-the plural ("Families", "Orders"), or "Months". `src/lib/viewName.ts` makes it.
+A view has one name, in the header's tab and over the sidebar's list alike: the collection's groups
+in the plural ("Families", "Orders"), or "Months". `src/lib/viewName.ts` makes it.
 
 Use **sentence case** for buttons, labels and headings: "Clear search", not "Clear Search".
 `.caps-label` handles the small uppercase treatment; its markup is still written in sentence case.
@@ -414,13 +416,13 @@ everyone, on every screen_
 
 Design for the phone first, then let the layout widen. Nothing scrolls sideways; check at **375px**.
 
-| Screen               | Behaviour                                                               |
-| -------------------- | ----------------------------------------------------------------------- |
-| Below 420px          | Search is a button; opened, it takes the header row until closed        |
-| Phone, below 640px   | Two-column grid                                                         |
-| Below 768px          | Collections are one menu button; search shares the row                  |
-| Tablet, from 768px   | Collection tabs (up to four), logo and wordmark                         |
-| Desktop, from 1024px | Sidebar stays visible, with the count and "Drawn only" beside its title |
+| Screen               | Behaviour                                                                |
+| -------------------- | ------------------------------------------------------------------------ |
+| Below 420px          | Search is a button; opened, it takes the header row until closed         |
+| Phone, below 640px   | Two-column grid                                                          |
+| Below 768px          | Collections are one menu button; search shares the row                   |
+| Tablet, from 768px   | Collection tabs (up to four), logo and wordmark                          |
+| Desktop, from 1024px | Sidebar stays visible: the collection, its count and "Drawn only" on top |
 
 Each region has one job: the header switches collection, view and theme; the sidebar jumps between
 sections; the grid presents drawings; the viewer shows one drawing and its details.
@@ -476,8 +478,8 @@ state and never contradict each other.
 
 `0 of 0 drawn` is not a loading state: it claims to know what is not yet known. `noResults` belongs
 to search, not to empty collections. A mostly unfinished collection says how much is done — `15 of
-204 drawn` — and offers a "Drawn only" switch, beside the view's name (above the grid below 1024px).
-A collection with no drawings says "Nothing drawn yet" rather than showing a wall of icons.
+204 drawn` — under its name, with a "Drawn only" switch (above the grid below 1024px). A collection
+with no drawings says "Nothing drawn yet" rather than showing a wall of icons.
 
 ---
 

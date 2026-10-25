@@ -13,12 +13,13 @@
   >
     <!-- Header -->
     <div class="sticky top-0 z-10 px-5 pt-5 pb-4 border-b border-slate-100 dark:border-slate-800/60">
-      <!-- The view's name (as the header's tab says it), with the collection's count and
-           the "Drawn only" switch beside it: what you are looking at, and how much of it
-           is done. Below lg the sidebar is a drawer, so the grid repeats them there. -->
+      <!-- The collection, how much of it is drawn, and the switch to hide the rest. The
+           count sits under the collection's name so it can only be counting its items
+           (not the groups listed below). Below lg the sidebar is a drawer, so the grid
+           repeats them there. -->
       <div class="flex items-center justify-between gap-2">
         <h1 class="text-base font-semibold tracking-tight text-slate-800 dark:text-slate-100">
-          {{ viewName(viewMode, activeCollection?.groupLabel ?? 'Group') }}
+          {{ activeCollection?.label }}
         </h1>
         <button
           v-if="!data.loading && viewMode === 'group' && stats.drawn > 0 && stats.drawn < data.items.length"
@@ -38,8 +39,11 @@
       </p>
     </div>
 
-    <!-- List -->
+    <!-- List, labelled with the view's name as the header's tab says it -->
     <div class="flex-1 overflow-y-auto px-3 py-3 custom-scrollbar">
+      <h2 id="sidebar-list-label" class="caps-label text-muted px-3 pt-1 pb-2">
+        {{ viewName(viewMode, activeCollection?.groupLabel ?? 'Group') }}
+      </h2>
       <!-- Loading: rows shaped like the real ones, as the grid does -->
       <ul v-if="data.loading" class="space-y-0.5" aria-busy="true">
         <li v-for="n in 8" :key="n" class="flex items-center justify-between px-3 py-2.5">
@@ -47,7 +51,7 @@
           <span class="h-3 w-8 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
         </li>
       </ul>
-      <ul v-else-if="activeData.sidebarItems.length" class="space-y-0.5">
+      <ul v-else-if="activeData.sidebarItems.length" class="space-y-0.5" aria-labelledby="sidebar-list-label">
         <li v-for="item in activeData.sidebarItems" :key="item.id">
           <button
             class="nav-item marker-l focus-ring w-full px-3 py-2 text-left flex items-center justify-between
