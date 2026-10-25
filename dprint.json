@@ -19,7 +19,7 @@
   "malva": { "quotes": "preferSingle" },
   "markup": {},
   "yaml": { "quotes": "preferSingle" },
-  // Generated SVG files (the logo, the favicon): the generator, not the formatter, owns their layout
+  // Generated files (the logo, the favicon, stats.json): the generator, not the formatter, owns their layout
   "excludes": [
     "dist",
     "node_modules",
@@ -29,6 +29,7 @@
     "test-results",
     "docs/assets/logo",
     "public/favicon.svg",
+    "public/stats.json",
     "package.json",
     "package-lock.json",
     "**/*.vue"

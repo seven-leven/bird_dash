@@ -1,0 +1,90 @@
+{
+  "drawn": 18,
+  "total": 276,
+  "collections": [
+    {
+      "id": "birds",
+      "label": "Birds",
+      "total": 204,
+      "drawn": 15,
+      "groups": 56,
+      "firstDrawn": "2024-10-10",
+      "lastDrawn": "2026-02-06"
+    },
+    {
+      "id": "sharks",
+      "label": "Sharks",
+      "total": 42,
+      "drawn": 0,
+      "groups": 6,
+      "firstDrawn": null,
+      "lastDrawn": null
+    },
+    {
+      "id": "shells",
+      "label": "Shells",
+      "total": 30,
+      "drawn": 3,
+      "groups": 4,
+      "firstDrawn": "2025-07-06",
+      "lastDrawn": "2026-03-09"
+    }
+  ],
+  "newest": [
+    {
+      "collection": "shells",
+      "id": "029",
+      "name": "Sand Dollar",
+      "drawn": "2026-03-09"
+    },
+    {
+      "collection": "birds",
+      "id": "031",
+      "name": "Eurasian Moorhen",
+      "dhivehi": "ކުލީ ކުކުޅު / އޮޅުވަލު ކަނބިލި",
+      "drawn": "2026-02-06"
+    },
+    {
+      "collection": "birds",
+      "id": "032",
+      "name": "Eurasian Coot",
+      "dhivehi": "ސަލްވާ ދޫނި",
+      "drawn": "2026-01-15"
+    },
+    {
+      "collection": "birds",
+      "id": "004",
+      "name": "Northern Shoveler",
+      "dhivehi": "ރޭރު",
+      "drawn": "2025-12-19"
+    },
+    {
+      "collection": "birds",
+      "id": "029",
+      "name": "White-breasted Waterhen",
+      "dhivehi": "ކަނބިލި",
+      "drawn": "2025-11-09"
+    },
+    {
+      "collection": "birds",
+      "id": "177",
+      "name": "House Crow",
+      "dhivehi": "ކާލު",
+      "drawn": "2025-10-24"
+    },
+    {
+      "collection": "birds",
+      "id": "030",
+      "name": "Watercock",
+      "dhivehi": "ވަލު ކުކުޅު / ކުލީ ކުކުޅު",
+      "drawn": "2025-10-15"
+    },
+    {
+      "collection": "birds",
+      "id": "011",
+      "name": "Greater Flamingo",
+      "dhivehi": "ގުޑުގުޑާ ދޫނި",
+      "drawn": "2025-10-07"
+    }
+  ]
+}
