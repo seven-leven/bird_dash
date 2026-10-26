@@ -4,6 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, assertEquals, assertMatch } from '@std/assert';
 import { fileIo, run, unloggedCommits } from './changelog.ts';
+import { lineName, loadLineNames } from '../version/line_names.ts';
 
 // Runs against the real repository's history.
 test('unloggedCommits returns dated, non-merge commits (possibly none)', async () => {
@@ -41,4 +42,23 @@ test('a dry run against the real repository never touches CHANGELOG.md', async (
   const outcome = await run(['--dry-run'], { ...fileIo(), log: () => {} });
   assert(outcome === 'dry-run' || outcome === 'up-to-date');
   assertEquals(await readFile('./CHANGELOG.md', 'utf8'), before);
+});
+
+test("every line's heading carries its name, the Dhivehi name the drawings give it", async () => {
+  const changelog = await readFile('./CHANGELOG.md', 'utf8');
+  const names = await loadLineNames();
+  const headings = [...changelog.matchAll(/^## v(\d+)\.(\d+)\.0 (.+?) \(/gm)];
+  assert(headings.length > 0, 'CHANGELOG.md has line headings');
+  assertEquals(
+    headings.length,
+    [...changelog.matchAll(/^## v/gm)].length,
+    'every heading is named',
+  );
+  for (const [heading, major, minor, name] of headings) {
+    assertEquals(
+      name,
+      lineName(names, Number(major), Number(minor))?.roman,
+      `${heading.trim()}: the lists name this line differently (script/version/line_names.ts)`,
+    );
+  }
 });

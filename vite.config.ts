@@ -16,6 +16,7 @@ export default defineConfig({
   define: {
     // Shown in the page footer (see GalleryContent.vue).
     __APP_VERSION__: JSON.stringify(formatVersion(version)),
+    __APP_NAME__: JSON.stringify(version.name),
     __APP_DRAWN__: JSON.stringify(version.drawn),
     __APP_COMMIT__: JSON.stringify(version.commit),
     // We use only the Composition API — drop the Options-API compat layer and
