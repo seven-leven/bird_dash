@@ -35,7 +35,7 @@ export interface RawCollectionConfig {
   groupLabel: string;
   itemLabel: string;
   /** `url` may contain `{{common}}` and `{{sci}}` placeholders. */
-  links: { label: string; color: string; url: string }[];
+  links: { label: string; url: string }[];
 }
 
 // `public/stats.json`: the archive's numbers, written by the asset build

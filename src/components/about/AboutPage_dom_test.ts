@@ -14,7 +14,7 @@ import type {
 
 const FOLIO = 'https://seven-leven.github.io/folio/code-wildlife.html';
 
-const link = (label: string) => ({ label, color: '', url: () => '' });
+const link = (label: string) => ({ label, url: () => '' });
 const birds = makeCollection('birds', {
   label: 'Birds',
   icon: 'bird',

@@ -229,7 +229,7 @@ test('link templates from collections.json become functions of the item', async 
     '/collections.json': () =>
       json([{
         ...col('a'),
-        links: [{ label: 'Wiki', color: 'bg-x', url: 'https://w.test/?q={{common}}' }],
+        links: [{ label: 'Wiki', url: 'https://w.test/?q={{common}}' }],
       }]),
     '/lists/a.json': () => json(list('a')),
   });
