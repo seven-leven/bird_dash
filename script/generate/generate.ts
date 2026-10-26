@@ -19,7 +19,7 @@ import { writePlaceholders } from './placeholders.ts';
 import { contrastReport, writeDesignGuide } from './designGuide.ts';
 import { writeIconSheet } from './iconSheet.ts';
 import { writeFavicons, writeLogoFiles } from './logo.ts';
-import { writeDrawingStrip } from './drawingsStrip.ts';
+import { writeDrawingsStrip } from './drawingsStrip.ts';
 
 /** One generator: what it makes, and how to write it, into its place or into `into`. */
 export interface Generator {
@@ -79,7 +79,7 @@ export const GENERATORS: Generator[] = [
     makes: 'docs/assets/drawings.webp, the README’s newest drawings',
     write: async (io, into) => {
       const path = `${into ?? PATHS.docsAssets}/drawings.webp`;
-      return (await writeDrawingStrip(path, io)) ? [path] : [];
+      return (await writeDrawingsStrip(path, io)) ? [path] : [];
     },
   },
 ];

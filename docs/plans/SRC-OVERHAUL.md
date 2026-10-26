@@ -3,8 +3,8 @@
 > **Status:** planned 2026-10-26, nothing started. Rebuilds the layout and naming of `src/` (the
 > site's code: components, composables, lib, stores, styles, types) from the ground up, one pull
 > request per phase, with the site looking and behaving the same throughout. `src/testing/` is out
-> of scope except where its imports have to follow a move. The scripts have their own plan,
-> [SCRIPTS-OVERHAUL.md](SCRIPTS-OVERHAUL.md). Delete this page when phase 8 is done.
+> of scope except where its imports have to follow a move. The scripts went through the same (done
+> 2026-10-26: [SCRIPTS.md](../SCRIPTS.md) and the CHANGELOG). Delete this page when phase 8 is done.
 
 ## Why
 

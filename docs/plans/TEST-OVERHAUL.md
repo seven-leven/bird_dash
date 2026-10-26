@@ -3,9 +3,9 @@
 > **Status:** planned 2026-10-26, nothing started. The tests were written bottom up, one file at a
 > time, as each piece of code was; this plans them top down, from what the site promises to the
 > smallest rule, and rebuilds the kit they share. One pull request per phase, 100% coverage
-> throughout. Phases 1 to 3 come **before** the [site code](SRC-OVERHAUL.md) and
-> [scripts](SCRIPTS-OVERHAUL.md) overhauls: journey tests are what make moving every file safe.
-> Delete this page when phase 8 is done.
+> throughout. Phases 1 to 3 come **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests
+> are what make moving every file safe. (The scripts overhaul went first, as the scripts already had
+> direct tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
 
@@ -239,7 +239,7 @@ browser/       the browser tier: Playwright config and its few checks (phase 7)
 ```
 
 `withDom.ts`, `mountComposable.ts` and `mountComponent.ts` fold into the above. The scripts'
-`fakeIo` comes with the [scripts overhaul](SCRIPTS-OVERHAUL.md), phase 1.
+`fakeIo` is already in `script/lib/`; the runner's own `RunnerDeps` moves onto `Io` in phase 1.
 
 ## Phases
 

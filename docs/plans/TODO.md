@@ -36,9 +36,9 @@ page cheap.
       keeps the image's load state, under the same API, so `LightBox.vue` did not change.
 - [ ] Afterwards: `Chrome`, `TopBar` and `GalleryContent` inject four stores each. Most of that goes
       with 2 and 4; look again then.
-- [ ] **6. The scripts, the same way** (planned 2026-10-26). `script/` onto the principles and
-      naming in [SCRIPTS.md](../SCRIPTS.md), in eight phases: see
-      [SCRIPTS-OVERHAUL.md](SCRIPTS-OVERHAUL.md).
+- [x] **6. The scripts, the same way** (done 2026-10-26). `script/` follows the principles and
+      naming in [SCRIPTS.md](../SCRIPTS.md): `ingest`, `build`, `generate` and `check`, each one
+      job, on one `Io`. Left for the test overhaul: the runner's own `RunnerDeps`.
 - [ ] **7. The site's code, the same way** (planned 2026-10-26). `src/` by feature (`viewer/`,
       `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/` layers, one word
       per idea, in nine phases: see [SRC-OVERHAUL.md](SRC-OVERHAUL.md).

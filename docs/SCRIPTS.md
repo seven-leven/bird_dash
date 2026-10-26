@@ -6,10 +6,10 @@ site's own code (`src/`) follows [ARCHITECTURE.md](ARCHITECTURE.md); this page i
 the tooling. The words (ingest, build, generate, check, …) mean what [GLOSSARY.md](GLOSSARY.md)
 says.
 
-> **Status.** These are the rules new and changed scripts follow. The existing scripts are being
-> moved onto them one step at a time; the steps, and which are done, are in
-> [plans/SCRIPTS-OVERHAUL.md](plans/SCRIPTS-OVERHAUL.md). Until a step is done, the code it covers
-> may still use the old names.
+Every script follows these rules today, and a contract test
+([`script/lib/scriptNaming_contract_test.ts`](../script/lib/scriptNaming_contract_test.ts)) checks
+the ones a machine can. One exception is written down: the test runner keeps its own `RunnerDeps`
+until the [test overhaul](plans/TEST-OVERHAUL.md) moves it onto `Io`.
 
 ## Principles
 
@@ -108,7 +108,8 @@ file and says what to run to fix it: `✗ public/stats.json is stale: run npm ru
 - **A folder is the command it serves**, in one word: `ingest/`, `build/`, `generate/`, `check/`.
   Shared code is in `lib/`.
 - **A file is named after its main export**, in camelCase, as in `src/`: `planChanges.ts` exports
-  `planChanges`. A command's entry file is named after the command: `ingest/ingest.ts`.
+  `planChanges`. A file of several related functions is named for their subject: `palette.ts`,
+  `logo.ts`, `cli.ts`. A command's entry file is named after the command: `ingest/ingest.ts`.
 - **Tests sit beside their file** with the tier suffix: `planChanges_test.ts`,
   `planChanges_prop_test.ts` ([TESTING.md](TESTING.md)).
 
