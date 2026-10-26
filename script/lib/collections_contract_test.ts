@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { readFile, stat } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import { COLLECTIONS } from './collections.ts';
-import { loadCollectionData } from './lists.ts';
+import { readList } from './lists.ts';
 import { readJson } from './fs.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
 import { isIconName } from '../../src/lib/icons.ts';
@@ -65,7 +65,7 @@ for (const col of COLLECTIONS) {
   });
 
   test(`${col.id}: items have unique numeric ids, names, and valid drawn dates`, async () => {
-    const data = await loadCollectionData(col);
+    const data = await readList(col);
     const seen = new Set<string>();
     const problems: string[] = [];
 

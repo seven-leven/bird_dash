@@ -1,6 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { lineName, lineNames, loadLineNames } from './line_names.ts';
+import { lineName, lineNames, readLineNames } from './lineNames.ts';
+import { fakeIo } from '../lib/fakeIo.ts';
 import type { Collection } from '../lib/collections.ts';
 
 const birds = {
@@ -80,7 +81,12 @@ test('line 0.n takes the n-th name; past the last, or from 1.0, there is none', 
   assertEquals(lineName(names, 1, 0), null);
 });
 
-test('a collection whose list is not written yet has nothing to name', async () => {
-  const ghost = { id: 'ghosts', paths: { json: './public/lists/no-such-list.json' } } as Collection;
-  assertEquals(await loadLineNames([ghost]), []);
+test('the names are read from the lists; a list not written yet names nothing', async () => {
+  const at = (id: string) => ({ id, paths: { json: `./public/lists/${id}.json` } }) as Collection;
+  const io = fakeIo({ files: { './public/lists/birds.json': JSON.stringify(birds.data) } });
+  assertEquals((await readLineNames(io, [at('ghosts'), at('birds')])).map((n) => n.roman), [
+    'Reyru',
+    'Iruvaihudhu',
+    'Alhi Maakanaa',
+  ]);
 });

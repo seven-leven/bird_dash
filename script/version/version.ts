@@ -10,7 +10,7 @@
  *                          commits, so it rises by a few with every merged PR; it is a
  *                          build counter, not a count of fixes.
  *   Valu Kukulhu           the line's name: a Dhivehi name from the drawings, in the
- *                          order they were drawn (line_names.ts)
+ *                          order they were drawn (lineNames.ts)
  *   18 drawings            how many illustrations are marked drawn in public/lists/*.json
  *   a1b2c3d                the commit the build was made from
  *
@@ -18,16 +18,14 @@
  * injects it into the page footer). See docs/WORKFLOW.md ("Versioning") for the overview.
  */
 
-import { readJson } from '../lib/fs.ts';
-import { git } from '../lib/git.ts';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
-import { forEachDrawn, loadCollectionData } from '../lib/lists.ts';
-import { type LineName, lineName, loadLineNames } from './line_names.ts';
+import { readDrawnIds } from '../lib/lists.ts';
+import { type Io, readJson, realIo } from '../lib/io.ts';
+import { PATHS } from '../lib/paths.ts';
+import { parseArgs, runCommand } from '../lib/cli.ts';
+import { type LineName, lineName, readLineNames } from './lineNames.ts';
 
-/** The stored part of the version: major.minor, edited by hand. */
-export const VERSION_FILE = './script/version/base_version.json';
-
-export interface VersionData {
+export interface Version {
   major: number;
   minor: number;
   patch: number;
@@ -39,26 +37,18 @@ export interface VersionData {
   commit: string;
 }
 
-type Git = typeof git;
-
-export async function getCommitCount(run: Git = git): Promise<number> {
-  return Number(await run('rev-list', '--count', 'HEAD'));
+/** The commits in this checkout's history: the patch number. */
+export async function countCommits(io: Io): Promise<number> {
+  return Number(await io.git('rev-list', '--count', 'HEAD'));
 }
 
-export async function getDrawnIds(
-  collectionId?: string,
-  collections: Collection[] = COLLECTIONS,
-): Promise<Set<string>> {
-  const targets = collectionId ? collections.filter((c) => c.id === collectionId) : collections;
-
-  const ids = new Set<string>();
-  for (const col of targets) {
-    try {
-      const data = await loadCollectionData(col);
-      forEachDrawn(data, (item) => ids.add(`${col.id}/${item.id}`));
-    } catch { /* collection JSON may not exist yet */ }
+/** The drawn items across `collections`; a collection whose list is not written yet has none. */
+export async function countDrawn(io: Io, collections: Collection[] = COLLECTIONS): Promise<number> {
+  let count = 0;
+  for (const collection of collections) {
+    count += (await readDrawnIds(collection, io).catch(() => new Set())).size;
   }
-  return ids;
+  return count;
 }
 
 /**
@@ -68,22 +58,22 @@ export async function getDrawnIds(
  * made-up version.
  */
 export async function computeVersion(
-  opts: { lenient?: boolean; git?: Git } = {}, // `git` is replaceable for tests
-): Promise<VersionData> {
-  const run = opts.git ?? git;
-  const base = await readJson<{ major: number; minor: number }>(VERSION_FILE);
-  const drawn = (await getDrawnIds()).size;
-  const name = lineName(await loadLineNames(), base.major, base.minor);
+  io: Io = realIo,
+  options: { lenient?: boolean; collections?: Collection[] } = {},
+): Promise<Version> {
+  const base = await readJson<{ major: number; minor: number }>(io, PATHS.baseVersion);
+  const drawn = await countDrawn(io, options.collections);
+  const name = lineName(await readLineNames(io, options.collections), base.major, base.minor);
 
   try {
     const [patch, commit] = await Promise.all([
-      getCommitCount(run),
-      run('rev-parse', '--short=7', 'HEAD'),
+      countCommits(io),
+      io.git('rev-parse', '--short=7', 'HEAD'),
     ]);
     return { major: base.major, minor: base.minor, patch, name, drawn, commit };
   } catch (err) {
-    if (!opts.lenient || process.env.CI) throw err;
-    console.warn(
+    if (!options.lenient || io.env('CI')) throw err;
+    io.err(
       `[version] git is unavailable (${(err as Error).message.split('\n')[0]}); ` +
         'using patch 0 and commit "unknown"',
     );
@@ -92,24 +82,32 @@ export async function computeVersion(
 }
 
 /** The version proper: `major.minor.patch`. */
-export function formatVersion(v: VersionData): string {
-  return `${v.major}.${v.minor}.${v.patch}`;
+export function formatVersion(version: Version): string {
+  return `${version.major}.${version.minor}.${version.patch}`;
 }
 
-const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
+const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
 
 /** Everything on one line, for logs: `0.9.161 Valu Kukulhu · 18 drawings · a1b2c3d`. */
-export function describeVersion(v: VersionData): string {
-  const named = v.name ? `${formatVersion(v)} ${v.name.roman}` : formatVersion(v);
-  return `${named} · ${plural(v.drawn, 'drawing')} · ${v.commit}`;
+export function formatVersionLine(version: Version): string {
+  const named = version.name
+    ? `${formatVersion(version)} ${version.name.roman}`
+    : formatVersion(version);
+  return `${named} · ${plural(version.drawn, 'drawing')} · ${version.commit}`;
 }
 
-/** What `npm run version` prints: the version, or with `--long` the whole line. */
-export async function cli(args: string[], opts: { git?: Git } = {}): Promise<string> {
-  const v = await computeVersion(opts);
-  return args.includes('--long') ? describeVersion(v) : formatVersion(v);
+const USAGE = `npm run version [-- --long]
+  Prints the version (0.9.161); --long adds the line's name, the drawings and the commit.`;
+
+/** `npm run version`: the version, or with `--long` the whole line. */
+export function main(args: string[], io: Io = realIo): Promise<number> {
+  return runCommand(io, args, USAGE, async () => {
+    const { flags } = parseArgs(args, ['--long']);
+    const version = await computeVersion(io);
+    io.out(flags.has('--long') ? formatVersionLine(version) : formatVersion(version));
+  });
 }
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */
-if (import.meta.main) console.log(await cli(process.argv.slice(2)));
+if (import.meta.main) process.exit(await main(process.argv.slice(2)));

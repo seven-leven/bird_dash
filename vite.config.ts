@@ -2,11 +2,12 @@ import { defineConfig } from 'vitest/config';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from '@tailwindcss/vite';
 import { computeVersion, formatVersion } from './script/version/version.ts';
+import { realIo } from './script/lib/io.ts';
 
 // The version comes from the same function as `npm run version`; there is no
 // second copy of the formula here. Lenient so a dev server still starts without git
 // (CI stays strict).
-const version = await computeVersion({ lenient: true });
+const version = await computeVersion(realIo, { lenient: true });
 
 // https://vite.dev/config/
 export default defineConfig({

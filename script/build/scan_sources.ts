@@ -1,5 +1,5 @@
 import { listFiles } from '../lib/fs.ts';
-import { loadDrawnIds } from '../lib/lists.ts';
+import { readDrawnIds } from '../lib/lists.ts';
 import type { Collection } from '../lib/collections.ts';
 
 // ---------------------------------------------------------------------------
@@ -24,7 +24,7 @@ export function toIds(files: string[]): Set<string> {
 
 export async function scanCollection(col: Collection): Promise<CollectionState> {
   const [drawnIds, rawFiles, fullFiles, thumbFiles] = await Promise.all([
-    loadDrawnIds(col),
+    readDrawnIds(col),
     listFiles(col.paths.raw, (n) => n.endsWith('.png')),
     listFiles(col.paths.full, (n) => n.endsWith('.webp')),
     listFiles(col.paths.thumb, (n) => n.endsWith('.webp')),

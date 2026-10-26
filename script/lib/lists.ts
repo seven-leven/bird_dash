@@ -1,57 +1,43 @@
-import { readJson, writeJson } from './fs.ts';
+// A collection's list file (`public/lists/<id>.json`): reading it, the drawn items in it,
+// and dating an item when its drawing comes in.
+import { type Io, readJson, realIo, writeJson } from './io.ts';
 import type { Collection } from './collections.ts';
 // The list-file shape is defined once, next to the app's own types.
 import type { RawCollectionData, RawItem } from '../../src/types/data.ts';
 
-// ---------------------------------------------------------------------------
-// Read
-// ---------------------------------------------------------------------------
-
-export async function loadCollectionData(col: Collection): Promise<RawCollectionData> {
-  return await readJson<RawCollectionData>(col.paths.json);
+export function readList(collection: Collection, io: Io = realIo): Promise<RawCollectionData> {
+  return readJson<RawCollectionData>(io, collection.paths.json);
 }
 
-/** Invoke `cb` for every item marked drawn, across all groups in the collection. */
-export function forEachDrawn(data: RawCollectionData, cb: (item: RawItem) => void): void {
-  for (const group of Object.values(data)) {
-    for (const item of group) {
-      if (item.drawn) cb(item);
-    }
-  }
+/** Every item in the list that has a drawing, across all its groups, in list order. */
+export function eachDrawnItem(list: RawCollectionData): RawItem[] {
+  return Object.values(list).flatMap((group) => group.filter((item) => item.drawn));
 }
 
-export async function loadDrawnIds(col: Collection): Promise<Set<string>> {
-  const data = await loadCollectionData(col);
-  const ids = new Set<string>();
-  forEachDrawn(data, (item) => ids.add(item.id));
-  return ids;
+/** The ids of the collection's drawn items. */
+export async function readDrawnIds(collection: Collection, io: Io = realIo): Promise<Set<string>> {
+  return new Set(eachDrawnItem(await readList(collection, io)).map((item) => item.id));
 }
-
-// ---------------------------------------------------------------------------
-// Write
-// ---------------------------------------------------------------------------
 
 /**
- * Mark a single item as drawn today.
- * Returns the item's name on success, null if the id was not found.
+ * Date an item as drawn on `date`, unless it already has a date. Returns the item's
+ * name, or null if the list has no item with that id (and then writes nothing).
  */
 export async function markDrawn(
-  col: Collection,
+  collection: Collection,
   itemId: string,
   date: string,
+  io: Io = realIo,
 ): Promise<string | null> {
-  const data = await loadCollectionData(col);
-
-  for (const group of Object.values(data)) {
-    const item = group.find((i) => i.id === itemId);
-    if (item) {
-      if (!item.drawn) {
-        item.drawn = date;
-        await writeJson(col.paths.json, data);
-      }
-      return item.name;
+  const list = await readList(collection, io);
+  for (const group of Object.values(list)) {
+    const item = group.find((entry) => entry.id === itemId);
+    if (!item) continue;
+    if (!item.drawn) {
+      item.drawn = date;
+      await writeJson(io, collection.paths.json, list);
     }
+    return item.name;
   }
-
   return null;
 }
