@@ -202,6 +202,11 @@ The forms differ on purpose: "of 8" only makes sense when there is a total still
 search is counted in "matches" wherever it is shown; never "results". Never show a count until it is
 known.
 
+In the sidebar a row's count is weighted by what it holds: where something is drawn (`4 of 8`, `1 of
+1`) it is `slate-700` and medium, where nothing is (`0 of 7`) it stays the muted `slate-500`, so the
+eye goes to the families with drawings in them. Both pass AA; the difference is weight and depth,
+never a fainter grey (`slate-400` on white is 2.6:1).
+
 Each count is shown once on a screen, and sits under the name of what it counts. The sidebar opens
 in three levels, largest first: the collection's emblem, its name, then its count, so `All 30 ·
 Drawn 3` under "Shells" can only mean shells. The view's name then labels the list below. Never put

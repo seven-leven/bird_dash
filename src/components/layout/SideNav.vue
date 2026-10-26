@@ -69,7 +69,12 @@
             @click="goToSection(item.id)"
           >
             <span class="truncate pr-2">{{ item.label }}</span>
-            <span class="text-xs shrink-0 tabular-nums font-normal opacity-60">
+            <!-- A row with drawings carries the stronger count, so the eye finds them; an
+                 empty one stays muted, still at AA contrast (docs/DESIGN.md §03). -->
+            <span
+              class="text-xs shrink-0 tabular-nums"
+              :class="item.disabled ? '' : item.count ? COUNT_DRAWN : COUNT_EMPTY"
+            >
               {{ viewMode === 'group' && item.total ? ratio(item.count, item.total) : item.count }}
             </span>
           </button>
@@ -115,6 +120,11 @@ import { useUi } from '../../stores/ui.ts';
 import { useSearch } from '../../stores/search.ts';
 import { drawings, drawnOf, ratio } from '../../lib/formatCount.ts';
 import { viewName } from '../../lib/viewName.ts';
+
+// The sidebar's counts: slate-700 (10.4:1 on white) where something is drawn, the muted
+// slate-500 (4.8:1) where nothing is yet.
+const COUNT_DRAWN = 'font-medium text-slate-700 dark:text-slate-300';
+const COUNT_EMPTY = 'text-muted';
 
 const { activeCollection, data, activeData, stats, globalStats } = useCollectionsStore();
 // Off-screen on small screens until opened: `inert` keeps it out of the tab order.
