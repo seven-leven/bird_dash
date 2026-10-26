@@ -147,7 +147,8 @@ git branch -d test/lightbox-keys
 | ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `npm run dev`                                   | Start the Vite dev server                                                                      |
 | `npm run ingest`                                | Take in new drawings: date them, make their WebPs, rewrite `stats.json` (`-- --dry-run` first) |
-| `npm run build`                                 | Build the site into `dist/` from what is committed; changes nothing git tracks                 |
+| `npm run build`                                 | Build the site, then the docs site into `dist/docs/`; changes nothing git tracks               |
+| `npm run build:site` / `build:docs`             | Build one stage only (`npm run build -- docs` is the same)                                     |
 | `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems                                 |
 | `npm test`                                      | Every test tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
 | `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                                 |
@@ -162,7 +163,6 @@ git branch -d test/lightbox-keys
 | `npm run design`                                | Redraw the design guide image and the icon sheet                                               |
 | `npm run preview`                               | Preview the production build locally                                                           |
 | `npm run docs:dev`                              | Serve the docs site (`docs/*.md`, VitePress) with live reload                                  |
-| `npm run docs:build`                            | Build the docs site into `dist/docs/` (after the site); fails on a dead link                   |
 | `npm run docs:preview`                          | Preview the built docs site                                                                    |
 | `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks                                  |
 

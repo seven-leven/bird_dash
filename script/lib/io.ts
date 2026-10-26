@@ -1,6 +1,7 @@
 // The one way a command reaches the outside world (docs/SCRIPTS.md, principle 6): files,
 // git, the environment, the clock and the console. A command's `main` takes an `Io`;
 // tests pass `fakeIo()` (fakeIo.ts) instead of touching the repository.
+import { spawn } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
 import { ensureDir, listFiles } from './fs.ts';
 import { git } from './git.ts';
@@ -14,6 +15,12 @@ export interface Io {
   makeDir(path: string): Promise<void>;
   /** Run git and return its trimmed output; rejects with git's message when it fails. */
   git(...args: string[]): Promise<string>;
+  /**
+   * Run a JavaScript file with this Node (a tool's entry, such as Vite's), its output
+   * going straight to the terminal; resolves with its exit code. No shell, so it runs the
+   * same on Windows.
+   */
+  runNode(script: string, args: string[]): Promise<number>;
   /** An environment variable, or undefined. */
   env(name: string): string | undefined;
   now(): Date;
@@ -28,6 +35,16 @@ export const realIo: Io = {
   listFiles: (dir, filter = () => true) => listFiles(dir, filter),
   makeDir: ensureDir,
   git,
+  runNode: (script, args) =>
+    new Promise((resolve, reject) => {
+      spawn(process.execPath, [script, ...args], { stdio: 'inherit' })
+        .on('error', reject)
+        // A tool killed by a signal (Ctrl+C) has no exit code: count it as a failure. A test
+        // cannot kill a child the same way on every platform, so that side is not run.
+        /* c8 ignore start */
+        .on('close', (code) => resolve(code ?? 1));
+      /* c8 ignore stop */
+    }),
   env: (name) => process.env[name],
   now: () => new Date(),
   out: (line) => console.log(line),

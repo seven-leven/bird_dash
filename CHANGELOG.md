@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | scripts: `npm run build` builds in stages, the site and then the docs site, as CI
+  does (phase 3 of the scripts overhaul). Name a stage to build only it (`npm run build -- docs`, or
+  `build:site`, `build:docs`); each stage reports its time, the first that fails stops the build,
+  and an unknown stage exits 2 with the list. Vite and VitePress are started the same way, through
+  the new `Io.runNode`, so the build's tests run no tool at all. `docs:build` is gone, and CI's two
+  build steps are one
 - 2026-10-26 | scripts: taking in new drawings is its own command, `npm run ingest` (phase 2 of the
   scripts overhaul), in `script/ingest/`. Its first line says it changes files git tracks, and `--
   --dry-run` says what it would do and changes nothing. `npm run build` now only builds the site

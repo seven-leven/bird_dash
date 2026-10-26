@@ -35,3 +35,14 @@ test('the real Io reaches the environment, the clock and the console', () => {
   }
   assertEquals(printed, ['out a', 'err b']);
 });
+
+test('the real Io runs a script with this Node and gives back its exit code', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_run_'));
+  try {
+    await realIo.writeText(`${dir}/exit.js`, 'process.exit(Number(process.argv[2]));\n');
+    assertEquals(await realIo.runNode(`${dir}/exit.js`, ['3']), 3);
+    assertEquals(await realIo.runNode(`${dir}/exit.js`, ['0']), 0);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

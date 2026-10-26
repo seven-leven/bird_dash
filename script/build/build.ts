@@ -1,52 +1,72 @@
 /**
- * script/build/build.ts — makes the site from what is committed; never changes a file git
- * tracks (taking in new drawings is `npm run ingest`, script/ingest/).
+ * `npm run build` — make dist/ from what is committed, in stages: the site, then the docs
+ * site into dist/docs/ (after the site, as Vite empties dist/ first). Never changes a file
+ * git tracks; taking in new drawings is `npm run ingest` (script/ingest/).
  *
- * Modes (pass as CLI flag):
- *   (none)           the site: vite build into dist/
- *   --check          read-only integrity report, no writes
+ *   npm run build              every stage, in order
+ *   npm run build -- docs      the stages named (also `npm run build:site`, `build:docs`)
+ *   npm run check              read-only integrity report (here until it gets its own command)
  */
 
-import { spawn } from 'node:child_process';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
-import { realIo } from '../lib/io.ts';
+import { type Io, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
+import { EXIT, MARK, parseArgs, runCommand, UsageError } from '../lib/cli.ts';
 import { scanSources } from '../ingest/scanSources.ts';
 import { countBlockingIssues, planChanges } from '../ingest/planChanges.ts';
 import { isStatsCurrent } from './collection_stats.ts';
 import { printCheckReport } from './printCheckReport.ts';
 import { computeVersion, formatVersionLine } from '../version/version.ts';
-import { errorMessage } from '../lib/error.ts';
 
-// ---------------------------------------------------------------------------
-// Vite build (subprocess)
-// ---------------------------------------------------------------------------
-
-/** Start `vite build` and resolve with its exit code. */
-// Runs the real build, so no test calls it; buildVite is tested with a stand-in.
-/* c8 ignore start */
-function spawnVite(): Promise<number> {
-  const root = process.cwd();
-  // Vite's own entry point, run with this Node: no shell, so it works the same on Windows.
-  const vite = `${root}/node_modules/vite/bin/vite.js`;
-  return new Promise((resolve, reject) => {
-    spawn(process.execPath, [vite, 'build', '--config', `${root}/vite.config.ts`], {
-      cwd: root,
-      stdio: 'inherit',
-    }).on('error', reject).on('close', (code) => resolve(code ?? 1));
-  });
-}
-/* c8 ignore stop */
-
-export async function buildVite(spawn: () => Promise<number> = spawnVite): Promise<void> {
-  console.log('\n  vite\n');
-  const code = await spawn();
-  if (code !== 0) throw new Error(`vite exited with code ${code}`);
+/** One stage of the build: a tool, run with this Node, and what it makes. */
+export interface Stage {
+  id: string;
+  makes: string;
+  tool: string;
+  args: string[];
 }
 
-// ---------------------------------------------------------------------------
-// Check (read-only)
-// ---------------------------------------------------------------------------
+/** The stages, in the order a full build runs them. */
+export const STAGES: Stage[] = [
+  {
+    id: 'site',
+    makes: 'the site, in dist/',
+    tool: PATHS.viteBin,
+    args: ['build', '--config', PATHS.viteConfig],
+  },
+  {
+    id: 'docs',
+    makes: 'the docs site, in dist/docs/',
+    tool: PATHS.vitepressBin,
+    args: ['build', 'docs'],
+  },
+];
+
+/** The stages these words name, in build order; all of them when none is named. */
+export function pickStages(words: string[]): Stage[] {
+  const unknown = words.filter((word) => !STAGES.some((stage) => stage.id === word));
+  if (unknown.length > 0) {
+    throw new UsageError(
+      `no stage ${unknown.join(', ')} (the stages: ${STAGES.map((s) => s.id).join(', ')})`,
+    );
+  }
+  return words.length === 0 ? STAGES : STAGES.filter((stage) => words.includes(stage.id));
+}
+
+/** Run the stages in order; the first that fails stops the build. */
+export async function runStages(io: Io, stages: Stage[]): Promise<number> {
+  for (const stage of stages) {
+    io.out(`\n  build: ${stage.id} (${stage.makes})\n`);
+    const started = io.now().getTime();
+    const code = await io.runNode(stage.tool, stage.args);
+    if (code !== 0) {
+      io.err(`${MARK.problem} build: ${stage.id} failed (exit code ${code})`);
+      return EXIT.problem;
+    }
+    io.out(`  ${MARK.done} ${stage.id}  ${((io.now().getTime() - started) / 1000).toFixed(2)}s`);
+  }
+  return EXIT.done;
+}
 
 /** Prints the integrity report and returns how many blocking issues it found. */
 export async function checkIntegrity(
@@ -68,7 +88,7 @@ export async function checkIntegrity(
   }
 
   printCheckReport(rows, formatVersionLine(version));
-  // A list changed without a build would leave the published numbers wrong.
+  // A list changed without ingesting would leave the published numbers wrong.
   const statsCurrent = await isStatsCurrent(collections, io, statsPath);
   console.log(
     statsCurrent
@@ -78,41 +98,27 @@ export async function checkIntegrity(
   return rows.reduce((n, r) => n + countBlockingIssues(r.plan), 0) + (statsCurrent ? 0 : 1);
 }
 
-// ---------------------------------------------------------------------------
-// CLI
-// ---------------------------------------------------------------------------
+const USAGE = `npm run build [-- <stage>…]
+  Builds dist/ from what is committed: ${STAGES.map((s) => `${s.id} (${s.makes})`).join(', ')}.
+  Name stages to build only those. Changes nothing git tracks.`;
 
-/** The two things the command can do — replaceable, so the dispatch can be tested. */
-export interface Steps {
-  vite: () => Promise<void>;
-  /** Resolves with the number of blocking issues found. */
-  check: () => Promise<number>;
-}
-
-const realSteps: Steps = { vite: buildVite, check: () => checkIntegrity() };
-
-/** Run the command for these arguments and return the process exit code. */
-export async function cli(args: string[], steps: Steps = realSteps): Promise<number> {
-  const has = (flag: string) => args.includes(flag);
-  try {
-    if (has('--check')) {
-      const issues = await steps.check();
-      if (issues > 0) {
-        console.error(`  integrity check failed: ${issues} issue(s)\n`);
-        return 1;
-      }
-      return 0;
+export function main(
+  args: string[],
+  io: Io = realIo,
+  check: (io: Io) => Promise<number> = (io) => checkIntegrity(COLLECTIONS, io),
+): Promise<number> {
+  return runCommand(io, args, USAGE, async () => {
+    const { flags, words } = parseArgs(args, ['--check']);
+    if (flags.has('--check')) {
+      const issues = await check(io);
+      if (issues === 0) return EXIT.done;
+      io.err(`${MARK.problem} integrity check failed: ${issues} issue(s)`);
+      return EXIT.problem;
     }
-    // Default: the site
-    await steps.vite();
-    return 0;
-  } catch (err) {
-    console.error('\n  build failed:', errorMessage(err));
-    if (err instanceof Error && err.stack) console.error(err.stack);
-    return 1;
-  }
+    return runStages(io, pickStages(words));
+  });
 }
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */
-if (import.meta.main) process.exit(await cli(process.argv.slice(2)));
+if (import.meta.main) process.exit(await main(process.argv.slice(2)));

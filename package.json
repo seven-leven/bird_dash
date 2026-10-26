@@ -9,6 +9,8 @@
     "dev": "vite",
     "preview": "vite preview",
     "build": "node script/build/build.ts",
+    "build:site": "node script/build/build.ts site",
+    "build:docs": "node script/build/build.ts docs",
     "ingest": "node script/ingest/ingest.ts",
     "test": "node script/test_runner/run_tests.ts",
     "test:unit": "node script/test_runner/run_tests.ts unit",
@@ -31,7 +33,6 @@
     "format": "dprint fmt",
     "format:check": "dprint check",
     "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs"
   },
   "dependencies": {
