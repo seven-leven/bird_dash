@@ -17,6 +17,10 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: a plan to rebuild the layout and naming of `src/` from the ground up
+  (`docs/plans/SRC-OVERHAUL.md`): folders by feature over pure `domain/`, `data/`, `browser/` and
+  `ui/` layers that import one way, one word per idea (the viewer is never also a lightbox or an
+  overlay), types beside their owners, a store per job, and nine phases with every rename listed
 - 2026-10-26 | docs: rules for the scripts and a plan to move them onto the rules. `docs/SCRIPTS.md`
   sets out eight principles (a command is a verb with one job; changing the repository is never a
   side effect; decide, then do, then say; one generator and one check per generated file; one home
