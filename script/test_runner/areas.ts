@@ -62,8 +62,8 @@ export const AREAS: Area[] = [
   {
     id: 'tooling',
     label: 'Test harness and docs tooling',
-    protects: 'the test runner and its reports, generated guide images',
-    paths: ['script/test_runner/', 'script/design/'],
+    protects: 'the test runner and its reports, generated guide images, the docs site',
+    paths: ['script/test_runner/', 'script/design/', 'script/docs/'],
   },
 ];
 

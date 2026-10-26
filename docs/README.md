@@ -1,5 +1,11 @@
 # Documentation
 
+These pages are also the [docs site](https://seven-leven.github.io/bird_dash/docs/), in the
+gallery's design ([`.vitepress/`](.vitepress/config.ts), `npm run docs:dev`). Write for GitHub
+first: the site rewrites links to source files into GitHub links, fails the build on a dead link,
+and uses GitHub's heading anchors. A section between `<!-- live: … -->` and `<!-- /live -->` shows
+its text on GitHub and the named component on the site (the manifesto's colour ramps and icons).
+
 Reference pages describe how the project is today and are kept true as the code changes. Plans
 describe work that has not happened yet; each one is deleted (or folded into a reference page) once
 it is done.

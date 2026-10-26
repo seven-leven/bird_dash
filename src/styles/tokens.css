@@ -1,0 +1,41 @@
+/*
+  The tokens the site and the docs site share (docs/DESIGN.md): the type, the two
+  corner radii and the two shadows. Plain CSS, so both can import it: main.css hands
+  them to Tailwind's theme, and the docs theme (docs/.vitepress/theme/style.css) to
+  VitePress. Change one here and both follow.
+*/
+
+@font-face {
+  font-family: 'Faruma';
+  src: url('./fonts/Faruma.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  /* Thaana, and the Arabic comma, semicolon and question mark Dhivehi uses. */
+  unicode-range: U+0780-07BF, U+060C, U+061B, U+061F;
+}
+
+:root {
+  /* Faruma first, but only for Thaana (its @font-face has a unicode-range), so any
+     Dhivehi anywhere (typed into search, in a note) is set in it; everything else
+     falls through to the system sans-serif. */
+  --wi-font-sans:
+    'Faruma',
+    ui-sans-serif,
+    system-ui,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
+    'Noto Color Emoji';
+
+  /* Controls (buttons, inputs, badges) and cards (tiles, panels, menus). */
+  --wi-radius-control: 0.375rem;
+  --wi-radius-card: 0.75rem;
+
+  /* Two shadows, for the two ways something leaves the page (docs/DESIGN.md §04):
+     float for what sits over it (menus, sheets, the phone sidebar), lift for what
+     rises a little (a hovered tile, controls over a drawing). */
+  --wi-shadow-float: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --wi-shadow-lift: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}

@@ -85,12 +85,12 @@ look at, and what you checked (and what you could not). Keep it to the branch's 
 every pull request; a new push cancels the run in progress for the same pull request. `main` will
 not accept the merge until these four checks pass:
 
-| Check                                    | What it runs                                                                                                              |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `verify / Lint, types, tests, and build` | `npm ci`, lint, format check, type check, every test tier with coverage (in Los Angeles time), the asset check, the build |
-| `verify / Tests (UTC)`                   | Every test tier in UTC                                                                                                    |
-| `verify / Tests (Asia/Kolkata)`          | The same, UTC+5:30                                                                                                        |
-| `verify / Tests (Pacific/Kiritimati)`    | The same, UTC+14                                                                                                          |
+| Check                                    | What it runs                                                                                                                                          |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `verify / Lint, types, tests, and build` | `npm ci`, lint, format check, type check, every test tier with coverage (in Los Angeles time), the asset check, the build of the site and of the docs |
+| `verify / Tests (UTC)`                   | Every test tier in UTC                                                                                                                                |
+| `verify / Tests (Asia/Kolkata)`          | The same, UTC+5:30                                                                                                                                    |
+| `verify / Tests (Pacific/Kiritimati)`    | The same, UTC+14                                                                                                                                      |
 
 The run page has the summary tables, and the `test-results` artifact holds the full report. When a
 check fails, see
@@ -118,8 +118,10 @@ separate and does not block merges.
 Merging pushes to `main`, which starts [`deploy.yml`](../.github/workflows/deploy.yml):
 
 1. The same `verify.yml` runs again on the merged code.
-2. If it passes, the built `dist/` is published to GitHub Pages. If not, nothing is published and
-   the site stays as it was.
+2. If it passes, the built `dist/` is published to GitHub Pages: the gallery at `/bird_dash/` and
+   the docs site (built into `dist/docs/`) at
+   [`/bird_dash/docs/`](https://seven-leven.github.io/bird_dash/docs/). If not, nothing is published
+   and the site stays as it was.
 
 A newer merge cancels a deploy still in progress, so only the latest `main` goes out. To check what
 is live, compare the commit hash in the site's footer (`v0.9.230 · 18 drawings · 0f5de0a`) with
@@ -160,6 +162,9 @@ git branch -d test/lightbox-keys
 | `npm run placeholders`                          | Redraw the placeholder images from each collection's icon                                      |
 | `npm run design`                                | Redraw the design guide image and the icon sheet                                               |
 | `npm run preview`                               | Preview the production build locally                                                           |
+| `npm run docs:dev`                              | Serve the docs site (`docs/*.md`, VitePress) with live reload                                  |
+| `npm run docs:build`                            | Build the docs site into `dist/docs/` (after the site); fails on a dead link                   |
+| `npm run docs:preview`                          | Preview the built docs site                                                                    |
 | `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks                                  |
 
 ## Versioning

@@ -10,6 +10,7 @@ from the start, drawn or not, so the gaps are part of the record.
 
 **[View the live site →](https://seven-leven.github.io/bird_dash/)** ·
 **[About the archive →](https://seven-leven.github.io/bird_dash/#about)** ·
+[The docs →](https://seven-leven.github.io/bird_dash/docs/) ·
 [How the site was built →](https://seven-leven.github.io/folio/code-wildlife.html)
 
 ## Features
@@ -52,6 +53,10 @@ Every other command is in [WORKFLOW.md](docs/WORKFLOW.md#commands). To add a dra
 collection, see the recipes in [DATA.md](docs/DATA.md#recipes).
 
 ## Documentation
+
+The pages below are also a site, in the gallery's own design:
+**[seven-leven.github.io/bird_dash/docs](https://seven-leven.github.io/bird_dash/docs/)**, built
+from these files on every deploy (`npm run docs:dev` serves it locally).
 
 | Page                                          | Read it when                                                          |
 | --------------------------------------------- | --------------------------------------------------------------------- |

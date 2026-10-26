@@ -17,6 +17,15 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: the docs are a site, at
+  [/bird_dash/docs/](https://seven-leven.github.io/bird_dash/docs/), in the gallery's own design:
+  VitePress over `docs/*.md`, built into the same Pages deploy and checked by CI, where a dead link
+  fails the build. Faruma, the type, the corners and the shadows come from a new
+  `src/styles/tokens.css` that the site imports too, so the two cannot drift; the logo and the icons
+  are the site's own components. In the design manifesto the accent ramps and the icon set are drawn
+  live from `main.css` and the icon registry; links to source files open on GitHub, and headings
+  keep GitHub's anchors. The footer links "Docs", the About page's manifesto link opens the docs
+  page, and the README points to it
 - 2026-10-26 | site: the viewer's logic is three composables instead of one of 365 lines:
   `useZoomPan` (scale, offset, drag, pinch, swipe), `useDialogKeys` (focus in, Tab kept inside,
   shortcut keys, focus back on close) and `useDrawingNav` (where the open drawing sits, the moves

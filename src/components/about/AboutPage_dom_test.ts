@@ -194,20 +194,24 @@ test('the first drawing heads the page; the newest five link to their pages in t
   assert(text().includes('Watercock'));
 });
 
-test('the write-up, the manifesto and the source are links that leave the site', async () => {
+test('the write-up and the source are links that leave the site; the manifesto is in the docs', async () => {
   const { host } = mount();
   await settle();
   const external = [...host.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]')];
   assertEquals(external.map((a) => a.getAttribute('href')), [
     FOLIO,
     FOLIO,
-    'https://github.com/seven-leven/bird_dash/blob/main/docs/DESIGN.md',
     'https://github.com/seven-leven/bird_dash',
   ]);
   for (const a of external) {
     assertEquals(a.rel, 'noopener noreferrer');
     assert(a.textContent!.includes('(opens in a new tab)'));
   }
+  // The docs site is served beside the gallery, so the manifesto opens in this tab.
+  const manifesto = [...host.querySelectorAll('a')].find((a) =>
+    a.textContent!.includes('manifesto')
+  )!;
+  assertEquals([manifesto.getAttribute('href'), manifesto.target], ['docs/DESIGN.html', '']);
 });
 
 test('a failed load says so, and Try again loads it again', async () => {
