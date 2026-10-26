@@ -18,7 +18,7 @@
         aria-hidden="true"
       />
 
-      <!-- The About page has no sections to list. -->
+      <!-- Only the gallery has sections to list. -->
       <SideNav v-if="page === 'gallery'" />
 
       <!-- Main content -->
@@ -51,7 +51,7 @@
           :ref="bindScrollContainer"
           class="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth custom-scrollbar"
         >
-          <AboutPage v-if="page === 'about'" />
+          <component :is="currentPage.component" v-if="currentPage" />
           <GalleryContent v-else />
         </div>
 
@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick, watch } from 'vue';
+import { computed, defineAsyncComponent, nextTick, watch } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
@@ -85,12 +85,11 @@ import { useSearch } from '../../stores/search.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useOverlayStore } from '../../stores/overlay.ts';
 import { matches, matchesDrawn } from '../../lib/formatCount.ts';
+import { findPage } from '../../pages.ts';
 
 // Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)
 // are only needed after the first tile click, so keep them out of first paint.
 const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
-// The About page is a page few open; it loads when it is shown.
-const AboutPage = defineAsyncComponent(() => import('../about/AboutPage.vue'));
 
 const { data, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
@@ -107,6 +106,8 @@ const {
   scrollToTop,
   updateActiveSection,
 } = useUi();
+// The page shown instead of the gallery, if any (src/pages.ts).
+const currentPage = computed(() => findPage(page.value));
 
 // Each page opens at its top; back in the gallery, its sections have just mounted again,
 // so the scroll-spy measures them afresh.

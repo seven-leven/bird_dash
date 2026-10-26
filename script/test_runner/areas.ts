@@ -32,8 +32,8 @@ export const AREAS: Area[] = [
   {
     id: 'state',
     label: 'Site: state and routing',
-    protects: 'the stores, shareable links, theme, accent',
-    paths: ['src/stores/', 'src/composables/core/'],
+    protects: 'the stores, shareable links, the pages, theme, accent',
+    paths: ['src/stores/', 'src/composables/core/', 'src/pages'], // pages.ts and its test,
   },
   {
     id: 'interface',

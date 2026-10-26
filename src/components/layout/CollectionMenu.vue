@@ -14,7 +14,7 @@
       @click="open = !open"
     >
       <CollectionIcon v-if="page === 'gallery' && activeCollection" :collection="activeCollection" class="size-4" />
-      <span class="truncate max-w-32">{{ page === 'about' ? 'About' : activeCollection?.label }}</span>
+      <span class="truncate max-w-32">{{ currentPage?.label ?? activeCollection?.label }}</span>
       <Icon
         name="chevronDown"
         class="size-3 text-muted transition-transform duration-fast"
@@ -39,14 +39,18 @@
           {{ col.label }}
         </button>
       </li>
-      <li class="mt-1 border-t pt-1 border-slate-100 dark:border-slate-800">
+      <li
+        v-for="(p, i) in PAGES"
+        :key="p.id"
+        :class="i === 0 && 'mt-1 border-t pt-1 border-slate-100 dark:border-slate-800'"
+      >
         <a
-          href="#about"
+          :href="`#${p.id}`"
           class="nav-item focus-ring w-full flex items-center px-3 py-2 min-h-9"
-          :aria-current="page === 'about' ? 'page' : undefined"
+          :aria-current="page === p.id ? 'page' : undefined"
           @click="close()"
         >
-          About
+          {{ p.label }}
         </a>
       </li>
     </ul>
@@ -54,16 +58,18 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useActions } from '../../stores/actions.ts';
 import { useUi } from '../../stores/ui.ts';
+import { findPage, PAGES } from '../../pages.ts';
 
 const { list, activeCollection } = useCollectionsStore();
 const { switchCollection } = useActions();
 const { page } = useUi();
+const currentPage = computed(() => findPage(page.value));
 
 const open = ref(false);
 const rootRef = ref<HTMLElement | null>(null);

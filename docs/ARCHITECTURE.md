@@ -130,8 +130,13 @@ State moves one way:
 ### The URL
 
 [`useHashRoute`](../src/composables/core/useHashRoute.ts) is the only code that reads or writes the
-address. The grammar is `#<collection>` or `#<collection>/<item>`. State changes are mirrored to the
-hash, and a hash change (a deep link, the back button) is applied to the stores.
+address. The grammar is `#<collection>`, `#<collection>/<item>` or `#<page>`. State changes are
+mirrored to the hash, and a hash change (a deep link, the back button) is applied to the stores.
+
+The pages that are not a collection (today, About) are one list, [`src/pages.ts`](../src/pages.ts):
+an id, a label and a component each. The route, the top bar's tabs, the collection menu and the main
+area all read it, so a new page is one entry there. A contract test keeps collection ids and page
+ids apart.
 
 ## The asset pipeline
 
