@@ -20,7 +20,7 @@ the `.vue` components are next, in [TODO.md](plans/TODO.md).
 | `npm run test:report`                           | The same, and save the full report to `test-results/report.md`                 |
 | `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`              |
 | `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)                     |
-| `npm run check`                                 | Asset integrity: missing or orphaned images                                    |
+| `npm run check`                                 | Missing or orphaned images, and stale generated files                          |
 
 A passing run prints about ten lines. A failing run lists the failed tests first (file and message)
 and then Vitest's full output, with the diff and the failing line. The tests run on

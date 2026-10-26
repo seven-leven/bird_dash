@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | scripts: `npm run check` is its own command, in `script/check/` (phase 5 of the
+  scripts overhaul). It reads and never writes: every drawing has its images, nothing waits to be
+  ingested, and the generated text files (stats, the favicon, the logo files) are what their
+  generators would write now. Each problem goes to stderr with the command that fixes it, and the
+  check exits 1. `build` no longer takes `--check`
 - 2026-10-26 | scripts: every generated file has one generator, run by `npm run generate` (phase 4
   of the scripts overhaul): the stats, the placeholders, the design guide, the icon sheet, the logo
   files, the favicons and the README's row of drawings, all under `script/generate/`. Name some to

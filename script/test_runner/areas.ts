@@ -53,6 +53,7 @@ export const AREAS: Area[] = [
     protects: 'image builds, the integrity check, the files in public/',
     paths: [
       'script/ingest/',
+      'script/check/',
       'script/build/',
       'script/lib/',
       // The generated files the site serves; the rest of generate/ is the docs' images.

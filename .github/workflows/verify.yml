@@ -62,7 +62,7 @@ jobs:
           path: test-results/
           retention-days: 14
 
-      - name: Asset integrity
+      - name: Check the repository (images and generated files)
         run: npm run check
 
       # The site, then the docs site into dist/docs/; a dead link in docs/ fails it.

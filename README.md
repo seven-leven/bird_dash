@@ -48,7 +48,7 @@ Open [http://localhost:5173](http://localhost:5173).
 | `npm run ingest` | Take in new drawings: date them, make their WebP images (changes the repo) |
 | `npm run build`  | Build the site and the docs into `dist/` from what is committed            |
 | `npm test`       | Every test tier, one row each (`npm test -- src/lib` for a part)           |
-| `npm run check`  | Find missing or orphaned images and stale numbers; exits 1                 |
+| `npm run check`  | Find missing or orphaned images and stale generated files; exits 1         |
 
 Every other command is in [WORKFLOW.md](docs/WORKFLOW.md#commands). To add a drawing or a
 collection, see the recipes in [DATA.md](docs/DATA.md#recipes).

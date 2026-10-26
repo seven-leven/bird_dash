@@ -134,7 +134,8 @@ appears in it with no other change.
 - an item is marked drawn but its full or thumbnail image is missing;
 - an image exists for an item that is not marked drawn (an orphan);
 - a source PNG exists for an item that has no `drawn` date yet (run `npm run ingest`);
-- `stats.json` does not match the lists, as after a hand edit to a list (run `npm run ingest`).
+- `stats.json` does not match the lists, as after a hand edit to a list (run `npm run ingest`);
+- the favicon or a logo file is not what `npm run generate` would draw now (run it).
 
 ## Recipes
 
