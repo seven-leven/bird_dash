@@ -17,6 +17,9 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: the sidebar's counts say where the drawings are. A family with drawings shows
+  its count (`4 of 8`) in `slate-700`, medium; an empty one (`0 of 7`) stays the muted `slate-500`.
+  The counts were drawn at 60% opacity, about 2.3:1 on white, below AA; both now pass
 - 2026-10-26 | version: each line of work is named after a drawing, the archive's Dhivehi names in
   the order they were drawn, each once: v0.1 Reyru, v0.2 Kunburu Reyru, v0.3 Gudugudaa Dhooni, v0.4
   Valu Bondana, v0.5 Dhandifulhu Dhooni, v0.6 Dhon Raabondhi, v0.7 Iruvaihudhu, v0.8 Alhi Maakanaa,
