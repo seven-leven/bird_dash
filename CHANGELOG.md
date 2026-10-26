@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | scripts: the scripts overhaul is done (phase 7). A contract test checks the rules a
+  machine can: every file in `script/` is named in camelCase, no exported name starts with `get`,
+  `load`, `run` and the like, and every command is made with `command` in a file named after its
+  folder. WORKFLOW.md's commands are grouped by job (look, change the repository, build, check,
+  test), and the plan is deleted; SCRIPTS.md holds the rules, with one exception written down: the
+  test runner keeps its own `RunnerDeps` until the test overhaul
 - 2026-10-26 | scripts: the rest of `script/` follows the naming rules (phase 6 of the scripts
   overhaul). Every command's `main` is made one way, `command(usage, work)`, so `--help`, the exit
   codes and how a problem is reported are the same for all of them, including `npm run changelog`,

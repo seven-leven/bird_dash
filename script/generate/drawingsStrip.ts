@@ -15,7 +15,7 @@ export const STRIP = { count: 5, tile: 240, gap: 16 } as const;
  * Draw the strip, or return null when nothing is drawn yet. The page is slate-50, each
  * drawing sits on a white card with the site's slate-200 edge and 12px corners.
  */
-export async function drawingStrip(
+export async function drawDrawingsStrip(
   io: Io = realIo,
   statsPath: string = PATHS.stats,
   publicDir = './public',
@@ -48,13 +48,13 @@ export async function drawingStrip(
 }
 
 /** Write the strip as WebP (photographs of drawings: far smaller than PNG). */
-export async function writeDrawingStrip(
+export async function writeDrawingsStrip(
   path: string,
   io: Io = realIo,
   statsPath?: string,
   publicDir?: string,
 ): Promise<boolean> {
-  const strip = await drawingStrip(io, statsPath, publicDir);
+  const strip = await drawDrawingsStrip(io, statsPath, publicDir);
   if (!strip) return false;
   await strip.webp({ quality: 82 }).toFile(path);
   return true;

@@ -143,27 +143,52 @@ git branch -d test/lightbox-keys
 
 ## Commands
 
-| Task                                            | Description                                                                                    |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `npm run dev`                                   | Start the Vite dev server                                                                      |
-| `npm run ingest`                                | Take in new drawings: date them, make their WebPs, rewrite `stats.json` (`-- --dry-run` first) |
-| `npm run build`                                 | Build the site, then the docs site into `dist/docs/`; changes nothing git tracks               |
-| `npm run build:site` / `build:docs`             | Build one stage only (`npm run build -- docs` is the same)                                     |
-| `npm run check`                                 | Missing or orphaned images, stale generated files; changes nothing; exits 1 on a problem       |
-| `npm test`                                      | Every test tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
-| `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                                 |
-| `npm run test:watch`                            | Re-run the tests on every save                                                                 |
-| `npm run test:coverage`                         | Every tier + coverage table; fails below the line or branch floor                              |
-| `npm run test:report`                           | The same, saving the full report to `test-results/report.md`                                   |
-| `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`                             |
-| `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)                               |
-| `npm run version`                               | Print the current derived version                                                              |
-| `npm run changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews)                           |
-| `npm run generate`                              | Redraw every generated file (`-- placeholders` for some; `-- --into <dir>` to look first)      |
-| `npm run preview`                               | Preview the production build locally                                                           |
-| `npm run docs:dev`                              | Serve the docs site (`docs/*.md`, VitePress) with live reload                                  |
-| `npm run docs:preview`                          | Preview the built docs site                                                                    |
-| `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks                                  |
+Grouped by job, as [SCRIPTS.md](SCRIPTS.md) names them. Every command takes `-- --help`.
+
+**Look at the site** (changes nothing)
+
+| Command                | Does                                                          |
+| ---------------------- | ------------------------------------------------------------- |
+| `npm run dev`          | Serve the site with live reload                               |
+| `npm run docs:dev`     | Serve the docs site (`docs/*.md`, VitePress) with live reload |
+| `npm run preview`      | Serve the built site from `dist/`                             |
+| `npm run docs:preview` | Serve the built docs site from `dist/docs/`                   |
+
+**Change the repository** (on your machine, on purpose; each says so in its first line)
+
+| Command             | Does                                                                                                        |
+| ------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `npm run ingest`    | Take in new drawings: date them, make their WebPs, rewrite `stats.json` (`-- --dry-run` first)              |
+| `npm run generate`  | Redraw the generated files (`-- placeholders` for some; `-- --into <dir>` to look first, changing nothing)  |
+| `npm run changelog` | Insert the commits since the last changelog edit at the top of the newest section (`-- --dry-run` previews) |
+
+**Build** (writes only `dist/`)
+
+| Command                             | Does                                                                         |
+| ----------------------------------- | ---------------------------------------------------------------------------- |
+| `npm run build`                     | Build the site, then the docs site into `dist/docs/`; what CI and deploy run |
+| `npm run build:site` / `build:docs` | One stage only (`npm run build -- docs` is the same)                         |
+
+**Check** (reads only; exits 1 on a problem)
+
+| Command                | Does                                                                      |
+| ---------------------- | ------------------------------------------------------------------------- |
+| `npm run check`        | Missing or orphaned images, and stale generated files                     |
+| `npm run typecheck`    | Type-check the `.ts` sources and the `.vue` components (vue-tsc)          |
+| `npm run lint`         | Lint (ESLint)                                                             |
+| `npm run format:check` | Check the formatting (dprint); `npm run format` fixes it                  |
+| `npm run version`      | Print the version (`-- --long` adds the line's name, drawings and commit) |
+
+**Test** ([TESTING.md](TESTING.md))
+
+| Command                                         | Does                                                                                      |
+| ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `npm test`                                      | Every tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                            |
+| `npm run test:watch`                            | Re-run the tests on every save                                                            |
+| `npm run test:coverage`                         | Every tier and the coverage table; fails below the line or branch floor                   |
+| `npm run test:report`                           | The same, saving the full report to `test-results/report.md`                              |
+| `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`                        |
 
 ## Versioning
 

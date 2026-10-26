@@ -208,9 +208,7 @@ section.
 **Chosen:** a folder per command (`script/ingest/`, `build/`, `generate/`, `check/`, `version/`,
 `changelog/`, `testRunner/`), with shared code in `script/lib/`; each command's entry file is named
 after it. The helpers that tests share live in `src/testing/`, because nearly all of their users are
-`src/` tests. Until the [scripts overhaul](plans/SCRIPTS-OVERHAUL.md) is done, some commands are
-still in their old folders (`script/build/` also takes in drawings; `design/` and `placeholders/`
-hold generators).
+`src/` tests.
 
 **Why.** An entry point is easy to find, and a file name alone (in an editor tab, a stack trace)
 says what the file does. The rules for scripts are in [SCRIPTS.md](SCRIPTS.md).

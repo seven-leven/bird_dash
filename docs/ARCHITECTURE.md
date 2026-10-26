@@ -159,9 +159,9 @@ compares the generated text files with what their generators would write now.
 Other scripts: `version/version.ts` (the version, see the README), `changelog/changelog.ts`, and
 `generate/` (every generated file, one generator each: `npm run generate`).
 
-Every script follows the principles and naming in [SCRIPTS.md](SCRIPTS.md). The pipeline above is
-moving to them (taking in drawings becomes `npm run ingest`, the generators move to
-`script/generate/`); [plans/SCRIPTS-OVERHAUL.md](plans/SCRIPTS-OVERHAUL.md) has the steps.
+Every script follows the principles and naming in [SCRIPTS.md](SCRIPTS.md): one job per command
+(`ingest`, `build`, `generate`, `check`, …), each made with `command` and reaching the outside world
+only through `Io`.
 
 ## Rules
 
