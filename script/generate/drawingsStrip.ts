@@ -1,10 +1,11 @@
 /**
  * The README's picture: the newest drawings in a row, each on white paper as the site
- * shows them, taken from public/stats.json and the thumbnails. `npm run design` redraws
+ * shows them, taken from public/stats.json and the thumbnails. `npm run generate` redraws
  * it with the other images, so it follows the archive rather than being a screenshot.
  */
 import sharp, { type Sharp } from 'sharp';
-import { readJson } from '../lib/fs.ts';
+import { type Io, readJson, realIo } from '../lib/io.ts';
+import { PATHS } from '../lib/paths.ts';
 import type { Stats } from '../../src/types/data.ts';
 
 /** How many drawings, how big each is, and the room around and between them (px). */
@@ -15,10 +16,11 @@ export const STRIP = { count: 5, tile: 240, gap: 16 } as const;
  * drawing sits on a white card with the site's slate-200 edge and 12px corners.
  */
 export async function drawingStrip(
-  statsPath = './public/stats.json',
+  io: Io = realIo,
+  statsPath: string = PATHS.stats,
   publicDir = './public',
 ): Promise<Sharp | null> {
-  const { newest } = await readJson<Stats>(statsPath);
+  const { newest } = await readJson<Stats>(io, statsPath);
   const shown = newest.slice(0, STRIP.count);
   if (shown.length === 0) return null;
 
@@ -48,10 +50,11 @@ export async function drawingStrip(
 /** Write the strip as WebP (photographs of drawings: far smaller than PNG). */
 export async function writeDrawingStrip(
   path: string,
+  io: Io = realIo,
   statsPath?: string,
   publicDir?: string,
 ): Promise<boolean> {
-  const strip = await drawingStrip(statsPath, publicDir);
+  const strip = await drawingStrip(io, statsPath, publicDir);
   if (!strip) return false;
   await strip.webp({ quality: 82 }).toFile(path);
   return true;

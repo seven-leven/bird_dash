@@ -51,7 +51,14 @@ export const AREAS: Area[] = [
     id: 'pipeline',
     label: 'Asset pipeline and data files',
     protects: 'image builds, the integrity check, the files in public/',
-    paths: ['script/ingest/', 'script/build/', 'script/placeholders/', 'script/lib/'],
+    paths: [
+      'script/ingest/',
+      'script/build/',
+      'script/lib/',
+      // The generated files the site serves; the rest of generate/ is the docs' images.
+      'script/generate/stats',
+      'script/generate/placeholders',
+    ],
   },
   {
     id: 'release',
@@ -63,7 +70,7 @@ export const AREAS: Area[] = [
     id: 'tooling',
     label: 'Test harness and docs tooling',
     protects: 'the test runner and its reports, generated guide images, the docs site',
-    paths: ['script/test_runner/', 'script/design/', 'script/docs/'],
+    paths: ['script/test_runner/', 'script/generate/', 'script/docs/'],
   },
 ];
 

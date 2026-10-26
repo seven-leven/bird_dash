@@ -165,10 +165,10 @@ mouse, and lets the two kinds of tile differ.
 
 ### Colours are measured as Tailwind renders them
 
-**Chosen** (October 2026): `script/design/palette.ts` reads every colour from Tailwind's own palette
-(`tailwindcss/colors`, in oklch) and converts it to hex. The guide's swatches, every contrast figure
-in DESIGN.md, the accent menu's rule and the placeholders all use those values; a test checks the
-page's tables against them.
+**Chosen** (October 2026): `script/generate/palette.ts` reads every colour from Tailwind's own
+palette (`tailwindcss/colors`, in oklch) and converts it to hex. The guide's swatches, every
+contrast figure in DESIGN.md, the accent menu's rule and the placeholders all use those values; a
+test checks the page's tables against them.
 
 **Why.** The file used to hold Tailwind 3's hex values, typed by hand, while the site renders
 Tailwind 4's oklch colours, which differ slightly. The figures described colours nobody saw, and the
@@ -264,7 +264,7 @@ reaching into `src/components/` blurred the layers. For the test report they sti
 ### Generated images are committed
 
 **Chosen:** `public/full/`, `public/thumb/` and `public/placeholders/` are in git, although `npm run
-ingest` and `npm run placeholders` generate them. The source PNGs (`raw_png/`, tens of MB) are not.
+ingest` and `npm run generate` make them. The source PNGs (`raw_png/`, tens of MB) are not.
 
 **Why.** CI and the deploy run only the Vite build: they never see `raw_png/`, so the generated
 images must already be in the repository. Committing the small WebPs (a few MB) instead of the large
@@ -305,7 +305,7 @@ costs about three seconds.
 ### Old command names are not kept as aliases
 
 **Chosen (2026-10-26):** when a command is renamed (`build:assets` to `ingest`, `build:vite` to
-`build:site`, `placeholders` and `design` to `generate:…`), the old name goes in the same pull
+`build:site`, `placeholders` and `design` to `generate`), the old name goes in the same pull
 request, together with WORKFLOW.md and the workflows.
 
 **Why.** One person runs these commands, and two names for one thing is what SCRIPTS.md exists to

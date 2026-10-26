@@ -1,9 +1,9 @@
 # Scripts overhaul
 
-> **Status:** planned 2026-10-26; phases 0–3 done (the rules; the foundation, with `version` on it;
-> `ingest`; build stages). Moves `script/` onto the rules in [SCRIPTS.md](../SCRIPTS.md), one pull
-> request per phase. Delete this page when phase 7 is done; the CHANGELOG keeps what happened, and
-> SCRIPTS.md stays as the rules.
+> **Status:** planned 2026-10-26; phases 0–4 done (the rules; the foundation, with `version` on it;
+> `ingest`; build stages; `generate`). Moves `script/` onto the rules in
+> [SCRIPTS.md](../SCRIPTS.md), one pull request per phase. Delete this page when phase 7 is done;
+> the CHANGELOG keeps what happened, and SCRIPTS.md stays as the rules.
 
 ## Why
 
@@ -118,10 +118,17 @@ the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
       `npm run build` gives the same `dist/` as CI. _Done:_ `STAGES` in `build.ts`, `Io.runNode`,
       `build:site` and `build:docs`; `docs:build` is gone. `--check` waits in `build.ts` for
       phase 5.
-- [ ] **4. Generate.** Every generator under `generate/`, one file per output, the design guide
+- [x] **4. Generate.** Every generator under `generate/`, one file per output, the design guide
       split up; `npm run generate` runs them all, `generate:<name>` one. `stats.json` is generated
       here (and `ingest` calls it). One contract test: every generated file is current. _Done when_
       `placeholders` and `design` are gone and the old per-file "is current" tests are folded in.
+      _Done:_ `GENERATORS` in `generate/generate.ts` (stats, placeholders, designGuide, iconSheet,
+      logo, favicons, drawingsStrip); one is picked by name (`npm run generate -- logo`) rather than
+      by a `generate:<name>` script, so no two scripts do the same thing. `--into <dir>` writes
+      anywhere (it replaces the placeholders' `--preview`). The guide is `designGuide.ts`,
+      `iconSheet.ts` and the shared `guideDrawing.ts` (`wrap` is `wrapText` there, not in `lib/`).
+      `generatedFiles_contract_test.ts` runs every generator. A real run reproduces the committed
+      files byte for byte.
 - [ ] **5. Check.** `npm run check` runs every read-only check (assets, generated files) and reports
       in one voice; one CI step. _Done when_ `check` is the only integrity command.
 - [ ] **6. The rest.** `testRunner/`, `changelog/` and `version/` renamed to the rules and moved

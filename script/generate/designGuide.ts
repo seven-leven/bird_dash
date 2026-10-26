@@ -1,103 +1,38 @@
 /**
- * Draws docs/assets/design-guide.png and docs/assets/icons.png — the visual half of
- * docs/DESIGN.md. Run `npm run design` after changing a token in
- * src/styles/accents.css or an icon in src/lib/icons.ts.
- *
- * The colours and the contrast maths are in ./palette.ts.
+ * Draws docs/assets/design-guide.png — the visual half of docs/DESIGN.md. Run
+ * `npm run generate` after changing a token in src/styles/accents.css or an icon in
+ * src/lib/icons.ts. The colours and the contrast maths are in ./palette.ts; the drawing
+ * kit it shares with the icon sheet is in ./guideDrawing.ts.
  */
 import sharp, { type OverlayOptions } from 'sharp';
-import { ICON_GROUPS, type IconDef, ICONS } from '../../src/lib/icons.ts';
-import { writeFavicons, writeLogoFiles } from './draw_logo.ts';
-import { writeDrawingStrip } from './draw_drawings.ts';
-import { iconGridLayout } from './icon_grid.ts';
 import { PRINCIPLES } from './principles.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
+import { PATHS } from '../lib/paths.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
-
-// ---------------------------------------------------------------------------
-// Drawing helpers
-// ---------------------------------------------------------------------------
-const W = 1400;
-const X = 80; // the left margin; the content runs from X to W - X
-const INK = SLATE['900'];
-const MUTED = SLATE['500'];
-// Small labels (caps, icon names, swatch notes) one step darker than muted text, so
-// they stay legible at the size the guide is read at. No guide text is below 13px
-// except the type scale's own 12 and 11px samples.
-const LABEL = SLATE['600'];
-// The guide is a document in its own voice: warm paper, fine rules, a serif for
-// statements. The site's own colours are the slate and accent swatches drawn on it.
-const PAPER = '#fbfaf7';
-const RULE = '#e2ded5';
-const RULE_SOFT = '#ebe8e1'; // the icon groups' dividers: present, never louder than the icons
-const FONT = 'font-family="Segoe UI, Helvetica, Arial, sans-serif"';
-const SERIF_FACE = 'font-family="Georgia, Cambria, serif"';
-const SERIF = `${SERIF_FACE} font-style="italic"`;
-// The SVG renderer cannot shape Thaana, so Dhivehi is drawn by Pango in the
-// site's own Thaana font and laid over the page.
-const FARUMA = './src/styles/fonts/Faruma.woff';
-
-const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-const text = (x: number, y: number, s: string, size = 15, fill = INK, weight = 400, extra = '') =>
-  `<text x="${x}" y="${y}" ${FONT} font-size="${size}" font-weight="${weight}" fill="${fill}" ${extra}>${
-    esc(s)
-  }</text>`;
-const caps = (x: number, y: number, s: string, fill = LABEL) =>
-  text(x, y, s.toUpperCase(), 13, fill, 600, 'letter-spacing="1.5"');
-const serif = (x: number, y: number, s: string, size = 17, fill = MUTED) =>
-  `<text x="${x}" y="${y}" ${SERIF} font-size="${size}" fill="${fill}">${esc(s)}</text>`;
-const statement = (x: number, y: number, s: string, size: number) =>
-  `<text x="${x}" y="${y}" ${SERIF_FACE} font-size="${size}" fill="${INK}">${esc(s)}</text>`;
-
-/** Break `s` into lines of at most `max` characters, at spaces. */
-export function wrap(s: string, max: number): string[] {
-  const lines: string[] = [];
-  for (const word of s.split(' ')) {
-    const last = lines.at(-1);
-    if (last !== undefined && `${last} ${word}`.length <= max) {
-      lines[lines.length - 1] += ` ${word}`;
-    } else lines.push(word);
-  }
-  return lines;
-}
-/** Several lines of text, `lead` apart, as one <text> of <tspan>s. */
-const para = (x: number, y: number, lines: string[], lead: number, attrs: string) =>
-  `<text x="${x}" y="${y}" ${attrs}>${
-    lines.map((l, i) => `<tspan x="${x}" dy="${i ? lead : 0}">${esc(l)}</tspan>`).join('')
-  }</text>`;
-const rect = (x: number, y: number, w: number, h: number, fill: string, rx = 0, extra = '') =>
-  `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" fill="${fill}" ${extra}/>`;
-const line = (x1: number, y1: number, x2: number, y2: number, stroke = RULE) =>
-  `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="1"/>`;
-const rule = (y: number) => line(X, y, W - X, y);
-const icon = (name: keyof typeof ICONS, x: number, y: number, size: number, ink: string) => {
-  const def: IconDef = ICONS[name];
-  const paint = def.filled
-    ? `fill="${ink}" stroke="none"`
-    : `fill="none" stroke="${ink}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
-  return `<g transform="translate(${x} ${y}) scale(${size / 24})" ${paint}>${def.body}</g>`;
-};
-
-/**
- * Dhivehi in Faruma, `size` px, its baseline at `baseline`: an image to lay over the
- * page. The rendered image is cropped to the ink, so it is placed by its bottom edge:
- * `descent` is how far the text's lowest mark reaches below the baseline, in ems
- * (ރޭރު reaches 0.06, measured in the browser).
- */
-async function thaana(s: string, x: number, baseline: number, size: number, descent = 0.06) {
-  const input = await sharp({
-    text: {
-      text: `<span foreground="${INK}">${s}</span>`,
-      font: `Faruma ${size}`,
-      fontfile: FARUMA,
-      rgba: true,
-      dpi: 72,
-    },
-  }).png().toBuffer();
-  const { height = 0 } = await sharp(input).metadata();
-  return { input, left: x, top: Math.round(baseline + descent * size - height) };
-}
+import {
+  caps,
+  FONT,
+  icon,
+  iconGroups,
+  INK,
+  LABEL,
+  line,
+  MUTED,
+  PAPER,
+  para,
+  rect,
+  RULE,
+  rule,
+  serif,
+  SERIF_FACE,
+  statement,
+  text,
+  thaana,
+  W,
+  wrapText,
+  X,
+} from './guideDrawing.ts';
 
 /**
  * Every section has the same shape: a fine rule, a small label, a statement in
@@ -120,63 +55,6 @@ function ramp(y: number, name: string, colors: Record<string, string>): string {
     return rect(x, y, w - 6, 78, hex, 8, `stroke="${RULE}"`) +
       text(x + 10, y + 30, `${name}-${step}`, 16, on, 600) + text(x + 10, y + 56, hex, 14, on);
   }).join('');
-}
-
-/**
- * The icon groups on one grid of equal columns (see icon_grid.ts). Each group is
- * labelled above its first icon, and a divider stands in the empty column that
- * separates it from the group before, on the same centre line as the icons.
- */
-function iconGroups(
-  x0: number,
-  y0: number,
-  o: {
-    cols: number;
-    size: number;
-    cell: number;
-    row: number;
-    label: number;
-    name: number;
-    /** Space between a group's label and its icons. */
-    gap?: number;
-  },
-  ink: string,
-): { svg: string; bottom: number } {
-  const layout = iconGridLayout(ICON_GROUPS, o.cols);
-  const gap = o.gap ?? 16;
-  let svg = '';
-  for (const group of layout) {
-    const y = y0 + group.row * o.row;
-    if (group.col > 0) {
-      // Beside the icons only, not the labels: the grouping shows without a cage of lines.
-      const x = x0 + (group.col - 1) * o.cell + o.size / 2;
-      svg += line(x, y + gap, x, y + gap + o.size + o.name + 8, RULE_SOFT);
-    }
-    svg += text(
-      x0 + group.col * o.cell,
-      y,
-      group.label.toUpperCase(),
-      o.label,
-      LABEL,
-      600,
-      'letter-spacing="1"',
-    );
-    for (const { name, col } of group.icons) {
-      const x = x0 + col * o.cell;
-      svg += icon(name as keyof typeof ICONS, x, y + gap, o.size, ink) +
-        text(
-          x + o.size / 2,
-          y + gap + o.size + o.name + 8,
-          name,
-          o.name,
-          LABEL,
-          400,
-          'text-anchor="middle"',
-        );
-    }
-  }
-  const rows = Math.max(...layout.map((g) => g.row)) + 1;
-  return { svg, bottom: y0 + rows * o.row };
 }
 
 /** The colours of one theme, as the role cards and the states draw them. */
@@ -311,8 +189,8 @@ export async function designGuide(
     parts.push(
       (i ? line(x - 28, y + 72, x - 28, y + 452) : '') + icon(p.icon, x, y + 72, 36, INK) +
         caps(x, y + 164, `P${i + 1}`) +
-        para(x, y + 214, wrap(p.title, 15), 38, `${SERIF_FACE} font-size="30" fill="${INK}"`) +
-        para(x, y + 336, wrap(p.summary, 24), 32, `${FONT} font-size="18" fill="${LABEL}"`),
+        para(x, y + 214, wrapText(p.title, 15), 38, `${SERIF_FACE} font-size="30" fill="${INK}"`) +
+        para(x, y + 336, wrapText(p.summary, 24), 32, `${FONT} font-size="18" fill="${LABEL}"`),
     );
   });
   y += 524;
@@ -509,21 +387,6 @@ export async function designGuide(
   return { svg, placeholders, dhivehi };
 }
 
-/** The icon sheet (docs/assets/icons.png) as an SVG. */
-export function iconSheetSvg(): string {
-  const width = 1000;
-  const groups = iconGroups(56, 44, {
-    cols: 7,
-    size: 60,
-    cell: 132,
-    row: 168,
-    label: 13,
-    name: 14,
-  }, '#111111');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${groups.bottom}">` +
-    rect(0, 0, width, groups.bottom, '#ffffff') + groups.svg + '</svg>';
-}
-
 /** The contrast figures quoted in docs/DESIGN.md, one line each. */
 export function contrastReport(): string[] {
   const pairs: [string, string, string][] = [
@@ -541,29 +404,11 @@ export function contrastReport(): string[] {
   return pairs.map(([label, a, b]) => `  ${contrast(a, b).toFixed(1)}:1  ${label}`);
 }
 
-/**
- * Draw every generated image: the guide, the icon sheet, the logo sheet and files and
- * the README's row of drawings into `dir`, and the favicons into `publicDir`.
- */
-export async function writeDesignImages(
-  dir = './docs/assets',
-  publicDir = './public',
-): Promise<void> {
-  const png = (svg: string) => sharp(new TextEncoder().encode(svg));
+/** Draw the guide into `dir` (docs/assets/ by default) as design-guide.png. */
+export async function writeDesignGuide(dir: string = PATHS.docsAssets): Promise<string> {
   const { svg, placeholders, dhivehi } = await designGuide();
-  await png(svg).composite([...placeholders, ...dhivehi]).png().toFile(`${dir}/design-guide.png`);
-  await png(iconSheetSvg()).png().toFile(`${dir}/icons.png`);
-  await writeLogoFiles(dir);
-  await writeFavicons(publicDir);
-  await writeDrawingStrip(`${dir}/drawings.webp`); // read from ./public, whatever publicDir is
-}
-
-// The command's entry point: it only runs as a program, never inside a test.
-/* c8 ignore next */
-if (import.meta.main) {
-  await writeDesignImages();
-  console.log(
-    '  wrote design-guide.png, icons.png, logo.png, drawings.webp and logo/ in docs/assets/, favicons in public/',
-  );
-  for (const line of contrastReport()) console.log(line);
+  const path = `${dir}/design-guide.png`;
+  await sharp(new TextEncoder().encode(svg)).composite([...placeholders, ...dhivehi]).png()
+    .toFile(path);
+  return path;
 }

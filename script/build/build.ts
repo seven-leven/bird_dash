@@ -14,7 +14,7 @@ import { PATHS } from '../lib/paths.ts';
 import { EXIT, MARK, parseArgs, runCommand, UsageError } from '../lib/cli.ts';
 import { scanSources } from '../ingest/scanSources.ts';
 import { countBlockingIssues, planChanges } from '../ingest/planChanges.ts';
-import { isStatsCurrent } from './collection_stats.ts';
+import { isStatsCurrent } from '../generate/stats.ts';
 import { printCheckReport } from './printCheckReport.ts';
 import { computeVersion, formatVersionLine } from '../version/version.ts';
 

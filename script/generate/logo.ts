@@ -1,11 +1,12 @@
 /**
  * Draws the logo sheet (docs/assets/logo.png) and writes the logo as standalone SVG
- * files (docs/assets/logo/). Run through `npm run design` (script/design/draw_design_guide.ts).
+ * files (docs/assets/logo/), and the favicons. Written by `npm run generate`.
  */
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { LOGO_MARK, LOGO_TILE, WORDMARK } from '../../src/lib/logo.ts';
 import { SLATE } from './palette.ts';
+import { PATHS } from '../lib/paths.ts';
 
 const INK = SLATE['900'];
 const MUTED = SLATE['500'];
@@ -121,29 +122,33 @@ export function logoSheetSvg(): string {
 }
 
 /** Write the logo sheet (`logo.png`) and the standalone files (`logo/`) into `dir`. */
-export async function writeLogoFiles(dir = './docs'): Promise<void> {
+export async function writeLogoFiles(dir: string = PATHS.docsAssets): Promise<string[]> {
   await mkdir(`${dir}/logo`, { recursive: true });
   const files: Record<string, string> = {
     'mark.svg': logoSvg('mark', INK),
     'mark-white.svg': logoSvg('mark', '#ffffff'),
     'tile.svg': logoSvg('tile', INK),
   };
+  const written: string[] = [];
   for (const [name, svg] of Object.entries(files)) {
     await writeFile(`${dir}/logo/${name}`, svg + '\n');
+    written.push(`${dir}/logo/${name}`);
   }
   await sharp(new TextEncoder().encode(logoSvg('tile', INK, 512))).png().toFile(
     `${dir}/logo/tile-512.png`,
   );
   await sharp(new TextEncoder().encode(logoSheetSvg())).png().toFile(`${dir}/logo.png`);
+  return [...written, `${dir}/logo/tile-512.png`, `${dir}/logo.png`];
 }
 
 /**
  * The browser-tab icon: the logo tile, as SVG, and as a 64px PNG for browsers
  * that take no SVG icon. Written into `public/`, where index.html links them.
  */
-export async function writeFavicons(dir = './public'): Promise<void> {
+export async function writeFavicons(dir = './public'): Promise<string[]> {
   await writeFile(`${dir}/favicon.svg`, logoSvg('tile', INK) + '\n');
   await sharp(new TextEncoder().encode(logoSvg('tile', INK, 64))).png().toFile(
     `${dir}/favicon.png`,
   );
+  return [`${dir}/favicon.svg`, `${dir}/favicon.png`];
 }

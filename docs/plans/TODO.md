@@ -71,7 +71,8 @@ page cheap.
         24.22.1 (raised from 24.22.0 on 2026-10-23). Everything passes, but upgrade to match CI.
   - [x] **Stale paths in the docs.** The `CHANGELOG.md` header points to
         `script/version/version.json` (now `base_version.json`); the diagram in
-        `docs/ARCHITECTURE.md` lists `docs/` among the scripts (now `script/design/`).
+        `docs/ARCHITECTURE.md` lists `docs/` among the scripts (then `script/design/`, now
+        `script/generate/`).
 - [ ] **Technical Debt**:
   - [x] URL/routing — hash routing (`#<collection>` / `#<collection>/<item>`) deep-links a
         collection or an item; deep-linking an item scrolls/opens it, and tiles/images are
@@ -116,8 +117,8 @@ page cheap.
         `ItemSheet`), so the viewer and the page share one vocabulary.
   - [ ] **Placeholders as icons:** draw an undrawn tile (and a failed load, and a search row) as
         `CollectionIcon` in the muted colour on the tile grey, instead of a generated image. Then
-        remove `public/placeholders/`, `script/placeholders/` and its tests, `npm run placeholders`,
-        `tileImage`'s placeholder URLs, and the guide's overlays and their checks.
+        remove `public/placeholders/`, `script/generate/placeholders.ts` and its tests, the
+        generator, `tileImage`'s placeholder URLs, and the guide's overlays and their checks.
   - [ ] **Five type sizes:** drop `text-micro` (11px) and use `text-xs` for `.caps-label`,
         `.count-pill` and `.kbd-hint`. Check that they still fit at 375px.
   - [ ] **Warm paper on the site:** swap the neutral ramp from slate to stone, so the site matches
@@ -167,7 +168,7 @@ page cheap.
         own, as the page already counts collections past three.
   - [ ] **An icon per series** (a butterfly, a cake, a mountain, a sphere, a face, a running animal)
         for its emblem and placeholder silhouette, drawn to the icon rules (DESIGN.md §08), then
-        `npm run placeholders`.
+        `npm run generate -- placeholders`.
   - [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
         notes.
 
