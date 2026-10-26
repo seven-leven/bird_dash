@@ -92,11 +92,23 @@
   - [ ] Add Seasonality data (Iruvai / Hulhangu).
 - [ ] **Media**:
   - [ ] Add support for multiple images per item.
-- [ ] **The design manifesto as a page** (proposed 2026-10-26): `docs/DESIGN.md` is the one doc with
-      a public audience. Show it on the site, like the About page (`#design`), so it is set in the
-      real type, colours and dark mode; generate it from the markdown so the two cannot drift.
-      Chosen over a VitePress docs site: the other docs are for contributors and read well on
-      GitHub, they link to source files, and Pages serves one site per repository.
+- [ ] **The docs as a site, in the site's own design** (decided 2026-10-26). Build `docs/` into
+      static pages with Vite (VitePress, which is Vue and Vite like the site), themed by the design
+      manifesto instead of the default theme, so the docs look like Wildlife Illustrated. The
+      markdown stays the source, and GitHub keeps rendering it as now.
+  - [ ] **The theme from the manifesto:** the same tokens as `src/styles/main.css` (slate ground,
+        one accent, the six type sizes, 4px spacing, 6 and 12px corners), Faruma for Thaana, the
+        logo mark, light and dark. Share the tokens rather than copy them, so the two cannot drift.
+  - [ ] **DESIGN.md first:** it is the doc with a public audience. Its tables of colours, type and
+        icons can render live from the real tokens and icon set instead of as text.
+  - [ ] **Hosting:** Pages serves one site per repository, so build the docs into the same artifact
+        under a subpath (`/bird_dash/docs/`) in `deploy.yml`, and add the docs build to `verify.yml`
+        so a broken page fails CI like a broken site.
+  - [ ] **Links to source files** (`../src/…`, `../script/…`) work on GitHub but not on a built
+        site: rewrite them to GitHub URLs at build time, and fail the build on a dead link.
+  - [ ] **Link it** from the site's footer and the About page, and from the README.
+  - [ ] Pin VitePress exactly, like every other dependency (DECISIONS.md), and keep the 100%
+        coverage floor meaningful: theme code is tested or excluded on purpose.
 - [ ] **Collections that are not species lists** (planned 2026-10-26). The practice series in the
       art notes are coming: Butterflies (colour pencil), Dynamic Animals (pen), Sweet Treats
       (fineliner), Landscapes (pencil), Digital Value Studies, Movie Character Portraits. Each is a
