@@ -56,12 +56,10 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
 - [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
       notes.
 
-### The viewer and the facts it shows
+### The viewer
 
 - [ ] **Several images per item** (after phase 5): a series piece, or a drawing with its sketches;
       the viewer pages through an item's images with the same zoom and keys.
-- [ ] **Conservation status** (IUCN / Maldives Red List) and **seasonality** (Iruvai / Hulhangu):
-      the data is a lists task; the site side (typed fields the viewer shows) comes after phase 1.
 
 ### Images
 

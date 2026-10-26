@@ -156,6 +156,6 @@ appears in it with no other change.
 3. Run `npm run generate -- placeholders` to draw its two placeholder images.
 4. Add source art under `raw_png/<id>/` and run `npm run ingest`.
 
-**Add a new kind of information** (conservation status, season): add a string field to the items. It
-appears in the viewer and in search with no code change. Give it its own treatment later by adding
-it to `RawItem` in `src/types/data.ts` and handling it in `src/lib/collectionItems.ts`.
+**Add a new kind of information** (a habitat, where it was seen): add a string field to the items.
+It appears in the viewer and in search with no code change. Give it its own treatment later by
+adding it to `RawItem` in `src/types/data.ts` and handling it in `src/lib/collectionItems.ts`.
