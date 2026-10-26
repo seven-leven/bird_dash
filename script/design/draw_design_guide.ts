@@ -8,6 +8,7 @@
 import sharp, { type OverlayOptions } from 'sharp';
 import { ICON_GROUPS, type IconDef, ICONS } from '../../src/lib/icons.ts';
 import { writeFavicons, writeLogoFiles } from './draw_logo.ts';
+import { writeDrawingStrip } from './draw_drawings.ts';
 import { iconGridLayout } from './icon_grid.ts';
 import { PRINCIPLES } from './principles.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
@@ -541,8 +542,8 @@ export function contrastReport(): string[] {
 }
 
 /**
- * Draw every generated image: the guide, the icon sheet, the logo sheet and files
- * into `dir`, and the favicons into `publicDir`.
+ * Draw every generated image: the guide, the icon sheet, the logo sheet and files and
+ * the README's row of drawings into `dir`, and the favicons into `publicDir`.
  */
 export async function writeDesignImages(
   dir = './docs/assets',
@@ -554,6 +555,7 @@ export async function writeDesignImages(
   await png(iconSheetSvg()).png().toFile(`${dir}/icons.png`);
   await writeLogoFiles(dir);
   await writeFavicons(publicDir);
+  await writeDrawingStrip(`${dir}/drawings.webp`); // read from ./public, whatever publicDir is
 }
 
 // The command's entry point: it only runs as a program, never inside a test.
@@ -561,7 +563,7 @@ export async function writeDesignImages(
 if (import.meta.main) {
   await writeDesignImages();
   console.log(
-    '  wrote design-guide.png, icons.png, logo.png and logo/ in docs/assets/, favicons in public/',
+    '  wrote design-guide.png, icons.png, logo.png, drawings.webp and logo/ in docs/assets/, favicons in public/',
   );
   for (const line of contrastReport()) console.log(line);
 }

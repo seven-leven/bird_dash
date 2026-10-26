@@ -107,6 +107,8 @@ test('`npm run design` writes every image, at the expected sizes, into the folde
     }
     assertStringIncludes(await readFile(`${dir}/logo/mark-white.svg`, 'utf8'), '#ffffff');
     assertEquals(await size(`${dir}/favicon.png`), { width: 64, height: 64, format: 'png' });
+    // Five drawings of 240px with 16px around and between them.
+    assertEquals(await size(`${dir}/drawings.webp`), { width: 1296, height: 272, format: 'webp' });
     assertEquals(
       await readFile(`${dir}/favicon.svg`, 'utf8'),
       await readFile(`${dir}/logo/tile.svg`, 'utf8'),
@@ -135,7 +137,7 @@ test('the images in docs/ are up to date with the code that draws them', async (
       'public/favicon.svg is stale: run `npm run design` and commit the result',
     );
     // PNG bytes can differ between machines (fonts), so compare what is stable: the size.
-    for (const name of ['design-guide.png', 'icons.png', 'logo.png']) {
+    for (const name of ['design-guide.png', 'icons.png', 'logo.png', 'drawings.webp']) {
       assertEquals(
         await size(`./docs/assets/${name}`),
         await size(`${dir}/${name}`),
