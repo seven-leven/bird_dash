@@ -1,5 +1,6 @@
 import { computed, type ComputedRef, ref, shallowReactive } from 'vue';
 import { toCollectionConfig, toCollectionItems } from '../../lib/collectionItems.ts';
+import { fetchJson, getBase } from '../../lib/fetchJson.ts';
 import type {
   CollectionCache,
   CollectionConfig,
@@ -9,13 +10,6 @@ import type {
   RawCollectionConfig,
   RawCollectionData,
 } from '../../types/index.ts';
-
-// Self-contained cast (not import.meta.env directly), so this file also loads where Vite has
-// not defined import.meta.env; the base is then '/'. Vite and Vitest always define it, so the
-// fallback never runs in a test.
-/* c8 ignore next 2 */
-export const getBase = (): string =>
-  (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 
 export function useCollections() {
   const collections = ref<CollectionConfig[]>([]);
@@ -50,10 +44,7 @@ export function useCollections() {
   });
 
   const fetchCollectionData = async (col: CollectionConfig): Promise<CollectionItem[]> => {
-    const res = await fetch(col.dataUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status} loading ${col.label}`);
-
-    const raw: RawCollectionData = await res.json();
+    const raw = await fetchJson<RawCollectionData>(col.dataUrl, col.label);
     return toCollectionItems(col, raw, getBase());
   };
 
@@ -126,11 +117,10 @@ export function useCollections() {
   const init = async (): Promise<void> => {
     initError.value = undefined;
     try {
-      const response = await fetch(`${getBase()}collections.json`);
-      if (!response.ok) throw new Error(`HTTP ${response.status} loading collections`);
-      const rawData: RawCollectionConfig[] = await response.json().catch(() => {
-        throw new Error('collections.json is missing or not valid JSON');
-      });
+      const rawData = await fetchJson<RawCollectionConfig[]>(
+        `${getBase()}collections.json`,
+        'collections.json',
+      );
       if (!Array.isArray(rawData) || rawData.length === 0) {
         throw new Error('No collections are configured');
       }

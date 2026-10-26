@@ -20,10 +20,11 @@ page cheap.
       route, the nav item and the menu entry; Chrome renders `<component :is>`. A design page or a
       link to the docs site is then one entry, not six edits. _Done:_ `src/pages.ts`; the gallery
       stays the default page.
-- [ ] **3. Pages do not fetch.** `AboutPage.vue` fetches `stats.json` itself and borrows `getBase`
+- [x] **3. Pages do not fetch.** `AboutPage.vue` fetches `stats.json` itself and borrows `getBase`
       from the collections composable. A `useStats` loader beside the collections loader, sharing
       one fetch-JSON helper, makes each page a plain view of a store; tests fake one thing instead
-      of `fetch`.
+      of `fetch`. _Done:_ `lib/fetchJson.ts`, `useStats` and the `stats` store; the numbers now load
+      once, not on every visit to About.
 - [ ] **4. One footer.** The gallery and the About page each have their own, already drifting (one
       has the version and commit). An `AppFooter` for both; it also shrinks `GalleryContent.vue`
       (223 lines, four stores) to the sections and the grid.

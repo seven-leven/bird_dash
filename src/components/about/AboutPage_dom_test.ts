@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import { afterEach, test } from 'vitest';
+import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
-import { computed, h, nextTick, ref } from 'vue';
+import { computed, h, nextTick, ref, shallowRef } from 'vue';
 import AboutPage from './AboutPage.vue';
 import { makeCollection } from '../../testing/fixtures.ts';
 import { mountComponent } from '../../testing/mountComponent.ts';
@@ -85,32 +85,41 @@ const STATS: Stats = {
   newest: [dollar, waterhen, duck],
 };
 
-// fetch answers with each response in turn; restored after each test.
-const original = globalThis.fetch;
-afterEach(() => {
-  globalThis.fetch = original;
-});
-function answer(...responses: (Stats | number | Error | string)[]): string[] {
-  const urls: string[] = [];
-  globalThis.fetch = ((input: string) => {
-    urls.push(String(input));
-    const next = responses.shift();
-    if (next instanceof Error || typeof next === 'string') return Promise.reject(next);
-    if (typeof next === 'number') return Promise.resolve(new Response('', { status: next }));
-    return Promise.resolve(new Response(JSON.stringify(next)));
-  }) as typeof fetch;
-  return urls;
+/**
+ * A stand-in for the stats store: each load answers with the next of `answers`, the
+ * numbers or an error message, after a tick (as a fetch would).
+ */
+function fakeStats(...answers: (Stats | string)[]) {
+  const stats = shallowRef<Stats | null>(null);
+  const error = ref('');
+  let loads = 0;
+  const load = async () => {
+    loads++;
+    error.value = '';
+    await Promise.resolve();
+    const next = answers.shift()!;
+    if (typeof next === 'string') error.value = next;
+    else stats.value = next;
+  };
+  return { stats, error, load, loads: () => loads };
 }
 
-/** Wait for the fetch and the render after it. */
+/** Wait for the load and the render after it. */
 const settle = async () => {
   for (let i = 0; i < 5; i++) await new Promise((r) => setTimeout(r, 0));
   await nextTick();
 };
 
-function mount(list: CollectionConfig[] = [birds, sharks, shells], active?: CollectionConfig) {
+function mount(
+  list: CollectionConfig[] = [birds, sharks, shells],
+  active?: CollectionConfig,
+  stats = fakeStats(STATS),
+) {
   const host = mountComponent(() => h(AboutPage), {
-    stores: { collections: { list: ref(list), activeCollection: computed(() => active) } },
+    stores: {
+      collections: { list: ref(list), activeCollection: computed(() => active) },
+      stats,
+    },
   });
   const text = () => host.textContent!.replace(/\s+/g, ' ');
   const hrefs = () => [...host.querySelectorAll('a')].map((a) => a.getAttribute('href'));
@@ -118,11 +127,11 @@ function mount(list: CollectionConfig[] = [birds, sharks, shells], active?: Coll
 }
 
 test('it shows the grey shape while the numbers load, then the numbers from stats.json', async () => {
-  const urls = answer(STATS);
-  const { host, text } = mount();
+  const stats = fakeStats(STATS);
+  const { host, text } = mount(undefined, undefined, stats);
   assert(host.querySelector('[aria-busy="true"]'));
   await settle();
-  assertEquals(urls, ['/stats.json']);
+  assertEquals(stats.loads(), 1);
   assertEquals(host.querySelector('[aria-busy="true"]'), null);
 
   assert(text().includes('sets out to draw the birds, sharks and shells in its lists'));
@@ -133,7 +142,6 @@ test('it shows the grey shape while the numbers load, then the numbers from stat
 });
 
 test('one card per collection: its count, its bar, its groups and how long it has been drawn', async () => {
-  answer(STATS);
   const { host } = mount();
   await settle();
   const lines = [...host.querySelectorAll('ul')][0].querySelectorAll(':scope > li');
@@ -157,7 +165,6 @@ test('one card per collection: its count, its bar, its groups and how long it ha
 });
 
 test('the first drawing heads the page; the newest five link to their pages in the viewer', async () => {
-  answer(STATS);
   const { host, text, hrefs } = mount([birds, sharks, shells], sharks);
   await settle();
   const figure = host.querySelector('figure')!;
@@ -184,7 +191,6 @@ test('the first drawing heads the page; the newest five link to their pages in t
 });
 
 test('the write-up, the manifesto and the source are links that leave the site', async () => {
-  answer(STATS);
   const { host } = mount();
   await settle();
   const external = [...host.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]')];
@@ -201,11 +207,14 @@ test('the write-up, the manifesto and the source are links that leave the site',
 });
 
 test('a failed load says so, and Try again loads it again', async () => {
-  answer(404, new Error('offline'), 'no reason', STATS);
-  const { host, text } = mount();
+  const { host, text } = mount(
+    undefined,
+    undefined,
+    fakeStats('HTTP 404 loading stats.json', 'offline', 'no reason', STATS),
+  );
   await settle();
   assert(text().includes("Couldn't load the numbers"));
-  assert(text().includes('stats.json answered 404'));
+  assert(text().includes('HTTP 404 loading stats.json'));
 
   const retry = () =>
     [...host.querySelectorAll('button')].find((b) => b.textContent!.includes('Try again'))!;
@@ -221,7 +230,7 @@ test('a failed load says so, and Try again loads it again', async () => {
 });
 
 test('an archive with nothing drawn and no names still reads', async () => {
-  answer({
+  const empty = fakeStats({
     drawn: 0,
     total: 30,
     collections: [counts('shells', { total: 0 })],
@@ -229,7 +238,11 @@ test('an archive with nothing drawn and no names still reads', async () => {
     newest: [],
   });
   // Crabs are in collections.json but not yet in stats.json: no card until the next build.
-  const { host, text, hrefs } = mount([shells, makeCollection('crabs', { label: 'Crabs' })]);
+  const { host, text, hrefs } = mount(
+    [shells, makeCollection('crabs', { label: 'Crabs' })],
+    undefined,
+    empty,
+  );
   await settle();
   assert(text().includes('sets out to draw the shells and crabs in its lists'));
   assert(text().includes('Each species carries its Dhivehi name in Thaana where it has one.'));
@@ -243,8 +256,11 @@ test('an archive with nothing drawn and no names still reads', async () => {
 });
 
 test('with no collections, Browse has nowhere to go; a drawing whose collection is gone has no image base', async () => {
-  answer({ ...STATS, first: { ...dollar, collection: 'gone' } });
-  const { host, hrefs } = mount([]);
+  const { host, hrefs } = mount(
+    [],
+    undefined,
+    fakeStats({ ...STATS, first: { ...dollar, collection: 'gone' } }),
+  );
   await settle();
   assertEquals(hrefs()[0], '#');
   assertEquals(host.querySelector('figure img')!.getAttribute('src'), '029.webp');
@@ -264,13 +280,13 @@ test('many collections fold: six cards, then Show all; the prose counts them ins
         links: [link(i % 2 ? 'Wiki' : 'WoRMS')],
       }),
   );
-  answer({
+  const numbers = fakeStats({
     ...STATS,
     collections: many.map((c) => counts(c.id, { named: 1 })),
     first: null,
     newest: [],
   });
-  const { host, text } = mount(many);
+  const { host, text } = mount(many, undefined, numbers);
   await settle();
   assert(text().includes('sets out to draw the wildlife in its 8 collections'));
   assert(text().includes('8 of the 80 species in 8 collections carry'));

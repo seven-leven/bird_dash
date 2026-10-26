@@ -59,7 +59,7 @@ src/
     search/             Global search dropdown and sub-components
     icons/              Icon, CollectionIcon and LogoMark (the drawings are in lib/)
     ui/                 Reusable primitives (IdBadge, EmptyState)
-  stores/               Domain state — search, ui, collections, overlay — each with readonly
+  stores/               Domain state — search, ui, collections, overlay, stats — each with readonly
                         state + actions, shared through provide/inject (defineInjection)
   composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
   lib/                  Small framework-free helpers, and the icon and logo drawings
@@ -95,13 +95,14 @@ Imports only point leftwards in this list; nothing imports from a layer to its r
 
 ### Stores
 
-There are four, created in dependency order and shared with `provide`/`inject` (through
+There are five, created in dependency order and shared with `provide`/`inject` (through
 `defineInjection`, which throws if a store is used outside its provider):
 
 ```
 search ──(debounced query)──┐
                             ├──► collections ──(drawn items)──► overlay
 ui ─────(view mode)─────────┘
+stats   (on its own)
 ```
 
 | Store         | Owns                                                                                |
@@ -110,6 +111,7 @@ ui ─────(view mode)─────────┘
 | `ui`          | Sidebar, theme, view mode (group or date), scroll-spy                               |
 | `collections` | The collection list, the active one, loaded items, and every view derived from them |
 | `overlay`     | Which item is open in the lightbox                                                  |
+| `stats`       | The archive's numbers (`stats.json`), loaded the first time a page asks, then kept  |
 
 Actions that touch more than one store live in [`src/stores/actions.ts`](../src/stores/actions.ts)
 (`switchCollection`, `selectGlobalResult`).
@@ -159,7 +161,9 @@ Other scripts: `version/version.ts` (the version, see the README), `changelog/ch
 
 - **Imports follow the layers.** A helper in `lib/` never imports a store; a component never imports
   a data composable directly.
-- **`src/` never imports from `public/`.** It fetches. `script/` may import `collections.json`.
+- **`src/` never imports from `public/`.** It fetches, through one helper (`lib/fetchJson.ts`), and
+  only in the loaders (`useCollections`, `useStats`): a page is a view of a store and never fetches.
+  `script/` may import `collections.json`.
 - **Components change state only through store actions.**
 - **Anything that can be computed is not stored.** The version, the counts and the grouped views are
   all derived.

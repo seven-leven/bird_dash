@@ -222,12 +222,12 @@ import EmptyState from '../ui/EmptyState.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
+import { useStatsStore } from '../../stores/stats.ts';
 import { drawnOf, plural } from '../../lib/formatCount.ts';
 import { viewName } from '../../lib/viewName.ts';
 import { dhivehiNames } from '../../lib/dhivehiNames.ts';
 import { monthKey } from '../../composables/collection/useCollectionData.ts';
-import { getBase } from '../../composables/collection/useCollections.ts';
-import type { NewestDrawing, Stats } from '../../types/index.ts';
+import type { NewestDrawing } from '../../types/index.ts';
 
 const FOLIO_URL = 'https://seven-leven.github.io/folio/code-wildlife.html';
 const SOURCE_URL = 'https://github.com/seven-leven/bird_dash';
@@ -263,19 +263,8 @@ const externalLink = 'focus-ring rounded-control inline-flex items-center gap-1 
 
 const { list, activeCollection } = useCollectionsStore();
 
-const stats = ref<Stats | null>(null);
-const error = ref('');
-
-async function load(): Promise<void> {
-  error.value = '';
-  try {
-    const res = await fetch(`${getBase()}stats.json`);
-    if (!res.ok) throw new Error(`stats.json answered ${res.status}`);
-    stats.value = await res.json() as Stats;
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : String(err);
-  }
-}
+// The numbers come from the stats store, loaded the first time the page opens.
+const { stats, error, load } = useStatsStore();
 onMounted(load);
 
 const byId = computed(() => new Map(list.value.map((c) => [c.id, c])));

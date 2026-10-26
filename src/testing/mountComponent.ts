@@ -4,6 +4,7 @@ import { type CollectionsStore, provideCollections } from '../stores/collections
 import { type AppActions, provideActions } from '../stores/actions.ts';
 import { provideSearch, type SearchStore } from '../stores/search.ts';
 import { provideUi, type UiStore } from '../stores/ui.ts';
+import { provideStats, type StatsStore } from '../stores/stats.ts';
 
 /**
  * Stand-ins for the stores a component injects. A component reads only a few members
@@ -14,6 +15,7 @@ export interface FakeStores {
   actions?: Partial<AppActions>;
   search?: Partial<SearchStore>;
   ui?: Partial<UiStore>;
+  stats?: Partial<StatsStore>;
 }
 
 // Everything mounted in a test is unmounted after it, so no test has to clean up.
@@ -41,6 +43,7 @@ export function mountComponent(
       if (stores.actions) provideActions(stores.actions as AppActions);
       if (stores.search) provideSearch(stores.search as SearchStore);
       if (stores.ui) provideUi(stores.ui as UiStore);
+      if (stores.stats) provideStats(stores.stats as StatsStore);
       return render;
     },
   });

@@ -48,7 +48,7 @@ test('init: an HTTP error sets initError instead of hanging or throwing', async 
     const c = useCollections();
     await c.init();
     assertEquals(c.isInitialized.value, false);
-    assertEquals(c.initError.value, 'HTTP 404 loading collections');
+    assertEquals(c.initError.value, 'HTTP 404 loading collections.json');
   } finally {
     restore();
   }
@@ -60,7 +60,7 @@ test('init: a non-JSON response (e.g. an SPA fallback page) gets a readable mess
     const c = useCollections();
     await c.init();
     assertEquals(c.isInitialized.value, false);
-    assertEquals(c.initError.value, 'collections.json is missing or not valid JSON');
+    assertEquals(c.initError.value, 'collections.json is not valid JSON');
   } finally {
     restore();
   }

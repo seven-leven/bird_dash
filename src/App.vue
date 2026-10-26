@@ -10,6 +10,7 @@ import { createUiStore, provideUi } from './stores/ui.ts';
 import { createCollectionsStore, provideCollections } from './stores/collections.ts';
 import { createOverlayStore, provideOverlay } from './stores/overlay.ts';
 import { createAppActions, provideActions } from './stores/actions.ts';
+import { createStatsStore, provideStats } from './stores/stats.ts';
 import { applyAccent } from './lib/accent.ts';
 
 // =============================================================================
@@ -24,11 +25,14 @@ const collections = createCollectionsStore({
   drawnOnly: ui.drawnOnly,
 });
 const overlay = createOverlayStore({ drawnItems: collections.drawnItems });
+// The archive's numbers: loaded by the first page that shows them, then kept.
+const stats = createStatsStore();
 
 provideSearch(search);
 provideUi(ui);
 provideCollections(collections);
 provideOverlay(overlay);
+provideStats(stats);
 
 // =============================================================================
 // CROSS-STORE ORCHESTRATIONS — the only actions that touch more than one store
