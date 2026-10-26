@@ -1,203 +1,141 @@
 # TODO
 
-## 🧩 Top Priority: Modular and Decoupled (planned 2026-10-26)
+Open work first, most urgent at the top, grouped by what it touches; everything done is at the
+bottom, newest first. When an item is done, tick it and move it to **Done** with its date, in one
+line; the CHANGELOG keeps the detail. Work big enough to need phases gets a plan of its own in this
+folder, and the item here points to it.
 
-In this order: the first unblocks the non-species collections below, the next two make every new
-page cheap.
+## 🔧 Fix now
 
-- [x] **1. Names as data, not fields the components know.** `dhiv`, `dhiv_script` and `sci` are read
-      by name in `ItemTile.vue`, `ItemSheet.vue`, `SearchResultsList.vue`, `useGlobalSearch.ts` and
-      `collectionItems.ts`. Build each item's names once in `collectionItems.ts`, as a list of `{
-      text, lang: 'dv' | 'en' | 'la', role: 'title' | 'also' | 'latin' }`, and have the tile, the
-      viewer and search render whatever names an item has. A `series` piece then gives a title and
-      its medium with no scientific name, and no component changes. The groundwork for `kind`.
-      _Done:_ `src/lib/itemNames.ts` builds `item.names` (roles `title`, `also`, `common`, `latin`);
-      the tile, the viewer and search render them. `useGlobalSearch` still matches on
-      `commonName`/`scientificName`, which the link templates need anyway.
-- [x] **2. A page registry instead of `'gallery' | 'about'` everywhere.** The About page is written
-      into the `Page` type, the ui store, `useHashRoute`, `Chrome.vue`, `TopBar.vue` and
-      `CollectionMenu.vue`. One list, `pages = [{ id: 'about', component, label }]`, drives the
-      route, the nav item and the menu entry; Chrome renders `<component :is>`. A design page or a
-      link to the docs site is then one entry, not six edits. _Done:_ `src/pages.ts`; the gallery
-      stays the default page.
-- [x] **3. Pages do not fetch.** `AboutPage.vue` fetches `stats.json` itself and borrows `getBase`
-      from the collections composable. A `useStats` loader beside the collections loader, sharing
-      one fetch-JSON helper, makes each page a plain view of a store; tests fake one thing instead
-      of `fetch`. _Done:_ `lib/fetchJson.ts`, `useStats` and the `stats` store; the numbers now load
-      once, not on every visit to About.
-- [x] **4. One footer.** The gallery and the About page each have their own, already drifting (one
-      has the version and commit). An `AppFooter` for both; it also shrinks `GalleryContent.vue`
-      (223 lines, four stores) to the sections and the grid. _Done:_ `layout/AppFooter.vue`, with
-      the pages from `src/pages.ts`; `GalleryContent` is 176 lines.
-- [x] **5. Split the lightbox's logic.** `useLightbox.ts` (365 lines) holds three state machines:
-      zoom and pan, the keyboard, moving between drawings. As three composables each is tested
-      without a DOM, and the viewer can reuse them for a series' multiple images. _Done:_
-      `useZoomPan`, `useDialogKeys` and `useDrawingNav`; `useLightbox` (136 lines) wires them and
-      keeps the image's load state, under the same API, so `LightBox.vue` did not change.
-- [ ] Afterwards: `Chrome`, `TopBar` and `GalleryContent` inject four stores each. Rides along after
-      the site overhaul's phase 3 ([SRC-OVERHAUL.md](SRC-OVERHAUL.md)).
-- [x] **6. The scripts, the same way** (done 2026-10-26). `script/` follows the principles and
-      naming in [SCRIPTS.md](../SCRIPTS.md): `ingest`, `build`, `generate` and `check`, each one
-      job, on one `Io`. Left for the test overhaul: the runner's own `RunnerDeps`.
-- [ ] **7. The site's code, the same way** (planned 2026-10-26). `src/` by feature (`viewer/`,
-      `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/` layers, one word
-      per idea, in nine phases: see [SRC-OVERHAUL.md](SRC-OVERHAUL.md).
-- [ ] **8. The tests, top down** (planned 2026-10-26). From the site's promises to journeys through
-      the whole app, then features, units and contracts, with one kit for fakes, mounting and
-      waiting: see [TEST-OVERHAUL.md](TEST-OVERHAUL.md). Its phases 1–3 come before items 6 and 7.
+- [ ] **The focus ring on a light page** (found 2026-10-26, in the design guide's final review).
+      `.focus-ring` draws `accent-500`, which is below WCAG's 3:1 for a focus indicator on white for
+      teal (2.42:1, the Birds' accent), emerald (2.47), sky (2.71) and orange (2.89); every hue
+      passes on dark. Draw the ring (and the current-item marker) in `accent-700` on light surfaces
+      (5.2:1 or more for every hue), keep `500` on dark; update DESIGN.md's colour rule, the palette
+      contract test and the guide.
+- [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
+      24.22.1. Everything passes, but upgrade to match CI.
 
-## 🚀 High Priority (Fixes & Cleanup)
+## 🧭 Next: the overhauls, in this order
 
-- [ ] **Fixes**:
-  - [ ] **The focus ring on a light page** (found 2026-10-26, in the design guide's final review).
-        `.focus-ring` draws `accent-500`, which is below WCAG's 3:1 for a focus indicator on white
-        for teal (2.42:1, the Birds' accent), emerald (2.47), sky (2.71) and orange (2.89); every
-        hue passes on dark. Draw the ring (and the current-item marker) in `accent-700` on light
-        surfaces (5.2:1 or more for every hue), keep `500` on dark; update DESIGN.md's colour rule,
-        the palette contract test and the guide.
-  - [x] Version numbering logic — version is now derived at build time (patch = commit count,
-        count = drawn illustrations), so it can no longer drift.
-  - [x] Date sorting — the lightbox now pages drawn items chronologically (by drawn date), not by
-        id.
-  - [x] Thumbnail sizing inconsistencies.
-- [ ] **Found 2026-10-23** (reading `main` after the Node migration):
-  - [x] **Weekly deep run fails.** `nightly.yml` has failed since 2026-10-19 in all three timezones:
-        three property tests in `src/composables/collection/useCollectionData_prop_test.ts` take
-        6–11s at `FC_RUNS_MULTIPLIER=25` and hit Vitest's default 5s timeout (Deno had none). Scale
-        the timeout with the multiplier, e.g. `testTimeout` in `vite.config.ts` or a timeout
-        argument from `src/testing/propertyRuns.ts`. Normal CI is unaffected. _Fixed:_ `testTimeout`
-        is 5s × `FC_RUNS_MULTIPLIER`.
-  - [x] **The 100% branch floor is flaky.** One of four local `npm run test:coverage` runs reported
-        99.9% of branches and failed; the other three were 100%. Find the branch that is only
-        sometimes taken (likely reached by some generated inputs only, or timing-dependent) and give
-        it a deterministic test, so CI cannot fail at random. _Fixed:_ it was the sort's tie-break
-        for two drawings on the same day (`useCollectionData.ts`), reached only when a property test
-        happened to generate equal dates; a unit test now covers it.
-  - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
-        24.22.1 (raised from 24.22.0 on 2026-10-23). Everything passes, but upgrade to match CI.
-  - [x] **Stale paths in the docs.** The `CHANGELOG.md` header points to
-        `script/version/version.json` (now `base_version.json`); the diagram in
-        `docs/ARCHITECTURE.md` lists `docs/` among the scripts (then `script/design/`, now
-        `script/generate/`).
-- [ ] **Technical Debt**:
-  - [x] URL/routing — hash routing (`#<collection>` / `#<collection>/<item>`) deep-links a
-        collection or an item; deep-linking an item scrolls/opens it, and tiles/images are
-        shareable.
-  - [x] Scroll-spy via `IntersectionObserver` (with a throttled scroll fallback) — no per-event
-        layout reads, and `content-visibility` virtualization can now be re-introduced safely.
+- [ ] **1. The tests, top down** ([TEST-OVERHAUL.md](TEST-OVERHAUL.md)). From the site's promises to
+      journeys through the whole app, then features, units and contracts, with one kit for fakes,
+      mounting and waiting. Phases 1–3 (the kit, one way to a browser, the journeys) come first:
+      they are the safety net for everything below. Phase 4 is the **Vue component tests**: the 11
+      components that have no test of their own yet. Also moves the test runner onto `Io`, the
+      scripts overhaul's one exception.
+- [ ] **2. The site's code, the same way** ([SRC-OVERHAUL.md](SRC-OVERHAUL.md)). `src/` by feature
+      (`viewer/`, `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/`
+      layers, one word per idea, in nine phases. Most features below ride along with it, each as its
+      own pull request straight after the phase that prepares it ("Features that ride along").
+      Includes fewer stores per component (`Chrome`, `TopBar` and `GalleryContent` inject four each
+      today), after phase 3.
 
-- [x] **Bring the UI in line with DESIGN.md** (revised 2026-10-24): captions under the drawings,
-      grey placeholders, "Drawn only" and "Nothing drawn yet", one sticky heading per section, one
-      set of empty and loading states, search counts and match reasons, the date view newest first
-      with empty runs folded, the collection named on phones, links between drawings, and a light
-      viewer. Done 2026-10-24.
+## ✨ Features
 
-- [x] **Polish the design guide** (from a review of the manifesto, 2026-10-24). The direction is
-      right, so refine rather than redesign. Done 2026-10-24. In order of impact:
-  - [x] **Numbering:** the image shows 01, 02, 04 · 06, 05, 08, 09. Number its sections 1 to n in
-        order, or drop the numbers and keep the titles.
-  - [x] **Thaana in the image:** the Dhivehi type sample renders as broken glyphs, because the
-        renderer has no Faruma. Load the font so the sample reads.
-  - [x] **Title:** make it the signature. A large serif "Wildlife Illustrated" under a small tracked
-        "DESIGN MANIFESTO" label. Serif for statements, sans for everything functional.
-  - [x] **Principles:** a little more vertical room, so they read as the manifesto's main statements
-        rather than an index.
-  - [x] **Colour weight:** keep the ramps and the two theme cards; make the accent menu a slim strip
-        with smaller labels.
-  - [x] **Type section as a specimen:** "Lesser Whistling-Duck" as the hero, Dhivehi and English
-        together, token names and sizes in a quiet side column.
-  - [x] **One shape for the lower sections** (Form and motion, States, Icons, Tiles): a short line,
-        one demonstration, the essential specs. States all at the same scale.
-  - [x] **Ending:** more space above the closing line, set like the opening one.
-  - [x] **DESIGN.md:** keep every rule, but move pure reference (the ramp hex table, the placeholder
-        files) into a short reference section at the end, so the manifesto reads first.
-  - [x] **Test the numbers:** check the ramp and contrast tables in DESIGN.md against `palette.ts`
-        and `contrastReport()`, so they cannot drift.
-  - Don't: add colours or illustrations, use serif everywhere, put every section in a card, or drop
-    a rule only to shorten the page.
+### Collections that are not species lists
 
-- [ ] **Simplify the design system** (proposed 2026-10-24, on hold while the manifesto settled).
-      Each one removes a rule from DESIGN.md; update the guide and its image along with the code.
-      All four ride along with the site overhaul: placeholders as icons after phase 4, the other
-      three after phase 7 ([SRC-OVERHAUL.md](SRC-OVERHAUL.md), "Features that ride along").
-  - [ ] **One set of text roles:** `.text-strong`, `.text-body` and `.text-muted`, each with its
-        light and dark value, replace `.viewer-title/-body/-label` (main.css, `LightBox`,
-        `ItemSheet`), so the viewer and the page share one vocabulary.
-  - [ ] **Placeholders as icons:** draw an undrawn tile (and a failed load, and a search row) as
-        `CollectionIcon` in the muted colour on the tile grey, instead of a generated image. Then
-        remove `public/placeholders/`, `script/generate/placeholders.ts` and its tests, the
-        generator, `tileImage`'s placeholder URLs, and the guide's overlays and their checks.
-  - [ ] **Five type sizes:** drop `text-micro` (11px) and use `text-xs` for `.caps-label`,
-        `.count-pill` and `.kbd-hint`. Check that they still fit at 375px.
-  - [ ] **Warm paper on the site:** swap the neutral ramp from slate to stone, so the site matches
-        the guide's paper. Stone keeps the contrast rules (`stone-500` on white is 4.8:1,
-        `stone-400` on `stone-950` 7.8:1). Change main.css, `palette.ts`, the placeholder colours
-        and DESIGN.md together; as its own commit, so it is easy to drop.
-  - [x] **Say what the guide's own look is:** the image uses warm paper and a serif, neither of
-        which is a site token. Add one line to DESIGN.md saying the guide is printed in its own
-        voice and the site's tokens are the swatches on it (or, with warm paper on the site, that
-        the paper is the site's own).
+The practice series in the art notes are coming: Butterflies (colour pencil), Dynamic Animals (pen),
+Sweet Treats (fineliner), Landscapes (pencil), Digital Value Studies, Movie Character Portraits.
+Each is a numbered list of about 30 prompts in one medium, grouped by difficulty or week, and most
+are not wildlife. "Every piece has its place from the start, drawn or not" already fits them, and
+`groupLabel` ("Difficulty", "Week") already works. Before the first one goes in:
 
-## 🏗️ Architecture & Features
+- [ ] **The name** (a decision, not code; first). "Wildlife Illustrated" over a sweet-treats
+      collection: keep it as the umbrella (wildlife is the core, the series are its studies), or
+      keep the mark and the look and change the word. The logo, README, `index.html` and the About
+      page all carry it.
+- [ ] **A `kind` per collection** in `collections.json` (after the site overhaul's phase 1):
+      `species` (today's: scientific and Dhivehi names, reference links) or `series` (the medium,
+      the prompt, the challenge it belongs to). The viewer, search and the data contract test show
+      and check each kind's fields; the file shapes hold both.
+- [ ] **An icon per series** (after phase 4): a butterfly, a cake, a mountain, a sphere, a face, a
+      running animal, drawn to the icon rules (DESIGN.md §08), for the emblem and the placeholder.
+- [ ] **The About page by kind** (after phase 5): "species", "Named in Dhivehi" and "Checked against
+      references" describe `species` collections only; count and name each kind on its own.
+- [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
+      notes.
 
-- [x] **Search**: Global search (ID, common/scientific name, Dhivehi name + Thaana script) with
-      cross-collection results, counters, and keyboard navigation.
-- [ ] **Data**:
-  - [ ] Add Conservation status (IUCN / Maldives Red List).
-  - [ ] Add Seasonality data (Iruvai / Hulhangu).
-  - The site side (typed fields the viewer shows) rides along after the site overhaul's phase 1; the
-    data itself is a lists task.
-- [ ] **Media**:
-  - [ ] Add support for multiple images per item. Rides along after the site overhaul's phase 5.
-- [ ] Responsive thumbnails (below, under tooling): the `srcset` rides along after phase 5.
-- [x] **The docs as a site, in the site's own design** (done 2026-10-26). VitePress
-      (`docs/.vitepress/`) builds `docs/*.md` into `dist/docs/`, served at `/bird_dash/docs/` from
-      the same Pages deploy; `verify.yml` builds it, so a dead link fails CI. The theme takes
-      Faruma, the type stack, the radii and the shadows from `src/styles/tokens.css`, which the
-      site's `main.css` imports too, and the site's own logo and icon components. DESIGN.md's colour
-      ramps and icon set render live (`<!-- live: … -->`); source links go to GitHub; headings keep
-      GitHub's anchors. Linked from the footer, the About page and the README. The docs theme takes
-      its colours from Tailwind's theme variables and `src/styles/accents.css` too, so it names no
-      colour of its own. Still open: VitePress is the 2.0 alpha, the one that shares the site's Vite
-      8; move to 2.0 when it is released.
-- [ ] **Collections that are not species lists** (planned 2026-10-26). The practice series in the
-      art notes are coming: Butterflies (colour pencil), Dynamic Animals (pen), Sweet Treats
-      (fineliner), Landscapes (pencil), Digital Value Studies, Movie Character Portraits. Each is a
-      numbered list of about 30 prompts in one medium, grouped by difficulty or week, and most are
-      not wildlife. "Every piece has its place from the start, drawn or not" already fits them, and
-      `groupLabel` ("Difficulty", "Week") already works. Before the first one goes in:
-  - [ ] **A `kind` per collection** (rides along after the site overhaul's phase 1) in
-        `collections.json`: `species` (today's: scientific and Dhivehi names, reference links) or
-        `series` (the medium, the prompt, the challenge it belongs to). The viewer, search and the
-        data contract test show and check the fields of each kind; `src/types/data.ts` holds both
-        shapes.
-  - [ ] **The name.** "Wildlife Illustrated" over a sweet-treats collection: keep it as the umbrella
-        (wildlife is the core, the series are its studies), or keep the mark and the look and change
-        the word. Decide before the first non-wildlife series ships; the logo, README, `index.html`
-        and the About page all carry it.
-  - [ ] **The About page's wording** (rides along after phase 5) for a series: "species", "Named in
-        Dhivehi" and "Checked against references" describe `species` collections only. Count and
-        name each kind on its own, as the page already counts collections past three.
-  - [ ] **An icon per series** (rides along after phase 4) (a butterfly, a cake, a mountain, a
-        sphere, a face, a running animal) for its emblem and placeholder silhouette, drawn to the
-        icon rules (DESIGN.md §08), then `npm run generate -- placeholders`.
-  - [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
-        notes.
+### The viewer and the facts it shows
 
-## 🛠️ Workflow & Tooling
+- [ ] **Several images per item** (after phase 5): a series piece, or a drawing with its sketches;
+      the viewer pages through an item's images with the same zoom and keys.
+- [ ] **Conservation status** (IUCN / Maldives Red List) and **seasonality** (Iruvai / Hulhangu):
+      the data is a lists task; the site side (typed fields the viewer shows) comes after phase 1.
 
-- [x] **Ship Script**: `npm run changelog` inserts unlogged commits at the top of the newest
-      changelog section.
-- [x] **Docs**: `CHANGELOG.md` scheme documented; entries curated via the changelog task.
-- [x] **CI**: lint / format / build run on every pull request.
-- [x] **Accessibility & SEO**: Lighthouse to 100 (contrast, meta description, favicon).
-- [ ] Proper group names throughout each collection. _(data task — needs correct taxonomy per item
-      in `public/lists/*.json`)_
-- [ ] Group images by collection, matching the storage layout. _(data/tooling task — needs a spec)_
-- [x] Extract types.
-- [x] Standardize names for all types (PascalCase interfaces per domain in `src/types/`; removed the
-      stray `loadingState`).
-- [ ] Responsive / higher-compression thumbnails (Lighthouse image-delivery, currently unscored).
-- [ ] **Component tests (`.vue`)**: moved into the test overhaul, phase 4
-      ([TEST-OVERHAUL.md](TEST-OVERHAUL.md)), with the up-to-date list: the 11 components that have
-      no test of their own yet.
+### Images
+
+- [ ] **Responsive, smaller thumbnails** (Lighthouse image delivery, unscored today): `npm run
+      ingest` makes a second, smaller size and higher compression; the tiles take it through
+      `srcset` (after phase 5).
+
+## 🎨 Simplify the design system
+
+Proposed 2026-10-24, held while the manifesto settled. Each one removes a rule from DESIGN.md;
+update the guide and its image with the code. All ride along with the site overhaul.
+
+- [ ] **Placeholders as icons** (after phase 4): an undrawn tile, a failed load and a search row
+      draw `CollectionIcon` in the muted colour on the tile grey, instead of a generated image; then
+      `public/placeholders/`, its generator and tests, `tileImage`'s URLs and the guide's overlays
+      go.
+- [ ] **One set of text roles** (after phase 7): `.text-strong`, `.text-body` and `.text-muted`,
+      each with its light and dark value, replace `.viewer-title/-body/-label`, so the viewer and
+      the page share one vocabulary.
+- [ ] **Five type sizes** (after phase 7): drop `text-micro` (11px) and use `text-xs` for
+      `.caps-label`, `.count-pill` and `.kbd-hint`; check that they still fit at 375px.
+- [ ] **Warm paper on the site** (after phase 7, its own commit so it is easy to drop): swap the
+      neutral ramp from slate to stone, so the site matches the guide's paper. Stone keeps the
+      contrast rules (`stone-500` on white 4.8:1, `stone-400` on `stone-950` 7.8:1); change
+      `main.css`, `palette.ts`, the placeholder colours and DESIGN.md together.
+
+## 🗂️ Data and tooling
+
+- [ ] **Proper group names** throughout each collection: the right taxonomy per item in
+      `public/lists/*.json` (a data task).
+- [ ] **Group images by collection**, matching the storage layout (needs a spec first).
+- [ ] **VitePress 2.0** when it is released: the docs site runs the 2.0 alpha, the one that shares
+      the site's Vite 8.
+
+## ✅ Done
+
+**2026-10-26**
+
+- [x] The scripts overhaul: `ingest`, `build`, `generate` and `check`, each one job, on one `Io`,
+      named to [SCRIPTS.md](../SCRIPTS.md), with a contract test for the naming.
+- [x] The docs as a site, in the site's own design: VitePress at `/bird_dash/docs/`, built and
+      link-checked in CI, sharing the site's tokens, accents, logo and icons.
+- [x] The design guide's final pass (V5–V7): legible at the size it is read, the principles and the
+      icons on one grid each, the radii and speeds read from the CSS.
+- [x] Names as data: `item.names` (title, also, common, Latin), rendered by the tile, the viewer and
+      search.
+- [x] A page registry, `src/pages.ts`, instead of `'gallery' | 'about'` in six places.
+- [x] Pages do not fetch: `fetchJson`, `useStats` and the `stats` store.
+- [x] One footer, `AppFooter`, for the gallery and every page.
+- [x] The lightbox's logic split into `useZoomPan`, `useDialogKeys` and `useDrawingNav`.
+
+**2026-10-23 – 2026-10-24**
+
+- [x] The weekly deep run fixed: `testTimeout` scales with `FC_RUNS_MULTIPLIER`.
+- [x] The flaky 100% branch floor fixed: the same-day sort tie-break has a deterministic test.
+- [x] Stale paths in the docs (the CHANGELOG header, the ARCHITECTURE diagram).
+- [x] The UI in line with DESIGN.md: captions under the drawings, grey placeholders, "Drawn only"
+      and "Nothing drawn yet", one sticky heading per section, one set of empty and loading states,
+      search counts and match reasons, the month view newest first, the collection named on phones,
+      links between drawings, a light viewer.
+- [x] The design guide polished (numbering, Thaana in Faruma, the title as the signature, the
+      specimen, one shape for the lower sections, the ending), with its tables tested against the
+      code; DESIGN.md says the guide's paper and serif are its own voice.
+
+**Earlier**
+
+- [x] Global search: id, common, scientific and Dhivehi names (Thaana too), across collections, with
+      counts and keyboard navigation.
+- [x] The version derived at build time (patch from commits, the drawing count), so it cannot drift.
+- [x] Date sorting: the viewer pages drawn items by drawn date.
+- [x] Consistent thumbnail sizes.
+- [x] Hash routing: `#<collection>` and `#<collection>/<item>` deep links.
+- [x] The scroll-spy on `IntersectionObserver`.
+- [x] `npm run changelog`, and the CHANGELOG scheme documented.
+- [x] CI: lint, format and build on every pull request.
+- [x] Lighthouse accessibility and SEO at 100.
+- [x] Types extracted and named consistently.

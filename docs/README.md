@@ -26,11 +26,11 @@ it is done.
 
 ## Plans
 
-| Page                                             | Status                                                        |
-| ------------------------------------------------ | ------------------------------------------------------------- |
-| [plans/TODO.md](plans/TODO.md)                   | Backlog of features and fixes, including the component tests  |
-| [plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)   | Planned: `src/` by feature, one word per idea, in nine phases |
-| [plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md) | Planned: the tests top down, from promises to units, one kit  |
+| Page                                             | Status                                                                    |
+| ------------------------------------------------ | ------------------------------------------------------------------------- |
+| [plans/TODO.md](plans/TODO.md)                   | Open work by priority (fixes, the overhauls, features), then what is done |
+| [plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)   | Planned: `src/` by feature, one word per idea, in nine phases             |
+| [plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md) | Planned: the tests top down, from promises to units, one kit              |
 
 ## Assets
 

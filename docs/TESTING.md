@@ -3,7 +3,7 @@
 How the tests are organised, how to run them, and how to write a new one. For step-by-step
 instructions (setting up a machine, what to do when a test or CI fails, maintenance, the runner's
 flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). The `.ts` code is at 100% coverage; tests for
-the `.vue` components are next, in [TODO.md](plans/TODO.md).
+the `.vue` components are next, in the [test overhaul](plans/TEST-OVERHAUL.md) (phase 4).
 
 ## Running them
 
@@ -210,7 +210,7 @@ Two things the number does not tell you:
   by at least one test, and names it.
 - **`.vue` files count only once a test imports one,** and then must be at 100% like any other file.
   The untested-files gate covers `.ts` files only; components without a test yet are listed in
-  [plans/TODO.md](plans/TODO.md).
+  [plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md) (phase 4).
 
 ## In CI
 
