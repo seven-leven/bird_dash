@@ -17,6 +17,10 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: the pages that are not a collection are one list, `src/pages.ts` (an id, a
+  label and a code-split component). The route, the top bar, the collection menu and the main area
+  read it instead of naming the About page in six places, so a new page is one entry. A contract
+  test keeps a collection from taking a page's id
 - 2026-10-26 | site: an item's names are data. The loader builds each item's `names` once
   (`src/lib/itemNames.ts`: the text, its language and its role: title, also, common or Latin), and
   the tile, the viewer and search render whatever names an item has instead of reading `dhiv`,

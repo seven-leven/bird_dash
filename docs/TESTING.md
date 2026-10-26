@@ -61,7 +61,7 @@ belongs to one area, by its folder
 | Area                          | Folders                                                                           | Protects                                                  |
 | ----------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------- |
 | Site: data and search         | `src/lib` (but the icons), `src/composables/collection`, `src/composables/search` | Loading collections, filtering, grouping, search          |
-| Site: state and routing       | `src/stores`, `src/composables/core`                                              | The stores, shareable links, theme, accent                |
+| Site: state and routing       | `src/stores`, `src/composables/core`, `src/pages.ts`                              | The stores, shareable links, the pages, theme, accent     |
 | Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`     | The lightbox, scroll-spy, icons and logo                  |
 | Asset pipeline and data files | `script/build`, `script/placeholders`, `script/lib`                               | Image builds, the integrity check, the files in `public/` |
 | Version and changelog         | `script/version`, `script/changelog`                                              | The version in the footer, the changelog task             |

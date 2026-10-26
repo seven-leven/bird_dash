@@ -27,10 +27,10 @@ export function createUiStore() {
   const closeSidebar = (): void => {
     sidebarOpen.value = false;
   };
-  /** Show the gallery or the About page; the About page has no sidebar to leave open. */
+  /** Show the gallery or another page; only the gallery has a sidebar to leave open. */
   const showPage = (next: Page): void => {
     page.value = next;
-    if (next === 'about') sidebarOpen.value = false;
+    if (next !== 'gallery') sidebarOpen.value = false;
   };
   const toggleDrawnOnly = (): void => {
     drawnOnly.value = !drawnOnly.value;

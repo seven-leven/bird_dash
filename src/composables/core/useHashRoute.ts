@@ -1,5 +1,6 @@
 import { nextTick, onMounted, onUnmounted, type Ref, watch } from 'vue';
 import { flashItem } from '../../lib/flashItem.ts';
+import { findPage, type PageId } from '../../pages.ts';
 import type { CollectionCache, CollectionConfig, CollectionItem, Page } from '../../types/index.ts';
 
 /** Parse the hash grammar `#<collectionId>[/<itemId>]` (leading `#`/`/` optional). */
@@ -17,7 +18,7 @@ export function buildHash(collectionId: string, itemId: string): string {
  * The single owner of URL ⇄ state sync. Hash grammar:
  *   #<collectionId>            → a collection
  *   #<collectionId>/<itemId>   → that item's image (lightbox open)
- *   #about                     → the About page (no collection is called "about")
+ *   #<pageId>                  → a page in src/pages.ts (no collection shares its id)
  *
  * State → URL is a watch that mirrors (activeCollection, open item); URL → state
  * is `apply()`. A `last` sentinel ignores the hash changes we make ourselves,
@@ -51,7 +52,7 @@ export function useHashRoute(deps: {
   // state → URL
   watch(
     () => {
-      if (deps.page.value === 'about') return 'about';
+      if (deps.page.value !== 'gallery') return deps.page.value;
       const col = deps.activeCollection.value?.id ?? '';
       const item = deps.expandedImage.isOpen ? deps.expandedImage.item?.itemId ?? '' : '';
       return buildHash(col, item);
@@ -72,8 +73,8 @@ export function useHashRoute(deps: {
 
     const { collectionId, itemId } = parseHash(location.hash);
     if (!collectionId) return;
-    if (collectionId === 'about') {
-      deps.showPage('about');
+    if (findPage(collectionId)) {
+      deps.showPage(collectionId as PageId);
       return;
     }
     deps.showPage('gallery');

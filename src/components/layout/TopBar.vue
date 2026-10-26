@@ -52,13 +52,15 @@
           <CollectionIcon :collection="col" class="size-4" />
           {{ col.label }}
         </button>
-        <!-- About sits after the collections; where they are a menu, it is in the menu. -->
+        <!-- The pages sit after the collections; where they are a menu, they are in the menu. -->
         <a
-          href="#about"
+          v-for="p in PAGES"
+          :key="p.id"
+          :href="`#${p.id}`"
           class="nav-item marker-b focus-ring flex items-center justify-center px-3 py-1.5"
-          :aria-current="page === 'about' ? 'page' : undefined"
+          :aria-current="page === p.id ? 'page' : undefined"
         >
-          About
+          {{ p.label }}
         </a>
       </div>
       <CollectionMenu :class="tabsFit && 'md:hidden'" />
@@ -141,6 +143,7 @@ import { useUi } from '../../stores/ui.ts';
 import { useActions } from '../../stores/actions.ts';
 import { useSearch } from '../../stores/search.ts';
 import { viewName } from '../../lib/viewName.ts';
+import { PAGES } from '../../pages.ts';
 
 const { list: collections, activeCollection } = useCollectionsStore();
 const { isMobile, sidebarOpen, page, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();

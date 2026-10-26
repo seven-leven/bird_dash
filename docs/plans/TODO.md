@@ -14,11 +14,12 @@ page cheap.
       _Done:_ `src/lib/itemNames.ts` builds `item.names` (roles `title`, `also`, `common`, `latin`);
       the tile, the viewer and search render them. `useGlobalSearch` still matches on
       `commonName`/`scientificName`, which the link templates need anyway.
-- [ ] **2. A page registry instead of `'gallery' | 'about'` everywhere.** The About page is written
+- [x] **2. A page registry instead of `'gallery' | 'about'` everywhere.** The About page is written
       into the `Page` type, the ui store, `useHashRoute`, `Chrome.vue`, `TopBar.vue` and
       `CollectionMenu.vue`. One list, `pages = [{ id: 'about', component, label }]`, drives the
       route, the nav item and the menu entry; Chrome renders `<component :is>`. A design page or a
-      link to the docs site is then one entry, not six edits.
+      link to the docs site is then one entry, not six edits. _Done:_ `src/pages.ts`; the gallery
+      stays the default page.
 - [ ] **3. Pages do not fetch.** `AboutPage.vue` fetches `stats.json` itself and borrows `getBase`
       from the collections composable. A `useStats` loader beside the collections loader, sharing
       one fetch-JSON helper, makes each page a plain view of a store; tests fake one thing instead
