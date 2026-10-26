@@ -40,11 +40,29 @@ export const text = (
     esc(s)
   }</text>`;
 export const caps = (x: number, y: number, s: string, fill = LABEL) =>
-  text(x, y, s.toUpperCase(), 13, fill, 600, 'letter-spacing="1.5"');
+  text(x, y, s.toUpperCase(), 14, fill, 600, 'letter-spacing="1.5"');
 export const serif = (x: number, y: number, s: string, size = 17, fill = MUTED) =>
   `<text x="${x}" y="${y}" ${SERIF} font-size="${size}" fill="${fill}">${esc(s)}</text>`;
 export const statement = (x: number, y: number, s: string, size: number) =>
   `<text x="${x}" y="${y}" ${SERIF_FACE} font-size="${size}" fill="${INK}">${esc(s)}</text>`;
+
+/**
+ * Break `s` into two lines at the space that makes them most even, so a set of
+ * headings shares one shape ("Drawings / first", "Always say / where you are").
+ * One word stays one line.
+ */
+export function balanceTwoLines(s: string): string[] {
+  const words = s.split(' ');
+  if (words.length < 2) return [s];
+  let best = [s];
+  let longest = Infinity;
+  for (let at = 1; at < words.length; at++) {
+    const lines = [words.slice(0, at).join(' '), words.slice(at).join(' ')];
+    const length = Math.max(...lines.map((l) => l.length));
+    if (length < longest) [best, longest] = [lines, length];
+  }
+  return best;
+}
 
 /** Break `s` into lines of at most `max` characters, at spaces. */
 export function wrapText(s: string, max: number): string[] {
@@ -119,10 +137,12 @@ export function iconGroups(
     name: number;
     /** Space between a group's label and its icons. */
     gap?: number;
+    /** Equal tracks per row, so groups start in the same columns (see iconGrid.ts). */
+    tracks?: number;
   },
   ink: string,
 ): { svg: string; bottom: number } {
-  const layout = iconGridLayout(ICON_GROUPS, o.cols);
+  const layout = iconGridLayout(ICON_GROUPS, o.cols, o.tracks);
   const gap = o.gap ?? 16;
   let svg = '';
   for (const group of layout) {

@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: the design guide's final pass (V7). Nothing in it is smaller than 15px except
+  the type scale's own 11 and 12px samples, as it is read at about half size; the five principles
+  share one shape (each heading in two even lines, its description close beneath); the icon groups
+  sit on two equal tracks, so every group starts on a shared column; and the accent menu is
+  readable. The corner radii and the speeds it quotes are read from `tokens.css` and `main.css`, and
+  a test fails if the guide and the CSS disagree
 - 2026-10-26 | scripts: the scripts overhaul is done (phase 7). A contract test checks the rules a
   machine can: every file in `script/` is named in camelCase, no exported name starts with `get`,
   `load`, `run` and the like, and every command is made with `command` in a file named after its
