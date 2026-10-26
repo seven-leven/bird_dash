@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { assert, assertEquals } from '@std/assert';
 import { liveNames } from './live_blocks.ts';
-import { accentHues, rampOf } from './accents.ts';
+import { accentHues, missingSteps } from './accents.ts';
 
 // The docs site builds from these files; a mistake in them would otherwise surface only
 // when the site is built, or as an empty section on it.
@@ -23,12 +23,26 @@ test('every live section in the docs names a component the docs theme registers'
   assertEquals([...registered].filter((n) => !asked.has(n)), []);
 });
 
-test('every accent in main.css, and slate, has a full ramp in Tailwind', async () => {
+test('every accent in accents.css, and slate, has a full ramp in Tailwind', async () => {
   const themeCss = await readFile(
     createRequire(import.meta.url).resolve('tailwindcss/theme.css'),
     'utf8',
   );
-  const hues = accentHues(await readFile('./src/styles/main.css', 'utf8'));
-  assert(hues.length > 0, 'main.css has no accent palettes');
-  for (const name of ['slate', ...hues]) assertEquals(rampOf(name, themeCss).colors.length, 11);
+  const hues = accentHues(await readFile('./src/styles/accents.css', 'utf8'));
+  assert(hues.length > 0, 'accents.css has no accent palettes');
+  for (const name of ['slate', ...hues]) {
+    assertEquals(missingSteps(name, themeCss), [], `${name} is missing steps in Tailwind`);
+  }
+});
+
+test("the docs take Tailwind's theme variables only, never its preflight", async () => {
+  // Preflight resets headings, lists and tables, which VitePress's own styles need.
+  const dir = './docs/.vitepress/theme';
+  for (const file of (await readdir(dir)).filter((f) => f.endsWith('.css'))) {
+    const css = (await readFile(`${dir}/${file}`, 'utf8')).replace(/\/\*[\s\S]*?\*\//g, '');
+    const imports = [...css.matchAll(/@import\s+['"](tailwindcss[^'"]*)['"]/g)].map((m) => m[1]);
+    for (const what of imports) {
+      assertEquals(what, 'tailwindcss/theme.css', `${file} imports ${what}`);
+    }
+  }
 });

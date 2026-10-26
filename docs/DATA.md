@@ -37,16 +37,16 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 }
 ```
 
-| Field        | Required | Meaning                                                                                      |
-| ------------ | -------- | -------------------------------------------------------------------------------------------- |
-| `id`         | yes      | Used in the URL (`#birds`), file names and folder names. Lowercase, no spaces, unique        |
-| `label`      | yes      | The name on the tab                                                                          |
-| `emoji`      | yes      | Shown in terminal reports, and on the tab if there is no `icon`                              |
-| `icon`       | no       | Name of an icon in `src/lib/icons.ts`. Also what the placeholder is drawn from               |
-| `accent`     | no       | The collection's accent colour: a hue from the menu in `src/styles/main.css`. Default `teal` |
-| `groupLabel` | yes      | What a group is called ("Family", "Order"); labels the group view and the sidebar            |
-| `itemLabel`  | yes      | The singular noun for an item ("bird")                                                       |
-| `links`      | yes      | "Learn more" links in the viewer; may be an empty array                                      |
+| Field        | Required | Meaning                                                                                         |
+| ------------ | -------- | ----------------------------------------------------------------------------------------------- |
+| `id`         | yes      | Used in the URL (`#birds`), file names and folder names. Lowercase, no spaces, unique           |
+| `label`      | yes      | The name on the tab                                                                             |
+| `emoji`      | yes      | Shown in terminal reports, and on the tab if there is no `icon`                                 |
+| `icon`       | no       | Name of an icon in `src/lib/icons.ts`. Also what the placeholder is drawn from                  |
+| `accent`     | no       | The collection's accent colour: a hue from the menu in `src/styles/accents.css`. Default `teal` |
+| `groupLabel` | yes      | What a group is called ("Family", "Order"); labels the group view and the sidebar               |
+| `itemLabel`  | yes      | The singular noun for an item ("bird")                                                          |
+| `links`      | yes      | "Learn more" links in the viewer; may be an empty array                                         |
 
 In a link, `url` must start with `http://` or `https://` and may contain `{{common}}` (the common
 name) and `{{sci}}` (the scientific name); both are URL-encoded when filled in. No other placeholder
@@ -123,7 +123,7 @@ collection appears in it with no other change.
 `npm test` (contract tier) fails if:
 
 - `collections.json` is empty or has a duplicate `id`;
-- an `icon` is not in the icon registry, or an `accent` is not on the menu in `main.css`;
+- an `icon` is not in the icon registry, or an `accent` is not on the menu in `accents.css`;
 - a link has no label, is not `http(s)`, or uses an unknown `{{placeholder}}`;
 - a collection has no list file, or is missing either placeholder image;
 - an item's `id` is not digits or is repeated, its `name` is empty, or its `drawn` is not a real
