@@ -9,6 +9,7 @@ import type {
   CollectionConfig,
   CollectionCounts,
   NewestDrawing,
+  Page,
   Stats,
 } from '../../types/index.ts';
 
@@ -119,6 +120,7 @@ function mount(
     stores: {
       collections: { list: ref(list), activeCollection: computed(() => active) },
       stats,
+      ui: { page: ref<Page>('about') }, // for the footer
     },
   });
   const text = () => host.textContent!.replace(/\s+/g, ' ');
@@ -172,7 +174,8 @@ test('the first drawing heads the page; the newest five link to their pages in t
   assert(figure.textContent!.includes('The first drawing · 10 October 2024'));
   assertEquals(figure.querySelector('img')!.getAttribute('src'), '/thumb/birds/001.webp');
 
-  // Browse goes to the collection last open; the drawings to their own pages.
+  // Browse goes to the collection last open; the drawings to their own pages; then the
+  // footer's pages.
   assertEquals(hrefs().filter((h) => h?.startsWith('#')), [
     '#sharks',
     '#birds/001',
@@ -182,6 +185,7 @@ test('the first drawing heads the page; the newest five link to their pages in t
     '#shells/029',
     '#birds/029',
     '#birds/001',
+    '#about',
   ]);
   // A bird with two Dhivehi names is captioned by the first; one with none keeps the line.
   const recent = [...host.querySelectorAll('[aria-labelledby="about-recent"] [lang="dv"]')];

@@ -205,14 +205,8 @@
       </p>
     </section>
 
-    <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6 text-xs text-muted dark:border-slate-800">
-      <span>Built in the open with Vue, Vite and Tailwind. Thaana set in Faruma.</span>
-      <a :href="SOURCE_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
-        Source on GitHub
-            <Icon name="externalLink" class="size-3 opacity-60" />
-        <span class="sr-only">(opens in a new tab)</span>
-      </a>
-    </footer>
+
+    <AppFooter />
   </article>
 </template>
 
@@ -221,6 +215,7 @@ import { computed, onMounted, ref } from 'vue';
 import EmptyState from '../ui/EmptyState.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
+import AppFooter from '../layout/AppFooter.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useStatsStore } from '../../stores/stats.ts';
 import { drawnOf, plural } from '../../lib/formatCount.ts';

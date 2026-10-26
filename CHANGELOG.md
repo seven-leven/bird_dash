@@ -17,6 +17,10 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: one footer, `AppFooter`, under the gallery and the About page alike. The About
+  page gains the version, the drawings and the commit; the gallery gains the colophon (Vue, Vite,
+  Tailwind, Faruma). Its page links come from `src/pages.ts` and mark the page you are on, and the
+  GitHub link says it opens a new tab
 - 2026-10-26 | site: pages do not fetch. The About page's numbers come from a `stats` store
   (`useStats`, beside the collections loader), loaded the first time the page opens and kept, so
   going back to About no longer fetches `stats.json` again. Both loaders share one helper,

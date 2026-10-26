@@ -25,9 +25,10 @@ page cheap.
       one fetch-JSON helper, makes each page a plain view of a store; tests fake one thing instead
       of `fetch`. _Done:_ `lib/fetchJson.ts`, `useStats` and the `stats` store; the numbers now load
       once, not on every visit to About.
-- [ ] **4. One footer.** The gallery and the About page each have their own, already drifting (one
+- [x] **4. One footer.** The gallery and the About page each have their own, already drifting (one
       has the version and commit). An `AppFooter` for both; it also shrinks `GalleryContent.vue`
-      (223 lines, four stores) to the sections and the grid.
+      (223 lines, four stores) to the sections and the grid. _Done:_ `layout/AppFooter.vue`, with
+      the pages from `src/pages.ts`; `GalleryContent` is 176 lines.
 - [ ] **5. Split the lightbox's logic.** `useLightbox.ts` (365 lines) holds three state machines:
       zoom and pan, the keyboard, moving between drawings. As three composables each is tested
       without a DOM, and the viewer can reuse them for a series' multiple images.
