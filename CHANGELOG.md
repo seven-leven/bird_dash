@@ -16,6 +16,10 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: the README opens with the five newest drawings, each on its white card, so the
+  first thing it shows is the work. `npm run design` draws the row from `stats.json` and the
+  thumbnails (`docs/assets/drawings.webp`), so it follows the archive. The deploy link goes to
+  WORKFLOW.md's "Deploy"; the design manifesto as a page on the site joins the TODO
 - 2026-10-26 | data: the reference links in `collections.json` lose their `color` (Tailwind classes
   such as `bg-emerald-600`, left from when they were coloured buttons). The viewer draws them as
   plain links and nothing read it; a collection's colour is set once, by its `accent`

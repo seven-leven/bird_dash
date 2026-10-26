@@ -92,6 +92,11 @@
   - [ ] Add Seasonality data (Iruvai / Hulhangu).
 - [ ] **Media**:
   - [ ] Add support for multiple images per item.
+- [ ] **The design manifesto as a page** (proposed 2026-10-26): `docs/DESIGN.md` is the one doc with
+      a public audience. Show it on the site, like the About page (`#design`), so it is set in the
+      real type, colours and dark mode; generate it from the markdown so the two cannot drift.
+      Chosen over a VitePress docs site: the other docs are for contributors and read well on
+      GitHub, they link to source files, and Pages serves one site per repository.
 
 ## 🛠️ Workflow & Tooling
 

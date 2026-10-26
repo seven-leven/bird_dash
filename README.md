@@ -6,6 +6,8 @@ A gallery of hand-drawn wildlife of the Maldives, one species at a time: birds, 
 each shown with its Dhivehi, English and scientific names. Every species has its place from the
 start, drawn or not, so the gaps are part of the record.
 
+[![The five newest drawings: a sand dollar, a moorhen, a coot, a shoveler and a waterhen](docs/assets/drawings.webp)](https://seven-leven.github.io/bird_dash/)
+
 **[View the live site →](https://seven-leven.github.io/bird_dash/)** ·
 **[About the archive →](https://seven-leven.github.io/bird_dash/#about)** ·
 [How the site was built →](https://seven-leven.github.io/folio/code-wildlife.html)
@@ -70,7 +72,7 @@ drift ([how](docs/WORKFLOW.md#versioning)).
 
 Every pull request and every merge runs the same checks: lint, format, types, every test tier at
 100% coverage (in four timezones, from UTC−8 to UTC+14), the asset check and the build. A merge to
-`main` deploys to GitHub Pages only if they all pass ([how](docs/WORKFLOW.md#5-ci)).
+`main` deploys to GitHub Pages only if they all pass ([how](docs/WORKFLOW.md#7-deploy)).
 
 ## License
 
