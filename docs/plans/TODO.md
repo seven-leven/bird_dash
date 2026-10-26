@@ -34,8 +34,8 @@ page cheap.
       without a DOM, and the viewer can reuse them for a series' multiple images. _Done:_
       `useZoomPan`, `useDialogKeys` and `useDrawingNav`; `useLightbox` (136 lines) wires them and
       keeps the image's load state, under the same API, so `LightBox.vue` did not change.
-- [ ] Afterwards: `Chrome`, `TopBar` and `GalleryContent` inject four stores each. Most of that goes
-      with 2 and 4; look again then.
+- [ ] Afterwards: `Chrome`, `TopBar` and `GalleryContent` inject four stores each. Rides along after
+      the site overhaul's phase 3 ([SRC-OVERHAUL.md](SRC-OVERHAUL.md)).
 - [x] **6. The scripts, the same way** (done 2026-10-26). `script/` follows the principles and
       naming in [SCRIPTS.md](../SCRIPTS.md): `ingest`, `build`, `generate` and `check`, each one
       job, on one `Io`. Left for the test overhaul: the runner's own `RunnerDeps`.
@@ -49,6 +49,12 @@ page cheap.
 ## 🚀 High Priority (Fixes & Cleanup)
 
 - [ ] **Fixes**:
+  - [ ] **The focus ring on a light page** (found 2026-10-26, in the design guide's final review).
+        `.focus-ring` draws `accent-500`, which is below WCAG's 3:1 for a focus indicator on white
+        for teal (2.42:1, the Birds' accent), emerald (2.47), sky (2.71) and orange (2.89); every
+        hue passes on dark. Draw the ring (and the current-item marker) in `accent-700` on light
+        surfaces (5.2:1 or more for every hue), keep `500` on dark; update DESIGN.md's colour rule,
+        the palette contract test and the guide.
   - [x] Version numbering logic — version is now derived at build time (patch = commit count,
         count = drawn illustrations), so it can no longer drift.
   - [x] Date sorting — the lightbox now pages drawn items chronologically (by drawn date), not by
@@ -112,6 +118,8 @@ page cheap.
 
 - [ ] **Simplify the design system** (proposed 2026-10-24, on hold while the manifesto settled).
       Each one removes a rule from DESIGN.md; update the guide and its image along with the code.
+      All four ride along with the site overhaul: placeholders as icons after phase 4, the other
+      three after phase 7 ([SRC-OVERHAUL.md](SRC-OVERHAUL.md), "Features that ride along").
   - [ ] **One set of text roles:** `.text-strong`, `.text-body` and `.text-muted`, each with its
         light and dark value, replace `.viewer-title/-body/-label` (main.css, `LightBox`,
         `ItemSheet`), so the viewer and the page share one vocabulary.
@@ -137,8 +145,11 @@ page cheap.
 - [ ] **Data**:
   - [ ] Add Conservation status (IUCN / Maldives Red List).
   - [ ] Add Seasonality data (Iruvai / Hulhangu).
+  - The site side (typed fields the viewer shows) rides along after the site overhaul's phase 1; the
+    data itself is a lists task.
 - [ ] **Media**:
-  - [ ] Add support for multiple images per item.
+  - [ ] Add support for multiple images per item. Rides along after the site overhaul's phase 5.
+- [ ] Responsive thumbnails (below, under tooling): the `srcset` rides along after phase 5.
 - [x] **The docs as a site, in the site's own design** (done 2026-10-26). VitePress
       (`docs/.vitepress/`) builds `docs/*.md` into `dist/docs/`, served at `/bird_dash/docs/` from
       the same Pages deploy; `verify.yml` builds it, so a dead link fails CI. The theme takes
@@ -155,20 +166,21 @@ page cheap.
       numbered list of about 30 prompts in one medium, grouped by difficulty or week, and most are
       not wildlife. "Every piece has its place from the start, drawn or not" already fits them, and
       `groupLabel` ("Difficulty", "Week") already works. Before the first one goes in:
-  - [ ] **A `kind` per collection** in `collections.json`: `species` (today's: scientific and
-        Dhivehi names, reference links) or `series` (the medium, the prompt, the challenge it
-        belongs to). The viewer, search and the data contract test show and check the fields of each
-        kind; `src/types/data.ts` holds both shapes.
+  - [ ] **A `kind` per collection** (rides along after the site overhaul's phase 1) in
+        `collections.json`: `species` (today's: scientific and Dhivehi names, reference links) or
+        `series` (the medium, the prompt, the challenge it belongs to). The viewer, search and the
+        data contract test show and check the fields of each kind; `src/types/data.ts` holds both
+        shapes.
   - [ ] **The name.** "Wildlife Illustrated" over a sweet-treats collection: keep it as the umbrella
         (wildlife is the core, the series are its studies), or keep the mark and the look and change
         the word. Decide before the first non-wildlife series ships; the logo, README, `index.html`
         and the About page all carry it.
-  - [ ] **The About page's wording** for a series: "species", "Named in Dhivehi" and "Checked
-        against references" describe `species` collections only. Count and name each kind on its
-        own, as the page already counts collections past three.
-  - [ ] **An icon per series** (a butterfly, a cake, a mountain, a sphere, a face, a running animal)
-        for its emblem and placeholder silhouette, drawn to the icon rules (DESIGN.md §08), then
-        `npm run generate -- placeholders`.
+  - [ ] **The About page's wording** (rides along after phase 5) for a series: "species", "Named in
+        Dhivehi" and "Checked against references" describe `species` collections only. Count and
+        name each kind on its own, as the page already counts collections past three.
+  - [ ] **An icon per series** (rides along after phase 4) (a butterfly, a cake, a mountain, a
+        sphere, a face, a running animal) for its emblem and placeholder silhouette, drawn to the
+        icon rules (DESIGN.md §08), then `npm run generate -- placeholders`.
   - [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
         notes.
 
@@ -186,19 +198,6 @@ page cheap.
 - [x] Standardize names for all types (PascalCase interfaces per domain in `src/types/`; removed the
       stray `loadingState`).
 - [ ] Responsive / higher-compression thumbnails (Lighthouse image-delivery, currently unscored).
-- [ ] **Component tests (`.vue`)**: the `.ts` code is at 100% of lines, branches and functions. A
-      component counts toward coverage once a test loads it; four do so far (at 100%). About 40–60
-      tests to go, roughly 2–5 per component:
-  - [x] `ui/` — `IdBadge`, `EmptyState`
-  - [ ] `icons/` — `Icon` (done), `CollectionIcon`, `LogoMark`
-  - [ ] `search/` — `GlobalSearch`, `SearchResultsList`, `SearchDropdownHeader`,
-        `SearchKeyboardHints`
-  - [ ] `gallery/` — `ItemTile` (done), `ItemSheet`, `GalleryContent`, `LightBox`
-  - [ ] `layout/` — `Chrome`, `TopBar`, `SideNav`
-  - [ ] `App.vue` — the loading, error and loaded screens
-  - How: see `ItemTile_dom_test.ts` — a `// @vitest-environment happy-dom` line, then mount with
-    Vue's `createApp` (Vitest compiles `.vue` files as the build does). Test what a visitor sees and
-    does (text, ARIA state, clicks, emitted events), not the markup.
-  - Keep the 100% floors: add `.vue` files to `discoverSources` (`script/testRunner/areas.ts`) one
-    folder at a time, together with that folder's tests, so the untested-files gate and the floors
-    cover each component the moment it has tests.
+- [ ] **Component tests (`.vue`)**: moved into the test overhaul, phase 4
+      ([TEST-OVERHAUL.md](TEST-OVERHAUL.md)), with the up-to-date list: the 11 components that have
+      no test of their own yet.

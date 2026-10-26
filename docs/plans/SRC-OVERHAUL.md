@@ -202,6 +202,31 @@ touching `src/` is open, as nearly every file moves.
       redrawn; `types/` gone; this page deleted. _Done when_ ARCHITECTURE.md describes the code as
       it is.
 
+## Features that ride along
+
+The TODO has features that need the very code a phase moves. Each one comes as **its own pull
+request straight after that phase**, on the new layout, so the phases themselves still change
+nothing a visitor sees, and every visible change is reviewed on its own (in the browser, both
+themes, a phone width).
+
+| After phase  | Feature (from TODO.md)                                                                                                                                                                                              | Why there                                                                                                      |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| 1. Domain    | **A `kind` per collection** (`species` or `series`) in the `Collection` type and `data/files.ts`; the data contract test checks each kind's fields                                                                  | The domain types are rewritten in phase 1; adding the kind then costs one type, not a second pass              |
+| 1. Domain    | **Room for typed item facts**: conservation status (IUCN / Maldives Red List) and seasonality (Iruvai / Hulhangu) as optional `Item` fields, shown by the viewer's details when a list has them                     | Today such facts land in `meta` as loose strings; the new `Item` can name them. Only once the data exists      |
+| 3. Stores    | **Fewer stores per component**: `Chrome`, `TopBar` and `GalleryContent` inject four stores each (the "afterwards" note under the decoupling items)                                                                  | Splitting the ui store and moving the grid's derivations is exactly what lets each component take only its own |
+| 4. Shared UI | **Placeholders as icons**: an undrawn tile, a failed load and a search row draw `CollectionIcon` in the muted colour, instead of a generated image; `public/placeholders/`, its generator and `tileImage`'s URLs go | `ui/` is assembled in phase 4, and the icon component it builds is the one that replaces the images            |
+| 4. Shared UI | **An icon per series** (butterfly, cake, mountain, sphere, face, running animal), drawn to the icon rules                                                                                                           | New entries in the registry `ui/` now owns                                                                     |
+| 5. Features  | **Several images per item** (a series piece, or a drawing with its sketches): the viewer pages through an item's images with the same zoom and keys                                                                 | The viewer's parts (`useZoomPan`, `useDialogKeys`, `useDrawingNav`) land in `viewer/` together                 |
+| 5. Features  | **The About page by kind**: "species", "Named in Dhivehi" and "Checked against references" counted for `species` collections only, series counted on their own                                                      | `AboutPage.vue` is split into sections in phase 5                                                              |
+| 5. Features  | **Responsive thumbnails**: `srcset` on tiles, once `npm run ingest` makes a second, smaller size                                                                                                                    | The tile moves into `gallery/`; the second size is a scripts change made first                                 |
+| 7. Styles    | **One set of text roles** (`.text-strong`, `.text-body`, `.text-muted`) replacing `.viewer-title/-body/-label`                                                                                                      | `components.css` is written in phase 7                                                                         |
+| 7. Styles    | **Five type sizes**: drop `text-micro`, use `text-xs` for `.caps-label`, `.count-pill`, `.kbd-hint`; check 375px                                                                                                    | Same file, same pass; the guide and DESIGN.md change with it                                                   |
+| 7. Styles    | **Warm paper on the site** (slate to stone), as its own commit so it is easy to drop                                                                                                                                | The neutral ramp lives in the files phase 7 writes                                                             |
+
+Not riding along: **the focus-ring contrast fix** (in TODO.md's fixes) is too small and too urgent
+to wait for a phase, and the series' **name decision** ("Wildlife Illustrated" over a sweet-treats
+collection) is a choice, not code; both are done on their own.
+
 ## What keeps it safe
 
 - **The tests check behaviour, not paths.** A move that changes what the site does fails a test; the
@@ -215,6 +240,6 @@ touching `src/` is open, as nearly every file moves.
 ## Not in this plan
 
 - `src/testing/`: unchanged apart from its imports.
-- New features or visual changes. A phase that finds one notes it in TODO.md.
+- New features or visual changes inside a phase: they ride along after it (above), or go in TODO.md.
 - A router library, a state library or other new dependencies: the hash route and the
   `provide`/`inject` stores stay.

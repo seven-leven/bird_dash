@@ -256,11 +256,20 @@ Production code changes only where a test cannot reach it otherwise, and says so
       calls go, and so does `withDom.ts`. _Done when_ no test sets its own environment.
 - [ ] **3. Journeys.** The `journey` tier in `tiers.ts` and an area for it; `renderApp` on the
       fixture archive; J1–J9; the untested-files gate covers `.vue`. _Done when_ every component is
-      exercised by a test and every journey passes. **The site and scripts overhauls start after
-      this.**
-- [ ] **4. Feature gaps.** Component tests for what the journeys leave open in the shell, the search
-      box and the viewer (folding, key hints, every empty and error state, the ARIA attributes).
-      _Done when_ every component has a test beside it or a journey that names it.
+      exercised by a test and every journey passes. **The site overhaul starts after this** (the
+      scripts overhaul is done).
+- [ ] **4. Vue component tests.** Every `.vue` file gets its own `_dom_test.ts` beside it, for what
+      a journey leaves open: every empty, loading and error state, the ARIA attributes, the keys,
+      the emitted events. Mounted with `mountComponent` and fake stores; tests check what a visitor
+      sees and does (text, ARIA state, clicks, events), not the markup. The 11 with no test today
+      (the component-test list in TODO.md, moved here): - **shell:** `App.vue` (the loading, error
+      and loaded screens), `Chrome`, `TopBar`, `SideNav` - **gallery:** `GalleryContent`,
+      `LightBox` - **search:** `GlobalSearch`, `SearchResultsList`, `SearchDropdownHeader`,
+      `SearchKeyboardHints` - **icons:** `LogoMark`
+
+      Written against today's names; the site overhaul moves each test with its component. _Done
+      when_ every `.vue` file has a test beside it and the untested-files gate counts `.vue` files
+      as it counts `.ts`.
 - [ ] **5. Split and rename.** `useLightbox_dom_test.ts` into one file per composable;
       `runTests_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
       local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer` onto the kit's

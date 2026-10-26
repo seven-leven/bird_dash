@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs(plans): the TODO folded into the overhauls. The test overhaul's phase 4 is the
+  Vue component tests, with the up-to-date list (the 11 components that have no test of their own
+  yet). The site overhaul gains "Features that ride along": each TODO feature that needs code a
+  phase moves (a `kind` per collection, typed facts such as conservation status, placeholders as
+  icons, icons per series, several images per item, the About page by kind, responsive thumbnails,
+  one set of text roles, five type sizes, warm paper) comes as its own pull request straight after
+  that phase. The focus ring's contrast on light pages is logged as a fix of its own
 - 2026-10-26 | scripts: the scripts overhaul is done (phase 7). A contract test checks the rules a
   machine can: every file in `script/` is named in camelCase, no exported name starts with `get`,
   `load`, `run` and the like, and every command is made with `command` in a file named after its
