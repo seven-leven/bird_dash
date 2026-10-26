@@ -97,6 +97,28 @@
       real type, colours and dark mode; generate it from the markdown so the two cannot drift.
       Chosen over a VitePress docs site: the other docs are for contributors and read well on
       GitHub, they link to source files, and Pages serves one site per repository.
+- [ ] **Collections that are not species lists** (planned 2026-10-26). The practice series in the
+      art notes are coming: Butterflies (colour pencil), Dynamic Animals (pen), Sweet Treats
+      (fineliner), Landscapes (pencil), Digital Value Studies, Movie Character Portraits. Each is a
+      numbered list of about 30 prompts in one medium, grouped by difficulty or week, and most are
+      not wildlife. "Every piece has its place from the start, drawn or not" already fits them, and
+      `groupLabel` ("Difficulty", "Week") already works. Before the first one goes in:
+  - [ ] **A `kind` per collection** in `collections.json`: `species` (today's: scientific and
+        Dhivehi names, reference links) or `series` (the medium, the prompt, the challenge it
+        belongs to). The viewer, search and the data contract test show and check the fields of each
+        kind; `src/types/data.ts` holds both shapes.
+  - [ ] **The name.** "Wildlife Illustrated" over a sweet-treats collection: keep it as the umbrella
+        (wildlife is the core, the series are its studies), or keep the mark and the look and change
+        the word. Decide before the first non-wildlife series ships; the logo, README, `index.html`
+        and the About page all carry it.
+  - [ ] **The About page's wording** for a series: "species", "Named in Dhivehi" and "Checked
+        against references" describe `species` collections only. Count and name each kind on its
+        own, as the page already counts collections past three.
+  - [ ] **An icon per series** (a butterfly, a cake, a mountain, a sphere, a face, a running animal)
+        for its emblem and placeholder silhouette, drawn to the icon rules (DESIGN.md §08), then
+        `npm run placeholders`.
+  - [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
+        notes.
 
 ## 🛠️ Workflow & Tooling
 
