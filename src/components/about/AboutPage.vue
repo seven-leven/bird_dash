@@ -197,14 +197,11 @@
         each count is worded.
       </p>
       <p class="mt-4 text-sm">
-        <a :href="MANIFESTO_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
+        <a :href="MANIFESTO_URL" :class="externalLink">
           Read the design manifesto
-            <Icon name="externalLink" class="size-3 opacity-60" />
-          <span class="sr-only">(opens in a new tab)</span>
         </a>
       </p>
     </section>
-
 
     <AppFooter />
   </article>
@@ -225,8 +222,8 @@ import { monthKey } from '../../composables/collection/useCollectionData.ts';
 import type { NewestDrawing } from '../../types/index.ts';
 
 const FOLIO_URL = 'https://seven-leven.github.io/folio/code-wildlife.html';
-const SOURCE_URL = 'https://github.com/seven-leven/bird_dash';
-const MANIFESTO_URL = `${SOURCE_URL}/blob/main/docs/DESIGN.md`;
+// On the docs site, served beside the gallery (docs/.vitepress), so the link is relative.
+const MANIFESTO_URL = 'docs/DESIGN.html';
 /** How many of the newest drawings the page shows (stats.json lists more). */
 const RECENT_COUNT = 5;
 /** Collection cards shown before "Show all": two rows of three. */

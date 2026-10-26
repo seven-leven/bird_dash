@@ -65,7 +65,7 @@ belongs to one area, by its folder
 | Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`     | The lightbox, scroll-spy, icons and logo                  |
 | Asset pipeline and data files | `script/build`, `script/placeholders`, `script/lib`                               | Image builds, the integrity check, the files in `public/` |
 | Version and changelog         | `script/version`, `script/changelog`                                              | The version in the footer, the changelog task             |
-| Test harness and docs tooling | `script/test_runner`, `script/design`                                             | The runner and its reports, generated guide images        |
+| Test harness and docs tooling | `script/test_runner`, `script/design`, `script/docs`                              | The runner and its reports, guide images, the docs site   |
 
 When two areas' folders overlap, the longer path wins: `src/lib/icons.ts` is interface, the rest of
 `src/lib` is data.

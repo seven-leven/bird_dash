@@ -25,6 +25,8 @@
     "src/**/*.ts",
     "src/**/*.vue",
     "script/**/*.ts",
+    "docs/.vitepress/**/*.ts",
+    "docs/.vitepress/**/*.vue",
     "vite.config.ts",
     "eslint.config.ts"
   ],

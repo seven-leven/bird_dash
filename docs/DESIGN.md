@@ -127,6 +127,15 @@ yellow, lime, green and cyan are left out because their `500` shades are too pal
 because it reads as an error. For collections shown beside one another, choose distinct neighbours —
 avoid pairs such as rose and pink, or violet and purple.
 
+<!-- live: AccentRamps -->
+
+The menu is the `[data-accent]` palettes in [`src/styles/main.css`](../src/styles/main.css), shown
+in the [design guide](assets/design-guide.png); the
+[docs site](https://seven-leven.github.io/bird_dash/docs/DESIGN.html) draws every ramp here, read
+from that file.
+
+<!-- /live -->
+
 The viewer follows the page theme: a light page opens a light viewer. Use `.viewer-title`,
 `.viewer-body` and `.viewer-label` for its text; do not hard-code faded white. Every colour needs a
 dark-theme partner, either through paired classes such as `text-slate-500 dark:text-slate-400` or an
@@ -366,6 +375,8 @@ Every interface icon lives in [`src/lib/icons.ts`](../src/lib/icons.ts) and is d
 name="…" />`; the logo is the only other SVG in the project. The registry, the icon sheet
 ([`assets/icons.png`](assets/icons.png)) and the guide use the same groups, in the same order:
 
+<!-- live: IconSheet -->
+
 - **Collections:** `bird`, `shark`, `shell`
 - **Views:** `taxonomy`, `calendar`
 - **Search:** `search`, `noResults`
@@ -376,6 +387,8 @@ name="…" />`; the logo is the only other SVG in the project. The registry, the
 - **Keyboard:** `arrowsUpDown`, `enter`, `command`
 - **Principles:** `easel`, `progress`, `pin`, `grid`, `person`
 - **Brand:** `github`
+
+<!-- /live -->
 
 Add a new icon to one of these groups in `ICON_GROUPS`; a test fails if one is left out. In the
 pictures the groups share one column grid, with a thin divider in the empty column between

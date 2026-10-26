@@ -1,7 +1,7 @@
 <!-- components/layout/AppFooter.vue
      The one footer, under the gallery and under every page (src/pages.ts): what this
-     build is (version, its line's name, the drawings, the commit), the pages, the source,
-     and how it is made. -->
+     build is (version, its line's name, the drawings, the commit), the pages, the docs,
+     the source, and how it is made. -->
 <template>
   <footer
     class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
@@ -33,6 +33,13 @@
         :aria-current="page === p.id ? 'page' : undefined"
       >
         {{ p.label }}
+      </a>
+      <!-- The docs site, served beside the gallery (docs/.vitepress). -->
+      <a
+        href="docs/"
+        class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+      >
+        Docs
       </a>
       <a
         :href="SOURCE_URL"

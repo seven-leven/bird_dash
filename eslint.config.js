@@ -14,6 +14,8 @@ export default tseslint.config(
       'raw_png',
       'test-results',
       'docs/assets',
+      'docs/.vitepress/cache',
+      'docs/.vitepress/dist',
       '.vite',
       '.claude',
     ],
