@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: pages do not fetch. The About page's numbers come from a `stats` store
+  (`useStats`, beside the collections loader), loaded the first time the page opens and kept, so
+  going back to About no longer fetches `stats.json` again. Both loaders share one helper,
+  `lib/fetchJson.ts`, which words every failure the same way (`HTTP 404 loading stats.json`,
+  `collections.json is not valid JSON`), and the About page's tests fake the store, not `fetch`
 - 2026-10-26 | site: the pages that are not a collection are one list, `src/pages.ts` (an id, a
   label and a code-split component). The route, the top bar, the collection menu and the main area
   read it instead of naming the About page in six places, so a new page is one entry. A contract
