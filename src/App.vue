@@ -48,6 +48,8 @@ const route = useHashRoute({
   cache: collections.cache,
   switchCollection: actions.switchCollection,
   openOverlay: overlay.open,
+  page: ui.page,
+  showPage: ui.showPage,
 });
 
 // When a collection's data (re)loads: rebuild the scroll-spy and apply any

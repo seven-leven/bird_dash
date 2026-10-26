@@ -13,7 +13,11 @@ function setup(active: string) {
       clear: () => calls.push('clear'),
       setDropdown: (open: boolean) => calls.push(`dropdown:${open}`),
     },
-    ui: { resetHeaders: () => {}, scrollToTop: () => calls.push('scrollToTop') },
+    ui: {
+      resetHeaders: () => {},
+      scrollToTop: () => calls.push('scrollToTop'),
+      showPage: (page) => calls.push(`page:${page}`),
+    },
     collections: {
       activeCollection: current as never,
       switch: (id: string) => {
@@ -35,7 +39,8 @@ test('selecting a result in the open collection closes the dropdown and flashes 
   withDom(async () => {
     const { actions, calls, tile } = setup('birds');
     await actions.selectGlobalResult('birds', '042');
-    assertEquals(calls, ['dropdown:false', 'scrollIntoView']); // no collection switch
+    // No collection switch; from the About page, the result shows the gallery.
+    assertEquals(calls, ['dropdown:false', 'page:gallery', 'scrollIntoView']);
     assert(tile.classList.contains('ring-2'), 'the tile was not highlighted');
   }));
 
@@ -45,6 +50,8 @@ test('selecting a result in another collection switches first, then flashes the 
     await actions.selectGlobalResult('sharks', '042');
     assertEquals(calls, [
       'dropdown:false',
+      'page:gallery',
+      'page:gallery',
       'clear',
       'switch:sharks',
       'scrollToTop',

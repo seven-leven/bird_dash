@@ -13,8 +13,8 @@
       aria-controls="collection-menu"
       @click="open = !open"
     >
-      <CollectionIcon v-if="activeCollection" :collection="activeCollection" class="size-4" />
-      <span class="truncate max-w-32">{{ activeCollection?.label }}</span>
+      <CollectionIcon v-if="page === 'gallery' && activeCollection" :collection="activeCollection" class="size-4" />
+      <span class="truncate max-w-32">{{ page === 'about' ? 'About' : activeCollection?.label }}</span>
       <Icon
         name="chevronDown"
         class="size-3 text-muted transition-transform duration-fast"
@@ -32,12 +32,22 @@
       <li v-for="col in list" :key="col.id">
         <button
           class="nav-item focus-ring w-full flex items-center gap-2 px-3 py-2 text-left min-h-9"
-          :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
+          :aria-current="page === 'gallery' && col.id === activeCollection?.id ? 'page' : undefined"
           @click="choose(col.id)"
         >
           <CollectionIcon :collection="col" class="size-4" />
           {{ col.label }}
         </button>
+      </li>
+      <li class="mt-1 border-t pt-1 border-slate-100 dark:border-slate-800">
+        <a
+          href="#about"
+          class="nav-item focus-ring w-full flex items-center px-3 py-2 min-h-9"
+          :aria-current="page === 'about' ? 'page' : undefined"
+          @click="close()"
+        >
+          About
+        </a>
       </li>
     </ul>
   </div>
@@ -49,9 +59,11 @@ import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useActions } from '../../stores/actions.ts';
+import { useUi } from '../../stores/ui.ts';
 
 const { list, activeCollection } = useCollectionsStore();
 const { switchCollection } = useActions();
+const { page } = useUi();
 
 const open = ref(false);
 const rootRef = ref<HTMLElement | null>(null);

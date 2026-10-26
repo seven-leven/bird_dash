@@ -7,6 +7,7 @@ import { createAppActions } from './actions.ts';
 // either at once (cached) or when the test releases it (still loading).
 function setup(known: string[]) {
   const calls: string[] = [];
+  const pages: string[] = [];
   const active = ref<{ id: string } | undefined>({ id: known[0] });
   const pending = new Map<string, () => void>();
 
@@ -15,6 +16,7 @@ function setup(known: string[]) {
     ui: {
       resetHeaders: () => calls.push('resetHeaders'),
       scrollToTop: () => calls.push('scrollToTop'),
+      showPage: (page) => pages.push(page),
     },
     collections: {
       activeCollection: active as never,
@@ -27,7 +29,7 @@ function setup(known: string[]) {
   });
   const slow = (id: string) => pending.set(id, () => {});
   const finish = (id: string) => pending.get(id)!();
-  return { actions, calls, slow, finish };
+  return { actions, calls, pages, slow, finish };
 }
 
 test('switchCollection: clears the search, then scrolls to the top once the data is in', async () => {
@@ -64,4 +66,10 @@ test('switchCollection: an unknown id does not scroll', async () => {
   const { actions, calls } = setup(['a']);
   await actions.switchCollection('nope');
   assertEquals(calls.includes('scrollToTop'), false);
+});
+
+test('choosing a collection shows the gallery, from the About page too', async () => {
+  const { actions, pages } = setup(['birds', 'sharks']);
+  await actions.switchCollection('sharks');
+  assertEquals(pages, ['gallery']);
 });

@@ -139,6 +139,12 @@
               <Icon name="commit" aria-hidden="true" />{{ appCommit }}
             </span>
             <a
+              href="#about"
+              class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+            >
+              About
+            </a>
+            <a
               href="https://github.com/seven-leven/bird_dash"
               target="_blank"
               rel="noopener noreferrer"

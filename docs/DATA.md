@@ -107,10 +107,13 @@ Do not edit these by hand; run the task that makes them.
 ### `stats.json`
 
 The numbers a page such as the About page shows, so none of them is typed by hand: for each
-collection its `total` species, how many are `drawn`, its number of `groups`, and the dates of its
-`firstDrawn` and `lastDrawn` drawing (`null` while nothing is drawn); the `drawn` and `total` across
-every collection; and the `newest` eight drawings across all of them, newest first (on the same day,
-in collection order, then by id), each with its collection, id, name, Dhivehi name if any, and date.
+collection its `total` species, how many are `drawn`, its number of `groups`, how many are `named`
+in Dhivehi (have a `dhiv_script`), and the dates of its `firstDrawn` and `lastDrawn` drawing (`null`
+while nothing is drawn); the `drawn` and `total` across every collection; the archive's `first`
+drawing (`null` if none); and the `newest` eight drawings across all of them, newest first (on the
+same day, in collection order, then by id). Each drawing has its collection, id, name, date, and,
+when the list gives them, its Dhivehi name in Thaana (`dhivehi`) and how to say it (`roman`). The
+shape is `Stats` in [`src/types/data.ts`](../src/types/data.ts), which the build and the page share.
 [`script/build/collection_stats.ts`](../script/build/collection_stats.ts) writes it as the last step
 of the asset build. It holds no build time, so the same lists always write the same file. A new
 collection appears in it with no other change.

@@ -37,3 +37,41 @@ export interface RawCollectionConfig {
   /** `url` may contain `{{common}}` and `{{sci}}` placeholders. */
   links: { label: string; color: string; url: string }[];
 }
+
+// `public/stats.json`: the archive's numbers, written by the asset build
+// (script/build/collection_stats.ts) and read by the About page.
+
+export interface CollectionCounts {
+  id: string;
+  label: string;
+  /** Species in the list, drawn or not. */
+  total: number;
+  drawn: number;
+  /** Families, orders or groups: the list's top-level keys. */
+  groups: number;
+  /** Species with a Dhivehi name (in Thaana) in the list. */
+  named: number;
+  /** `YYYY-MM-DD` of the first and the latest drawing; null while nothing is drawn. */
+  firstDrawn: string | null;
+  lastDrawn: string | null;
+}
+
+export interface NewestDrawing {
+  collection: string;
+  id: string;
+  name: string;
+  /** The Dhivehi name in Thaana, when the list has one, and how to say it. */
+  dhivehi?: string;
+  roman?: string;
+  drawn: string;
+}
+
+export interface Stats {
+  drawn: number;
+  total: number;
+  collections: CollectionCounts[];
+  /** The archive's first drawing (on the same day, the first collection's, lowest id); null if none. */
+  first: NewestDrawing | null;
+  /** Newest first; on the same day, in collection order and then by id. */
+  newest: NewestDrawing[];
+}

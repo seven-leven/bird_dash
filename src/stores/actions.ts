@@ -18,12 +18,13 @@ export interface AppActions {
 
 export function createAppActions(deps: {
   search: Pick<SearchStore, 'clear' | 'setDropdown'>;
-  ui: Pick<UiStore, 'resetHeaders' | 'scrollToTop'>;
+  ui: Pick<UiStore, 'resetHeaders' | 'scrollToTop' | 'showPage'>;
   collections: Pick<CollectionsStore, 'activeCollection' | 'switch'>;
 }): AppActions {
   const { search, ui, collections } = deps;
 
   const switchCollection = async (id: string): Promise<void> => {
+    ui.showPage('gallery'); // a collection is chosen from the About page too
     search.clear();
     ui.resetHeaders();
     await collections.switch(id); // resolves once the data is in place (cached or fetched)
@@ -36,6 +37,7 @@ export function createAppActions(deps: {
 
   const selectGlobalResult = async (collectionId: string, itemId: string): Promise<void> => {
     search.setDropdown(false);
+    ui.showPage('gallery');
     if (collectionId !== collections.activeCollection.value?.id) {
       await switchCollection(collectionId);
     }

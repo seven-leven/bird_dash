@@ -5,7 +5,7 @@ import { useHashRoute } from './useHashRoute.ts';
 import { at, makeCollection, makeItem, runInScope } from '../../testing/fixtures.ts';
 import { mountComposable } from '../../testing/mountComposable.ts';
 import { withDom } from '../../testing/withDom.ts';
-import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
+import type { CollectionConfig, CollectionItem, Page } from '../../types/index.ts';
 
 // The router is a small state machine (bare load / reflect / deep link / own
 // writes). These tests pin the two bugs that only showed up in a browser:
@@ -31,13 +31,24 @@ function harness(items: Record<string, CollectionItem[]>) {
 
   // onMounted has no component here, so the hashchange hook is never attached;
   // tests call apply()/start() directly instead.
+  const page = ref<Page>('gallery');
+  const showPage = (next: Page) => (page.value = next);
   const { value: route, stop } = runInScope(() =>
-    useHashRoute({ activeCollection, expandedImage, cache: items, switchCollection, openOverlay })
+    useHashRoute({
+      activeCollection,
+      expandedImage,
+      cache: items,
+      switchCollection,
+      openOverlay,
+      page,
+      showPage,
+    })
   );
 
   return {
     route,
     stop,
+    page,
     activeCollection,
     expandedImage,
     switched,
@@ -200,6 +211,8 @@ test('mounted, the router follows hashchange events, and stops when unmounted', 
         activeCollection,
         expandedImage: reactive({ isOpen: false, item: undefined }),
         cache: { birds: [], sharks: [] },
+        page: ref<Page>('gallery'),
+        showPage: () => {},
         switchCollection: async (id) => {
           switched.push(id);
           activeCollection.value = collections.find((c) => c.id === id);
@@ -218,4 +231,27 @@ test('mounted, the router follows hashchange events, and stops when unmounted', 
     globalThis.dispatchEvent(new HashChangeEvent('hashchange'));
     await nextTick();
     assertEquals(switched, ['sharks']); // no longer listening
+  }));
+
+test('#about shows the About page without switching collection, and is written back', () =>
+  withDom(async () => {
+    const h = harness({ birds: [], sharks: [] });
+    await h.loadFirst('birds');
+
+    location.hash = '#about';
+    await h.route.apply();
+    assertEquals(h.page.value, 'about');
+    assertEquals(h.switched, []); // "about" is not a collection
+
+    // Leaving it by a collection link shows the gallery again.
+    location.hash = '#sharks';
+    await h.route.apply();
+    assertEquals(h.page.value, 'gallery');
+    assertEquals(h.switched, ['sharks']);
+
+    // And showing the About page from the app writes #about.
+    h.page.value = 'about';
+    await nextTick();
+    assertEquals(location.hash, '#about');
+    h.stop();
   }));

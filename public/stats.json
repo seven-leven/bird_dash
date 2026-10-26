@@ -8,6 +8,7 @@
       "total": 204,
       "drawn": 15,
       "groups": 56,
+      "named": 191,
       "firstDrawn": "2024-10-10",
       "lastDrawn": "2026-02-06"
     },
@@ -17,6 +18,7 @@
       "total": 42,
       "drawn": 0,
       "groups": 6,
+      "named": 19,
       "firstDrawn": null,
       "lastDrawn": null
     },
@@ -26,10 +28,19 @@
       "total": 30,
       "drawn": 3,
       "groups": 4,
+      "named": 0,
       "firstDrawn": "2025-07-06",
       "lastDrawn": "2026-03-09"
     }
   ],
+  "first": {
+    "collection": "birds",
+    "id": "001",
+    "name": "Lesser Whistling-Duck",
+    "dhivehi": "ރޭރު",
+    "roman": "Reyru",
+    "drawn": "2024-10-10"
+  },
   "newest": [
     {
       "collection": "shells",
@@ -42,6 +53,7 @@
       "id": "031",
       "name": "Eurasian Moorhen",
       "dhivehi": "ކުލީ ކުކުޅު / އޮޅުވަލު ކަނބިލި",
+      "roman": "Kulhee Kukulhu / Olhuvalu Kanbili",
       "drawn": "2026-02-06"
     },
     {
@@ -49,6 +61,7 @@
       "id": "032",
       "name": "Eurasian Coot",
       "dhivehi": "ސަލްވާ ދޫނި",
+      "roman": "Salvaa Dhooni",
       "drawn": "2026-01-15"
     },
     {
@@ -56,6 +69,7 @@
       "id": "004",
       "name": "Northern Shoveler",
       "dhivehi": "ރޭރު",
+      "roman": "Reyru",
       "drawn": "2025-12-19"
     },
     {
@@ -63,6 +77,7 @@
       "id": "029",
       "name": "White-breasted Waterhen",
       "dhivehi": "ކަނބިލި",
+      "roman": "Kanbili",
       "drawn": "2025-11-09"
     },
     {
@@ -70,6 +85,7 @@
       "id": "177",
       "name": "House Crow",
       "dhivehi": "ކާލު",
+      "roman": "Kaalu",
       "drawn": "2025-10-24"
     },
     {
@@ -77,6 +93,7 @@
       "id": "030",
       "name": "Watercock",
       "dhivehi": "ވަލު ކުކުޅު / ކުލީ ކުކުޅު",
+      "roman": "Valu Kukulhu / Kulhee Kukulhu",
       "drawn": "2025-10-15"
     },
     {
@@ -84,6 +101,7 @@
       "id": "011",
       "name": "Greater Flamingo",
       "dhivehi": "ގުޑުގުޑާ ދޫނި",
+      "roman": "Gudugudaa Dhooni",
       "drawn": "2025-10-07"
     }
   ]

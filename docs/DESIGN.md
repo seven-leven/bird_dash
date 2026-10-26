@@ -465,7 +465,8 @@ current collection is always named:
 
 1. **Collections become one menu.** Below 768px, or whenever there are more than four collections,
    the tabs become one button that names the current collection (its icon, its name, `chevronDown`)
-   and opens the list of all of them. Escape or a press outside closes it.
+   and opens the list of all of them, with About last. On the About page the button says "About".
+   Escape or a press outside closes it.
 2. **The logo goes.** Below 640px the row keeps the collection's name over the logo mark, because
    orientation matters most.
 3. **Search folds into a button.** Below 420px an inline field would be too narrow to type in, so
@@ -473,6 +474,14 @@ current collection is always named:
    empty.
 
 The view switch and the theme toggle never give way: they are icons, 36px each.
+
+**About** (`#about`) sits after the collection tabs, or last in their menu. It is a page, not a
+view: on it no collection tab is current, and the sidebar, its toggle and the view switch are gone,
+because there are no sections to jump between. Every number on it comes from `stats.json` (the build
+writes it; docs/DATA.md), never from the page. It is built to hold more collections without a
+redesign: the cards are a grid that shows six and then "Show all", and past three collections a
+sentence counts them ("in 7 collections") instead of naming each. Choosing a collection, a search
+result or a drawing on it returns to the gallery.
 
 The month view runs newest first, because returning visitors want what's new. Months stay continuous
 so gaps remain visible, but three or more empty months in a row fold into one disabled row, such as
