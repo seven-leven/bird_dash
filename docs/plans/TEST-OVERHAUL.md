@@ -141,6 +141,88 @@ Phase 0 writes these into TESTING.md; the words (journey, promise, fake, scenari
     timezones stay; the weekly deep run stays.
 12. **Small files.** A test file past about 300 lines splits by behaviour.
 
+## Conventions
+
+The everyday rules for writing a test file and the tests in it. Phase 0 writes them into TESTING.md;
+phase 8 adds a contract test for every one that can be checked mechanically (marked ✓).
+
+### One file, many tests
+
+A test file answers "what are the tests for X?". Each test in it states one thing that must stay
+true about X. Never one file per test: each file costs a worker's start-up (about 0.6 s today),
+shared setup would be copied, and the report would list hundreds of entries.
+
+| What is tested                                     | File                                                                 |
+| -------------------------------------------------- | -------------------------------------------------------------------- |
+| One source file                                    | One test file beside it, holding every test of that file in its tier |
+| The same file, in another tier                     | One more file, with that tier's suffix                               |
+| Something that spans files (a journey, a contract) | One file per journey or contract, named after what it proves         |
+| A file past about 300 lines                        | Split by behaviour, each part named for its behaviour (below)        |
+
+### File names
+
+`<subject>_<tier suffix>`, where the tier suffix is `test.ts`, `dom_test.ts`, `prop_test.ts`,
+`contract_test.ts`, `journey_test.ts` or `browser_test.ts`, and the subject is:
+
+| Kind                            | Subject                                    | Example                                                           |
+| ------------------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| A source file                   | Its file name, case kept ✓                 | `planChanges_test.ts`, `ItemTile_dom_test.ts`                     |
+| A split of a long file          | File name, then the behaviour in camelCase | `runTests_arguments_test.ts`, `useViewer_keys_dom_test.ts`        |
+| A journey                       | The visit, in camelCase                    | `firstVisit_journey_test.ts`, `search_journey_test.ts`            |
+| A contract not tied to one file | What it guards, in camelCase               | `thaanaLineHeight_contract_test.ts`, `iconSizes_contract_test.ts` |
+| A browser check                 | What it checks                             | `phoneWidth_browser_test.ts`                                      |
+
+Where it lives: beside its source file; journeys in the site's `app/journeys/` (the site code plan's
+`app/`), the scripts' journeys beside the command they run; browser checks in `browser/`. Test files
+only under `src/` and `script/` (and `browser/`), as today ✓.
+
+### Test titles
+
+`test('…', …)` takes a sentence that must stay true:
+
+- **Says the behaviour, not the function.** The file names the subject: `"an undrawn result
+  highlights its tile instead of opening the viewer"`, not `"select: undrawn"`. No `name:` prefix ✓,
+  except a contract test, whose subject is a file: `"collections.json: every accent is on the
+  menu"`.
+- **The situation, then the outcome:** `"with nothing drawn, the count reads Nothing drawn yet"`.
+- **Present tense, lower case, no full stop, no "should"** ✓: `"returns …"`, not `"should return
+  …"`.
+- **Unique in its file** ✓, and under about 100 characters.
+- **A property test says what holds for any input:** `"for any query, every result contains it"`.
+- **A journey reads as the visitor's steps:** `"typing a Dhivehi name finds the bird and opens it in
+  the viewer"`.
+
+### Inside a test
+
+- **Flat files: no `describe`.** The file is the group; a group big enough to need a heading is a
+  file of its own.
+- **Arrange, act, assert,** separated by a blank line when the test has all three.
+- **One behaviour per test.** Several assertions are fine when they check the same behaviour; prefer
+  one `assertEquals` on a whole value to many on its parts.
+- **Assertions from `@std/assert`:** `assertEquals` for values, `assertStringIncludes` for text,
+  `assertThrows` / `assertRejects` for failures, and `assert(condition, message)` only with a
+  message saying what was expected. Inside a loop, every assertion has a message naming the case.
+- **No `.only`, `.skip` or `.todo` committed** ✓. A test that cannot pass yet is an issue in
+  TODO.md, not a skipped test.
+- **No timeouts in a test**, except the property tests' scaled one.
+- **No real clock, network, timers or randomness** (rule 11): a fake from the kit instead.
+
+### Helpers and data
+
+| Thing                     | Name                                                               | Example                                       |
+| ------------------------- | ------------------------------------------------------------------ | --------------------------------------------- |
+| A file's own mount helper | `mount` + what it mounts, returning a named object                 | `mountTile(item) → { tile, image, clicked }`  |
+| A file's own data helper  | `make` + what it makes                                             | `makeNote(paragraphs)`                        |
+| Shared data               | A scenario from `testing/scenarios/`, by what it is                | `archiveWithGaps`, `birdWithTwoNames`         |
+| A value in a test         | Its role in the story, never a number                              | `drawn`, `undrawn`, `goose`; not `item1`      |
+| A user action             | The kit's event helpers: `press`, `type`, `click`, `swipe`         | `press('ArrowRight')`                         |
+| Waiting                   | `await settle()` only                                              |                                               |
+| A fast-check arbitrary    | `any` + what it generates                                          | `anyQuery`, `anyItem`, `anyHash`              |
+| A fake                    | `fake` + what it replaces; the console capture is `captureConsole` | `fakeFetch(routes)`, `fakeClock(at(2025, 3))` |
+
+No `setup()`: say what it sets up. Variables follow the code's rules: whole words
+([SCRIPTS.md](../SCRIPTS.md), [GLOSSARY.md](../GLOSSARY.md)).
+
 ## The kit, where it ends up
 
 ```
@@ -149,6 +231,7 @@ src/testing/
   scenarios/   the fixture archive (collections, lists, stats) and the named scenarios
   fixtures.ts  makeItem, makeCollection, at
   mount.ts     mountComponent, mountComposable
+  events.ts    press, type, click, swipe (today `key` and `pointer`, each local to one file)
   renderApp.ts the whole app for journeys, on a scenario
   settle.ts    settle
   propertyRuns.ts
@@ -164,8 +247,8 @@ Each phase is one pull request: 100% lines and branches, all checks green, the f
 TESTING.md, TEST-PROCEDURES.md and `script/test_runner/` (tiers, areas) updated in the same PR.
 Production code changes only where a test cannot reach it otherwise, and says so.
 
-- [ ] **0. Agree the rules.** Settle the decisions; the rules and the promise list into TESTING.md;
-      the words into GLOSSARY.md. _Done when_ merged.
+- [ ] **0. Agree the rules.** Settle the decisions; the rules, the conventions and the promise list
+      into TESTING.md; the words into GLOSSARY.md. _Done when_ merged.
 - [ ] **1. The kit.** `testing/fakes/`, `settle`, one `mount.ts`; the four `fetch` fakes, seven
       console swaps and thirteen temporary folders moved onto it; the contract test against
       hand-swapped globals. _Done when_ no test fakes the outside world by itself.
@@ -180,8 +263,10 @@ Production code changes only where a test cannot reach it otherwise, and says so
       _Done when_ every component has a test beside it or a journey that names it.
 - [ ] **5. Split and rename.** `useLightbox_dom_test.ts` into one file per composable;
       `run_tests_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
-      local `setup()`s onto scenarios. _Done when_ no test file is over about 300 lines and every
-      title is a sentence.
+      local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer` onto the kit's
+      events; the arbitraries named `any…`; the contracts not tied to a file renamed for what they
+      guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`). _Done when_ no test
+      file is over about 300 lines and every title and file name follows the conventions.
 - [ ] **6. The promise map.** Each journey names its promises (`// Keeps: P2, P3`); a contract test
       checks the list in TESTING.md against them. _Done when_ every promise is kept by a test.
 - [ ] **7. A real browser.** Playwright, pinned, on the built `dist/`, as a CI job that does not
@@ -190,7 +275,8 @@ Production code changes only where a test cannot reach it otherwise, and says so
       **B4** the focus ring shows on every control by keyboard. _Done when_ it has passed for two
       weeks; then decide whether it becomes required.
 - [ ] **8. Close.** TESTING.md rewritten top down (promises, journeys, features, units, contracts);
-      "Not covered yet" shrinks to what is left; this page deleted.
+      a contract test for the conventions marked ✓ (file names, title rules, no `.only`/`.skip`, no
+      duplicate titles); "Not covered yet" shrinks to what is left; this page deleted.
 
 ## Not in this plan
 

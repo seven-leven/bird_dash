@@ -22,7 +22,10 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
   through the whole app in new journey tests, then features, units and contracts, and gives them one
   kit for fakes, mounting and waiting (today `fetch` is faked four ways and a browser is set up two
   ways). Its first three phases come before the site and scripts overhauls, as their safety net. The
-  glossary gains promise, journey, fake and scenario
+  glossary gains promise, journey, fake and scenario. It sets the conventions too: one test file per
+  source file with many tests in it, split by behaviour past about 300 lines; file names
+  (`planChanges_test.ts`, `search_journey_test.ts`); titles as sentences that must stay true; flat
+  files; and names for helpers, fakes and arbitraries
 - 2026-10-26 | docs: a glossary (`docs/GLOSSARY.md`): every word the project uses, for the archive,
   the site, the code, building and testing, each with one meaning, where the code says it, and the
   words to avoid (the viewer is never a lightbox or an overlay; the numbers on screen are counts,
