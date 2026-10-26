@@ -1,6 +1,6 @@
 import { test } from 'vitest';
-import { assert, assertEquals, assertRejects } from '@std/assert';
-import { computeStats, formatStats, isStatsCurrent, writeStats } from './stats.ts';
+import { assert, assertEquals } from '@std/assert';
+import { computeStats, formatStats, formatStatsFor, writeStats } from './stats.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import type { Collection } from '../lib/collections.ts';
 
@@ -109,7 +109,7 @@ test('the file text is stable: the same lists always write the same bytes', () =
   assert(text.endsWith('}\n'));
 });
 
-test('the stats are written, and known to be stale once a list changes without them', async () => {
+test('the stats are written as the lists say, the same text the check expects', async () => {
   const collection = {
     id: 'birds',
     label: 'Birds',
@@ -117,36 +117,9 @@ test('the stats are written, and known to be stale once a list changes without t
     paths: { json: './birds.json' },
   } as Collection;
   const io = fakeIo({ files: { './birds.json': JSON.stringify(birds.groups) } });
-
-  assertEquals(await isStatsCurrent([collection], io, './stats.json'), false); // no file yet
   const stats = await writeStats([collection], io, './stats.json');
   assertEquals(stats.drawn, 3);
-  assertEquals(await isStatsCurrent([collection], io, './stats.json'), true);
-
-  // A drawing added to the list without ingesting leaves the numbers wrong.
-  await io.writeText(
-    './birds.json',
-    JSON.stringify({ ...birds.groups, Owls: [{ id: '150', name: 'Owl', drawn: '2026-04-01' }] }),
-  );
-  assertEquals(await isStatsCurrent([collection], io, './stats.json'), false);
-});
-
-test('a stats file that cannot be read for another reason is a failure, not "stale"', async () => {
-  const collection = {
-    id: 'birds',
-    label: 'Birds',
-    emoji: '',
-    paths: { json: './birds.json' },
-  } as Collection;
-  const io = fakeIo({ files: { './birds.json': JSON.stringify(birds.groups) } });
-  const locked = {
-    ...io,
-    readText: (path: string) =>
-      path === './stats.json'
-        ? Promise.reject(new Error('EACCES: permission denied'))
-        : io.readText(path),
-  };
-  await assertRejects(() => isStatsCurrent([collection], locked, './stats.json'), Error, 'EACCES');
+  assertEquals(io.files.get('./stats.json'), await formatStatsFor([collection], io));
 });
 
 test('the first drawing is the oldest, the same rules breaking a tie', () => {

@@ -149,7 +149,7 @@ git branch -d test/lightbox-keys
 | `npm run ingest`                                | Take in new drawings: date them, make their WebPs, rewrite `stats.json` (`-- --dry-run` first) |
 | `npm run build`                                 | Build the site, then the docs site into `dist/docs/`; changes nothing git tracks               |
 | `npm run build:site` / `build:docs`             | Build one stage only (`npm run build -- docs` is the same)                                     |
-| `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems                                 |
+| `npm run check`                                 | Missing or orphaned images, stale generated files; changes nothing; exits 1 on a problem       |
 | `npm test`                                      | Every test tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
 | `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                                 |
 | `npm run test:watch`                            | Re-run the tests on every save                                                                 |

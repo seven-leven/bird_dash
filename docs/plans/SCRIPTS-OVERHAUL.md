@@ -1,7 +1,7 @@
 # Scripts overhaul
 
-> **Status:** planned 2026-10-26; phases 0–4 done (the rules; the foundation, with `version` on it;
-> `ingest`; build stages; `generate`). Moves `script/` onto the rules in
+> **Status:** planned 2026-10-26; phases 0–5 done (the rules; the foundation, with `version` on it;
+> `ingest`; build stages; `generate`; `check`). Moves `script/` onto the rules in
 > [SCRIPTS.md](../SCRIPTS.md), one pull request per phase. Delete this page when phase 7 is done;
 > the CHANGELOG keeps what happened, and SCRIPTS.md stays as the rules.
 
@@ -129,8 +129,11 @@ the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
       `iconSheet.ts` and the shared `guideDrawing.ts` (`wrap` is `wrapText` there, not in `lib/`).
       `generatedFiles_contract_test.ts` runs every generator. A real run reproduces the committed
       files byte for byte.
-- [ ] **5. Check.** `npm run check` runs every read-only check (assets, generated files) and reports
-      in one voice; one CI step. _Done when_ `check` is the only integrity command.
+- [x] **5. Check.** `npm run check` runs every read-only check (assets, generated files) and reports
+      in one voice; one CI step. _Done when_ `check` is the only integrity command. _Done:_
+      `script/check/` (`checkAssets`, `checkGenerated`, `formatCheckReport`, `check`); `build.ts`
+      lost `--check`. The generated _text_ files (stats, favicon, logo SVGs) are checked here; the
+      images stay with `generatedFiles_contract_test.ts`, as their bytes differ by machine.
 - [ ] **6. The rest.** `testRunner/`, `changelog/` and `version/` renamed to the rules and moved
       onto the shared `Io`; the three `format*` pairs in the runner named apart. Mostly renames; the
       runner's output is unchanged. _Done when_ no `get…`, `load…`, `run`, `cli` or snake_case file

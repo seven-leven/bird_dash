@@ -121,17 +121,24 @@ export function logoSheetSvg(): string {
     `<rect width="100%" height="100%" fill="${SLATE['50']}"/>${p.join('')}</svg>`;
 }
 
+/** The logo's standalone SVG files, by name, exactly as written into `logo/`. */
+export function logoFiles(): Record<string, string> {
+  return {
+    'mark.svg': logoSvg('mark', INK) + '\n',
+    'mark-white.svg': logoSvg('mark', '#ffffff') + '\n',
+    'tile.svg': logoSvg('tile', INK) + '\n',
+  };
+}
+
+/** The browser-tab icon as SVG, exactly as written into `public/favicon.svg`. */
+export const faviconSvg = (): string => logoSvg('tile', INK) + '\n';
+
 /** Write the logo sheet (`logo.png`) and the standalone files (`logo/`) into `dir`. */
 export async function writeLogoFiles(dir: string = PATHS.docsAssets): Promise<string[]> {
   await mkdir(`${dir}/logo`, { recursive: true });
-  const files: Record<string, string> = {
-    'mark.svg': logoSvg('mark', INK),
-    'mark-white.svg': logoSvg('mark', '#ffffff'),
-    'tile.svg': logoSvg('tile', INK),
-  };
   const written: string[] = [];
-  for (const [name, svg] of Object.entries(files)) {
-    await writeFile(`${dir}/logo/${name}`, svg + '\n');
+  for (const [name, svg] of Object.entries(logoFiles())) {
+    await writeFile(`${dir}/logo/${name}`, svg);
     written.push(`${dir}/logo/${name}`);
   }
   await sharp(new TextEncoder().encode(logoSvg('tile', INK, 512))).png().toFile(
@@ -146,7 +153,7 @@ export async function writeLogoFiles(dir: string = PATHS.docsAssets): Promise<st
  * that take no SVG icon. Written into `public/`, where index.html links them.
  */
 export async function writeFavicons(dir = './public'): Promise<string[]> {
-  await writeFile(`${dir}/favicon.svg`, logoSvg('tile', INK) + '\n');
+  await writeFile(`${dir}/favicon.svg`, faviconSvg());
   await sharp(new TextEncoder().encode(logoSvg('tile', INK, 64))).png().toFile(
     `${dir}/favicon.png`,
   );

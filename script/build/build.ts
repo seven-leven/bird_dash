@@ -5,18 +5,11 @@
  *
  *   npm run build              every stage, in order
  *   npm run build -- docs      the stages named (also `npm run build:site`, `build:docs`)
- *   npm run check              read-only integrity report (here until it gets its own command)
  */
 
-import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { type Io, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import { EXIT, MARK, parseArgs, runCommand, UsageError } from '../lib/cli.ts';
-import { scanSources } from '../ingest/scanSources.ts';
-import { countBlockingIssues, planChanges } from '../ingest/planChanges.ts';
-import { isStatsCurrent } from '../generate/stats.ts';
-import { printCheckReport } from './printCheckReport.ts';
-import { computeVersion, formatVersionLine } from '../version/version.ts';
 
 /** One stage of the build: a tool, run with this Node, and what it makes. */
 export interface Stage {
@@ -68,53 +61,13 @@ export async function runStages(io: Io, stages: Stage[]): Promise<number> {
   return EXIT.done;
 }
 
-/** Prints the integrity report and returns how many blocking issues it found. */
-export async function checkIntegrity(
-  collections: Collection[] = COLLECTIONS,
-  io = realIo,
-  statsPath: string = PATHS.stats,
-): Promise<number> {
-  const version = await computeVersion(io);
-  const rows: Array<{
-    col: Collection;
-    state: Awaited<ReturnType<typeof scanSources>>;
-    plan: ReturnType<typeof planChanges>;
-  }> = [];
-
-  for (const col of collections) {
-    const state = await scanSources(col, io);
-    const plan = planChanges(state);
-    rows.push({ col, state, plan });
-  }
-
-  printCheckReport(rows, formatVersionLine(version));
-  // A list changed without ingesting would leave the published numbers wrong.
-  const statsCurrent = await isStatsCurrent(collections, io, statsPath);
-  console.log(
-    statsCurrent
-      ? `  ✓ ${statsPath} matches the lists`
-      : `  ✗ ${statsPath} is stale: run \`npm run ingest\` to rewrite it`,
-  );
-  return rows.reduce((n, r) => n + countBlockingIssues(r.plan), 0) + (statsCurrent ? 0 : 1);
-}
-
 const USAGE = `npm run build [-- <stage>…]
   Builds dist/ from what is committed: ${STAGES.map((s) => `${s.id} (${s.makes})`).join(', ')}.
   Name stages to build only those. Changes nothing git tracks.`;
 
-export function main(
-  args: string[],
-  io: Io = realIo,
-  check: (io: Io) => Promise<number> = (io) => checkIntegrity(COLLECTIONS, io),
-): Promise<number> {
-  return runCommand(io, args, USAGE, async () => {
-    const { flags, words } = parseArgs(args, ['--check']);
-    if (flags.has('--check')) {
-      const issues = await check(io);
-      if (issues === 0) return EXIT.done;
-      io.err(`${MARK.problem} integrity check failed: ${issues} issue(s)`);
-      return EXIT.problem;
-    }
+export function main(args: string[], io: Io = realIo): Promise<number> {
+  return runCommand(io, args, USAGE, () => {
+    const { words } = parseArgs(args, []);
     return runStages(io, pickStages(words));
   });
 }

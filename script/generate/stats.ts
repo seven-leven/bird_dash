@@ -8,7 +8,6 @@
  * time), so `npm run check` can tell when it is stale.
  */
 import type { Collection } from '../lib/collections.ts';
-import { isErrno } from '../lib/fs.ts';
 import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import type { CollectionCounts, NewestDrawing, RawItem, Stats } from '../../src/types/data.ts';
@@ -95,17 +94,7 @@ export async function writeStats(
   return stats;
 }
 
-/** True when the file on disk says what the lists say now (`npm run check`). */
-export async function isStatsCurrent(
-  collections: Collection[],
-  io: Io = realIo,
-  path: string = PATHS.stats,
-): Promise<boolean> {
-  const expected = formatStats(computeStats(await readLists(collections, io)));
-  try {
-    return (await io.readText(path)) === expected;
-  } catch (err) {
-    if (isErrno(err, 'ENOENT')) return false;
-    throw err;
-  }
+/** The text stats.json should hold for the lists as they are now (`npm run check` compares). */
+export async function formatStatsFor(collections: Collection[], io: Io = realIo): Promise<string> {
+  return formatStats(computeStats(await readLists(collections, io)));
 }

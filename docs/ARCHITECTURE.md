@@ -152,8 +152,9 @@ machine, never in CI):
 | **Apply**  | `script/ingest/applyChanges.ts`       | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
 | **Report** | `script/ingest/formatIngestReport.ts` | The warnings, each step, the summary                           |
 
-Keeping the plan pure is what makes it testable without touching the disk. `npm run check` runs scan
-and plan only, and fails if anything is missing or orphaned.
+Keeping the plan pure is what makes it testable without touching the disk. `npm run check`
+(`script/check/`) runs scan and plan only, and fails if anything is missing or orphaned; it also
+compares the generated text files with what their generators would write now.
 
 Other scripts: `version/version.ts` (the version, see the README), `changelog/changelog.ts`, and
 `generate/` (every generated file, one generator each: `npm run generate`).

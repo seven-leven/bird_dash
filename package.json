@@ -22,7 +22,7 @@
     "test:report": "node script/test_runner/run_tests.ts --coverage --min-lines=100 --min-branches=100 --report",
     "test:html": "node script/test_runner/run_tests.ts --coverage --min-lines=100 --min-branches=100 --report --html",
     "typecheck": "vue-tsc --noEmit",
-    "check": "node script/build/build.ts --check",
+    "check": "node script/check/check.ts",
     "version": "node script/version/version.ts",
     "changelog": "node script/changelog/changelog.ts",
     "generate": "node script/generate/generate.ts",
