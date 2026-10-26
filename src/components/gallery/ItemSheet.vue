@@ -25,36 +25,36 @@
          of the English title below nor share a line with the Latin. A bird with more than
          one Dhivehi name gets a line per name: the first as the title, each other smaller,
          "also …", every Thaana name with its own romanisation. A gloss that does not fit
-         beside its name wraps under it instead of splitting it. -->
+         beside its name wraps under it instead of splitting it. Each name's role
+         (src/lib/itemNames.ts) picks its line; the block reads no field by name. -->
     <div>
-      <template v-if="dhivehi.length">
+      <template v-for="(name, n) in item.names" :key="n">
         <div
-          v-for="(name, n) in dhivehi"
-          :key="n"
+          v-if="name.lang === 'dv'"
           class="flex flex-wrap items-baseline gap-x-3 gap-y-1"
         >
           <component
-            :is="n === 0 ? 'h2' : 'p'"
+            :is="name.role === 'title' ? 'h2' : 'p'"
             class="font-dhivehi font-bold viewer-title text-left"
-            :class="n === 0 ? 'text-3xl' : 'text-xl'"
+            :class="name.role === 'title' ? 'text-3xl' : 'text-xl'"
             dir="rtl"
           >
-            {{ name.script }}
+            {{ name.text }}
           </component>
           <span v-if="name.roman" class="text-sm viewer-label">
-            <template v-if="n > 0">also </template><span lang="dv-Latn">{{ name.roman }}</span>
+            <template v-if="name.role === 'also'">also </template><span lang="dv-Latn">{{ name.roman }}</span>
           </span>
         </div>
-        <p class="text-base font-semibold viewer-title leading-tight mt-1">
-          {{ item.commonName }}
+        <h2 v-else-if="name.role === 'title'" class="text-xl font-semibold viewer-title leading-tight tracking-tight">
+          {{ name.text }}
+        </h2>
+        <p v-else-if="name.role === 'common'" class="text-base font-semibold viewer-title leading-tight mt-1">
+          {{ name.text }}
+        </p>
+        <p v-else class="viewer-label italic text-sm mt-0.5">
+          {{ name.text }}
         </p>
       </template>
-      <h2 v-else class="text-xl font-semibold viewer-title leading-tight tracking-tight">
-        {{ item.commonName }}
-      </h2>
-      <p class="viewer-label italic text-sm mt-0.5">
-        {{ item.scientificName }}
-      </p>
     </div>
 
     <!-- Any other facts the list carries -->
@@ -133,7 +133,6 @@ import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import Icon from '../icons/Icon.vue';
 import { noteSegments } from '../../lib/noteLinks.ts';
-import { dhivehiNames } from '../../lib/dhivehiNames.ts';
 import { monthKey } from '../../composables/collection/useCollectionData.ts';
 import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 
@@ -150,11 +149,6 @@ const emit = defineEmits<{
 // "October 2024", as the month view heads it; nothing for an undated drawing.
 const drawnMonth = computed(() =>
   props.item.drawnTime ? monthKey(new Date(props.item.drawnTime)) : ''
-);
-
-// Each Dhivehi name, paired with how to say it (some birds have two).
-const dhivehi = computed(() =>
-  dhivehiNames(props.item.meta?.dhiv_script ?? '', props.item.meta?.dhiv ?? '')
 );
 
 const note = computed(() => props.item.illustratorNote ?? '');
@@ -183,15 +177,8 @@ watch(() => props.item.id, () => (expanded.value = false));
 // Links come straight from the collection config
 const links = computed(() => props.collection.links);
 
-// All meta keys except the names, which the name block shows
-const SPECIAL_META_KEYS = new Set(['dhiv', 'dhiv_script']);
-
-const otherMeta = computed(() => {
-  if (!props.item.meta) return {};
-  return Object.fromEntries(
-    Object.entries(props.item.meta).filter(([k]) => !SPECIAL_META_KEYS.has(k))
-  );
-});
+// Every other fact the list carries (the names are not among them: they are `names`)
+const otherMeta = computed(() => props.item.meta ?? {});
 
 // Convert snake_case / camelCase keys to readable labels
 function formatMetaKey(key: string): string {

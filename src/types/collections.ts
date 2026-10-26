@@ -1,8 +1,16 @@
+import type { ItemName } from '../lib/itemNames.ts';
+
 export interface CollectionItem {
   id: string;
   itemId: string;
   commonName: string;
   scientificName: string;
+  /**
+   * Every name the item has, in display order, built once at load
+   * (src/lib/itemNames.ts). Components render names from here; `commonName` and
+   * `scientificName` stay for link templates, search matching and labels.
+   */
+  names: readonly ItemName[];
   group: string;
   imageUrl: string;
   placeholderUrl: string;
@@ -15,8 +23,8 @@ export interface CollectionItem {
   /** Drawn date as an epoch ms timestamp (0 if undrawn/invalid), for date sorting/grouping. */
   drawnTime: number;
   /**
-   * Lowercased haystack for search — common/scientific/group/id plus all meta
-   * values (Dhivehi name + Thaana script included). Built once at load.
+   * Lowercased haystack for search — every name (Thaana and romanisation included),
+   * group, id and all meta values. Built once at load.
    */
   searchText: string;
   illustratorNote?: string;

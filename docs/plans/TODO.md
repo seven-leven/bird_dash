@@ -5,12 +5,15 @@
 In this order: the first unblocks the non-species collections below, the next two make every new
 page cheap.
 
-- [ ] **1. Names as data, not fields the components know.** `dhiv`, `dhiv_script` and `sci` are read
+- [x] **1. Names as data, not fields the components know.** `dhiv`, `dhiv_script` and `sci` are read
       by name in `ItemTile.vue`, `ItemSheet.vue`, `SearchResultsList.vue`, `useGlobalSearch.ts` and
       `collectionItems.ts`. Build each item's names once in `collectionItems.ts`, as a list of `{
       text, lang: 'dv' | 'en' | 'la', role: 'title' | 'also' | 'latin' }`, and have the tile, the
       viewer and search render whatever names an item has. A `series` piece then gives a title and
       its medium with no scientific name, and no component changes. The groundwork for `kind`.
+      _Done:_ `src/lib/itemNames.ts` builds `item.names` (roles `title`, `also`, `common`, `latin`);
+      the tile, the viewer and search render them. `useGlobalSearch` still matches on
+      `commonName`/`scientificName`, which the link templates need anyway.
 - [ ] **2. A page registry instead of `'gallery' | 'about'` everywhere.** The About page is written
       into the `Page` type, the ui store, `useHashRoute`, `Chrome.vue`, `TopBar.vue` and
       `CollectionMenu.vue`. One list, `pages = [{ id: 'about', component, label }]`, drives the

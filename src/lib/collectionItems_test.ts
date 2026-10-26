@@ -37,12 +37,37 @@ test('toCollectionItems: an unparseable date still counts as drawn, with time 0'
   assertEquals(item.drawnTime, 0);
 });
 
-test('toCollectionItems: extra string fields become meta and are searchable', () => {
+test('toCollectionItems: the name fields become names; other string fields become meta', () => {
   const [item] = toCollectionItems(col, {
-    Herons: [{ id: '010', name: 'Grey Heron', dhiv: 'Maakanaa', dhiv_script: 'މާކަނާ', rank: 3 }],
+    Herons: [{
+      id: '010',
+      name: 'Grey Heron',
+      sci: 'Ardea cinerea',
+      dhiv: 'Maakanaa',
+      dhiv_script: 'މާކަނާ',
+      habitat: 'Shore',
+      rank: 3,
+    }],
   }, '/');
-  assertEquals(item.meta, { dhiv: 'Maakanaa', dhiv_script: 'މާކަނާ' }); // non-strings dropped
-  for (const term of ['grey heron', 'herons', '010', 'maakanaa', 'މާކަނާ']) {
+  assertEquals(item.names, [
+    { text: 'މާކަނާ', lang: 'dv', role: 'title', roman: 'Maakanaa' },
+    { text: 'Grey Heron', lang: 'en', role: 'common' },
+    { text: 'Ardea cinerea', lang: 'la', role: 'latin' },
+  ]);
+  assertEquals(item.meta, { habitat: 'Shore' }); // names have left it; non-strings dropped
+});
+
+test('toCollectionItems: every name, the group, the id and the meta are searchable', () => {
+  const [item] = toCollectionItems(col, {
+    Herons: [{
+      id: '010',
+      name: 'Grey Heron',
+      dhiv: 'Maakanaa',
+      dhiv_script: 'މާކަނާ',
+      habitat: 'Shore',
+    }],
+  }, '/');
+  for (const term of ['grey heron', 'herons', '010', 'maakanaa', 'މާކަނާ', 'shore']) {
     assert(item.searchText.includes(term), `searchText is missing "${term}"`);
   }
   assertEquals(item.searchText, item.searchText.toLowerCase());

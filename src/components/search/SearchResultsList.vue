@@ -36,13 +36,20 @@
     >
       <img :src="tileImage(result.item, theme.isDark)" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
       <div class="flex-1 min-w-0">
-        <p class="text-sm font-medium truncate text-slate-800 dark:text-slate-100" v-html="highlight(result.item.commonName)" />
-        <p class="text-xs text-muted italic truncate mt-0.5" v-html="highlight(result.item.scientificName)" />
-        <p
-          v-if="result.item.meta?.dhiv_script"
-          class="font-dhivehi text-xs text-muted truncate mt-0.5"
-          dir="rtl"
-        >{{ result.item.meta.dhiv_script }}</p>
+        <!-- The names a query can match first (English, then Latin), then the Thaana -->
+        <template v-for="(line, l) in resultLines(result.item)" :key="line.lang">
+          <p
+            v-if="line.lang === 'dv'"
+            class="font-dhivehi text-xs text-muted truncate mt-0.5"
+            dir="rtl"
+          >{{ line.text }}</p>
+          <p
+            v-else
+            :class="l === 0 ? 'text-sm font-medium truncate text-slate-800 dark:text-slate-100'
+              : `text-xs text-muted truncate mt-0.5${line.lang === 'la' ? ' italic' : ''}`"
+            v-html="highlight(line.text)"
+          />
+        </template>
         <!-- Why it matched, when the names do not show it (only the group matched) -->
         <p
           v-if="result.matchedFields.length === 1 && result.matchedFields[0] === 'group'"
@@ -77,11 +84,18 @@ import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { tileImage } from '../../lib/collectionItems.ts';
+import { nameLines } from '../../lib/itemNames.ts';
 import { useUi } from '../../stores/ui.ts';
-import type { GlobalSearchResult } from '../../types/index.ts';
+import type { CollectionItem, GlobalSearchResult } from '../../types/index.ts';
 import type { VisibleGroup } from '../../lib/collapseGroups.ts';
 
 const { theme } = useUi();
+
+// A result's names, the ones a query matches (English, Latin) before the Thaana.
+const resultLines = (item: CollectionItem) => {
+  const lines = nameLines(item.names);
+  return [...lines.filter((l) => l.lang !== 'dv'), ...lines.filter((l) => l.lang === 'dv')];
+};
 
 const props = defineProps<{
   results: VisibleGroup[];

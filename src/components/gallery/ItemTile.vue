@@ -35,25 +35,28 @@
       />
     </div>
 
-    <!-- Caption: Dhivehi first, then English, both always shown -->
+    <!-- Caption: every name but the Latin, a line per language (Dhivehi first) -->
     <div
       class="min-w-0 px-3 pt-2 pb-2.5 border-t"
       :class="drawn ? 'border-slate-100 dark:border-slate-800' : 'border-transparent'"
     >
-      <p
-        v-if="props.item.meta?.dhiv_script"
-        class="font-dhivehi text-base font-bold truncate"
-        :class="drawn ? 'text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400'"
-        dir="rtl"
-      >
-        {{ props.item.meta.dhiv_script }}
-      </p>
-      <h3
-        class="text-sm leading-snug truncate"
-        :class="drawn ? 'font-semibold text-slate-700 dark:text-slate-300' : 'text-slate-600 dark:text-slate-400'"
-      >
-        {{ props.item.commonName }}
-      </h3>
+      <template v-for="line in caption" :key="line.lang">
+        <p
+          v-if="line.lang === 'dv'"
+          class="font-dhivehi text-base font-bold truncate"
+          :class="drawn ? 'text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400'"
+          dir="rtl"
+        >
+          {{ line.text }}
+        </p>
+        <h3
+          v-else
+          class="text-sm leading-snug truncate"
+          :class="drawn ? 'font-semibold text-slate-700 dark:text-slate-300' : 'text-slate-600 dark:text-slate-400'"
+        >
+          {{ line.text }}
+        </h3>
+      </template>
     </div>
   </div>
 </template>
@@ -62,6 +65,7 @@
 import { computed, ref } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import { tileImage } from '../../lib/collectionItems.ts';
+import { nameLines } from '../../lib/itemNames.ts';
 import type { CollectionItem } from '../../types/index.ts';
 
 const props = withDefaults(
@@ -82,6 +86,7 @@ const emit = defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
 const INTERACTIVE = 'cursor-pointer hover:ring-black/15 dark:hover:ring-white/10 hover:shadow-lift ' +
   'hover:-translate-y-0.5 active:scale-[0.98]';
 const drawn = computed(() => props.item.isDrawn);
+const caption = computed(() => nameLines(props.item.names).filter((l) => l.lang !== 'la'));
 const buttonAttrs = computed(() =>
   drawn.value
     ? {

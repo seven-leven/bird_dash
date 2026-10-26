@@ -16,7 +16,8 @@ const drawn = makeItem({
   imageUrl: '/thumb/birds/042.webp',
   meta: { dhiv_script: 'ވަލު ބޮނޑަނަ' },
 });
-const undrawn = makeItem({ itemId: '005', commonName: 'Green-winged Teal', isDrawn: false });
+const teal = { itemId: '005', commonName: 'Green-winged Teal', isDrawn: false };
+const undrawn = makeItem(teal);
 
 /** Mount a tile and record what it emits. */
 function mount(props: { item: CollectionItem; dark?: boolean; eager?: boolean }) {
@@ -100,7 +101,7 @@ test('a drawing that fails to load falls back to the placeholder', async () => {
 });
 
 test("an undrawn tile's names are muted, Dhivehi included", () => {
-  const { tile } = mount({ item: { ...undrawn, meta: { dhiv_script: 'ސަޓު' } } });
+  const { tile } = mount({ item: makeItem({ ...teal, meta: { dhiv_script: 'ސަޓު' } }) });
   const [dhivehi, english] = [...(tile.lastElementChild as HTMLElement).children];
   for (const line of [dhivehi, english]) assertStringIncludes(line.className, 'text-slate-600');
 });
