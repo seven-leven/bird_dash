@@ -65,12 +65,9 @@ jobs:
       - name: Asset integrity
         run: npm run check
 
-      - name: Build the site
+      # The site, then the docs site into dist/docs/; a dead link in docs/ fails it.
+      - name: Build the site and the docs
         run: npm run build
-
-      # After the site: Vite empties dist/ first. Fails on a dead link in docs/.
-      - name: Build docs site
-        run: npm run docs:build
 
       - name: Upload Pages artifact
         if: ${{ inputs.upload-pages }}

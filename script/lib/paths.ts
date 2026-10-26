@@ -20,6 +20,10 @@ export const PATHS = {
   placeholders: './public/placeholders',
   /** The docs' generated images. */
   docsAssets: './docs/assets',
+  /** The tools the build runs, by their own entry files. */
+  viteBin: './node_modules/vite/bin/vite.js',
+  vitepressBin: './node_modules/vitepress/bin/vitepress.js',
+  viteConfig: './vite.config.ts',
 
   /** A collection's list file. */
   list: (collectionId: string): string => `./public/lists/${collectionId}.json`,

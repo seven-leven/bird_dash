@@ -9,11 +9,15 @@ export interface FakeIoOptions {
   git?: Record<string, string>;
   env?: Record<string, string>;
   now?: Date;
+  /** Exit codes for scripts run with `runNode`, by script path; any other exits 0. */
+  exitCodes?: Record<string, number>;
 }
 
 export interface FakeIo extends Io {
   /** Every file, including those the command wrote. */
   files: Map<string, string>;
+  /** Every `runNode` call, as `script args…`. */
+  ran: string[];
   /** Lines the command printed, and lines it reported as problems. */
   outLines: string[];
   errLines: string[];
@@ -25,6 +29,7 @@ export interface FakeIo extends Io {
  */
 export function fakeIo(options: FakeIoOptions = {}): FakeIo {
   const files = new Map(Object.entries(options.files ?? {}));
+  const ran: string[] = [];
   const outLines: string[] = [];
   const errLines: string[] = [];
   const missing = (path: string) =>
@@ -33,6 +38,7 @@ export function fakeIo(options: FakeIoOptions = {}): FakeIo {
 
   return {
     files,
+    ran,
     outLines,
     errLines,
     readText: (path) => {
@@ -57,6 +63,10 @@ export function fakeIo(options: FakeIoOptions = {}): FakeIo {
       return answer === undefined
         ? Promise.reject(new Error(`git ${args.join(' ')} failed: not a git repository`))
         : Promise.resolve(answer);
+    },
+    runNode: (script, args) => {
+      ran.push([script, ...args].join(' '));
+      return Promise.resolve(options.exitCodes?.[script] ?? 0);
     },
     env: (name) => options.env?.[name],
     now: () => options.now ?? new Date(Date.UTC(2026, 0, 1)),

@@ -41,3 +41,10 @@ test('the environment, the clock and the console are the test’s', () => {
   io.err('problem');
   assertEquals([io.outLines, io.errLines], [['done'], ['problem']]);
 });
+
+test('a script run is recorded, and exits as it was told to, or 0', async () => {
+  const io = fakeIo({ exitCodes: { './tool.js': 2 } });
+  assertEquals(await io.runNode('./tool.js', ['build']), 2);
+  assertEquals(await io.runNode('./other.js', []), 0);
+  assertEquals(io.ran, ['./tool.js build', './other.js']);
+});

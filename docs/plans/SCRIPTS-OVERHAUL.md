@@ -1,9 +1,9 @@
 # Scripts overhaul
 
-> **Status:** planned 2026-10-26; phases 0–2 done (the rules; the foundation, with `version` on it;
-> `ingest`). Moves `script/` onto the rules in [SCRIPTS.md](../SCRIPTS.md), one pull request per
-> phase. Delete this page when phase 7 is done; the CHANGELOG keeps what happened, and SCRIPTS.md
-> stays as the rules.
+> **Status:** planned 2026-10-26; phases 0–3 done (the rules; the foundation, with `version` on it;
+> `ingest`; build stages). Moves `script/` onto the rules in [SCRIPTS.md](../SCRIPTS.md), one pull
+> request per phase. Delete this page when phase 7 is done; the CHANGELOG keeps what happened, and
+> SCRIPTS.md stays as the rules.
 
 ## Why
 
@@ -112,10 +112,12 @@ the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
       `ingest`); `build` is the site alone until phase 3 adds the docs, and `build:vite` went with
       `build:assets`. `collection_stats.ts` moved onto `Io` but stays in `build/` until phase 4, and
       the check's report (`printCheckReport.ts`) until phase 5. `paths.raw` is `paths.sourceArt`.
-- [ ] **3. Build stages.** `build/build.ts` runs a list of stages (`site`, `docs`), all by default
+- [x] **3. Build stages.** `build/build.ts` runs a list of stages (`site`, `docs`), all by default
       or the ones named (`npm run build -- docs`); one helper starts Vite and VitePress with this
       Node. `build` now includes the docs; `verify.yml` calls `npm run build`. _Done when_ a local
-      `npm run build` gives the same `dist/` as CI.
+      `npm run build` gives the same `dist/` as CI. _Done:_ `STAGES` in `build.ts`, `Io.runNode`,
+      `build:site` and `build:docs`; `docs:build` is gone. `--check` waits in `build.ts` for
+      phase 5.
 - [ ] **4. Generate.** Every generator under `generate/`, one file per output, the design guide
       split up; `npm run generate` runs them all, `generate:<name>` one. `stats.json` is generated
       here (and `ingest` calls it). One contract test: every generated file is current. _Done when_
