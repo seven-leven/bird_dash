@@ -52,6 +52,7 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/' },
           { text: 'Design manifesto', link: '/DESIGN' },
+          { text: 'Glossary', link: '/GLOSSARY' },
         ],
       },
       {
@@ -71,6 +72,7 @@ export default defineConfig({
           { text: 'Scripts', link: '/SCRIPTS' },
           { text: 'What is next', link: '/plans/TODO' },
           { text: 'Scripts overhaul', link: '/plans/SCRIPTS-OVERHAUL' },
+          { text: 'Site code overhaul', link: '/plans/SRC-OVERHAUL' },
         ],
       },
     ],

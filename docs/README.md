@@ -14,6 +14,7 @@ it is done.
 
 | Page                                     | Read it when                                                           |
 | ---------------------------------------- | ---------------------------------------------------------------------- |
+| [GLOSSARY.md](GLOSSARY.md)               | You need the word for something, or wonder what one means              |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | You need the big picture: the three programs, the site's layers, rules |
 | [DATA.md](DATA.md)                       | You add a drawing or a collection, or change a field in `public/`      |
 | [DESIGN.md](DESIGN.md)                   | You add a button, a colour or an icon                                  |
@@ -25,10 +26,11 @@ it is done.
 
 ## Plans
 
-| Page                                                   | Status                                                       |
-| ------------------------------------------------------ | ------------------------------------------------------------ |
-| [plans/TODO.md](plans/TODO.md)                         | Backlog of features and fixes, including the component tests |
-| [plans/SCRIPTS-OVERHAUL.md](plans/SCRIPTS-OVERHAUL.md) | Planned: moving `script/` onto SCRIPTS.md, in eight phases   |
+| Page                                                   | Status                                                        |
+| ------------------------------------------------------ | ------------------------------------------------------------- |
+| [plans/TODO.md](plans/TODO.md)                         | Backlog of features and fixes, including the component tests  |
+| [plans/SCRIPTS-OVERHAUL.md](plans/SCRIPTS-OVERHAUL.md) | Planned: moving `script/` onto SCRIPTS.md, in eight phases    |
+| [plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)         | Planned: `src/` by feature, one word per idea, in nine phases |
 
 ## Assets
 

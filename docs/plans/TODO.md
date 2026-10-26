@@ -39,6 +39,9 @@ page cheap.
 - [ ] **6. The scripts, the same way** (planned 2026-10-26). `script/` onto the principles and
       naming in [SCRIPTS.md](../SCRIPTS.md), in eight phases: see
       [SCRIPTS-OVERHAUL.md](SCRIPTS-OVERHAUL.md).
+- [ ] **7. The site's code, the same way** (planned 2026-10-26). `src/` by feature (`viewer/`,
+      `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/` layers, one word
+      per idea, in nine phases: see [SRC-OVERHAUL.md](SRC-OVERHAUL.md).
 
 ## 🚀 High Priority (Fixes & Cleanup)
 

@@ -1,0 +1,220 @@
+# Site code overhaul
+
+> **Status:** planned 2026-10-26, nothing started. Rebuilds the layout and naming of `src/` (the
+> site's code: components, composables, lib, stores, styles, types) from the ground up, one pull
+> request per phase, with the site looking and behaving the same throughout. `src/testing/` is out
+> of scope except where its imports have to follow a move. The scripts have their own plan,
+> [SCRIPTS-OVERHAUL.md](SCRIPTS-OVERHAUL.md). Delete this page when phase 8 is done.
+
+## Why
+
+The site works, every line is tested, and the five decoupling items in TODO.md are done. What is
+left is how the code is arranged and named, which grew a folder of each _kind_ at a time:
+
+- **Folders by kind, not by feature.** The viewer is spread over `components/gallery/LightBox.vue`,
+  `ItemSheet.vue`, `composables/ui/useLightbox.ts`, `useZoomPan.ts`, `useDialogKeys.ts`,
+  `useDrawingNav.ts`, `stores/overlay.ts` and `types/`. Changing one feature means visiting five
+  folders.
+- **One thing, three names.** The viewer is `LightBox` (component), `useLightbox` (composable),
+  `overlay` and `expandedImage` (store), and "the viewer" (DESIGN.md, the UI). The month view is
+  `'date'` in code. `stats` is both the collections store's live counts and the `stats.json` store.
+- **Vague names.** `Chrome.vue`, `GalleryContent.vue`, `useScrollLogic`, `useCollectionData` beside
+  `useCollections`, `data` (`data.items`, `data.loading`), `COLLECTIONS` for a ref, `switch`,
+  `update`, `isMobile` (it means "narrower than 1024px").
+- **`lib/` is four things.** Pure domain rules (`itemNames`, `collapseGroups`), wording
+  (`formatCount`, `viewName`), the browser (`accent` sets an attribute on `<html>`, `flashItem`,
+  `scrollBehavior`), the network (`fetchJson`) and drawings (`icons`, `logo`).
+- **Some things live in the wrong layer.** `monthKey`, a date formatter, lives in
+  `useCollectionData` and two components import the composable to get it. `defineInjection` is in
+  `composables/` but is not a composable. `useClickOutside` is under `search/` but is general.
+- **Types by kind.** `types/composables.ts` holds the return types of composables;
+  `types/collections.ts` and `types/data.ts` are far from the code that makes those shapes; a barrel
+  (`types/index.ts`) hides where anything comes from.
+- **One store, four jobs.** `stores/ui.ts` (97 lines) holds the theme, the viewport, the sidebar,
+  the page, the view mode, the drawn-only filter and the scroll-spy.
+- **Big files.** `AboutPage.vue` 341 lines (the history, the cards and the sentence builders),
+  `GlobalSearch.vue` 256, `useCollectionData.ts` 201, `main.css` 392 (Tailwind setup, tokens,
+  palettes, utilities and component classes in one file).
+
+## Decisions to make first
+
+| Question                      | Recommendation                                                                                          | Why                                                                              |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Folders by feature or kind    | By feature (`viewer/`, `search/`, `gallery/`, …), with shared layers below them                         | A change to one feature stays in one folder; the import rules below keep it tidy |
+| One name for the viewer       | `viewer` everywhere (`Viewer.vue`, `useViewer`, the `viewer` store)                                     | It is what DESIGN.md and the interface call it                                   |
+| The month view's name         | `'month'`, not `'date'` (the `ViewMode` value)                                                          | The view is "Months" on screen; `'date'` is a field, not a view                  |
+| How far to split the ui store | Three: `theme`, `layout` (viewport, sidebar, page, scroll-spy), `view` (mode, filter, the derived grid) | One job each, and the grid's derivations leave the collections store too         |
+
+## The rules it ends at
+
+Phase 0 moves these into ARCHITECTURE.md ("Rules"), as SCRIPTS.md did for the scripts; the words are
+already in [GLOSSARY.md](../GLOSSARY.md).
+
+### Principles
+
+1. **Organise by feature.** A feature folder holds its components, its composables and its store.
+   Code two features share moves down a layer, never sideways into one of them.
+2. **Layers point one way.** `app/` → features → `ui/`, `browser/`, `data/` → `domain/`. A layer
+   imports only from the layers below it. A contract test checks the imports.
+3. **`domain/` is pure.** Plain TypeScript: no Vue, no `document`, no `fetch`, no clock. The rules
+   of the archive (names, counts, wording, groups, dates) live here and are tested hardest.
+4. **One door to the outside.** Only `data/` fetches; only `browser/` (and components) touch
+   `document`, `window` or `localStorage`; only `app/buildInfo.ts` reads the build-time globals
+   (`__APP_VERSION__` and friends).
+5. **A store per feature, derived state stays derived.** A store exposes read-only state and verbs;
+   anything that can be computed is computed. Actions that touch more than one store live in
+   `app/actions.ts`, as today.
+6. **Shared UI does not know the app.** Components in `ui/` take props and emit events; they never
+   inject a store. Feature components may inject their own store and the app's.
+7. **Types live with their owner.** A type is defined in the module that makes the value, and
+   imported from there. No barrel file; `types/` is gone. The shapes of the files in `public/`
+   (shared with `script/`) live in `data/files.ts`.
+8. **One word per idea** (the glossary below), and a name never means two things.
+9. **Small files.** A component does one job and stays under about 200 lines; a page is made of
+   sections; a composable is one behaviour.
+
+### Glossary
+
+The words are in [GLOSSARY.md](../GLOSSARY.md), each with where the code still says something else.
+Every "to be …" there is a rename in the table below; phase 8 checks none is left.
+
+### Naming
+
+| Thing             | Rule                                                                                       | Example                              |
+| ----------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
+| Folders           | A feature or a layer, one word                                                             | `viewer/`, `domain/`                 |
+| Files             | Named after the main export (DECISIONS.md)                                                 | `useScrollSpy.ts`                    |
+| Components        | PascalCase noun; prefixed with the feature when the word alone is vague                    | `ViewerDetails.vue`, `SearchBox.vue` |
+| Composables       | `use` + what it gives; never `Logic`, `Data`, `Manager`, `Helper`                          | `useScrollSpy`, `useCollectionView`  |
+| Store verbs       | `open`, `close`, `select…`, `set…`, `toggle…`, `show…`; never `update`, `switch`, `handle` | `selectCollection`                   |
+| Events            | kebab-case verbs                                                                           | `select`, `close`, `go-to-group`     |
+| Template handlers | `on` + event                                                                               | `onSelect`                           |
+| Booleans          | `is`, `has`, `should`, `can`                                                               | `isNarrow`, `hasNext`                |
+| Element refs      | end in `El`                                                                                | `dialogEl`, `scrollEl`               |
+| Types             | The noun; no `Data`, `Info`, `Config`, `Return` suffix                                     | `Collection`, `CollectionView`       |
+| Variables         | Whole words; `i` and `e` only in one-line lambdas                                          | `collection`, not `col`              |
+
+## Where it ends up
+
+```
+src/
+  main.ts
+  app/          App.vue (makes and provides the stores), AppShell.vue, pages.ts,
+                useHashRoute.ts, actions.ts, buildInfo.ts
+  domain/       pure: Collection and Item types, toCollectionItems, itemNames, dhivehiNames,
+                countWords, viewName, dates, collapseGroups, noteLinks, normalizeQuery, linkUrl
+  data/         fetchJson, files.ts (the shapes of public/), useCollectionLoader, useStatsLoader
+  browser/      defineInjection, useTheme, useBreakpoint, useDebouncedRef, useClickOutside,
+                applyAccent, scrollBehavior
+  ui/           Icon, CollectionIcon, LogoMark, IdBadge, EmptyState, DrawnFilter;
+                icons.ts and logo.ts (the drawings Icon and LogoMark draw)
+  shell/        TopBar, CollectionMenu, SideNav, AppFooter, the layout and theme stores
+  gallery/      Gallery, GallerySection, ItemTile, tileImage, flashTile, useScrollSpy,
+                useCollectionView, the collections and view stores
+  viewer/       Viewer, ViewerDetails, useViewer, useZoomPan, useDialogKeys, useDrawingNav,
+                the viewer store
+  search/       SearchBox, SearchResults, SearchSummary, SearchKeyHints, useSearchResults,
+                useResultKeys, useHighlight, the search store
+  about/        AboutPage and its sections (Intro, Progress, Newest, History, Design),
+                aboutSentences.ts, the stats store
+  styles/       main.css (Tailwind setup and imports only), tokens.css, accents.css,
+                components.css, utilities.css, base.css
+  testing/      unchanged, apart from imports
+  env.d.ts      the build-time globals (was vite-env.d.ts)
+```
+
+### Renames
+
+| Now                                                                                                                  | After                                                                                                    |
+| -------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `components/layout/Chrome.vue`                                                                                       | `app/AppShell.vue`                                                                                       |
+| `App.vue`, `pages.ts`, `stores/actions.ts`, `composables/core/useHashRoute.ts`                                       | `app/App.vue`, `app/pages.ts`, `app/actions.ts`, `app/useHashRoute.ts`                                   |
+| `components/gallery/GalleryContent.vue`                                                                              | `gallery/Gallery.vue`, with `GallerySection.vue` split out                                               |
+| `components/gallery/LightBox.vue`, `ItemSheet.vue`                                                                   | `viewer/Viewer.vue`, `viewer/ViewerDetails.vue`                                                          |
+| `composables/ui/useLightbox.ts`                                                                                      | `viewer/useViewer.ts`                                                                                    |
+| `stores/overlay.ts` `expandedImage`, `open`, `close`, `update`                                                       | `viewer/viewerStore.ts` `isOpen`, `item`, `open`, `close`, `show`                                        |
+| `components/search/GlobalSearch.vue`                                                                                 | `search/SearchBox.vue` (the dropdown's parts split out)                                                  |
+| `SearchResultsList.vue`, `SearchDropdownHeader.vue`, `SearchKeyboardHints.vue`                                       | `SearchResults.vue`, `SearchSummary.vue`, `SearchKeyHints.vue`                                           |
+| `composables/collection/useGlobalSearch.ts`                                                                          | `search/useSearchResults.ts`                                                                             |
+| `composables/search/useSearchNavigation.ts`, `useSearchHighlight.ts`                                                 | `search/useResultKeys.ts`, `search/useHighlight.ts`                                                      |
+| `composables/search/useClickOutside.ts`                                                                              | `browser/useClickOutside.ts`                                                                             |
+| `composables/collection/useCollections.ts` (returns `COLLECTIONS`, `data`, `switchCollection`)                       | `data/useCollectionLoader.ts` (`collections`, `items`, `loadState`, `selectCollection`)                  |
+| `composables/collection/useCollectionData.ts` (and its `monthKey`)                                                   | `gallery/useCollectionView.ts`; `domain/dates.ts` `monthName`                                            |
+| `composables/collection/useStats.ts`                                                                                 | `data/useStatsLoader.ts`                                                                                 |
+| `composables/ui/useScrollLogic.ts`                                                                                   | `gallery/useScrollSpy.ts`                                                                                |
+| `composables/core/injection.ts`                                                                                      | `browser/defineInjection.ts`                                                                             |
+| `composables/core/useDebounce.ts` (exports `useDebouncedRef`)                                                        | `browser/useDebouncedRef.ts`                                                                             |
+| `composables/core/useBreakpoints.ts` (`isMobile`)                                                                    | `browser/useBreakpoint.ts` (`isNarrow`)                                                                  |
+| `stores/ui.ts`                                                                                                       | `shell/themeStore.ts`, `shell/layoutStore.ts`, `gallery/viewStore.ts`                                    |
+| collections store `stats`, `data`, `switch`, `list`                                                                  | `counts` (moves to the view store), `loadState`, `selectCollection`, `collections`                       |
+| `lib/collectionItems.ts` (`toCollectionItems`, `resolveUrl`, `tileImage`)                                            | `domain/toCollectionItems.ts`, `domain/linkUrl.ts`, `gallery/tileImage.ts`                               |
+| `lib/formatCount.ts`                                                                                                 | `domain/countWords.ts`                                                                                   |
+| `lib/accent.ts`, `lib/scrollBehavior.ts`, `lib/flashItem.ts`                                                         | `browser/applyAccent.ts`, `browser/scrollBehavior.ts`, `gallery/flashTile.ts`                            |
+| `lib/icons.ts`, `lib/logo.ts`, `components/icons/*`, `components/ui/*`                                               | `ui/`                                                                                                    |
+| `types/data.ts` `RawItem`, `RawCollectionData`, `RawCollectionConfig`                                                | `data/files.ts` `ListEntry`, `ListFile`, `CollectionEntry`                                               |
+| `types/collections.ts` `CollectionConfig`, `CollectionItem`, `DataState`, `GlobalStats`, `CollectionCache`           | `domain/` `Collection`, `Item`; `data/` `LoadState`; `ArchiveCounts`; `ItemsByCollection`                |
+| `types/composables.ts` `GroupedData`, `CollectionStats`, `SidebarItem`, `GlobalSearchResult`, `UseScrollLogicReturn` | `CollectionView`, `ViewCounts`, `SectionEntry`, `SearchResult` with their composables; the last one goes |
+| `ViewMode` `'group' \| 'date'`                                                                                       | `View` `'group' \| 'month'`                                                                              |
+| `vite-env.d.ts`; `__APP_*__` read in `AppFooter.vue`                                                                 | `env.d.ts`; read once in `app/buildInfo.ts`                                                              |
+| `styles/main.css` (392 lines)                                                                                        | `main.css` imports `tokens`, `accents`, `base`, `components`, `utilities`                                |
+
+## Phases
+
+Each phase is one pull request. In every one: the site looks and behaves the same, 100% lines and
+branches, all four checks green, files moved with `git mv` so history follows, tests moved beside
+their files, and in the same PR the paths in `script/test_runner/areas.ts`, the imports in `script/`
+and `docs/.vitepress/` (which import `src/lib/icons.ts`, `logo.ts`, `pages.ts`, `types/data.ts` and
+the icon components), and the docs that name a moved file. Best done when no other pull request
+touching `src/` is open, as nearly every file moves.
+
+- [ ] **0. Agree the rules.** Settle the decisions above; write the principles, the glossary and the
+      naming into ARCHITECTURE.md (the words are in GLOSSARY.md); a DECISIONS.md entry ("folders by
+      feature"). _Done when_ the rules are merged.
+- [ ] **1. Domain.** `domain/` from the pure half of `lib/` and the domain types; `monthKey` out of
+      the composable into `domain/dates.ts`; the `Collection` and `Item` types. A contract test:
+      nothing in `domain/` imports `vue` or touches `document`, `window` or `fetch`. _Done when_ no
+      component imports a composable to format something.
+- [ ] **2. Data and browser.** `data/` (`fetchJson`, the loaders, `files.ts` with the file shapes,
+      which `script/` now imports from there) and `browser/` (injection, theme, breakpoint,
+      debounce, click-outside, accent, scroll behaviour). _Done when_ `lib/` holds only `ui/`'s
+      drawings, ready to move.
+- [ ] **3. Stores.** The ui store split into `theme`, `layout` and `view`; the grid's derivations
+      move from the collections store to the view store; `overlay` becomes `viewer`; `stats` (the
+      counts) becomes `counts`; the verbs renamed (`selectCollection`, `show`). _Done when_ every
+      store has one job and no name means two things.
+- [ ] **4. Shared UI.** `ui/` from `components/icons/`, `components/ui/`, `lib/icons.ts` and
+      `lib/logo.ts`; none of them injects a store. _Done when_ `components/icons` and
+      `components/ui` are gone.
+- [ ] **5. Features.** `viewer/`, `search/`, `gallery/`, `about/` and `shell/`, each with its
+      components, composables and store, renamed to the tables above. `AboutPage.vue` becomes
+      sections; `GlobalSearch.vue` and `GalleryContent.vue` split where they do two jobs. `ViewMode`
+      becomes `View` with `'month'`. _Done when_ `components/`, `composables/` and `stores/` are
+      gone and no file is over about 200 lines.
+- [ ] **6. App.** `app/` with `App.vue`, `AppShell.vue`, `pages.ts`, `useHashRoute.ts`, `actions.ts`
+      and `buildInfo.ts`; `vite-env.d.ts` becomes `env.d.ts`. _Done when_ `src/` holds only
+      `main.ts`, `env.d.ts` and the folders above.
+- [ ] **7. Styles.** `main.css` split into `tokens`, `accents` (if not already), `base`
+      (`.font-dhivehi`, reduced motion), `components` (the `@layer components` classes) and
+      `utilities`; `main.css` keeps only Tailwind's setup and the imports. _Done when_ each file has
+      one kind of rule.
+- [ ] **8. Close.** The import-direction test covers every layer; a naming test (file name matches
+      its main export; no banned word in a composable's name); the layout diagram in ARCHITECTURE.md
+      redrawn; `types/` gone; this page deleted. _Done when_ ARCHITECTURE.md describes the code as
+      it is.
+
+## What keeps it safe
+
+- **The tests check behaviour, not paths.** A move that changes what the site does fails a test; the
+  component tests mount the real components.
+- **The type check catches every broken import**, in `src/`, `script/` and the docs theme.
+- **The docs build fails on a dead link** to a moved file; the area test fails on a file left out of
+  an area.
+- **Look before merging.** Each phase is checked in the browser (the gallery, the viewer, search,
+  About, both themes, a phone width), as the earlier refactors were.
+
+## Not in this plan
+
+- `src/testing/`: unchanged apart from its imports.
+- New features or visual changes. A phase that finds one notes it in TODO.md.
+- A router library, a state library or other new dependencies: the hash route and the
+  `provide`/`inject` stores stay.
