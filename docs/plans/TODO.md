@@ -36,6 +36,9 @@ page cheap.
       keeps the image's load state, under the same API, so `LightBox.vue` did not change.
 - [ ] Afterwards: `Chrome`, `TopBar` and `GalleryContent` inject four stores each. Most of that goes
       with 2 and 4; look again then.
+- [ ] **6. The scripts, the same way** (planned 2026-10-26). `script/` onto the principles and
+      naming in [SCRIPTS.md](../SCRIPTS.md), in eight phases: see
+      [SCRIPTS-OVERHAUL.md](SCRIPTS-OVERHAUL.md).
 
 ## 🚀 High Priority (Fixes & Cleanup)
 

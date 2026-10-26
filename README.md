@@ -66,6 +66,7 @@ from these files on every deploy (`npm run docs:dev` serves it locally).
 | [TESTING.md](docs/TESTING.md)                 | You write a test or want to know what the tiers and areas mean        |
 | [TEST-PROCEDURES.md](docs/TEST-PROCEDURES.md) | You set up a machine, a test or CI fails, or you maintain the runner  |
 | [WORKFLOW.md](docs/WORKFLOW.md)               | You take a change to the live site; every command; the version        |
+| [SCRIPTS.md](docs/SCRIPTS.md)                 | You write or change a script: the principles and the naming rules     |
 | [DECISIONS.md](docs/DECISIONS.md)             | You wonder why something is done this way, before changing it         |
 | [plans/TODO.md](docs/plans/TODO.md)           | You want to know what is next                                         |
 
