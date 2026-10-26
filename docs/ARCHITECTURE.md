@@ -41,6 +41,45 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
 The shape of the `public/` files is typed once, in [`src/types/data.ts`](../src/types/data.ts), and
 used by all three.
 
+## Where things are
+
+```
+public/                 Static assets, served as-is
+  collections.json      Collection definitions (id, label, emoji, links, …)
+  lists/<id>.json       Item data per collection, grouped by taxonomy
+  stats.json            The archive's numbers, written by the asset build
+  full/<id>/            Full-resolution WebP illustrations
+  thumb/<id>/           Grid thumbnails (generated)
+  placeholders/<id>.webp  Shown for undrawn items (<id>-dark.webp in the dark theme)
+src/
+  components/
+    layout/             Chrome, TopBar, SideNav — the app shell
+    about/              The About page (#about), numbered from stats.json
+    gallery/            Grid, tiles, lightbox, info sheet
+    search/             Global search dropdown and sub-components
+    icons/              Icon, CollectionIcon and LogoMark (the drawings are in lib/)
+    ui/                 Reusable primitives (IdBadge, EmptyState)
+  stores/               Domain state — search, ui, collections, overlay — each with readonly
+                        state + actions, shared through provide/inject (defineInjection)
+  composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
+  lib/                  Small framework-free helpers, and the icon and logo drawings
+                        (icons.ts, logo.ts) that both the site and the scripts use
+  types/                Shared TypeScript types
+  styles/               main.css (Tailwind and the design tokens) and fonts/
+  testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
+                        The tests themselves sit next to the code they cover (see TESTING.md)
+script/                 One folder per command, run by Node; shared code in lib/
+  build/                Transcode, register and check the images; the Vite build
+  version/              The derived version; base_version.json stores major/minor only
+  changelog/            Insert unlogged commits into CHANGELOG.md
+  design/               Draw the design guide, icon sheet and logo (docs/assets/)
+  placeholders/         Draw the placeholder images
+  test_runner/          The test runner (`npm test`): tiers, areas, reports, coverage
+  lib/                  Collections, list files, fs and git helpers
+docs/                   Reference guides at the top level; plans/ for work not done yet,
+                        assets/ for generated images (see README.md)
+```
+
 ## The site, layer by layer
 
 Imports only point leftwards in this list; nothing imports from a layer to its right.

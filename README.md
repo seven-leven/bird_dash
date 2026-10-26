@@ -1,248 +1,76 @@
 # Wildlife Illustrated
 
-A digital gallery of hand-drawn wildlife illustrations, organized into collections (birds, sharks,
-shells) with cross-collection search, taxonomic and timeline views, Dhivehi names, and a full-screen
-lightbox.
+> _The drawings carry the colour. Everything around them makes room._
 
-**[View the live site →](https://seven-leven.github.io/bird_dash/)**
+A gallery of hand-drawn wildlife of the Maldives, one species at a time: birds, sharks and shells,
+each shown with its Dhivehi, English and scientific names. Every species has its place from the
+start, drawn or not, so the gaps are part of the record.
+
+**[View the live site →](https://seven-leven.github.io/bird_dash/)** ·
+**[About the archive →](https://seven-leven.github.io/bird_dash/#about)** ·
+[How the site was built →](https://seven-leven.github.io/folio/code-wildlife.html)
 
 ## Features
 
-- **Multiple collections** — birds, sharks, and shells, each with its own taxonomy, icon, and
-  reference links. Adding a new one is JSON + images, no code.
-- **Two views** — browse by taxonomic group (Family, Order, …) or as a chronological timeline of
-  when each piece was drawn.
-- **Global search** — search every collection at once by common name, scientific name, or ID, with
-  keyboard navigation (`↑`/`↓`/`↵`) and `Ctrl`/`⌘ K` to focus.
-- **Progress tracking** — undrawn species show a placeholder silhouette; the sidebar and each group
-  header report how many are drawn versus total.
-- **Lightbox** — full-resolution view with zoom, pan, prev/next navigation, and an info panel
-  showing scientific/Dhivehi names, the illustrator's note, and reference links.
-- **Dark mode**, responsive layout, and Dhivehi (Thaana) script support.
+- **Collections** — birds, sharks and shells, each with its own groups, icon, accent colour and
+  reference links. Content is data: a new drawing or a whole new collection is JSON and images, no
+  code.
+- **Two views** — by family, order or group, or by the month each piece was drawn.
+- **Search everything** — common, scientific and Dhivehi names across every collection, from the
+  keyboard (`Ctrl`/`⌘ K`, `↑`/`↓`/`↵`).
+- **Honest progress** — an undrawn species shows its collection's silhouette, and every count says
+  how many are drawn of how many.
+- **The viewer** — full resolution with zoom and pan, the names in three languages, the
+  illustrator's note, and where to learn more.
+- **An About page** — progress per collection and the newest drawings, every number worked out by
+  the build.
+- **Dhivehi throughout** — Thaana set in Faruma; dark mode; phone to desktop.
 
-## Tech Stack
+Built with Vue 3, Vite and Tailwind CSS 4 on Node 24, with sharp for the images.
 
-- **Runtime & tooling:** [Node.js](https://nodejs.org/) 24 and npm; Vitest, vue-tsc, ESLint, dprint
-- **Framework:** Vue 3 (`<script setup>`, composables, provide/inject)
-- **Build tool:** Vite
-- **Styling:** Tailwind CSS v4 (single accent design token, class-based dark mode)
-- **Images:** [sharp](https://sharp.pixelplumbing.com/) (PNG → WebP transcoding)
-
-## Quick Start
+## Quick start
 
 ```bash
-# 1. Clone
 git clone https://github.com/seven-leven/bird_dash.git
 cd bird_dash
-
-# 2. Install dependencies (Node 24; see .nvmrc)
 npm install
-
-# 3. Run the dev server
 npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
 
-## Project Structure
+| Command         | What it does                                                     |
+| --------------- | ---------------------------------------------------------------- |
+| `npm run dev`   | Start the dev server                                             |
+| `npm run build` | Turn new drawings into WebP images, then build the site          |
+| `npm test`      | Every test tier, one row each (`npm test -- src/lib` for a part) |
+| `npm run check` | Find missing or orphaned images and stale numbers; exits 1       |
 
-```
-public/                 Static assets, served as-is
-  collections.json      Collection definitions (id, label, emoji, links, …)
-  lists/<id>.json       Item data per collection, grouped by taxonomy
-  full/<id>/            Full-resolution WebP illustrations
-  thumb/<id>/           Grid thumbnails (generated)
-  placeholders/<id>.webp  Shown for undrawn items (<id>-dark.webp in the dark theme)
-src/
-  components/
-    layout/             Chrome, TopBar, SideNav — the app shell
-    gallery/            Grid, tiles, lightbox, info sheet
-    search/             Global search dropdown and sub-components
-    icons/              Icon, CollectionIcon and LogoMark (the drawings are in lib/)
-    ui/                 Reusable primitives (IdBadge, EmptyState)
-  stores/               Domain state — search, ui, collections, overlay — each with readonly
-                        state + actions, shared through provide/inject (defineInjection)
-  composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
-  lib/                  Small framework-free helpers, and the icon and logo drawings
-                        (icons.ts, logo.ts) that both the site and the scripts use
-  types/                Shared TypeScript types
-  styles/               main.css (Tailwind and the design tokens) and fonts/
-  testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
-                        The tests themselves sit next to the code they cover (see Testing)
-script/                 One folder per command, run by Node; shared code in lib/
-  build/                Transcode, register and check the images; the Vite build
-  version/              The derived version; base_version.json stores major/minor only
-  changelog/            Insert unlogged commits into CHANGELOG.md
-  design/               Draw the design guide, icon sheet and logo (docs/assets/)
-  placeholders/         Draw the placeholder images
-  test_runner/          The test runner (`npm test`): tiers, areas, reports, coverage
-  lib/                  Collections, list files, fs and git helpers
-docs/                   Reference guides at the top level; plans/ for work not done yet,
-                        assets/ for generated images (see docs/README.md)
-```
-
-State flows one way: `App.vue` creates the stores in dependency order (search and ui → collections →
-overlay) and provides them; components read state from the stores and change it only through their
-actions. `useHashRoute` is the single owner of URL ⇄ state sync (`#<collection>` /
-`#<collection>/<item>`).
-
-## Data Model
-
-The app is data-driven — content lives entirely in `public/`, no code changes needed. The quick
-version is below; [`docs/DATA.md`](docs/DATA.md) is the full reference. The shape of these files is
-typed once, in [`src/types/data.ts`](src/types/data.ts), and shared by the build scripts, the app's
-loader and the data contract test.
-
-**`public/collections.json`** — one entry per collection:
-
-```json
-{
-  "id": "birds",
-  "label": "Birds",
-  "emoji": "🐦",
-  "icon": "bird",
-  "accent": "teal",
-  "groupLabel": "Family",
-  "itemLabel": "bird",
-  "links": [
-    {
-      "label": "eBird",
-      "color": "bg-emerald-600 hover:bg-emerald-500",
-      "url": "https://www.google.com/search?q={{common}}+ebird"
-    }
-  ]
-}
-```
-
-`icon` names a line icon in [`src/lib/icons.ts`](src/lib/icons.ts), where every SVG in the app
-lives; without one the emoji is shown instead. `accent` picks the collection's accent colour from
-the palettes in [`src/styles/main.css`](src/styles/main.css) (twelve to choose from, listed in
-[`docs/DESIGN.md`](docs/DESIGN.md); default teal). Link URLs support `{{common}}` (common name) and
-`{{sci}}` (scientific name) placeholders.
-
-**`public/lists/<id>.json`** — items grouped by taxonomy. An item is considered _drawn_ once it has
-a `drawn` date; without one it renders as the placeholder silhouette. `dhiv` and `dhiv_script` are
-rendered specially; any other string fields appear in the info panel.
-
-```json
-{
-  "Ducks, Geese, and Swans": [
-    {
-      "id": "001",
-      "name": "Lesser Whistling-Duck",
-      "sci": "Dendrocygna javanica",
-      "dhiv": "Reyru",
-      "dhiv_script": "ރޭރު",
-      "drawn": "2024-10-10",
-      "illustratorNote": "The first drawing—a benchmark for future work."
-    }
-  ]
-}
-```
-
-### Adding an illustration
-
-1. Drop the source PNG in `raw_png/<collection>/<id>.png` (e.g. `raw_png/birds/005.png`).
-2. Add or update the item's entry in `public/lists/<collection>.json`, giving it a `drawn` date.
-3. Run `npm run build:assets` to transcode the PNG into `full/` and `thumb/` WebPs.
-
-### Adding a collection
-
-1. Add an entry to `public/collections.json`.
-2. Create `public/lists/<id>.json`. Add an icon for it to `icons.ts`, name it in the entry, and run
-   `npm run placeholders` to draw its light and dark placeholders (`public/placeholders/<id>.webp`
-   and `<id>-dark.webp`) from it.
-3. Add source art under `raw_png/<id>/` and run `npm run build:assets`.
+Every other command is in [WORKFLOW.md](docs/WORKFLOW.md#commands). To add a drawing or a
+collection, see the recipes in [DATA.md](docs/DATA.md#recipes).
 
 ## Documentation
 
-Everything in [`docs/`](docs/):
+| Page                                          | Read it when                                                          |
+| --------------------------------------------- | --------------------------------------------------------------------- |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md)       | You want the big picture: the three programs, where things are, rules |
+| [DATA.md](docs/DATA.md)                       | You add a drawing or a collection, or change a field in `public/`     |
+| [DESIGN.md](docs/DESIGN.md)                   | You add a button, a colour or an icon (the design manifesto)          |
+| [TESTING.md](docs/TESTING.md)                 | You write a test or want to know what the tiers and areas mean        |
+| [TEST-PROCEDURES.md](docs/TEST-PROCEDURES.md) | You set up a machine, a test or CI fails, or you maintain the runner  |
+| [WORKFLOW.md](docs/WORKFLOW.md)               | You take a change to the live site; every command; the version        |
+| [DECISIONS.md](docs/DECISIONS.md)             | You wonder why something is done this way, before changing it         |
+| [plans/TODO.md](docs/plans/TODO.md)           | You want to know what is next                                         |
 
-| Page                                                 | What it covers                                                      |
-| ---------------------------------------------------- | ------------------------------------------------------------------- |
-| [`docs/README.md`](docs/README.md)                   | The index of these pages, and where a new page goes                 |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)       | The three programs, the layers of the site, the stores, the rules   |
-| [`docs/DATA.md`](docs/DATA.md)                       | Every field in `collections.json` and the list files; recipes       |
-| [`docs/DESIGN.md`](docs/DESIGN.md)                   | Colours, type, spacing, states, icons; a checklist for UI changes   |
-| [`docs/DECISIONS.md`](docs/DECISIONS.md)             | Why the project is set up as it is, and when to revisit each choice |
-| [`docs/WORKFLOW.md`](docs/WORKFLOW.md)               | Branch, commit, pull request, merge, deploy; upgrading dependencies |
-| [`docs/TESTING.md`](docs/TESTING.md)                 | Tiers, writing tests, coverage, CI                                  |
-| [`docs/TEST-PROCEDURES.md`](docs/TEST-PROCEDURES.md) | Step by step: setup, running, failures, maintenance, the runner     |
-| [`docs/plans/TODO.md`](docs/plans/TODO.md)           | The backlog: features, fixes and the component tests still to write |
+## Versions and deploys
 
-The images in [`docs/assets/`](docs/assets/) are drawn from the real tokens, icons and logo by `npm
-run design`.
+The footer reads like `v0.9.161 · 18 drawings · 4f0f400`. Only `0.9` is stored; the patch counts
+commits, the drawings are counted from the lists and the hash is the commit built, so it cannot
+drift ([how](docs/WORKFLOW.md#versioning)).
 
-## Tasks
-
-| Task                                            | Description                                                                                    |
-| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `npm run dev`                                   | Start the Vite dev server                                                                      |
-| `npm run build`                                 | Full build: transcode assets, then bundle the frontend                                         |
-| `npm run build:assets`                          | Transcode images and register new items only                                                   |
-| `npm run build:vite`                            | Bundle the frontend only (assumes assets are built)                                            |
-| `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems                                 |
-| `npm test`                                      | Every test tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
-| `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                                 |
-| `npm run test:watch`                            | Re-run the tests on every save                                                                 |
-| `npm run test:coverage`                         | Every tier + coverage table; fails below the line or branch floor                              |
-| `npm run test:report`                           | The same, saving the full report to `test-results/report.md`                                   |
-| `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`                             |
-| `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)                               |
-| `npm run version`                               | Print the current derived version                                                              |
-| `npm run changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews)                           |
-| `npm run placeholders`                          | Redraw the placeholder images from each collection's icon                                      |
-| `npm run design`                                | Redraw the design guide image and the icon sheet                                               |
-| `npm run preview`                               | Preview the production build locally                                                           |
-| `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks                                  |
-
-## Testing
-
-Tests sit next to the code they cover, and the file name decides the tier: `x_test.ts` (unit),
-`x_dom_test.ts` (fake browser), `x_prop_test.ts` (property-based) and `x_contract_test.ts` (the real
-files in this repo). `npm test` runs them all and prints one row per tier; `npm run test:coverage`
-adds a coverage table and fails below the floor.
-
-[`docs/TESTING.md`](docs/TESTING.md) has the full guide: choosing a tier, writing a test, property
-tests, coverage, and what CI runs.
-
-## Versioning
-
-The footer of the site reads something like `v0.9.161 · 18 drawings · 4f0f400`. Nothing here is
-stored except `major.minor`; the rest is worked out from the repo when the site is built, so it
-cannot drift.
-
-| Part          | Where it comes from                                                                                    |
-| ------------- | ------------------------------------------------------------------------------------------------------ |
-| `0.9`         | `script/version/base_version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
-| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below                    |
-| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                         |
-| `4f0f400`     | the commit the build was made from                                                                     |
-
-- **The patch is a build counter, not a count of fixes.** On `main` it includes merge commits, so it
-  rises by a few with every merged PR, and a local branch shows a different number from the deployed
-  site (which is why the commit is shown too).
-- **One implementation.** [`script/version/version.ts`](script/version/version.ts) computes all of
-  it. `npm run version` prints it (`--long` for the whole line), the build and check summaries print
-  it, and `vite.config.ts` calls the same function to inject it into the footer.
-- **Without git** (e.g. a zip download) a local build warns and shows patch `0` / commit `unknown`;
-  `npm run version` and any build with `CI` set fail instead of inventing a number.
-
-There are no git hooks, tags or releases: CI and the deploy are the only gates. Changelog entries
-are curated with `npm run changelog`, which lists every commit made since `CHANGELOG.md` was last
-touched and inserts them at the top of the newest section to edit and commit. Every merge to `main`
-deploys, so there is no "unreleased" section.
-
-## Deployment
-
-Pull requests and deploys run the same checks, defined once in
-[`verify.yml`](.github/workflows/verify.yml): lint, format, type-check, every test tier with a
-coverage floor (in a timezone west of UTC, so accidental local-time date logic fails), the asset
-integrity check, and the production build. The tests also run in three more timezones (UTC, India,
-and UTC+14) in parallel. [`ci.yml`](.github/workflows/ci.yml) runs it on every pull request;
-[`deploy.yml`](.github/workflows/deploy.yml) runs it on every push to `main` and publishes the built
-site to GitHub Pages only if everything passed. The workflows check out full git history
-(`fetch-depth: 0`) so the derived version is accurate.
+Every pull request and every merge runs the same checks: lint, format, types, every test tier at
+100% coverage (in four timezones, from UTC−8 to UTC+14), the asset check and the build. A merge to
+`main` deploys to GitHub Pages only if they all pass ([how](docs/WORKFLOW.md#5-ci)).
 
 ## License
 

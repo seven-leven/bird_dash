@@ -13,7 +13,7 @@
  *   a1b2c3d                the commit the build was made from
  *
  * Used by `npm run version`, the build/check summaries, and vite.config.ts (which
- * injects it into the page footer). See the README ("Versioning") for the overview.
+ * injects it into the page footer). See docs/WORKFLOW.md ("Versioning") for the overview.
  */
 
 import { readJson } from '../lib/fs.ts';
