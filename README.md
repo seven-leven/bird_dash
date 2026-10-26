@@ -58,17 +58,18 @@ The pages below are also a site, in the gallery's own design:
 **[seven-leven.github.io/bird_dash/docs](https://seven-leven.github.io/bird_dash/docs/)**, built
 from these files on every deploy (`npm run docs:dev` serves it locally).
 
-| Page                                          | Read it when                                                          |
-| --------------------------------------------- | --------------------------------------------------------------------- |
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md)       | You want the big picture: the three programs, where things are, rules |
-| [DATA.md](docs/DATA.md)                       | You add a drawing or a collection, or change a field in `public/`     |
-| [DESIGN.md](docs/DESIGN.md)                   | You add a button, a colour or an icon (the design manifesto)          |
-| [TESTING.md](docs/TESTING.md)                 | You write a test or want to know what the tiers and areas mean        |
-| [TEST-PROCEDURES.md](docs/TEST-PROCEDURES.md) | You set up a machine, a test or CI fails, or you maintain the runner  |
-| [WORKFLOW.md](docs/WORKFLOW.md)               | You take a change to the live site; every command; the version        |
-| [SCRIPTS.md](docs/SCRIPTS.md)                 | You write or change a script: the principles and the naming rules     |
-| [DECISIONS.md](docs/DECISIONS.md)             | You wonder why something is done this way, before changing it         |
-| [plans/TODO.md](docs/plans/TODO.md)           | You want to know what is next                                         |
+| Page                                          | Read it when                                                             |
+| --------------------------------------------- | ------------------------------------------------------------------------ |
+| [GLOSSARY.md](docs/GLOSSARY.md)               | You need the word for something: one meaning each, and the ones to avoid |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md)       | You want the big picture: the three programs, where things are, rules    |
+| [DATA.md](docs/DATA.md)                       | You add a drawing or a collection, or change a field in `public/`        |
+| [DESIGN.md](docs/DESIGN.md)                   | You add a button, a colour or an icon (the design manifesto)             |
+| [TESTING.md](docs/TESTING.md)                 | You write a test or want to know what the tiers and areas mean           |
+| [TEST-PROCEDURES.md](docs/TEST-PROCEDURES.md) | You set up a machine, a test or CI fails, or you maintain the runner     |
+| [WORKFLOW.md](docs/WORKFLOW.md)               | You take a change to the live site; every command; the version           |
+| [SCRIPTS.md](docs/SCRIPTS.md)                 | You write or change a script: the principles and the naming rules        |
+| [DECISIONS.md](docs/DECISIONS.md)             | You wonder why something is done this way, before changing it            |
+| [plans/TODO.md](docs/plans/TODO.md)           | You want to know what is next                                            |
 
 ## Versions and deploys
 

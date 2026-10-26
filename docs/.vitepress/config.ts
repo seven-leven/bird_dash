@@ -47,6 +47,7 @@ export default defineConfig({
         items: [
           { text: 'Overview', link: '/' },
           { text: 'Design manifesto', link: '/DESIGN' },
+          { text: 'Glossary', link: '/GLOSSARY' },
         ],
       },
       {

@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: a glossary (`docs/GLOSSARY.md`): every word the project uses, for the archive,
+  the site, the code, building and testing, each with one meaning, where the code says it, and the
+  words to avoid (the viewer is never a lightbox or an overlay; the numbers on screen are counts,
+  not stats). Words the code still says differently are marked "to be …", and the site-code plan
+  renames them. The plans and the script rules point to it
 - 2026-10-26 | docs: a plan to rebuild the layout and naming of `src/` from the ground up
   (`docs/plans/SRC-OVERHAUL.md`): folders by feature over pure `domain/`, `data/`, `browser/` and
   `ui/` layers that import one way, one word per idea (the viewer is never also a lightbox or an

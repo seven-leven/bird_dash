@@ -14,6 +14,7 @@ it is done.
 
 | Page                                     | Read it when                                                           |
 | ---------------------------------------- | ---------------------------------------------------------------------- |
+| [GLOSSARY.md](GLOSSARY.md)               | You need the word for something, or wonder what one means              |
 | [ARCHITECTURE.md](ARCHITECTURE.md)       | You need the big picture: the three programs, the site's layers, rules |
 | [DATA.md](DATA.md)                       | You add a drawing or a collection, or change a field in `public/`      |
 | [DESIGN.md](DESIGN.md)                   | You add a button, a colour or an icon                                  |

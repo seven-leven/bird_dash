@@ -3,7 +3,8 @@
 The rules for everything in `script/`: the commands behind `npm run …` that take in drawings, build
 the site, generate images, check the repo, run the tests and keep the version and changelog. The
 site's own code (`src/`) follows [ARCHITECTURE.md](ARCHITECTURE.md); this page is the same idea for
-the tooling.
+the tooling. The words (ingest, build, generate, check, …) mean what [GLOSSARY.md](GLOSSARY.md)
+says.
 
 > **Status.** These are the rules new and changed scripts follow. The existing scripts are being
 > moved onto them one step at a time; the steps, and which are done, are in

@@ -47,8 +47,8 @@ left is how the code is arranged and named, which grew a folder of each _kind_ a
 
 ## The rules it ends at
 
-Phase 0 moves these into ARCHITECTURE.md ("Rules") and a glossary, as SCRIPTS.md did for the
-scripts.
+Phase 0 moves these into ARCHITECTURE.md ("Rules"), as SCRIPTS.md did for the scripts; the words are
+already in [GLOSSARY.md](../GLOSSARY.md).
 
 ### Principles
 
@@ -75,21 +75,8 @@ scripts.
 
 ### Glossary
 
-| Word       | Means                                                                | Not                                   |
-| ---------- | -------------------------------------------------------------------- | ------------------------------------- |
-| collection | Birds, sharks, shells: one entry in `collections.json`               | category, set                         |
-| item       | One entry in a collection's list, drawn or not                       | species (not every item is one), card |
-| drawing    | A drawn item's picture                                               | image (for the domain idea)           |
-| group      | The list's top-level key: a family, an order, a group (`groupLabel`) | category                              |
-| section    | One heading and its tiles in the gallery: a group, or a month        | group (in the month view)             |
-| view       | How the gallery is arranged: `'group'` or `'month'`                  | mode, date view                       |
-| page       | What the main area shows: the gallery, or one of `app/pages.ts`      | route, screen                         |
-| viewer     | The full-size drawing with its details                               | lightbox, overlay, modal              |
-| names      | An item's names (`domain/itemNames.ts`)                              | title, label                          |
-| counts     | Live numbers of the current view                                     | stats                                 |
-| stats      | The archive's numbers from `stats.json`                              | counts                                |
-| accent     | The collection's colour (`styles/accents.css`)                       | theme colour                          |
-| theme      | Light or dark                                                        | mode                                  |
+The words are in [GLOSSARY.md](../GLOSSARY.md), each with where the code still says something else.
+Every "to be …" there is a rename in the table below; phase 8 checks none is left.
 
 ### Naming
 
@@ -181,8 +168,8 @@ the icon components), and the docs that name a moved file. Best done when no oth
 touching `src/` is open, as nearly every file moves.
 
 - [ ] **0. Agree the rules.** Settle the decisions above; write the principles, the glossary and the
-      naming into ARCHITECTURE.md; a DECISIONS.md entry ("folders by feature"). _Done when_ the
-      rules are merged.
+      naming into ARCHITECTURE.md (the words are in GLOSSARY.md); a DECISIONS.md entry ("folders by
+      feature"). _Done when_ the rules are merged.
 - [ ] **1. Domain.** `domain/` from the pure half of `lib/` and the domain types; `monthKey` out of
       the composable into `domain/dates.ts`; the `Collection` and `Item` types. A contract test:
       nothing in `domain/` imports `vue` or touches `document`, `window` or `fetch`. _Done when_ no
