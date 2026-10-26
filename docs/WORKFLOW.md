@@ -46,8 +46,8 @@ The body says **why**, and anything a reviewer should know. Keep one concern per
 move or rename files, commit the moves on their own first and fix the imports in the next commit, so
 `git log --follow` keeps each file's history.
 
-Data-only changes (a new drawing, a corrected name) follow the same steps; the
-[README](../README.md#adding-an-illustration) and [DATA.md](DATA.md#recipes) have the recipes.
+Data-only changes (a new drawing, a corrected name) follow the same steps;
+[DATA.md](DATA.md#recipes) has the recipes.
 
 ## 3. Before you open the pull request
 
@@ -138,6 +138,56 @@ git pull --ff-only
 ```bash
 git branch -d test/lightbox-keys
 ```
+
+## Commands
+
+| Task                                            | Description                                                                                    |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `npm run dev`                                   | Start the Vite dev server                                                                      |
+| `npm run build`                                 | Full build: transcode assets, then bundle the frontend                                         |
+| `npm run build:assets`                          | Transcode images and register new items only                                                   |
+| `npm run build:vite`                            | Bundle the frontend only (assumes assets are built)                                            |
+| `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems                                 |
+| `npm test`                                      | Every test tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
+| `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                                 |
+| `npm run test:watch`                            | Re-run the tests on every save                                                                 |
+| `npm run test:coverage`                         | Every tier + coverage table; fails below the line or branch floor                              |
+| `npm run test:report`                           | The same, saving the full report to `test-results/report.md`                                   |
+| `npm run test:html`                             | The same, plus an HTML coverage report in `test-results/coverage/`                             |
+| `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)                               |
+| `npm run version`                               | Print the current derived version                                                              |
+| `npm run changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews)                           |
+| `npm run placeholders`                          | Redraw the placeholder images from each collection's icon                                      |
+| `npm run design`                                | Redraw the design guide image and the icon sheet                                               |
+| `npm run preview`                               | Preview the production build locally                                                           |
+| `npm run lint` / `format`                       | Lint (ESLint) and format (dprint); `format:check` only checks                                  |
+
+## Versioning
+
+The footer of the site reads something like `v0.9.161 · 18 drawings · 4f0f400`. Nothing here is
+stored except `major.minor`; the rest is worked out from the repo when the site is built, so it
+cannot drift.
+
+| Part          | Where it comes from                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------------------ |
+| `0.9`         | `script/version/base_version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
+| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below                    |
+| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                         |
+| `4f0f400`     | the commit the build was made from                                                                     |
+
+- **The patch is a build counter, not a count of fixes.** On `main` it includes merge commits, so it
+  rises by a few with every merged PR, and a local branch shows a different number from the deployed
+  site (which is why the commit is shown too).
+- **One implementation.** [`script/version/version.ts`](../script/version/version.ts) computes all
+  of it. `npm run version` prints it (`--long` for the whole line), the build and check summaries
+  print it, and `vite.config.ts` calls the same function to inject it into the footer.
+- **Without git** (e.g. a zip download) a local build warns and shows patch `0` / commit `unknown`;
+  `npm run version` and any build with `CI` set fail instead of inventing a number.
+
+There are no git hooks, tags or releases: CI and the deploy are the only gates. Changelog entries
+are curated with `npm run changelog`, which lists every commit made since `CHANGELOG.md` was last
+touched and inserts them at the top of the newest section to edit and commit. Every merge to `main`
+deploys, so there is no "unreleased" section.
 
 ## When something goes wrong
 

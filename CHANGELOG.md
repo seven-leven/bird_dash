@@ -1,8 +1,8 @@
 # Changelog
 
-How the version number is built is explained in the README ("Versioning"); `npm run version` prints
-it. To log new work here, run `npm run changelog` — it inserts every commit made since this file was
-last touched at the top of the newest section, ready to edit and commit.
+How the version number is built is explained in docs/WORKFLOW.md ("Versioning"); `npm run version`
+prints it. To log new work here, run `npm run changelog` — it inserts every commit made since this
+file was last touched at the top of the newest section, ready to edit and commit.
 
 The site deploys on every merge to `main`, so there is no "unreleased" work: anything listed here is
 live.
@@ -16,6 +16,12 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: the README is the front door: what the archive is, its features, a quick start
+  with four commands, the documentation table, and a paragraph each on versions and deploys, with
+  links to the About page and the write-up on how the site was built. Its reference material moved:
+  the folder map to ARCHITECTURE.md ("Where things are"), every command and how the version is
+  worked out to WORKFLOW.md ("Commands", "Versioning"); the data examples and recipes were already
+  in DATA.md
 - 2026-10-26 | site: an About page (`#about`, after the collection tabs or last in their menu): what
   the archive is, its first drawing, progress overall and per collection, the five newest drawings,
   how each page is made, a short history with a link to the write-up on how the site was built, and
