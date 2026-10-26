@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { clampScale, pinchScale, swipeDirection } from './useLightbox.ts';
+import { clampScale, pinchScale, swipeDirection } from './useZoomPan.ts';
 
 test('clampScale: values in range pass through', () => {
   assertEquals(clampScale(1.25), 1.25);

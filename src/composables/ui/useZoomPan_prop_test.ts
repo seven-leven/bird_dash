@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
 import { assertProperty } from '../../testing/propertyRuns.ts';
-import { clampScale, pinchScale, swipeDirection } from './useLightbox.ts';
+import { clampScale, pinchScale, swipeDirection } from './useZoomPan.ts';
 
 // Any number a gesture could plausibly feed in — including the awkward ones.
 const anyNumber = fc.double({ noNaN: false });

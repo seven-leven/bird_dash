@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: the viewer's logic is three composables instead of one of 365 lines:
+  `useZoomPan` (scale, offset, drag, pinch, swipe), `useDialogKeys` (focus in, Tab kept inside,
+  shortcut keys, focus back on close) and `useDrawingNav` (where the open drawing sits, the moves
+  beside it). `useLightbox` wires them under the same API; moving between drawings is tested without
+  a DOM, and up and down, which page like left and right, have a test of their own
 - 2026-10-26 | site: one footer, `AppFooter`, under the gallery and the About page alike. The About
   page gains the version, the drawings and the commit; the gallery gains the colophon (Vue, Vite,
   Tailwind, Faruma). Its page links come from `src/pages.ts` and mark the page you are on, and the

@@ -110,6 +110,17 @@ test('arrow keys page through the drawn items and stop at the ends', () =>
     t.stop();
   }));
 
+test('up and down page too, as left and right do, and keep the page from scrolling', () =>
+  withDom(async () => {
+    const t = setup(1);
+    await t.open();
+    const up = t.key('ArrowUp');
+    const down = t.key('ArrowDown');
+    assertEquals(t.emitted.map(([, p]) => p?.itemId), ['001', '003']);
+    assert(up.defaultPrevented && down.defaultPrevented);
+    t.stop();
+  }));
+
 test('keys typed into a text field do not zoom or page the image', () =>
   withDom(async () => {
     const t = setup();
