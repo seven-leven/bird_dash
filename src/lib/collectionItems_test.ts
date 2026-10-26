@@ -71,7 +71,7 @@ test('toCollectionConfig: derives the data and image URLs from the id and base',
     emoji: '🦈',
     groupLabel: 'Order',
     itemLabel: 'shark',
-    links: [{ label: 'Wiki', color: 'bg-x', url: 'https://example.org/?q={{sci}}' }],
+    links: [{ label: 'Wiki', url: 'https://example.org/?q={{sci}}' }],
   }, './');
   assertEquals(config.dataUrl, './lists/sharks.json');
   assertEquals(config.imageBase, './thumb/sharks/');

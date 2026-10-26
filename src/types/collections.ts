@@ -36,7 +36,6 @@ export interface CollectionConfig {
   itemLabel: string;
   links: {
     label: string;
-    color: string;
     url: (item: CollectionItem) => string;
   }[];
 }

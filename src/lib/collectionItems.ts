@@ -24,7 +24,6 @@ export function toCollectionConfig(raw: RawCollectionConfig, base: string): Coll
     fullImageBase: `${base}full/${raw.id}/`,
     links: raw.links.map((l) => ({
       label: l.label,
-      color: l.color,
       url: (item: CollectionItem) => resolveUrl(l.url, item),
     })),
   };

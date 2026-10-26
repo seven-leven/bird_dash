@@ -9,7 +9,7 @@ import { mountComponent } from '../../testing/mountComponent.ts';
 
 const birds = makeCollection('birds', {
   label: 'Birds',
-  links: [{ label: 'eBird', color: '', url: () => 'https://ebird.org/x' }],
+  links: [{ label: 'eBird', url: () => 'https://ebird.org/x' }],
 });
 const goose = makeItem({
   itemId: '002',

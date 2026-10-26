@@ -32,7 +32,7 @@ An array, in the order the tabs appear. The first entry is the collection shown 
   "groupLabel": "Family",
   "itemLabel": "bird",
   "links": [
-    { "label": "eBird", "color": "…", "url": "https://www.google.com/search?q={{common}}+ebird" }
+    { "label": "eBird", "url": "https://www.google.com/search?q={{common}}+ebird" }
   ]
 }
 ```

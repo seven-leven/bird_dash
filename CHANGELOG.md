@@ -16,6 +16,9 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | data: the reference links in `collections.json` lose their `color` (Tailwind classes
+  such as `bg-emerald-600`, left from when they were coloured buttons). The viewer draws them as
+  plain links and nothing read it; a collection's colour is set once, by its `accent`
 - 2026-10-26 | docs: the README is the front door: what the archive is, its features, a quick start
   with four commands, the documentation table, and a paragraph each on versions and deploys, with
   links to the About page and the write-up on how the site was built. Its reference material moved:
