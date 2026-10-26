@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertRejects } from '@std/assert';
-import { computeStats, formatStats, isStatsCurrent, writeStats } from './collection_stats.ts';
+import { computeStats, formatStats, isStatsCurrent, writeStats } from './stats.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import type { Collection } from '../lib/collections.ts';
 

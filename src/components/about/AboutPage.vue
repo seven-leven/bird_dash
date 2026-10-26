@@ -1,6 +1,6 @@
 <!-- components/about/AboutPage.vue — the About page (#about).
      Every number on it comes from public/stats.json, which the asset build works out
-     from the lists (script/build/collection_stats.ts), or from collections.json, so
+     from the lists (script/generate/stats.ts), or from collections.json, so
      nothing here is typed by hand and a new collection shows up on its own. However many
      there are, the page holds them: the cards are a grid that folds after CARDS_FIT, and
      past NAMES_FIT collections the prose counts them instead of naming each. Links that stay on the site are in

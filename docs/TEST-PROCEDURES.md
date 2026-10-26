@@ -99,7 +99,7 @@ npm run build
 ```
 
 All green means CI should be green too. If you changed a design token, an icon or the logo, also run
-`npm run design` and commit the regenerated images.
+`npm run generate` and commit the regenerated images.
 
 ## 4. Run one file or one test
 
@@ -164,8 +164,8 @@ Work down this list.
 2. **Formatting.** CI runs `npm run format:check`. Run `npm run format` and commit the result.
 3. **A file you did not commit.** Run `git status`. A new test helper or data file left untracked
    passes locally and fails in CI.
-4. **Generated images out of date.** If you changed an icon or a token, run `npm run design` and
-   `npm run placeholders`, then commit.
+4. **Generated images out of date.** If you changed an icon or a token, run `npm run generate`, then
+   commit.
 5. **Coverage.** CI fails below the floor even when every test passes (section 8).
 6. **Still stuck:** download the `test-results` artifact from the run (section 11) and read
    `report.md`.

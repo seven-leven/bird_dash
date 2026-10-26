@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import { contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
-import { THEMES } from '../placeholders/draw_placeholders.ts';
+import { THEMES } from './placeholders.ts';
 
 // The numbers DESIGN.md quotes are typed by hand; these check them against the
 // code that draws and measures them, so the page cannot drift from the tokens.

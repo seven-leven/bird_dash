@@ -97,12 +97,12 @@ Notes:
 
 Do not edit these by hand; run the task that makes them.
 
-| Files                                   | Made by                | From                                 |
-| --------------------------------------- | ---------------------- | ------------------------------------ |
-| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run ingest`       | `raw_png/<id>/*.png`                 |
-| `placeholders/<id>[-dark].webp`         | `npm run placeholders` | the collection's `icon`              |
-| `drawn` dates on newly added items      | `npm run ingest`       | a new PNG whose item has no date yet |
-| `stats.json`                            | `npm run ingest`       | every `lists/<id>.json`              |
+| Files                                   | Made by            | From                                 |
+| --------------------------------------- | ------------------ | ------------------------------------ |
+| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run ingest`   | `raw_png/<id>/*.png`                 |
+| `placeholders/<id>[-dark].webp`         | `npm run generate` | the collection's `icon`              |
+| `drawn` dates on newly added items      | `npm run ingest`   | a new PNG whose item has no date yet |
+| `stats.json`                            | `npm run ingest`   | every `lists/<id>.json`              |
 
 ### `stats.json`
 
@@ -114,9 +114,9 @@ drawing (`null` if none); and the `newest` eight drawings across all of them, ne
 same day, in collection order, then by id). Each drawing has its collection, id, name, date, and,
 when the list gives them, its Dhivehi name in Thaana (`dhivehi`) and how to say it (`roman`). The
 shape is `Stats` in [`src/types/data.ts`](../src/types/data.ts), which the build and the page share.
-[`script/build/collection_stats.ts`](../script/build/collection_stats.ts) writes it as the last step
-of the asset build. It holds no build time, so the same lists always write the same file. A new
-collection appears in it with no other change.
+[`script/generate/stats.ts`](../script/generate/stats.ts) writes it as the last step of the asset
+build. It holds no build time, so the same lists always write the same file. A new collection
+appears in it with no other change.
 
 ## What the checks enforce
 
@@ -152,7 +152,7 @@ collection appears in it with no other change.
 1. Add an entry to `collections.json`. Pick an `icon` (add one to `icons.ts` if needed) and an
    `accent` from the menu in [DESIGN.md](DESIGN.md).
 2. Create `public/lists/<id>.json`.
-3. Run `npm run placeholders` to draw its two placeholder images.
+3. Run `npm run generate -- placeholders` to draw its two placeholder images.
 4. Add source art under `raw_png/<id>/` and run `npm run ingest`.
 
 **Add a new kind of information** (conservation status, season): add a string field to the items. It

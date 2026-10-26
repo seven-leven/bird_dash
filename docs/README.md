@@ -36,10 +36,9 @@ it is done.
 ## Assets
 
 [`assets/`](assets/) holds generated images: the design guide, the icon sheet, the logo sheet, the
-logo files and the README's row of the newest drawings. Do not edit them by hand; `npm run design`
-redraws them from the code
-([`script/design/draw_design_guide.ts`](../script/design/draw_design_guide.ts)), and a contract test
-fails when they are out of date.
+logo files and the README's row of the newest drawings. Do not edit them by hand; `npm run generate`
+redraws them from the code ([`script/generate/`](../script/generate/generate.ts), one generator per
+file), and a contract test fails when they are out of date.
 
 ## Adding a page
 

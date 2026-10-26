@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertThrows } from '@std/assert';
 import { checkIntegrity, main, pickStages, STAGES } from './build.ts';
-import { writeStats } from './collection_stats.ts';
+import { writeStats } from '../generate/stats.ts';
 import { UsageError } from '../lib/cli.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import { PATHS } from '../lib/paths.ts';

@@ -5,7 +5,7 @@
 // Rules for using it are in docs/DESIGN.md.
 //
 // Both versions are inner SVG markup for a 32 × 32 viewBox (see LogoMark.vue and
-// script/design/draw_logo.ts) and take their colour from `currentColor`.
+// script/generate/logo.ts) and take their colour from `currentColor`.
 
 /** The frame: top-left stub, left side, and a bottom line that stops under the bird's feet. */
 const FRAME = '<path d="M12 4.5H8.5A5.5 5.5 0 0 0 3 10v14a5.5 5.5 0 0 0 5.5 5.5h16"/>';

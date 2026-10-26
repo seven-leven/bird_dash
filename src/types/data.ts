@@ -39,7 +39,7 @@ export interface RawCollectionConfig {
 }
 
 // `public/stats.json`: the archive's numbers, written by the asset build
-// (script/build/collection_stats.ts) and read by the About page.
+// (script/generate/stats.ts) and read by the About page.
 
 export interface CollectionCounts {
   id: string;

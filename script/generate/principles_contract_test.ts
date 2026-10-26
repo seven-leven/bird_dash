@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { PRINCIPLES } from './principles.ts';
-import { designGuide } from './draw_design_guide.ts';
+import { designGuide } from './designGuide.ts';
 import { ICON_GROUPS, ICONS } from '../../src/lib/icons.ts';
 
 const page = () => readFile('./docs/DESIGN.md', 'utf8');

@@ -54,7 +54,7 @@ Data-only changes (a new drawing, a corrected name) follow the same steps;
 1. Run the checks CI will run: the list is in
    [TEST-PROCEDURES.md, section 3](TEST-PROCEDURES.md#3-before-you-open-a-pull-request). Coverage
    must stay at 100%: new code needs a test.
-2. If you changed a design token, an icon or the logo, run `npm run design` and commit the images.
+2. If you changed a design token, an icon or the logo, run `npm run generate` and commit the images.
 3. Update the changelog:
 
    ```bash
@@ -159,8 +159,7 @@ git branch -d test/lightbox-keys
 | `npm run typecheck`                             | Type-check the `.ts` sources and the `.vue` components (vue-tsc)                               |
 | `npm run version`                               | Print the current derived version                                                              |
 | `npm run changelog`                             | Insert unlogged commits in the newest section (`--dry-run` previews)                           |
-| `npm run placeholders`                          | Redraw the placeholder images from each collection's icon                                      |
-| `npm run design`                                | Redraw the design guide image and the icon sheet                                               |
+| `npm run generate`                              | Redraw every generated file (`-- placeholders` for some; `-- --into <dir>` to look first)      |
 | `npm run preview`                               | Preview the production build locally                                                           |
 | `npm run docs:dev`                              | Serve the docs site (`docs/*.md`, VitePress) with live reload                                  |
 | `npm run docs:preview`                          | Preview the built docs site                                                                    |

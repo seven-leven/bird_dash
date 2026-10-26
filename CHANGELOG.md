@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | scripts: every generated file has one generator, run by `npm run generate` (phase 4
+  of the scripts overhaul): the stats, the placeholders, the design guide, the icon sheet, the logo
+  files, the favicons and the README's row of drawings, all under `script/generate/`. Name some to
+  run only those (`npm run generate -- placeholders`), or write them elsewhere to look first (`--
+  --into <dir>`). `npm run placeholders` and `npm run design` are gone. The 569-line guide script is
+  three files, and one contract test runs every generator and fails on any stale file. A real run
+  reproduces the committed files byte for byte
 - 2026-10-26 | scripts: `npm run build` builds in stages, the site and then the docs site, as CI
   does (phase 3 of the scripts overhaul). Name a stage to build only it (`npm run build -- docs`, or
   `build:site`, `build:docs`); each stage reports its time, the first that fails stops the build,

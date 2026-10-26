@@ -15,7 +15,7 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
 ┌─ 1. Asset pipeline (script/) ───────────────────────────────┐
 │ ingest/: scanSources (read disk) → planChanges (pure maths) │
 │   → applyChanges (sharp, write JSON) → formatIngestReport   │
-│ version/ · changelog/ · placeholders/ · design/ · lib/      │
+│ generate/ · version/ · changelog/ · docs/ · lib/            │
 └───────────────┬─────────────────────────────────────────────┘
                 ▼
    public/   collections.json · lists/<id>.json
@@ -155,8 +155,8 @@ machine, never in CI):
 Keeping the plan pure is what makes it testable without touching the disk. `npm run check` runs scan
 and plan only, and fails if anything is missing or orphaned.
 
-Other scripts: `version/version.ts` (the version, see the README), `changelog/changelog.ts`,
-`placeholders/draw_placeholders.ts` and `design/draw_design_guide.ts` (generated images).
+Other scripts: `version/version.ts` (the version, see the README), `changelog/changelog.ts`, and
+`generate/` (every generated file, one generator each: `npm run generate`).
 
 Every script follows the principles and naming in [SCRIPTS.md](SCRIPTS.md). The pipeline above is
 moving to them (taking in drawings becomes `npm run ingest`, the generators move to

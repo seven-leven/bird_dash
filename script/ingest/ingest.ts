@@ -12,7 +12,7 @@ import { type Io, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import { EXIT, MARK, parseArgs, printLines, runCommand } from '../lib/cli.ts';
 import { computeVersion, formatVersionLine } from '../version/version.ts';
-import { writeStats } from '../build/collection_stats.ts';
+import { writeStats } from '../generate/stats.ts';
 import { scanSources } from './scanSources.ts';
 import { planChanges } from './planChanges.ts';
 import { applyChanges } from './applyChanges.ts';

@@ -10,12 +10,12 @@ This document is both its point of view and its practical reference.
 
 ![Design guide](assets/design-guide.png)
 
-The picture is drawn from the real tokens and icons by `npm run design`. The source of truth for the
-tokens is [`src/styles/main.css`](../src/styles/main.css), with the parts the docs site shares in
-[`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css); this guide
-explains the decisions behind them and how to apply them. The picture has a voice of its own (warm
-paper, a serif for statements); neither is a site token. The site's colours are the swatches drawn
-on it.
+The picture is drawn from the real tokens and icons by `npm run generate`. The source of truth for
+the tokens is [`src/styles/main.css`](../src/styles/main.css), with the parts the docs site shares
+in [`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css); this
+guide explains the decisions behind them and how to apply them. The picture has a voice of its own
+(warm paper, a serif for statements); neither is a site token. The site's colours are the swatches
+drawn on it.
 
 ---
 
@@ -401,7 +401,7 @@ neighbours, so icons, names and dividers line up from row to row.
 - Draw on a **24 × 24** grid and fill most of it, leaving about 1.5px at the edges.
 - Use a **2px stroke**, round ends and joins, and no fills.
 - Prefer one or two bold shapes. If an icon needs more than about five strokes, simplify it.
-- It must stay legible at **16px**. Run `npm run design` and look at `docs/assets/icons.png`.
+- It must stay legible at **16px**. Run `npm run generate` and look at `docs/assets/icons.png`.
 
 Icons take `currentColor` and come in four sizes, by role: `size-3` (12px) beside a label or figure,
 `size-4` (16px) in a control, `size-5` or `size-6` (20 or 24px) standing alone. Label icons sit
@@ -453,8 +453,8 @@ Placeholders are 512 × 512, generated from the collection icon once per theme. 
 the tile's grey, never white, so they cannot be mistaken for sketches on paper. Their files and
 colours are in the [reference](#reference) below.
 
-`npm run placeholders` draws both from the icon set; do not edit them by hand. A contract test
-checks that both exist. At about 2.4:1 against their background, they are faint on purpose.
+`npm run generate` draws both from the icon set; do not edit them by hand. A contract test checks
+that both exist. At about 2.4:1 against their background, they are faint on purpose.
 
 ---
 
@@ -567,7 +567,7 @@ A short review of whether a change still belongs to the same design.
 - [ ] Does it use the slate and accent tokens, the six type sizes, 4px spacing and the three corner
       treatments?
 - [ ] Does it use the shared classes and components, with sentence-case wording?
-- [ ] If a token or an icon changed, was `npm run design` run?
+- [ ] If a token or an icon changed, was `npm run generate` run?
 
 ### For everyone, on every screen
 
@@ -579,8 +579,8 @@ A short review of whether a change still belongs to the same design.
 ## Reference
 
 The exact values behind the rules above. Tests check these tables against the code that draws and
-measures them (`script/design/palette.ts`, `script/placeholders/draw_placeholders.ts`), so they
-cannot drift.
+measures them (`script/generate/palette.ts`, `script/generate/placeholders.ts`), so they cannot
+drift.
 
 ### Ramps
 

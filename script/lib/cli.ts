@@ -25,18 +25,26 @@ export class UsageError extends Error {}
 
 export interface Args {
   flags: Set<string>;
+  /** Options that take a value (`--into <dir>`), by name. */
+  values: Map<string, string>;
   /** The arguments that are not flags, in order. */
   words: string[];
 }
 
 /**
- * Split `args` into flags and words, accepting only `flags` (and `--help`). A bare
- * `--` (which npm passes through) is ignored. Throws UsageError for any other flag.
+ * Split `args` into flags, options with a value, and words, accepting only `flags` and
+ * `options` (and `--help`). A bare `--` (which npm passes through) is ignored. Throws
+ * UsageError for any other flag, or for an option with no value after it.
  */
-export function parseArgs(args: string[], flags: readonly string[]): Args {
-  const known = new Set([...flags, '--help']);
-  const parsed: Args = { flags: new Set(), words: [] };
-  for (const arg of args) {
+export function parseArgs(
+  args: string[],
+  flags: readonly string[],
+  options: readonly string[] = [],
+): Args {
+  const known = new Set([...flags, ...options, '--help']);
+  const parsed: Args = { flags: new Set(), values: new Map(), words: [] };
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
     if (arg === '--') continue;
     if (!arg.startsWith('-')) {
       parsed.words.push(arg);
@@ -45,7 +53,13 @@ export function parseArgs(args: string[], flags: readonly string[]): Args {
     if (!known.has(arg)) {
       throw new UsageError(`unknown option ${arg} (this command takes: ${[...known].join(', ')})`);
     }
-    parsed.flags.add(arg);
+    if (!options.includes(arg)) {
+      parsed.flags.add(arg);
+      continue;
+    }
+    const value = args[++i];
+    if (value === undefined || value.startsWith('-')) throw new UsageError(`${arg} needs a value`);
+    parsed.values.set(arg, value);
   }
   return parsed;
 }

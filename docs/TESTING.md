@@ -63,9 +63,9 @@ belongs to one area, by its folder
 | Site: data and search         | `src/lib` (but the icons), `src/composables/collection`, `src/composables/search` | Loading collections, filtering, grouping, search        |
 | Site: state and routing       | `src/stores`, `src/composables/core`, `src/pages.ts`                              | The stores, shareable links, the pages, theme, accent   |
 | Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`     | The lightbox, scroll-spy, icons and logo                |
-| Asset pipeline and data files | `script/ingest`, `script/build`, `script/placeholders`, `script/lib`              | Ingest, the integrity check, the files in `public/`     |
+| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders             | Ingest, the integrity check, the files in `public/`     |
 | Version and changelog         | `script/version`, `script/changelog`                                              | The version in the footer, the changelog task           |
-| Test harness and docs tooling | `script/test_runner`, `script/design`, `script/docs`                              | The runner and its reports, guide images, the docs site |
+| Test harness and docs tooling | `script/test_runner`, `script/generate`, `script/docs`                            | The runner and its reports, guide images, the docs site |
 
 When two areas' folders overlap, the longer path wins: `src/lib/icons.ts` is interface, the rest of
 `src/lib` is data.
