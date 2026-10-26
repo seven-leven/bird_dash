@@ -120,49 +120,7 @@
         </div>
       </section>
 
-      <!-- Footer (override via slot if needed) — static per session -->
-      <slot name="footer">
-        <footer
-          v-once
-          class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
-                 border-slate-100 text-muted dark:border-slate-800/50"
-        >
-          <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
-            <span>Wildlife Illustrated &copy; {{ new Date().getFullYear() }}</span>
-            <span class="with-icon" title="Version">
-              <Icon name="tag" aria-hidden="true" />v{{ appVersion }}
-              <!-- The line's name: a Dhivehi name from the drawings, in drawing order. -->
-              <span
-                v-if="appName"
-                lang="dv-Latn"
-                :title="`This line of work is named after the ${appName.species}, ${appName.script}`"
-              >{{ appName.roman }}</span>
-            </span>
-            <span class="with-icon">
-              <Icon name="image" aria-hidden="true" />{{ drawnLabel }}
-            </span>
-            <span class="with-icon font-mono" title="The commit this site was built from">
-              <Icon name="commit" aria-hidden="true" />{{ appCommit }}
-            </span>
-            <a
-              href="#about"
-              class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
-            >
-              About
-            </a>
-            <a
-              href="https://github.com/seven-leven/bird_dash"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="focus-ring inline-flex items-center gap-1 rounded-control underline underline-offset-2
-                     hover:text-slate-800 dark:hover:text-slate-200"
-            >
-              <Icon name="github" class="size-3" aria-hidden="true" />
-              GitHub
-            </a>
-          </p>
-        </footer>
-      </slot>
+      <AppFooter />
     </template>
   </div>
 </template>
@@ -173,6 +131,7 @@ import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
 import DrawnFilter from '../ui/DrawnFilter.vue';
 import Icon from '../icons/Icon.vue';
+import AppFooter from '../layout/AppFooter.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useSearch } from '../../stores/search.ts';
@@ -185,12 +144,6 @@ const { query, clear } = useSearch();
 // The template registers each section with the ui store for the scroll-spy.
 const { viewMode, theme, drawnOnly, registerHeader, toggleDrawnOnly } = useUi();
 const { open: openItem } = useOverlayStore();
-
-// Injected at build time by vite.config.ts (worked out in script/version/version.ts).
-const appVersion = __APP_VERSION__;
-const appName = __APP_NAME__;
-const appCommit = __APP_COMMIT__;
-const drawnLabel = drawings(__APP_DRAWN__);
 
 // ---------------------------------------------------------------------------
 // COMPUTED
