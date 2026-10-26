@@ -9,13 +9,20 @@ live.
 
 Headings such as **v0.9.0** name a _line of work_ (the `major.minor` in
 `script/version/base_version.json`), not a release: the patch number in the running site (e.g.
-`0.9.161`) counts commits, so it is never `.0`. Entries up to v0.7 carry the old `x.y.z+w` labels,
-where `w` was the drawing count.
+`0.9.161`) counts commits, so it is never `.0`. Each line is named after a drawing, the Dhivehi
+names in the order they were drawn (`script/version/line_names.ts`); a test keeps the headings
+right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the drawing count.
 
 ---
 
-## v0.9.0 (Stores, Tests, Accessibility & Design)
+## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | version: each line of work is named after a drawing, the archive's Dhivehi names in
+  the order they were drawn, each once: v0.1 Reyru, v0.2 Kunburu Reyru, v0.3 Gudugudaa Dhooni, v0.4
+  Valu Bondana, v0.5 Dhandifulhu Dhooni, v0.6 Dhon Raabondhi, v0.7 Iruvaihudhu, v0.8 Alhi Maakanaa,
+  v0.9 Valu Kukulhu. Worked out from the lists like the rest of the version; shown in the footer
+  (the Thaana and the bird on hover), in `npm run version --long` and in these headings, which a
+  test keeps in step with the lists
 - 2026-10-26 | docs: the README opens with the five newest drawings, each on its white card, so the
   first thing it shows is the work. `npm run design` draws the row from `stats.json` and the
   thumbnails (`docs/assets/drawings.webp`), so it follows the archive. The deploy link goes to
@@ -280,7 +287,7 @@ where `w` was the drawing count.
   image), the lightbox pages in drawn-date order, and an IntersectionObserver scroll-spy replacing
   the per-scroll layout reads
 
-## v0.8.0 (Redesign, Performance & Tooling)
+## v0.8.0 Alhi Maakanaa (Redesign, Performance & Tooling)
 
 - 2026-07-05 | scroll-spy fix (content-visibility regression), Dhivehi name + Thaana script search,
   CSS de-duplication (`.text-muted`, `.tile-grid`, `.icon-btn-overlay`)
@@ -301,7 +308,7 @@ where `w` was the drawing count.
 - 2026-05-12 | refactored search, segmented the build pipeline, overhauled the GitHub deploy
   workflow, re-transcoded all images
 
-## v0.7.0 (Multi-collection Architecture)
+## v0.7.0 Iruvaihudhu (Multi-collection Architecture)
 
 - **0.7.072+018** | 2026-03-12 | barrel import types, updated modules |
 - **0.7.071+018** | 2026-03-10 | renamed components v2, cleaned up theme usage in ui |
@@ -316,7 +323,7 @@ where `w` was the drawing count.
 - **0.7.062+017** | 2026-03-06 | created subfolders for bird pics and updated version manager
 - **0.7.061+017** | 2026-03-06 | updated TODO with new multi-collection plans
 
-## v0.6.0 (QoL, Search, and Data)
+## v0.6.0 Dhon Raabondhi (QoL, Search, and Data)
 
 - **0.6.060+017** | 2026-02-15 | added Dhivehi names
 - **0.6.059+017** | 2026-02-07 | added illustrator notes
@@ -333,7 +340,7 @@ where `w` was the drawing count.
 - **0.6.048+016** | 2026-01-15 | added expanded image view
 - **0.6.047+016** | 2026-01-15 | 🐦 Bird 030: Eurasian Coot
 
-## v0.5.0 (Tailwind & Dark Mode)
+## v0.5.0 Dhandifulhu Dhooni (Tailwind & Dark Mode)
 
 - **0.5.046+015** | 2026-01-15 | updated script permissions
 - **0.5.045+015** | 2026-01-15 | footer implementation
@@ -347,7 +354,7 @@ where `w` was the drawing count.
 - **0.5.037+015** | 2026-01-12 | migrated to Tailwind CSS and added dark mode
 - **0.5.036+015** | 2025-12-19 | 🐦 Bird 004: Northern Shoveler
 
-## v0.4.0 (Vue Rewrite)
+## v0.4.0 Valu Bondana (Vue Rewrite)
 
 - **0.4.035+014** | 2025-12-17 | added bird 031 to data
 - **0.4.034+014** | 2025-12-05 | refactored main file
@@ -367,7 +374,7 @@ where `w` was the drawing count.
 - **0.4.020+003** | 2025-06-24 | converted PNG to WebP format
 - **0.4.019+003** | 2025-05-30 | rewrote from scratch using Vue.js
 
-## v0.3.0 (Deno & Build Tools)
+## v0.3.0 Gudugudaa Dhooni (Deno & Build Tools)
 
 - **0.3.018+003** | 2025-02-25 | project housekeeping
 - **0.3.017+003** | 2025-02-24 | added bundler tests
@@ -377,7 +384,7 @@ where `w` was the drawing count.
 - **0.2.013+003** | 2025-02-14 | fixed expanded images
 - **0.2.012+003** | 2025-02-14 | migrated to Deno and esbuild
 
-## v0.2.0 (Deployment Setup)
+## v0.2.0 Kunburu Reyru (Deployment Setup)
 
 - **0.2.011+003** | 2025-02-07 | updated dependencies
 - **0.2.010+003** | 2025-02-02 | major code refactor
@@ -389,7 +396,7 @@ where `w` was the drawing count.
 - **0.2.004+003** | 2025-01-26 | removed node_modules from tracking
 - **0.2.003+003** | 2025-01-11 | 🐦 Bird 003: Garganey
 
-## v0.1.0 (Initial Development)
+## v0.1.0 Reyru (Initial Development)
 
 - **0.1.002+002** | 2024-10-15 | 🐦 Bird 002: Cotton Pygmy-Goose
 - **0.1.001+001** | 2024-10-10 | 🐦 Bird 001: Lesser Whistling-Duck

@@ -9,6 +9,8 @@
  *                          (`git rev-list --count HEAD`). On main that includes merge
  *                          commits, so it rises by a few with every merged PR; it is a
  *                          build counter, not a count of fixes.
+ *   Valu Kukulhu           the line's name: a Dhivehi name from the drawings, in the
+ *                          order they were drawn (line_names.ts)
  *   18 drawings            how many illustrations are marked drawn in public/lists/*.json
  *   a1b2c3d                the commit the build was made from
  *
@@ -20,6 +22,7 @@ import { readJson } from '../lib/fs.ts';
 import { git } from '../lib/git.ts';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { forEachDrawn, loadCollectionData } from '../lib/lists.ts';
+import { type LineName, lineName, loadLineNames } from './line_names.ts';
 
 /** The stored part of the version: major.minor, edited by hand. */
 export const VERSION_FILE = './script/version/base_version.json';
@@ -28,6 +31,8 @@ export interface VersionData {
   major: number;
   minor: number;
   patch: number;
+  /** The line's name, from the drawings; null when the lists do not reach that far. */
+  name: LineName | null;
   /** Illustrations marked drawn, across all collections. */
   drawn: number;
   /** Short hash of the commit built from ("unknown" when git was unavailable). */
@@ -68,20 +73,21 @@ export async function computeVersion(
   const run = opts.git ?? git;
   const base = await readJson<{ major: number; minor: number }>(VERSION_FILE);
   const drawn = (await getDrawnIds()).size;
+  const name = lineName(await loadLineNames(), base.major, base.minor);
 
   try {
     const [patch, commit] = await Promise.all([
       getCommitCount(run),
       run('rev-parse', '--short=7', 'HEAD'),
     ]);
-    return { major: base.major, minor: base.minor, patch, drawn, commit };
+    return { major: base.major, minor: base.minor, patch, name, drawn, commit };
   } catch (err) {
     if (!opts.lenient || process.env.CI) throw err;
     console.warn(
       `[version] git is unavailable (${(err as Error).message.split('\n')[0]}); ` +
         'using patch 0 and commit "unknown"',
     );
-    return { major: base.major, minor: base.minor, patch: 0, drawn, commit: 'unknown' };
+    return { major: base.major, minor: base.minor, patch: 0, name, drawn, commit: 'unknown' };
   }
 }
 
@@ -92,9 +98,10 @@ export function formatVersion(v: VersionData): string {
 
 const plural = (n: number, word: string) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
-/** Everything on one line, for logs and the footer: `0.9.161 · 18 drawings · a1b2c3d`. */
+/** Everything on one line, for logs: `0.9.161 Valu Kukulhu · 18 drawings · a1b2c3d`. */
 export function describeVersion(v: VersionData): string {
-  return `${formatVersion(v)} · ${plural(v.drawn, 'drawing')} · ${v.commit}`;
+  const named = v.name ? `${formatVersion(v)} ${v.name.roman}` : formatVersion(v);
+  return `${named} · ${plural(v.drawn, 'drawing')} · ${v.commit}`;
 }
 
 /** What `npm run version` prints: the version, or with `--long` the whole line. */

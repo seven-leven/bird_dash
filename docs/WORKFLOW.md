@@ -164,17 +164,25 @@ git branch -d test/lightbox-keys
 
 ## Versioning
 
-The footer of the site reads something like `v0.9.161 · 18 drawings · 4f0f400`. Nothing here is
-stored except `major.minor`; the rest is worked out from the repo when the site is built, so it
-cannot drift.
+The footer of the site reads something like `v0.9.161 Valu Kukulhu · 18 drawings · 4f0f400`. Nothing
+here is stored except `major.minor`; the rest is worked out from the repo when the site is built, so
+it cannot drift.
 
-| Part          | Where it comes from                                                                                    |
-| ------------- | ------------------------------------------------------------------------------------------------------ |
-| `0.9`         | `script/version/base_version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
-| `.157` patch  | number of commits in the history (`git rev-list --count HEAD`) — see the note below                    |
-| `18 drawings` | illustrations with a `drawn` date across `public/lists/*.json`                                         |
-| `4f0f400`     | the commit the build was made from                                                                     |
+| Part           | Where it comes from                                                                                    |
+| -------------- | ------------------------------------------------------------------------------------------------------ |
+| `0.9`          | `script/version/base_version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
+| `.157` patch   | number of commits in the history (`git rev-list --count HEAD`) — see the note below                    |
+| `Valu Kukulhu` | the line's name: the Dhivehi names of the drawings, in the order they were drawn — see below           |
+| `18 drawings`  | illustrations with a `drawn` date across `public/lists/*.json`                                         |
+| `4f0f400`      | the commit the build was made from                                                                     |
 
+- **Each line is named after a drawing.** Line `0.n` takes the n-th Dhivehi name the archive gives,
+  oldest drawing first (on the same day, in collection order, then by id), each name once, a drawing
+  with two names giving its first: v0.1 is "Reyru", v0.9 "Valu Kukulhu", and v0.10 will be the next
+  name drawn after it (today "Kaalu", the House Crow). The footer shows the romanised name, with the
+  Thaana and the bird on hover; `CHANGELOG.md` headings carry it, and a test fails if one disagrees
+  with the lists (a back-dated drawing would shift the names after it).
+  [`script/version/line_names.ts`](../script/version/line_names.ts) has the rule.
 - **The patch is a build counter, not a count of fixes.** On `main` it includes merge commits, so it
   rises by a few with every merged PR, and a local branch shows a different number from the deployed
   site (which is why the commit is shown too).

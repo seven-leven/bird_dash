@@ -140,7 +140,11 @@ test('buildAssets builds a collection, prints the summary, and leaves the check 
     assert(output.includes('stats: 1 of 1 drawn'), output);
     assert(output.includes('registered') && output.includes('New drawing (001)'));
     assert(output.includes('1 drawn') && output.includes('+1 new'), output);
-    assert(/\d+\.\d+\.\d+ · \d+ drawings?/.test(output), 'the summary ends with the version');
+    // `0.9.161 Valu Kukulhu · 18 drawings`: the line's name sits between, when it has one.
+    assert(
+      /\d+\.\d+\.\d+( [^·]+)? · \d+ drawings?/.test(output),
+      'the summary ends with the version',
+    );
 
     let issuesAfter = -1;
     const report = await captured(async () => {

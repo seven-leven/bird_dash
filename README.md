@@ -66,9 +66,10 @@ collection, see the recipes in [DATA.md](docs/DATA.md#recipes).
 
 ## Versions and deploys
 
-The footer reads like `v0.9.161 · 18 drawings · 4f0f400`. Only `0.9` is stored; the patch counts
-commits, the drawings are counted from the lists and the hash is the commit built, so it cannot
-drift ([how](docs/WORKFLOW.md#versioning)).
+The footer reads like `v0.9.161 Valu Kukulhu · 18 drawings · 4f0f400`. Only `0.9` is stored; the
+patch counts commits, each line is named after a drawing (the Dhivehi names in the order they were
+drawn: v0.1 "Reyru", the first), the drawings are counted from the lists and the hash is the commit
+built, so it cannot drift ([how](docs/WORKFLOW.md#versioning)).
 
 Every pull request and every merge runs the same checks: lint, format, types, every test tier at
 100% coverage (in four timezones, from UTC−8 to UTC+14), the asset check and the build. A merge to

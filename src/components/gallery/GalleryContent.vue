@@ -131,6 +131,12 @@
             <span>Wildlife Illustrated &copy; {{ new Date().getFullYear() }}</span>
             <span class="with-icon" title="Version">
               <Icon name="tag" aria-hidden="true" />v{{ appVersion }}
+              <!-- The line's name: a Dhivehi name from the drawings, in drawing order. -->
+              <span
+                v-if="appName"
+                lang="dv-Latn"
+                :title="`This line of work is named after the ${appName.species}, ${appName.script}`"
+              >{{ appName.roman }}</span>
             </span>
             <span class="with-icon">
               <Icon name="image" aria-hidden="true" />{{ drawnLabel }}
@@ -182,6 +188,7 @@ const { open: openItem } = useOverlayStore();
 
 // Injected at build time by vite.config.ts (worked out in script/version/version.ts).
 const appVersion = __APP_VERSION__;
+const appName = __APP_NAME__;
 const appCommit = __APP_COMMIT__;
 const drawnLabel = drawings(__APP_DRAWN__);
 

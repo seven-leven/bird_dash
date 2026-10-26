@@ -91,12 +91,17 @@ test('computeVersion: in CI even lenient mode fails, so a deploy never ships a m
 
 // ── the command, and a collection whose list file is not there yet ──
 
-test('cli prints major.minor.patch, and with --long the drawings and commit too', async () => {
+test('cli prints major.minor.patch, and with --long the line name, drawings and commit too', async () => {
   const short = await cli([]);
   assertMatch(short, /^\d+\.\d+\.\d+$/);
 
+  const { name } = await computeVersion();
+  assert(name, 'the lists name the current line');
   const long = await cli(['--long']);
-  assert(long.startsWith(short + ' · '), `"${long}" should start with the version`);
+  assert(
+    long.startsWith(`${short} ${name.roman} · `),
+    `"${long}" should start with the named version`,
+  );
   assertMatch(long, / · \d+ drawings? · [0-9a-f]{7}$/);
 });
 
