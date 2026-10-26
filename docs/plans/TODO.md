@@ -1,5 +1,34 @@
 # TODO
 
+## 🧩 Top Priority: Modular and Decoupled (planned 2026-10-26)
+
+In this order: the first unblocks the non-species collections below, the next two make every new
+page cheap.
+
+- [ ] **1. Names as data, not fields the components know.** `dhiv`, `dhiv_script` and `sci` are read
+      by name in `ItemTile.vue`, `ItemSheet.vue`, `SearchResultsList.vue`, `useGlobalSearch.ts` and
+      `collectionItems.ts`. Build each item's names once in `collectionItems.ts`, as a list of `{
+      text, lang: 'dv' | 'en' | 'la', role: 'title' | 'also' | 'latin' }`, and have the tile, the
+      viewer and search render whatever names an item has. A `series` piece then gives a title and
+      its medium with no scientific name, and no component changes. The groundwork for `kind`.
+- [ ] **2. A page registry instead of `'gallery' | 'about'` everywhere.** The About page is written
+      into the `Page` type, the ui store, `useHashRoute`, `Chrome.vue`, `TopBar.vue` and
+      `CollectionMenu.vue`. One list, `pages = [{ id: 'about', component, label }]`, drives the
+      route, the nav item and the menu entry; Chrome renders `<component :is>`. A design page or a
+      link to the docs site is then one entry, not six edits.
+- [ ] **3. Pages do not fetch.** `AboutPage.vue` fetches `stats.json` itself and borrows `getBase`
+      from the collections composable. A `useStats` loader beside the collections loader, sharing
+      one fetch-JSON helper, makes each page a plain view of a store; tests fake one thing instead
+      of `fetch`.
+- [ ] **4. One footer.** The gallery and the About page each have their own, already drifting (one
+      has the version and commit). An `AppFooter` for both; it also shrinks `GalleryContent.vue`
+      (223 lines, four stores) to the sections and the grid.
+- [ ] **5. Split the lightbox's logic.** `useLightbox.ts` (365 lines) holds three state machines:
+      zoom and pan, the keyboard, moving between drawings. As three composables each is tested
+      without a DOM, and the viewer can reuse them for a series' multiple images.
+- [ ] Afterwards: `Chrome`, `TopBar` and `GalleryContent` inject four stores each. Most of that goes
+      with 2 and 4; look again then.
+
 ## 🚀 High Priority (Fixes & Cleanup)
 
 - [ ] **Fixes**:
