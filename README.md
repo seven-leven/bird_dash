@@ -2,9 +2,9 @@
 
 > _The drawings carry the colour. Everything around them makes room._
 
-A gallery of hand-drawn wildlife of the Maldives, one species at a time: birds, sharks and shells,
-each shown with its Dhivehi, English and scientific names. Every species has its place from the
-start, drawn or not, so the gaps are part of the record.
+A gallery of hand-drawn wildlife, one species at a time: birds, sharks and shells, each shown with
+its English and scientific names, and its Dhivehi name where it has one. Every species has its place
+from the start, drawn or not, so the gaps are part of the record.
 
 [![The five newest drawings: a sand dollar, a moorhen, a coot, a shoveler and a waterhen](docs/assets/drawings.webp)](https://seven-leven.github.io/bird_dash/)
 
