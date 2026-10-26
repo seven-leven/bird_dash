@@ -20,13 +20,15 @@ it is done.
 | [TESTING.md](TESTING.md)                 | You write a test or want to know what the tiers and areas mean         |
 | [TEST-PROCEDURES.md](TEST-PROCEDURES.md) | You set up a machine, a test or CI fails, or you maintain the runner   |
 | [WORKFLOW.md](WORKFLOW.md)               | You take a change from a branch to the live site, or upgrade a tool    |
+| [SCRIPTS.md](SCRIPTS.md)                 | You write or change a script in `script/`: its principles and naming   |
 | [DECISIONS.md](DECISIONS.md)             | You wonder why something is done this way, before changing it          |
 
 ## Plans
 
-| Page                           | Status                                                       |
-| ------------------------------ | ------------------------------------------------------------ |
-| [plans/TODO.md](plans/TODO.md) | Backlog of features and fixes, including the component tests |
+| Page                                                   | Status                                                       |
+| ------------------------------------------------------ | ------------------------------------------------------------ |
+| [plans/TODO.md](plans/TODO.md)                         | Backlog of features and fixes, including the component tests |
+| [plans/SCRIPTS-OVERHAUL.md](plans/SCRIPTS-OVERHAUL.md) | Planned: moving `script/` onto SCRIPTS.md, in eight phases   |
 
 ## Assets
 

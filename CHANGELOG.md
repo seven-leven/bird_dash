@@ -17,6 +17,14 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: rules for the scripts and a plan to move them onto the rules. `docs/SCRIPTS.md`
+  sets out eight principles (a command is a verb with one job; changing the repository is never a
+  side effect; decide, then do, then say; one generator and one check per generated file; one home
+  for paths and I/O; one command shape; one voice) and the naming, from folders to variables, with a
+  fixed list of verbs. `docs/plans/SCRIPTS-OVERHAUL.md` is the roadmap: the target layout, every
+  rename, the npm scripts before and after, and eight phases, one pull request each. Phase 0 is
+  done: camelCase file names in `script/` too (DECISIONS.md's naming entry is rewritten), `ingest`
+  for taking in drawings, a local build that includes the docs, and no aliases for old command names
 - 2026-10-26 | docs: the docs site names no colour of its own. Its theme takes Tailwind's colour
   variables (the theme file alone; a contract test keeps Tailwind's preflight out, which would reset
   VitePress's headings, lists and tables) and the accent palettes, which move from `main.css` into
