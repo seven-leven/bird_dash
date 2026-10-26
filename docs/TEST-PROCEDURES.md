@@ -95,7 +95,7 @@ npm run check
 And if you touched the site itself:
 
 ```bash
-npm run build:vite
+npm run build
 ```
 
 All green means CI should be green too. If you changed a design token, an icon or the logo, also run

@@ -99,10 +99,10 @@ Do not edit these by hand; run the task that makes them.
 
 | Files                                   | Made by                | From                                 |
 | --------------------------------------- | ---------------------- | ------------------------------------ |
-| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run build:assets` | `raw_png/<id>/*.png`                 |
+| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run ingest`       | `raw_png/<id>/*.png`                 |
 | `placeholders/<id>[-dark].webp`         | `npm run placeholders` | the collection's `icon`              |
-| `drawn` dates on newly added items      | `npm run build:assets` | a new PNG whose item has no date yet |
-| `stats.json`                            | `npm run build:assets` | every `lists/<id>.json`              |
+| `drawn` dates on newly added items      | `npm run ingest`       | a new PNG whose item has no date yet |
+| `stats.json`                            | `npm run ingest`       | every `lists/<id>.json`              |
 
 ### `stats.json`
 
@@ -133,8 +133,8 @@ collection appears in it with no other change.
 
 - an item is marked drawn but its full or thumbnail image is missing;
 - an image exists for an item that is not marked drawn (an orphan);
-- a source PNG exists for an item that has no `drawn` date yet (run `build:assets`);
-- `stats.json` does not match the lists, as after a hand edit to a list (run `build:assets`).
+- a source PNG exists for an item that has no `drawn` date yet (run `npm run ingest`);
+- `stats.json` does not match the lists, as after a hand edit to a list (run `npm run ingest`).
 
 ## Recipes
 
@@ -143,7 +143,7 @@ collection appears in it with no other change.
 1. Save the PNG as `raw_png/<collection>/<id>.png`.
 2. Make sure the item exists in `public/lists/<collection>.json`. You can leave `drawn` out; the
    build dates it today.
-3. Run `npm run build:assets`, then `npm run check`.
+3. Run `npm run ingest` (`-- --dry-run` first shows what it will do), then `npm run check`.
 
 **Add an item that is not drawn yet:** add it to the list file with `id` and `name` and no `drawn`.
 
@@ -153,7 +153,7 @@ collection appears in it with no other change.
    `accent` from the menu in [DESIGN.md](DESIGN.md).
 2. Create `public/lists/<id>.json`.
 3. Run `npm run placeholders` to draw its two placeholder images.
-4. Add source art under `raw_png/<id>/` and run `npm run build:assets`.
+4. Add source art under `raw_png/<id>/` and run `npm run ingest`.
 
 **Add a new kind of information** (conservation status, season): add a string field to the items. It
 appears in the viewer and in search with no code change. Give it its own treatment later by adding

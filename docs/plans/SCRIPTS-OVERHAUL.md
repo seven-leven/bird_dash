@@ -1,9 +1,9 @@
 # Scripts overhaul
 
-> **Status:** planned 2026-10-26; phases 0 and 1 done (the rules; the foundation, with `version` on
-> it). Moves `script/` onto the rules in [SCRIPTS.md](../SCRIPTS.md), one pull request per phase.
-> Delete this page when phase 7 is done; the CHANGELOG keeps what happened, and SCRIPTS.md stays as
-> the rules.
+> **Status:** planned 2026-10-26; phases 0–2 done (the rules; the foundation, with `version` on it;
+> `ingest`). Moves `script/` onto the rules in [SCRIPTS.md](../SCRIPTS.md), one pull request per
+> phase. Delete this page when phase 7 is done; the CHANGELOG keeps what happened, and SCRIPTS.md
+> stays as the rules.
 
 ## Why
 
@@ -105,9 +105,13 @@ the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
       where `ingest` first needs them; starting a process (Vite) comes with phase 3. The list
       helpers were renamed on the way (`readList`, `eachDrawnItem`, `readDrawnIds`), as were
       `lineNames.ts` and the version's functions (`countCommits`, `formatVersionLine`, `Version`).
-- [ ] **2. Ingest.** Out of `build.ts` into `ingest/`, with the renames above; `npm run ingest`
+- [x] **2. Ingest.** Out of `build.ts` into `ingest/`, with the renames above; `npm run ingest`
       replaces `build:assets` and gains `--dry-run`. WORKFLOW.md and DATA.md's recipes change to
-      `ingest`. _Done when_ nothing under `build/` writes a tracked file.
+      `ingest`. _Done when_ nothing under `build/` writes a tracked file. _Done:_ `script/ingest/`
+      (`scanSources`, `planChanges`, `applyChanges`, `transcodeImages`, `formatIngestReport`,
+      `ingest`); `build` is the site alone until phase 3 adds the docs, and `build:vite` went with
+      `build:assets`. `collection_stats.ts` moved onto `Io` but stays in `build/` until phase 4, and
+      the check's report (`printCheckReport.ts`) until phase 5. `paths.raw` is `paths.sourceArt`.
 - [ ] **3. Build stages.** `build/build.ts` runs a list of stages (`site`, `docs`), all by default
       or the ones named (`npm run build -- docs`); one helper starts Vite and VitePress with this
       Node. `build` now includes the docs; `verify.yml` calls `npm run build`. _Done when_ a local

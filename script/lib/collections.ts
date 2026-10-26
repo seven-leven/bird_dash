@@ -7,7 +7,7 @@ import { PATHS } from './paths.ts';
 
 export interface CollectionPaths {
   json: string; // public/lists/{id}.json
-  raw: string; // raw_png/{id}/
+  sourceArt: string; // raw_png/{id}/
   full: string; // public/full/{id}/
   thumb: string; // public/thumb/{id}/
   placeholder: string; // public/placeholders/{id}.webp
@@ -32,7 +32,7 @@ export const COLLECTIONS: Collection[] = RAW_COLLECTIONS.map((c) => ({
   emoji: c.emoji,
   paths: {
     json: PATHS.list(c.id),
-    raw: PATHS.sourceArt(c.id),
+    sourceArt: PATHS.sourceArt(c.id),
     full: PATHS.full(c.id),
     thumb: PATHS.thumb(c.id),
     placeholder: PATHS.placeholder(c.id, 'light'),

@@ -13,8 +13,8 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
       │                                        │
       ▼                                        ▼
 ┌─ 1. Asset pipeline (script/) ───────────────────────────────┐
-│ build/: scan_sources (read disk) → plan_changes (pure maths)│
-│   → apply_changes (sharp, write JSON) → print_build_summary │
+│ ingest/: scanSources (read disk) → planChanges (pure maths) │
+│   → applyChanges (sharp, write JSON) → formatIngestReport   │
 │ version/ · changelog/ · placeholders/ · design/ · lib/      │
 └───────────────┬─────────────────────────────────────────────┘
                 ▼
@@ -142,14 +142,15 @@ ids apart.
 
 ## The asset pipeline
 
-`npm run build:assets` runs four steps per collection:
+`npm run ingest` runs four steps per collection (it changes files git tracks, so it runs on your
+machine, never in CI):
 
-| Step        | File                                  | Does                                                           |
-| ----------- | ------------------------------------- | -------------------------------------------------------------- |
-| **Scan**    | `script/build/scan_sources.ts`        | Reads the list file and the three image folders, once          |
-| **Plan**    | `script/build/plan_changes.ts`        | Pure set arithmetic: what to register, transcode, or flag      |
-| **Execute** | `script/build/apply_changes.ts`       | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
-| **Report**  | `script/build/print_build_summary.ts` | Prints the summary                                             |
+| Step       | File                                  | Does                                                           |
+| ---------- | ------------------------------------- | -------------------------------------------------------------- |
+| **Scan**   | `script/ingest/scanSources.ts`        | Reads the list file and the three image folders, once          |
+| **Plan**   | `script/ingest/planChanges.ts`        | Pure set arithmetic: what to register, transcode, or flag      |
+| **Apply**  | `script/ingest/applyChanges.ts`       | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
+| **Report** | `script/ingest/formatIngestReport.ts` | The warnings, each step, the summary                           |
 
 Keeping the plan pure is what makes it testable without touching the disk. `npm run check` runs scan
 and plan only, and fails if anything is missing or orphaned.

@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | scripts: taking in new drawings is its own command, `npm run ingest` (phase 2 of the
+  scripts overhaul), in `script/ingest/`. Its first line says it changes files git tracks, and `--
+  --dry-run` says what it would do and changes nothing. `npm run build` now only builds the site
+  from what is committed and never writes a tracked file; `build:assets` and `build:vite` are gone.
+  Ingest runs on `Io`, so its tests use a fake repository and a stand-in for sharp, with one real
+  end-to-end test on tiny images. The words follow the glossary: source art, register, make, repair
 - 2026-10-26 | scripts: the foundation every command will share (phase 1 of the scripts overhaul).
   `script/lib/paths.ts` is the one place a path is written out, `project.ts` the repository and site
   URLs, `io.ts` the one way to files, git, the environment, the clock and the console (with
