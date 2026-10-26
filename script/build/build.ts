@@ -15,7 +15,7 @@ import { blockingIssues, planWork } from './plan_changes.ts';
 import { executeWork } from './apply_changes.ts';
 import { STATS_PATH, statsAreCurrent, writeStats } from './collection_stats.ts';
 import { printCheckReport, printSummary, reportWarnings } from './print_build_summary.ts';
-import { computeVersion, describeVersion } from '../version/version.ts';
+import { computeVersion, formatVersionLine } from '../version/version.ts';
 import { errorMessage } from '../lib/error.ts';
 import type { CollectionSummary } from './print_build_summary.ts';
 
@@ -45,7 +45,7 @@ export async function buildAssets(
 
   const version = await computeVersion();
 
-  printSummary(summaries, describeVersion(version), Date.now() - start);
+  printSummary(summaries, formatVersionLine(version), Date.now() - start);
 
   const failed = summaries.flatMap((s) =>
     s.result.failed.map((f) => `${s.col.id}/${f.id}: ${f.reason}`)
@@ -107,7 +107,7 @@ export async function checkIntegrity(
     rows.push({ col, state, plan });
   }
 
-  printCheckReport(rows, describeVersion(version));
+  printCheckReport(rows, formatVersionLine(version));
   // A list changed without a build would leave the published numbers wrong.
   const statsCurrent = await statsAreCurrent(collections, statsPath);
   console.log(

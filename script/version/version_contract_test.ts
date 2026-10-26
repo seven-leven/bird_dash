@@ -1,132 +1,45 @@
 import { test } from 'vitest';
-import { assert, assertEquals, assertMatch, assertRejects } from '@std/assert';
-import { cli, computeVersion, getCommitCount, getDrawnIds, VERSION_FILE } from './version.ts';
-import { git } from '../lib/git.ts';
-import { readJson } from '../lib/fs.ts';
+import { assert, assertEquals, assertMatch } from '@std/assert';
+import { computeVersion, countCommits, countDrawn, main } from './version.ts';
+import { readJson, realIo } from '../lib/io.ts';
+import { PATHS } from '../lib/paths.ts';
 import { COLLECTIONS } from '../lib/collections.ts';
+import { readDrawnIds } from '../lib/lists.ts';
+import { fakeIo } from '../lib/fakeIo.ts';
 
 // These run against the real repository: git history and the files in public/.
 
-test('git: returns trimmed output for a command that succeeds', async () => {
-  assertEquals(await git('rev-parse', '--is-inside-work-tree'), 'true');
+test('git answers with its trimmed output, and a failing command names itself', async () => {
+  assertEquals(await realIo.git('rev-parse', '--is-inside-work-tree'), 'true');
+  const failed = await realIo.git('rev-parse', '--verify', 'refs/heads/no-such-branch-here')
+    .catch((err: Error) => err.message);
+  assert(String(failed).startsWith('git rev-parse --verify refs/heads/no-such-branch-here failed'));
 });
 
-test('git: a failing command rejects and names the command', async () => {
-  await assertRejects(
-    () => git('rev-parse', '--verify', 'refs/heads/no-such-branch-here'),
-    Error,
-    'git rev-parse --verify refs/heads/no-such-branch-here failed',
-  );
+test("this repository's version: base_version.json, then git's count and commit", async () => {
+  const stored = await readJson<{ major: number; minor: number }>(realIo, PATHS.baseVersion);
+  const version = await computeVersion();
+  assertEquals([version.major, version.minor], [stored.major, stored.minor]);
+  assertEquals(version.patch, await countCommits(realIo));
+  assert(version.patch > 0, 'the repository has commits');
+  assertMatch(version.commit, /^[0-9a-f]{7}$/);
+  assert(version.name, 'the lists name the current line');
 });
 
-test('computeVersion: major.minor from base_version.json, patch and commit from git', async () => {
-  const stored = await readJson<{ major: number; minor: number }>(VERSION_FILE);
-  const v = await computeVersion();
-  assertEquals([v.major, v.minor], [stored.major, stored.minor]);
-  assertEquals(v.patch, await getCommitCount());
-  assert(v.patch > 0, 'the repository has commits');
-  assertMatch(v.commit, /^[0-9a-f]{7}$/);
-});
-
-test('computeVersion: the drawn count is the drawn items across every collection', async () => {
-  const all = await getDrawnIds();
-  assertEquals((await computeVersion()).drawn, all.size);
-
+test('the drawn count is every collection’s drawn items added up', async () => {
   let sum = 0;
-  for (const col of COLLECTIONS) {
-    const ids = await getDrawnIds(col.id);
-    for (const id of ids) assert(id.startsWith(`${col.id}/`), `${id} is not namespaced`);
-    sum += ids.size;
-  }
-  assertEquals(sum, all.size, 'per-collection counts add up to the total');
+  for (const collection of COLLECTIONS) sum += (await readDrawnIds(collection)).size;
+  assertEquals(await countDrawn(realIo), sum);
+  assertEquals((await computeVersion()).drawn, sum);
 });
 
-test('getDrawnIds: an unknown collection has no drawn items', async () => {
-  assertEquals((await getDrawnIds('no-such-collection')).size, 0);
-});
-
-// ── Without git (a zip download, a broken checkout) ──
-
-const noGit = () => Promise.reject(new Error('git: command not found\nmore detail'));
-
-/** Run `fn` with the CI variable set or unset, restoring it afterwards. */
-async function withCi(value: string | undefined, fn: () => Promise<void>): Promise<void> {
-  const before = process.env.CI;
-  if (value === undefined) delete process.env.CI;
-  else process.env.CI = value;
-  try {
-    await fn();
-  } finally {
-    if (before === undefined) delete process.env.CI;
-    else process.env.CI = before;
-  }
-}
-
-test('computeVersion: strict mode fails without git instead of inventing a version', () =>
-  withCi(undefined, async () => {
-    await assertRejects(() => computeVersion({ git: noGit }), Error, 'git: command not found');
-  }));
-
-test('computeVersion: lenient mode falls back to patch 0 / "unknown", with a warning', () =>
-  withCi(undefined, async () => {
-    const warnings: string[] = [];
-    const warn = console.warn;
-    console.warn = (msg: string) => warnings.push(msg);
-    try {
-      const v = await computeVersion({ lenient: true, git: noGit });
-      assertEquals([v.patch, v.commit], [0, 'unknown']);
-      assertEquals(v.drawn, (await getDrawnIds()).size, 'the drawing count does not need git');
-    } finally {
-      console.warn = warn;
-    }
-    assertEquals(warnings.length, 1);
-    assert(warnings[0].includes('git: command not found'));
-    assert(!warnings[0].includes('more detail'), 'only the first line of the error is shown');
-  }));
-
-test('computeVersion: in CI even lenient mode fails, so a deploy never ships a made-up version', () =>
-  withCi('true', async () => {
-    await assertRejects(() => computeVersion({ lenient: true, git: noGit }), Error);
-  }));
-
-// ── the command, and a collection whose list file is not there yet ──
-
-test('cli prints major.minor.patch, and with --long the line name, drawings and commit too', async () => {
-  const short = await cli([]);
-  assertMatch(short, /^\d+\.\d+\.\d+$/);
-
+test('the command prints this repository’s version, named, with --long', async () => {
+  // The real repository, with the output kept for the test instead of printed.
+  const output = fakeIo();
+  assertEquals(await main(['--long'], { ...realIo, out: output.out, err: output.err }), 0);
   const { name } = await computeVersion();
-  assert(name, 'the lists name the current line');
-  const long = await cli(['--long']);
-  assert(
-    long.startsWith(`${short} ${name.roman} · `),
-    `"${long}" should start with the named version`,
+  assertMatch(
+    output.outLines[0],
+    new RegExp(`^\\d+\\.\\d+\\.\\d+ ${name!.roman} · \\d+ drawings? · [0-9a-f]{7}$`),
   );
-  assertMatch(long, / · \d+ drawings? · [0-9a-f]{7}$/);
-});
-
-test('cli fails, rather than printing a made-up version, when git is unavailable', () =>
-  withCi(undefined, async () => {
-    await assertRejects(() => cli([], { git: noGit }), Error, 'git: command not found');
-  }));
-
-test('getDrawnIds skips a collection whose list file does not exist yet', async () => {
-  const missing = {
-    id: 'ghosts',
-    label: 'Ghosts',
-    emoji: '',
-    paths: {
-      json: './public/lists/no-such-list.json',
-      raw: '',
-      full: '',
-      thumb: '',
-      placeholder: '',
-      placeholderDark: '',
-    },
-  };
-  assertEquals((await getDrawnIds(undefined, [missing])).size, 0);
-
-  // A real collection next to it still counts.
-  const withReal = await getDrawnIds(undefined, [missing, COLLECTIONS[0]]);
-  assertEquals(withReal.size, (await getDrawnIds(COLLECTIONS[0].id)).size);
 });

@@ -1,8 +1,9 @@
 # Scripts overhaul
 
-> **Status:** planned 2026-10-26; phase 0 done (the rules and the decisions). Moves `script/` onto
-> the rules in [SCRIPTS.md](../SCRIPTS.md), one pull request per phase. Delete this page when phase
-> 7 is done; the CHANGELOG keeps what happened, and SCRIPTS.md stays as the rules.
+> **Status:** planned 2026-10-26; phases 0 and 1 done (the rules; the foundation, with `version` on
+> it). Moves `script/` onto the rules in [SCRIPTS.md](../SCRIPTS.md), one pull request per phase.
+> Delete this page when phase 7 is done; the CHANGELOG keeps what happened, and SCRIPTS.md stays as
+> the rules.
 
 ## Why
 
@@ -95,11 +96,15 @@ the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
 - [x] **0. Agree the rules.** Settle the decisions above; adjust SCRIPTS.md to match; add a
       DECISIONS.md entry ("ingest changes the repository, build does not"). Link SCRIPTS.md from
       ARCHITECTURE.md and the docs site's sidebar. _Done when_ the rules are merged.
-- [ ] **1. Foundation.** `lib/paths.ts`, `lib/project.ts`, `lib/io.ts` (one `Io`: files, git,
+- [x] **1. Foundation.** `lib/paths.ts`, `lib/project.ts`, `lib/io.ts` (one `Io`: files, git,
       processes, clock, console; `realIo` and a `fakeIo` in `src/testing/` or `script/lib/`) and
       `lib/cli.ts` (`main` runner, reporter, exit codes, `--dry-run`/`--verbose`/`--help`). Move
       `version` onto them as the pilot. _Done when_ `npm run version` runs through `lib/cli.ts` and
-      no path in `version/` is written out.
+      no path in `version/` is written out. _Done:_ `fakeIo` is in `script/lib/`; `cli.ts` has the
+      arguments, the exit codes and `--help`, and the reporter and `--dry-run` come with phase 2,
+      where `ingest` first needs them; starting a process (Vite) comes with phase 3. The list
+      helpers were renamed on the way (`readList`, `eachDrawnItem`, `readDrawnIds`), as were
+      `lineNames.ts` and the version's functions (`countCommits`, `formatVersionLine`, `Version`).
 - [ ] **2. Ingest.** Out of `build.ts` into `ingest/`, with the renames above; `npm run ingest`
       replaces `build:assets` and gains `--dry-run`. WORKFLOW.md and DATA.md's recipes change to
       `ingest`. _Done when_ nothing under `build/` writes a tracked file.

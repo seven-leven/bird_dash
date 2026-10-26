@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | scripts: the foundation every command will share (phase 1 of the scripts overhaul).
+  `script/lib/paths.ts` is the one place a path is written out, `project.ts` the repository and site
+  URLs, `io.ts` the one way to files, git, the environment, the clock and the console (with
+  `fakeIo.ts` for tests), and `cli.ts` the arguments, the exit codes (0 done, 1 a problem, 2 wrong
+  usage) and `--help`. `npm run version` is the first command on it: an option it does not take now
+  exits 2 with its usage instead of being ignored, and a missing git is one `✗` line instead of a
+  stack trace. Its tests no longer touch the repository, except the contract test that should
 - 2026-10-26 | docs: a plan for the tests, top down (`docs/plans/TEST-OVERHAUL.md`). The tests were
   written bottom up, a file at a time; the plan starts from the site's promises, proves each visit
   through the whole app in new journey tests, then features, units and contracts, and gives them one

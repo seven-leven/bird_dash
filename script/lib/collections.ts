@@ -1,4 +1,5 @@
 import RAW_COLLECTIONS from '../../public/collections.json' with { type: 'json' };
+import { PATHS } from './paths.ts';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,11 +31,11 @@ export const COLLECTIONS: Collection[] = RAW_COLLECTIONS.map((c) => ({
   label: c.label,
   emoji: c.emoji,
   paths: {
-    json: `./public/lists/${c.id}.json`,
-    raw: `./raw_png/${c.id}/`,
-    full: `./public/full/${c.id}/`,
-    thumb: `./public/thumb/${c.id}/`,
-    placeholder: `./public/placeholders/${c.id}.webp`,
-    placeholderDark: `./public/placeholders/${c.id}-dark.webp`,
+    json: PATHS.list(c.id),
+    raw: PATHS.sourceArt(c.id),
+    full: PATHS.full(c.id),
+    thumb: PATHS.thumb(c.id),
+    placeholder: PATHS.placeholder(c.id, 'light'),
+    placeholderDark: PATHS.placeholder(c.id, 'dark'),
   },
 }));

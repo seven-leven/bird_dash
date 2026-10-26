@@ -154,6 +154,15 @@ its text, roles and labels, what a click or a key does, what it emits. See
 - A component a test loads counts toward coverage at once, so cover every branch of its template
   (both sides of each `v-if` and `:class` choice).
 
+### Script tests
+
+A command's `main(args, io)` takes an `Io` ([`script/lib/io.ts`](../script/lib/io.ts)); a test
+passes `fakeIo({ files, git, env, now })` ([`script/lib/fakeIo.ts`](../script/lib/fakeIo.ts)) and
+reads what the command wrote (`io.files`) and printed (`io.outLines`, `io.errLines`). Nothing
+touches the disk, git or the console. A contract test runs against the real repository instead
+(`realIo`). Commands move onto `Io` one at a time
+([plans/SCRIPTS-OVERHAUL.md](plans/SCRIPTS-OVERHAUL.md)); `version` is the first.
+
 ### Property tests
 
 ```ts

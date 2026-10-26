@@ -1,13 +1,11 @@
 import { test } from 'vitest';
-import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { assertEquals } from '@std/assert';
-import { forEachDrawn, loadDrawnIds, markDrawn } from './lists.ts';
+import { eachDrawnItem, markDrawn, readDrawnIds, readList } from './lists.ts';
+import { fakeIo } from './fakeIo.ts';
 import type { Collection } from './collections.ts';
 import type { RawCollectionData } from '../../src/types/data.ts';
 
-const data: RawCollectionData = {
+const list: RawCollectionData = {
   Ducks: [
     { id: '001', name: 'Mallard', drawn: '2025-01-01' },
     { id: '002', name: 'Garganey' }, // undrawn
@@ -17,56 +15,43 @@ const data: RawCollectionData = {
   ],
 };
 
-test('forEachDrawn visits only drawn items, across all groups', () => {
-  const seen: string[] = [];
-  forEachDrawn(data, (item) => seen.push(item.id));
-  assertEquals(seen, ['001', '003']);
+const birds = { id: 'birds', paths: { json: './public/lists/birds.json' } } as Collection;
+const withList = () => fakeIo({ files: { [birds.paths.json]: JSON.stringify(list) } });
+const saved = (io: ReturnType<typeof fakeIo>): RawCollectionData =>
+  JSON.parse(io.files.get(birds.paths.json)!);
+
+test('the drawn items are every dated item, across all groups, in list order', () => {
+  assertEquals(eachDrawnItem(list).map((item) => item.name), ['Mallard', 'Greylag']);
 });
 
-test('forEachDrawn passes the full item to the callback', () => {
-  const names: string[] = [];
-  forEachDrawn(data, (item) => names.push(item.name));
-  assertEquals(names, ['Mallard', 'Greylag']);
+test('a list is read from the collection file, and its drawn ids with it', async () => {
+  const io = withList();
+  assertEquals(await readList(birds, io), list);
+  assertEquals([...await readDrawnIds(birds, io)], ['001', '003']);
 });
 
-/** A collection whose list file lives in a temporary directory. */
-async function withList(
-  data: RawCollectionData,
-  fn: (col: Collection, read: () => Promise<RawCollectionData>) => Promise<void>,
-): Promise<void> {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_record_'));
-  const json = `${dir}/list.json`;
-  const col: Collection = {
-    id: 'x',
-    label: 'X',
-    emoji: '',
-    paths: { json, raw: '', full: '', thumb: '', placeholder: '', placeholderDark: '' },
-  };
-  try {
-    await writeFile(json, JSON.stringify(data));
-    await fn(col, async () => JSON.parse(await readFile(json, 'utf8')));
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-}
+test('marking an undrawn item dates it, saves the file and gives its name', async () => {
+  const io = withList();
+  assertEquals(await markDrawn(birds, '002', '2025-06-01', io), 'Garganey');
+  assertEquals(saved(io).Ducks[1].drawn, '2025-06-01');
+  assertEquals(saved(io).Ducks[0].drawn, '2025-01-01', 'other items are untouched');
+  assertEquals(
+    io.files.get(birds.paths.json)!.endsWith('}\n'),
+    true,
+    'kept as the repo keeps JSON',
+  );
+});
 
-test('markDrawn dates an undrawn item, saves the file and returns its name', () =>
-  withList(data, async (col, read) => {
-    assertEquals(await markDrawn(col, '002', '2025-06-01'), 'Garganey');
-    const saved = await read();
-    assertEquals(saved.Ducks[1].drawn, '2025-06-01');
-    assertEquals(saved.Ducks[0].drawn, '2025-01-01', 'other items are untouched');
-    assertEquals([...await loadDrawnIds(col)].sort(), ['001', '002', '003']);
-  }));
+test('an item already drawn keeps its date, and nothing is written', async () => {
+  const io = withList();
+  const before = io.files.get(birds.paths.json);
+  assertEquals(await markDrawn(birds, '001', '2030-01-01', io), 'Mallard');
+  assertEquals(io.files.get(birds.paths.json), before);
+});
 
-test('markDrawn keeps the original date of an item that is already drawn', () =>
-  withList(data, async (col, read) => {
-    assertEquals(await markDrawn(col, '001', '2030-01-01'), 'Mallard');
-    assertEquals((await read()).Ducks[0].drawn, '2025-01-01');
-  }));
-
-test('markDrawn returns null for an id that is not in the list', () =>
-  withList(data, async (col, read) => {
-    assertEquals(await markDrawn(col, '999', '2025-06-01'), null);
-    assertEquals(await read(), data);
-  }));
+test('an id not in the list gives null and writes nothing', async () => {
+  const io = withList();
+  const before = io.files.get(birds.paths.json);
+  assertEquals(await markDrawn(birds, '999', '2025-06-01', io), null);
+  assertEquals(io.files.get(birds.paths.json), before);
+});

@@ -3,7 +3,8 @@
 // Markdown stays the source of truth, written for GitHub first.
 import { defineConfig } from 'vitepress';
 import tailwindcss from '@tailwindcss/vite';
-import { githubLinks, githubSlug, REPO_URL } from '../../script/docs/links.ts';
+import { githubLinks, githubSlug } from '../../script/docs/links.ts';
+import { REPO_URL } from '../../script/lib/project.ts';
 import { liveBlocks } from '../../script/docs/live_blocks.ts';
 
 export default defineConfig({

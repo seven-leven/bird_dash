@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, assertEquals, assertMatch } from '@std/assert';
 import { fileIo, run, unloggedCommits } from './changelog.ts';
-import { lineName, loadLineNames } from '../version/line_names.ts';
+import { lineName, readLineNames } from '../version/lineNames.ts';
 
 // Runs against the real repository's history.
 test('unloggedCommits returns dated, non-merge commits (possibly none)', async () => {
@@ -46,7 +46,7 @@ test('a dry run against the real repository never touches CHANGELOG.md', async (
 
 test("every line's heading carries its name, the Dhivehi name the drawings give it", async () => {
   const changelog = await readFile('./CHANGELOG.md', 'utf8');
-  const names = await loadLineNames();
+  const names = await readLineNames();
   const headings = [...changelog.matchAll(/^## v(\d+)\.(\d+)\.0 (.+?) \(/gm)];
   assert(headings.length > 0, 'CHANGELOG.md has line headings');
   assertEquals(

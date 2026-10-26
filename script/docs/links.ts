@@ -3,7 +3,7 @@
 // anchors, so `TESTING.md#3-tiers` lands on the same heading on GitHub and on the site.
 import { posix } from 'node:path';
 
-export const REPO_URL = 'https://github.com/seven-leven/bird_dash';
+import { REPO_URL } from '../lib/project.ts';
 
 /** Whether an href points somewhere else entirely: a URL, a mail link, an anchor on this page. */
 const isExternal = (href: string) => /^([a-z][a-z0-9+.-]*:|\/\/|#|\/)/i.test(href);

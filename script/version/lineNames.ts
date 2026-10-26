@@ -14,7 +14,8 @@
  * changelog's contract test (its headings carry the names) says so.
  */
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
-import { forEachDrawn, loadCollectionData } from '../lib/lists.ts';
+import { eachDrawnItem, readList } from '../lib/lists.ts';
+import { type Io, realIo } from '../lib/io.ts';
 import { dhivehiNames } from '../../src/lib/dhivehiNames.ts';
 import type { RawCollectionData, RawItem } from '../../src/types/data.ts';
 
@@ -27,10 +28,12 @@ export interface LineName {
   species: string;
 }
 
-/** Every line name the lists give, in order (pure; `loadLineNames` reads the lists). */
+/** Every line name the lists give, in order (pure; `readLineNames` reads the lists). */
 export function lineNames(lists: { id: string; data: RawCollectionData }[]): LineName[] {
   const drawn: { order: number; item: RawItem }[] = [];
-  lists.forEach(({ data }, order) => forEachDrawn(data, (item) => drawn.push({ order, item })));
+  lists.forEach(({ data }, order) => {
+    for (const item of eachDrawnItem(data)) drawn.push({ order, item });
+  });
   drawn.sort((a, b) =>
     a.item.drawn!.localeCompare(b.item.drawn!) || a.order - b.order ||
     a.item.id.localeCompare(b.item.id)
@@ -47,10 +50,14 @@ export function lineNames(lists: { id: string; data: RawCollectionData }[]): Lin
   return names;
 }
 
-export async function loadLineNames(collections: Collection[] = COLLECTIONS): Promise<LineName[]> {
-  const lists = await Promise.all(collections.map(async (c) => ({
-    id: c.id,
-    data: await loadCollectionData(c).catch(() => ({})), // a list not written yet
+/** Every line name, from the lists as they are on disk. */
+export async function readLineNames(
+  io: Io = realIo,
+  collections: Collection[] = COLLECTIONS,
+): Promise<LineName[]> {
+  const lists = await Promise.all(collections.map(async (collection) => ({
+    id: collection.id,
+    data: await readList(collection, io).catch(() => ({})), // a list not written yet
   })));
   return lineNames(lists);
 }

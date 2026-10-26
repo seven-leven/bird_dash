@@ -1,6 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { githubHref, githubLinks, githubSlug, REPO_URL } from './links.ts';
+import { githubHref, githubLinks, githubSlug } from './links.ts';
+import { REPO_URL } from '../lib/project.ts';
 import { liveBlocks, liveNames } from './live_blocks.ts';
 import { accentHues, missingSteps, STEPS } from './accents.ts';
 
