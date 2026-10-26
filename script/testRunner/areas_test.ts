@@ -3,8 +3,8 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import {
   areaOf,
   AREAS,
-  formatAreasConsole,
   formatAreasMarkdown,
+  formatAreasText,
   summarizeAreas,
   untestedFiles,
 } from './areas.ts';
@@ -31,7 +31,7 @@ test('areaOf places a file by its path, whatever the slashes', () => {
   assertEquals(areaOf('./src/composables/ui/useLightbox.ts')?.id, 'interface');
   assertEquals(areaOf('script/build/plan_changes.ts')?.id, 'pipeline');
   assertEquals(areaOf('script/changelog/changelog.ts')?.id, 'release');
-  assertEquals(areaOf('script/test_runner/run_tests.ts')?.id, 'tooling');
+  assertEquals(areaOf('script/testRunner/runTests.ts')?.id, 'tooling');
   assertEquals(areaOf('somewhere/else.ts'), undefined);
 });
 
@@ -71,11 +71,11 @@ test('summarizeAreas adds coverage per area and lists files no test loaded', () 
 });
 
 test('the console table shows coverage columns only when coverage was measured', () => {
-  const plain = formatAreasConsole(summarizeAreas([testCase('src/lib/a_test.ts')]));
+  const plain = formatAreasText(summarizeAreas([testCase('src/lib/a_test.ts')]));
   assert(!plain.includes('lines'));
   assertStringIncludes(plain, '– no tests'); // areas with nothing are called out
 
-  const withCov = formatAreasConsole(
+  const withCov = formatAreasText(
     summarizeAreas([testCase('src/lib/a_test.ts', 'x')], {
       coverage: [cov('src/lib/a.ts', 9, 10)],
       sources: ['src/lib/a.ts', 'src/lib/never.ts'],
@@ -120,7 +120,7 @@ test('with coverage but no source list, nothing is reported unloaded', () => {
   });
   assertEquals(untestedFiles(rows), []);
   // An area whose loaded files have no lines shows a dash, not 0% or NaN.
-  assertStringIncludes(formatAreasConsole(rows), '—');
+  assertStringIncludes(formatAreasText(rows), '—');
 });
 
 test('the longest matching prefix wins: the icon registry is interface, the rest of lib/ is data', () => {

@@ -29,7 +29,7 @@ and then Vitest's full output, with the diff and the failing line. The tests run
 ## Tiers
 
 Tests sit next to the code they cover, and **the file name decides the tier**.
-[`script/test_runner/tiers.ts`](../script/test_runner/tiers.ts) is the one place that maps names to
+[`script/testRunner/tiers.ts`](../script/testRunner/tiers.ts) is the one place that maps names to
 tiers.
 
 | Tier       | File name            | Use it for                                               | Helper                                       |
@@ -55,8 +55,7 @@ The helpers are in [`src/testing/`](../src/testing/).
 ## Areas
 
 Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
-belongs to one area, by its folder
-([`script/test_runner/areas.ts`](../script/test_runner/areas.ts)):
+belongs to one area, by its folder ([`script/testRunner/areas.ts`](../script/testRunner/areas.ts)):
 
 | Area                          | Folders                                                                           | Protects                                                |
 | ----------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------- |
@@ -65,7 +64,7 @@ belongs to one area, by its folder
 | Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`     | The lightbox, scroll-spy, icons and logo                |
 | Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders             | Ingest, the integrity check, the files in `public/`     |
 | Version and changelog         | `script/version`, `script/changelog`                                              | The version in the footer, the changelog task           |
-| Test harness and docs tooling | `script/test_runner`, `script/generate`, `script/docs`                            | The runner and its reports, guide images, the docs site |
+| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                             | The runner and its reports, guide images, the docs site |
 
 When two areas' folders overlap, the longer path wins: `src/lib/icons.ts` is interface, the rest of
 `src/lib` is data.

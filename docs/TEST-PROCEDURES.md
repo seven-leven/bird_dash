@@ -266,10 +266,10 @@ Helpers are in `src/testing/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`
 Every source file must belong to an **area**, or the suite fails with:
 
 ```
-add these to an area in script/test_runner/areas.ts so they show up in the report
+add these to an area in script/testRunner/areas.ts so they show up in the report
 ```
 
-1. Open [`script/test_runner/areas.ts`](../script/test_runner/areas.ts).
+1. Open [`script/testRunner/areas.ts`](../script/testRunner/areas.ts).
 2. Add the folder's path to the `paths` of the area it belongs to, or add a new area (`id`, `label`,
    `protects`, `paths`) if it is a new part of the project.
 3. If you added an area, add its row to the table in [TESTING.md](TESTING.md).
@@ -305,8 +305,8 @@ a failed job: **Re-run failed jobs** on the run's page.
 
 ## 13. Runner reference
 
-`npm test` runs [`script/test_runner/run_tests.ts`](../script/test_runner/run_tests.ts). Tier names
-and flags go after a `--`: `npm test -- unit --verbose`.
+`npm test` runs [`script/testRunner/runTests.ts`](../script/testRunner/runTests.ts). Tier names and
+flags go after a `--`: `npm test -- unit --verbose`.
 
 | Argument or flag   | Effect                                                            |
 | ------------------ | ----------------------------------------------------------------- |
@@ -336,7 +336,7 @@ Output files, all in `test-results/` (ignored by git): `report.md` and, in CI, `
 
 ## 14. How the runner works
 
-Useful when you need to change it. Each step is one module in `script/test_runner/`, with its own
+Useful when you need to change it. Each step is one module in `script/testRunner/`, with its own
 tests.
 
 1. **Find the tests** (`tiers.ts`): walk `src/` and `script/` for `*_test.ts`.
@@ -344,7 +344,7 @@ tests.
 3. **Run them once** with `vitest run`, each file in its own process, asking for a JUnit file (and
    an LCOV coverage file with `--coverage`). Vitest's own output is captured, not shown.
 4. **Read the results** (`junit.ts`) into a list of tests with file, time and failure message.
-5. **Summarise by tier** (`test_summary.ts`) and **by area** (`areas.ts`), and print both tables. On
+5. **Summarise by tier** (`testSummary.ts`) and **by area** (`areas.ts`), and print both tables. On
    a failure, print the failures first and then Vitest's captured output.
 6. **Coverage** (`coverage.ts`): read the LCOV file into per-file numbers, compare the total with
    floors, and work out which source files no test loaded.

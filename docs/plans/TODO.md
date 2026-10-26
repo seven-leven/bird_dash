@@ -199,6 +199,6 @@ page cheap.
   - How: see `ItemTile_dom_test.ts` — a `// @vitest-environment happy-dom` line, then mount with
     Vue's `createApp` (Vitest compiles `.vue` files as the build does). Test what a visitor sees and
     does (text, ARIA state, clicks, emitted events), not the markup.
-  - Keep the 100% floors: add `.vue` files to `discoverSources` (`script/test_runner/areas.ts`) one
+  - Keep the 100% floors: add `.vue` files to `discoverSources` (`script/testRunner/areas.ts`) one
     folder at a time, together with that folder's tests, so the untested-files gate and the floors
     cover each component the moment it has tests.

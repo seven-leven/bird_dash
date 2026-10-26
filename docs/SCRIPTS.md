@@ -73,15 +73,22 @@ repository except a contract test, on purpose. There is one `Io` type for all co
 ### 7. Every command has the same shape
 
 ```ts
-/** What the command does, in one line. */
-export async function main(args: string[], io: Io = realIo): Promise<number> {
+const USAGE = `npm run thing [-- --dry-run]
+  What the command does, in a line or two.`;
+
+/** `npm run thing`: what it does, in one line. */
+export const main = command(USAGE, async (args, io) => {
   // parse args → read → plan → (apply) → report
-}
+});
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */
 if (import.meta.main) process.exit(await main(process.argv.slice(2)));
 ```
+
+`command` (`script/lib/cli.ts`) gives every `main` the same `(args, io = realIo, options?)` and
+turns what the work does into an exit code: `--help` prints the usage, wrong arguments exit 2,
+anything thrown is one `✗` line and exit 1.
 
 Exit codes mean the same everywhere: `0` done, `1` the work found a problem (a failed check, a
 failed image), `2` the command was used wrongly (an unknown flag). Shared flags mean the same
@@ -121,8 +128,22 @@ file and says what to run to fix it: `✗ public/stats.json is stale: run npm ru
 | `count`          | A number                                                  | `countCommits`           |
 | `draw`           | An image (SVG markup or pixels), returned                 | `drawPlaceholder`        |
 
+Two more kinds of name:
+
+- **A command's own verb** names the function that does its work: `ingestDrawings`, `buildStages`,
+  `generate…`, `checkRepository`, `writeChangelog`.
+- **A function that makes something is named for what it makes**, as a noun: `command(usage, work)`
+  makes a command's `main`, `fakeIo()` makes an `Io`.
+
 Never `get`, `do`, `handle`, `process`, `run` or `execute`: they say that something happens, not
-what. `main` is the one exception, the entry of a command.
+what. `main` is the one exception, the entry of a command, made with `command`:
+
+```ts
+export const main = command(USAGE, async (args, io) => {
+  const { flags } = parseArgs(args, ['--dry-run']);
+  // read → plan → (apply) → report
+});
+```
 
 ### Values and types
 
@@ -155,4 +176,4 @@ lines saying what it is for. A `c8 ignore` always says why the line cannot run i
 - [ ] Does every path come from `lib/paths.ts`, and every outside effect go through `io`?
 - [ ] Do the names follow the tables above, verbs included?
 - [ ] Does `--dry-run` change nothing?
-- [ ] Is the command in WORKFLOW.md's table, and in an area in `script/test_runner/areas.ts`?
+- [ ] Is the command in WORKFLOW.md's table, and in an area in `script/testRunner/areas.ts`?

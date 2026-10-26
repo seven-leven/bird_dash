@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import type { TestCase } from './junit.ts';
-import { annotations, formatConsole, formatMarkdown, summarize } from './test_summary.ts';
+import { annotations, formatTiersMarkdown, formatTiersText, summarize } from './testSummary.ts';
 
 const t = (file: string, name: string, time = 0.001, failure?: string): TestCase => ({
   name,
@@ -35,14 +35,14 @@ test('summarize reports the slowest tests first', () => {
 });
 
 test('the console summary is short when everything passes', () => {
-  const out = formatConsole(summarize(cases.filter((c) => !c.failure)));
+  const out = formatTiersText(summarize(cases.filter((c) => !c.failure)));
   assertStringIncludes(out, 'all passing');
   assert(!out.includes('failing'));
   assert(out.split('\n').length < 14, 'a green run should stay compact');
 });
 
 test('failures are listed first, with file:line and only the first message line', () => {
-  const out = formatConsole(summarize(cases));
+  const out = formatTiersText(summarize(cases));
   const lines = out.split('\n');
   assertEquals(lines[0], '✗ 1 failing');
   assertStringIncludes(out, 'src/c_dom_test.ts:7');
@@ -51,13 +51,13 @@ test('failures are listed first, with file:line and only the first message line'
 });
 
 test('verbose lists each file with its test count', () => {
-  const out = formatConsole(summarize(cases), { verbose: true, cases });
+  const out = formatTiersText(summarize(cases), { verbose: true, cases });
   assertStringIncludes(out, '✓ src/a_test.ts  2 tests');
   assertStringIncludes(out, '✗ src/c_dom_test.ts  1 tests');
 });
 
 test('the markdown summary has a per-tier table and names the failures', () => {
-  const md = formatMarkdown(summarize(cases), 'Tests (TZ=UTC)');
+  const md = formatTiersMarkdown(summarize(cases), 'Tests (TZ=UTC)');
   assertStringIncludes(md, '### Tests (TZ=UTC)');
   assertStringIncludes(md, '| unit | 2 | 3 |');
   assertStringIncludes(md, '❌ 1 failed');
@@ -71,8 +71,8 @@ test('without a line number, failures name just the file', () => {
     '::error file=src/x_test.ts,title=Test failed%3A boom::bad',
   );
   const s = summarize([failing]);
-  assertStringIncludes(formatConsole(s), '  src/x_test.ts\n');
-  assertStringIncludes(formatMarkdown(s, 'Tests'), '- `src/x_test.ts` — boom');
+  assertStringIncludes(formatTiersText(s), '  src/x_test.ts\n');
+  assertStringIncludes(formatTiersMarkdown(s, 'Tests'), '- `src/x_test.ts` — boom');
 });
 
 test('annotations use GitHub workflow-command escaping', () => {
@@ -88,8 +88,8 @@ test('annotations use GitHub workflow-command escaping', () => {
 test('a failure with no message is listed with an empty line, not "undefined"', () => {
   const failing = { ...t('src/x_test.ts', 'boom'), line: 3 };
   const s = { ...summarize([failing]), failures: [failing] };
-  assert(!formatConsole(s).includes('undefined'));
-  assert(!formatMarkdown(s, 'Tests').includes('undefined'));
+  assert(!formatTiersText(s).includes('undefined'));
+  assert(!formatTiersMarkdown(s, 'Tests').includes('undefined'));
   assertEquals(
     annotations([failing])[0],
     '::error file=src/x_test.ts,line=3,title=Test failed%3A boom::failed',

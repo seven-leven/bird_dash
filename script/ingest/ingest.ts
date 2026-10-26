@@ -8,9 +8,9 @@
  *   scan (scanSources) → plan (planChanges) → apply (applyChanges) → report
  */
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
-import { type Io, realIo } from '../lib/io.ts';
+import type { Io } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
-import { EXIT, MARK, parseArgs, printLines, runCommand } from '../lib/cli.ts';
+import { command, EXIT, MARK, parseArgs, printLines } from '../lib/cli.ts';
 import { computeVersion, formatVersionLine } from '../version/version.ts';
 import { writeStats } from '../generate/stats.ts';
 import { scanSources } from './scanSources.ts';
@@ -82,16 +82,10 @@ const USAGE = `npm run ingest [-- --dry-run]
   Takes in new drawings from raw_png/: dates them in the lists, makes their WebPs and
   rewrites public/stats.json. Changes files git tracks. --dry-run changes nothing.`;
 
-export function main(
-  args: string[],
-  io: Io = realIo,
-  options: IngestOptions = {},
-): Promise<number> {
-  return runCommand(io, args, USAGE, () => {
-    const { flags } = parseArgs(args, ['--dry-run']);
-    return ingestDrawings(io, { ...options, dryRun: flags.has('--dry-run') });
-  });
-}
+export const main = command<IngestOptions>(USAGE, (args, io, options) => {
+  const { flags } = parseArgs(args, ['--dry-run']);
+  return ingestDrawings(io, { ...options, dryRun: flags.has('--dry-run') });
+});
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */

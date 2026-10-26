@@ -22,7 +22,7 @@ import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { readDrawnIds } from '../lib/lists.ts';
 import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
-import { parseArgs, runCommand } from '../lib/cli.ts';
+import { command, parseArgs } from '../lib/cli.ts';
 import { type LineName, lineName, readLineNames } from './lineNames.ts';
 
 export interface Version {
@@ -100,13 +100,11 @@ const USAGE = `npm run version [-- --long]
   Prints the version (0.9.161); --long adds the line's name, the drawings and the commit.`;
 
 /** `npm run version`: the version, or with `--long` the whole line. */
-export function main(args: string[], io: Io = realIo): Promise<number> {
-  return runCommand(io, args, USAGE, async () => {
-    const { flags } = parseArgs(args, ['--long']);
-    const version = await computeVersion(io);
-    io.out(flags.has('--long') ? formatVersionLine(version) : formatVersion(version));
-  });
-}
+export const main = command(USAGE, async (args, io) => {
+  const { flags } = parseArgs(args, ['--long']);
+  const version = await computeVersion(io);
+  io.out(flags.has('--long') ? formatVersionLine(version) : formatVersion(version));
+});
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */

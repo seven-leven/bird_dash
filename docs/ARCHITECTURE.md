@@ -26,7 +26,7 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
 │ types ← lib ← composables ← stores ← components ← App.vue   │
 └─────────────────────────────────────────────────────────────┘
 
-┌─ 3. Test harness and CI (script/test_runner/, .github/) ────┐
+┌─ 3. Test harness and CI (script/testRunner/, .github/) ────┐
 │ tiers by file name → runner → JUnit → summary and coverage  │
 │ verify.yml, reused by ci.yml (PRs) and deploy.yml (main)    │
 └─────────────────────────────────────────────────────────────┘
@@ -74,7 +74,7 @@ script/                 One folder per command, run by Node; shared code in lib/
   changelog/            Insert unlogged commits into CHANGELOG.md
   design/               Draw the design guide, icon sheet and logo (docs/assets/)
   placeholders/         Draw the placeholder images
-  test_runner/          The test runner (`npm test`): tiers, areas, reports, coverage
+  testRunner/          The test runner (`npm test`): tiers, areas, reports, coverage
   lib/                  Collections, list files, fs and git helpers
 docs/                   Reference guides at the top level; plans/ for work not done yet,
                         assets/ for generated images (see README.md)

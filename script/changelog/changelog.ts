@@ -11,10 +11,9 @@
  * Merge commits are skipped (their PR subject duplicates the branch commits).
  */
 
-import { readFile, writeFile } from 'node:fs/promises';
-import { git } from '../lib/git.ts';
-
-export const CHANGELOG_FILE = './CHANGELOG.md';
+import type { Io } from '../lib/io.ts';
+import { PATHS } from '../lib/paths.ts';
+import { command, parseArgs } from '../lib/cli.ts';
 
 export interface LoggedCommit {
   date: string;
@@ -35,12 +34,12 @@ export const toLines = (commits: LoggedCommit[]): string[] =>
   commits.map((c) => `- ${c.date} | ${c.subject}`);
 
 /** Commits since CHANGELOG.md was last modified, oldest first. */
-export async function unloggedCommits(): Promise<LoggedCommit[]> {
-  const lastTouch = await git('log', '-1', '--format=%H', '--', CHANGELOG_FILE);
+export async function readUnloggedCommits(io: Io): Promise<LoggedCommit[]> {
+  const lastTouch = await io.git('log', '-1', '--format=%H', '--', PATHS.changelog);
   // "Never committed" happens only in a repository without a CHANGELOG.md commit, not this one.
   /* c8 ignore next */
   const range = lastTouch ? `${lastTouch}..HEAD` : 'HEAD';
-  const raw = await git(
+  const raw = await io.git(
     'log',
     '--no-merges',
     '--reverse',
@@ -69,57 +68,39 @@ export function insertEntries(changelog: string, lines: string[]): string {
   return changelog.slice(0, at) + '\n' + block + changelog.slice(at).replace(/^\n/, '');
 }
 
-/** Everything the command touches outside itself — replaceable in tests. */
-export interface ChangelogIo {
-  commits: () => Promise<LoggedCommit[]>;
-  read: () => Promise<string>;
-  write: (text: string) => Promise<void>;
-  log: (line: string) => void;
-}
-
-/** The real thing: git history, the changelog file at `path`, and the console. */
-export const fileIo = (path: string = CHANGELOG_FILE): ChangelogIo => ({
-  commits: unloggedCommits,
-  read: () => readFile(path, 'utf8'),
-  write: (text) => writeFile(path, text),
-  log: (line) => console.log(line),
-});
-
 export type Outcome = 'up-to-date' | 'dry-run' | 'written';
 
-/** The `npm run changelog` command. Returns what it did. */
-export async function run(args: string[], io: ChangelogIo = fileIo()): Promise<Outcome> {
-  const commits = await io.commits();
+/** Write the unlogged commits into the changelog (unless `dryRun`), and say what was done. */
+export async function writeChangelog(io: Io, dryRun = false): Promise<Outcome> {
+  const commits = await readUnloggedCommits(io);
   if (commits.length === 0) {
-    io.log('[changelog] up to date — no commits since CHANGELOG.md was last touched');
+    io.out('[changelog] up to date — no commits since CHANGELOG.md was last touched');
     return 'up-to-date';
   }
 
   const lines = toLines(commits);
-  io.log(`[changelog] ${commits.length} unlogged commit(s):`);
-  for (const line of lines) io.log(`  ${line}`);
+  io.out(`[changelog] ${commits.length} unlogged commit(s):`);
+  for (const line of lines) io.out(`  ${line}`);
 
-  if (args.includes('--dry-run')) {
-    io.log('[changelog] dry run — nothing written');
+  if (dryRun) {
+    io.out('[changelog] dry run — nothing written');
     return 'dry-run';
   }
 
-  await io.write(insertEntries(await io.read(), lines));
-  io.log('[changelog] inserted at the top of the newest section — review, edit, and commit');
+  await io.writeText(PATHS.changelog, insertEntries(await io.readText(PATHS.changelog), lines));
+  io.out('[changelog] inserted at the top of the newest section — review, edit, and commit');
   return 'written';
 }
 
-/** `run` as a process: 0 when it worked, 1 (with the error printed) when it did not. */
-export async function cli(args: string[], io?: ChangelogIo): Promise<number> {
-  try {
-    await run(args, io);
-    return 0;
-  } catch (e) {
-    console.error('[changelog] error:', e);
-    return 1;
-  }
-}
+const USAGE = `npm run changelog [-- --dry-run]
+  Inserts every commit since CHANGELOG.md was last touched at the top of the newest
+  section, ready to edit into one entry per piece of work. --dry-run changes nothing.`;
+
+export const main = command(USAGE, async (args, io) => {
+  const { flags } = parseArgs(args, ['--dry-run']);
+  await writeChangelog(io, flags.has('--dry-run'));
+});
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */
-if (import.meta.main) process.exit(await cli(process.argv.slice(2)));
+if (import.meta.main) process.exit(await main(process.argv.slice(2)));

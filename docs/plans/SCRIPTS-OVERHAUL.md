@@ -1,7 +1,7 @@
 # Scripts overhaul
 
-> **Status:** planned 2026-10-26; phases 0–5 done (the rules; the foundation, with `version` on it;
-> `ingest`; build stages; `generate`; `check`). Moves `script/` onto the rules in
+> **Status:** planned 2026-10-26; phases 0–6 done (the rules; the foundation, with `version` on it;
+> `ingest`; build stages; `generate`; `check`; the renames). Moves `script/` onto the rules in
 > [SCRIPTS.md](../SCRIPTS.md), one pull request per phase. Delete this page when phase 7 is done;
 > the CHANGELOG keeps what happened, and SCRIPTS.md stays as the rules.
 
@@ -81,7 +81,7 @@ script/
 | `version/version.ts` `getCommitCount`, `getDrawnIds`, `VersionData`, `VERSION_FILE`        | `countCommits`, `readDrawnIds` (from `lib/lists`), `Version`, `paths.baseVersion`                     |
 | `version/line_names.ts` `loadLineNames`                                                    | `version/lineNames.ts` `readLineNames`                                                                |
 | `changelog/changelog.ts` `run`, `cli`, `fileIo`, `ChangelogIo`                             | `main(args, io)` with the shared `Io`                                                                 |
-| `test_runner/run_tests.ts` `main`, `RunnerDeps`, `withoutDots`                             | `testRunner/runTests.ts` `main(args, io)`, `toAreaPath`                                               |
+| `test_runner/run_tests.ts` `main`, `RunnerDeps`, `withoutDots`                             | `testRunner/runTests.ts` `main`, `RunnerDeps` (for now, see phase 6), `toQuietOutput`                 |
 | `test_runner/*` `formatConsole`, `formatMarkdown` (in three files)                         | `formatTiersText`, `formatCoverageText`, `formatAreasText`, and `…Markdown`                           |
 
 Variables follow SCRIPTS.md as each file is touched: `col` → `collection`, `res` → `response`, `f` →
@@ -134,10 +134,18 @@ the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
       `script/check/` (`checkAssets`, `checkGenerated`, `formatCheckReport`, `check`); `build.ts`
       lost `--check`. The generated _text_ files (stats, favicon, logo SVGs) are checked here; the
       images stay with `generatedFiles_contract_test.ts`, as their bytes differ by machine.
-- [ ] **6. The rest.** `testRunner/`, `changelog/` and `version/` renamed to the rules and moved
+- [x] **6. The rest.** `testRunner/`, `changelog/` and `version/` renamed to the rules and moved
       onto the shared `Io`; the three `format*` pairs in the runner named apart. Mostly renames; the
       runner's output is unchanged. _Done when_ no `get…`, `load…`, `run`, `cli` or snake_case file
-      is left in `script/`.
+      is left in `script/`. _Done:_ every command's `main` is made by `command(usage, work)`
+      (`script/lib/cli.ts`), which replaced `runCommand`; `runStages` is `buildStages`. `changelog`
+      is on `Io` and `PATHS` (`readUnloggedCommits`, `writeChangelog`). `test_runner/` is
+      `testRunner/`, with `runTests.ts`, `testSummary.ts`, and `formatTiersText`/`…Markdown`,
+      `formatCoverageText`/`…Markdown`, `formatAreasText`; `live_blocks.ts` is `liveBlocks.ts`.
+      **One exception:** the runner keeps its own `RunnerDeps`, because it captures Vitest's output,
+      which `Io.runNode` does not; the [test overhaul](TEST-OVERHAUL.md)'s kit phase moves it onto
+      `Io`. SCRIPTS.md gains two naming rules: a command's own verb names its work, and a function
+      that makes something is named for it.
 - [ ] **7. Close.** A contract test for the naming rules that can be checked mechanically (file name
       matches its main export; no banned verb at the start of an exported function); the command
       table in WORKFLOW.md grouped by job; this page deleted. _Done when_ SCRIPTS.md's status note
@@ -147,7 +155,7 @@ the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
 
 - **The tests check behaviour, not names.** A rename that changes what a command does fails a test.
 - **The docs build fails on a dead link**, so a moved file that a page links to is caught in CI.
-- **The area test fails on a file left out of an area** (`script/test_runner/areas.ts`).
+- **The area test fails on a file left out of an area** (`script/testRunner/areas.ts`).
 - **One phase at a time.** Each PR is small enough to review, and the site deploys after each one.
 
 ## Not in this plan

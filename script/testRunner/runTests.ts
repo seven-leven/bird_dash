@@ -1,8 +1,8 @@
 /**
- * script/test_runner/run_tests.ts — the test runner behind `npm test`.
+ * script/testRunner/runTests.ts — the test runner behind `npm test`.
  *
  *   npm test                            every tier, compact summary
- *   npm test -- unit dom                just those tiers (see script/test_runner/tiers.ts)
+ *   npm test -- unit dom                just those tiers (see script/testRunner/tiers.ts)
  *   npm test -- --verbose               also list every file
  *   npm run test:coverage               every tier + coverage table + line-coverage floor
  *   npm run test:report                 the same, and save the full report to test-results/report.md
@@ -21,22 +21,22 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { discoverTests, groupByTier, isTier, type Tier, TIER_ORDER } from './tiers.ts';
 import { parseJunit } from './junit.ts';
-import { annotations, formatConsole, formatMarkdown, summarize } from './test_summary.ts';
+import { annotations, formatTiersMarkdown, formatTiersText, summarize } from './testSummary.ts';
 import {
   areaOf,
   AREAS,
   discoverSources,
-  formatAreasConsole,
   formatAreasMarkdown,
+  formatAreasText,
   summarizeAreas,
   untestedFiles,
 } from './areas.ts';
 import {
   coverageAnnotations,
   coverageArgs,
+  formatCoverageMarkdown,
+  formatCoverageText,
   formatGaps,
-  formatMarkdown as coverageMarkdown,
-  formatTable,
   notFullyCovered,
   parseMinBranches,
   parseMinLines,
@@ -123,7 +123,7 @@ export function parseArgs(args: string[]): Options {
 const ANSI = /\x1b\[[0-9;]*m/g;
 
 /** The dot reporter's lines of marks say nothing the summary does not; drop them. */
-export const withoutDots = (output: string): string =>
+export const toQuietOutput = (output: string): string =>
   output.split(/\r?\n/).filter((line) => !/^[·x*-]*$/.test(line.trim())).join('\n');
 
 /** Run Vitest (with this Node, no shell) and collect its exit code and output. */
@@ -210,18 +210,18 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
     const tz = env.TZ;
     const title = `Tests${tz ? ` (TZ=${tz})` : ''} — ${opts.tiers.join(', ')}`;
 
-    console.log(cases.length > 0 ? formatConsole(summary, { verbose: opts.verbose, cases }) : '');
+    console.log(cases.length > 0 ? formatTiersText(summary, { verbose: opts.verbose, cases }) : '');
 
     // Vitest's own output holds what the summary can't: assertion diffs, stack traces,
     // or the error that stopped a file from loading.
     if (!run.success) {
       if (inCI) console.log('::group::Full vitest output');
-      console.log('\n' + withoutDots(raw).trim());
+      console.log('\n' + toQuietOutput(raw).trim());
       if (inCI) console.log('::endgroup::');
       if (inCI) { for (const line of annotations(summary.failures)) console.log(line); }
     }
 
-    let summaryMd = formatMarkdown(summary, title);
+    let summaryMd = formatTiersMarkdown(summary, title);
     let ok = run.success;
     // The verdict, built up as the run is judged: the first line of the job summary and
     // the last line in the terminal (docs/TESTING.md, "What the runner reports").
@@ -250,7 +250,7 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
     });
     // A narrowed run reports the areas it ran, not a row of "no tests" for the rest.
     const shown = narrowed ? areas.filter((a) => a.tests > 0) : areas;
-    if (cases.length > 0) console.log('\n' + formatAreasConsole(shown));
+    if (cases.length > 0) console.log('\n' + formatAreasText(shown));
     summaryMd += '\n' + formatAreasMarkdown(shown);
 
     if (cov) {
@@ -261,7 +261,7 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
       console.log(
         gaps.length > 0
           ? `\nnot fully covered (${gaps.length}):\n` + formatGaps(gaps, process.cwd())
-          : '\nleast covered files:\n' + formatTable(cov, process.cwd(), 8),
+          : '\nleast covered files:\n' + formatCoverageText(cov, process.cwd(), 8),
       );
       const floors = [
         ['line', percent(total.lines), opts.minLines],
@@ -287,7 +287,7 @@ export async function main(argv: string[], deps: RunnerDeps = realDeps): Promise
         for (const line of coverageAnnotations(gaps, process.cwd(), level)) console.log(line);
       }
       summaryMd += '\n' +
-        coverageMarkdown(cov, opts.minLines, process.cwd(), opts.minBranches);
+        formatCoverageMarkdown(cov, opts.minLines, process.cwd(), opts.minBranches);
 
       if (opts.html) {
         const index = await writeHtmlCoverage(covDir, `${resultsDir}/coverage`);

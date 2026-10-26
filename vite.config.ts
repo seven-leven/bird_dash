@@ -36,7 +36,7 @@ export default defineConfig({
       },
     },
   },
-  // Tests: `npm test` (script/test_runner/run_tests.ts) runs these and picks the files per tier.
+  // Tests: `npm test` (script/testRunner/runTests.ts) runs these and picks the files per tier.
   test: {
     include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
     // Each file in its own process (Vitest isolates files by default), so a fake DOM
@@ -48,7 +48,7 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       // No `include`: only files a test loads are measured, so the runner can tell
-      // which source files no test imports (script/test_runner/areas.ts).
+      // which source files no test imports (script/testRunner/areas.ts).
       exclude: ['**/*_test.ts', 'src/testing/**', '**/*.d.ts', 'public/**'],
     },
   },

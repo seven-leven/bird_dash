@@ -7,9 +7,9 @@
  *   npm run build -- docs      the stages named (also `npm run build:site`, `build:docs`)
  */
 
-import { type Io, realIo } from '../lib/io.ts';
+import type { Io } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
-import { EXIT, MARK, parseArgs, runCommand, UsageError } from '../lib/cli.ts';
+import { command, EXIT, MARK, parseArgs, UsageError } from '../lib/cli.ts';
 
 /** One stage of the build: a tool, run with this Node, and what it makes. */
 export interface Stage {
@@ -46,8 +46,8 @@ export function pickStages(words: string[]): Stage[] {
   return words.length === 0 ? STAGES : STAGES.filter((stage) => words.includes(stage.id));
 }
 
-/** Run the stages in order; the first that fails stops the build. */
-export async function runStages(io: Io, stages: Stage[]): Promise<number> {
+/** Build the stages in order; the first that fails stops the build. */
+export async function buildStages(io: Io, stages: Stage[]): Promise<number> {
   for (const stage of stages) {
     io.out(`\n  build: ${stage.id} (${stage.makes})\n`);
     const started = io.now().getTime();
@@ -65,12 +65,10 @@ const USAGE = `npm run build [-- <stage>…]
   Builds dist/ from what is committed: ${STAGES.map((s) => `${s.id} (${s.makes})`).join(', ')}.
   Name stages to build only those. Changes nothing git tracks.`;
 
-export function main(args: string[], io: Io = realIo): Promise<number> {
-  return runCommand(io, args, USAGE, () => {
-    const { words } = parseArgs(args, []);
-    return runStages(io, pickStages(words));
-  });
-}
+export const main = command(USAGE, (args, io) => {
+  const { words } = parseArgs(args, []);
+  return buildStages(io, pickStages(words));
+});
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */

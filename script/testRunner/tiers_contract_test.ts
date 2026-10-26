@@ -44,7 +44,7 @@ test('every source file and every test file belongs to an area', async () => {
   assertEquals(
     files.filter((f) => areaOf(f) === undefined),
     [],
-    'add these to an area in script/test_runner/areas.ts so they show up in the report',
+    'add these to an area in script/testRunner/areas.ts so they show up in the report',
   );
 });
 

@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | scripts: the rest of `script/` follows the naming rules (phase 6 of the scripts
+  overhaul). Every command's `main` is made one way, `command(usage, work)`, so `--help`, the exit
+  codes and how a problem is reported are the same for all of them, including `npm run changelog`,
+  now on `Io` too. `test_runner/` is `testRunner/`, its three pairs of `formatConsole` and
+  `formatMarkdown` are named for what they format, and no snake_case file is left
 - 2026-10-26 | scripts: `npm run check` is its own command, in `script/check/` (phase 5 of the
   scripts overhaul). It reads and never writes: every drawing has its images, nothing waits to be
   ingested, and the generated text files (stats, the favicon, the logo files) are what their

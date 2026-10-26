@@ -22,7 +22,7 @@ pieces. What bottom up left behind:
 | **Four ways to wait.**                                                                                                                                                                                                              | `settle()`, `tick()`, `setTimeout(r, 0)`, and `nextTick()` twice in a row (52 calls)                                                                                               |
 | **Setup reinvented per file.** A local `setup()` or `mount()` with its own shape.                                                                                                                                                   | 18 files                                                                                                                                                                           |
 | **Two title styles.**                                                                                                                                                                                                               | 116 titles start `functionName: …`; 367 are plain sentences                                                                                                                        |
-| **Big files.** The viewer's composables are tested through the composer since the split.                                                                                                                                            | `useLightbox_dom_test.ts` 500 lines, 31 tests; `run_tests_test.ts` 428 lines, 34 tests                                                                                             |
+| **Big files.** The viewer's composables are tested through the composer since the split.                                                                                                                                            | `useLightbox_dom_test.ts` 500 lines, 31 tests; `runTests_test.ts` 428 lines, 34 tests                                                                                              |
 | **Coverage leads.** A test is often added to reach a line or a branch, so the suite says _which code ran_, not _which promises hold_. Nothing maps the manifesto's principles or the README's features to the tests that keep them. | The 100% floors; no list of promises                                                                                                                                               |
 | **No real browser.** Phone layout, touch gestures, visible focus and Thaana that is not clipped are checked by hand.                                                                                                                | TESTING.md, "Not covered yet"                                                                                                                                                      |
 
@@ -244,7 +244,7 @@ browser/       the browser tier: Playwright config and its few checks (phase 7)
 ## Phases
 
 Each phase is one pull request: 100% lines and branches, all checks green, the four timezones, and
-TESTING.md, TEST-PROCEDURES.md and `script/test_runner/` (tiers, areas) updated in the same PR.
+TESTING.md, TEST-PROCEDURES.md and `script/testRunner/` (tiers, areas) updated in the same PR.
 Production code changes only where a test cannot reach it otherwise, and says so.
 
 - [ ] **0. Agree the rules.** Settle the decisions; the rules, the conventions and the promise list
@@ -262,7 +262,7 @@ Production code changes only where a test cannot reach it otherwise, and says so
       box and the viewer (folding, key hints, every empty and error state, the ARIA attributes).
       _Done when_ every component has a test beside it or a journey that names it.
 - [ ] **5. Split and rename.** `useLightbox_dom_test.ts` into one file per composable;
-      `run_tests_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
+      `runTests_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
       local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer` onto the kit's
       events; the arbitraries named `any…`; the contracts not tied to a file renamed for what they
       guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`). _Done when_ no test
