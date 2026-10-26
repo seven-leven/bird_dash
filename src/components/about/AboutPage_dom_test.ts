@@ -125,7 +125,7 @@ test('it shows the grey shape while the numbers load, then the numbers from stat
   assertEquals(urls, ['/stats.json']);
   assertEquals(host.querySelector('[aria-busy="true"]'), null);
 
-  assert(text().includes('sets out to draw the birds, sharks and shells of the Maldives'));
+  assert(text().includes('sets out to draw the birds, sharks and shells in its lists'));
   assert(text().includes('18 of 276 drawn'));
   assert(text().includes('The latest drawing is the Sand Dollar, in March 2026.'));
   assert(text().includes('191 of the 204 birds and 19 of the 42 sharks carry their Dhivehi name'));
@@ -231,7 +231,7 @@ test('an archive with nothing drawn and no names still reads', async () => {
   // Crabs are in collections.json but not yet in stats.json: no card until the next build.
   const { host, text, hrefs } = mount([shells, makeCollection('crabs', { label: 'Crabs' })]);
   await settle();
-  assert(text().includes('sets out to draw the shells and crabs of the Maldives'));
+  assert(text().includes('sets out to draw the shells and crabs in its lists'));
   assert(text().includes('Each species carries its Dhivehi name in Thaana where it has one.'));
   assert(text().includes('Every page links to where to learn more.'));
   assertEquals(host.querySelector('figure'), null);
@@ -272,7 +272,7 @@ test('many collections fold: six cards, then Show all; the prose counts them ins
   });
   const { host, text } = mount(many);
   await settle();
-  assert(text().includes('sets out to draw the wildlife of the Maldives, in 8 collections'));
+  assert(text().includes('sets out to draw the wildlife in its 8 collections'));
   assert(text().includes('8 of the 80 species in 8 collections carry'));
   assert(text().includes('learn more: WoRMS and Wiki.'));
 

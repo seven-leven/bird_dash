@@ -16,8 +16,9 @@
           An archive of drawings, in progress.
         </h1>
         <p class="mt-4 max-w-prose text-base text-slate-600 dark:text-slate-300">
-          Wildlife Illustrated sets out to draw {{ subject }}, one species at a time. Each is shown with its Dhivehi, English and scientific
-          names. Every species has its place from the start, drawn or not, so the gaps
+          Wildlife Illustrated sets out to draw {{ subject }}, one species at a time. Each is
+          shown with its English and scientific names, and its Dhivehi name where it has one.
+          Every species has its place from the start, drawn or not, so the gaps
           are part of the record.
         </p>
         <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
@@ -283,11 +284,12 @@ const browseId = computed(() => activeCollection.value?.id ?? list.value[0]?.id 
 /** "birds, sharks and shells". */
 const joinAnd = (words: string[]): string =>
   words.length < 2 ? words.join('') : `${words.slice(0, -1).join(', ')} and ${words.at(-1)}`;
-/** "the birds, sharks and shells of the Maldives", or with many, "… in 7 collections". */
+/** "the birds, sharks and shells in its lists", or with many, "the wildlife in its 7 collections".
+ * Where a collection's species come from is its own business (not every list is Maldivian). */
 const subject = computed(() =>
   list.value.length > NAMES_FIT
-    ? `the wildlife of the Maldives, in ${list.value.length} collections`
-    : `the ${joinAnd(list.value.map((c) => c.label.toLowerCase()))} of the Maldives`
+    ? `the wildlife in its ${list.value.length} collections`
+    : `the ${joinAnd(list.value.map((c) => c.label.toLowerCase()))} in its lists`
 );
 
 // Dates in the lists are `YYYY-MM-DD`; read them as UTC, as the month view does.

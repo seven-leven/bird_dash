@@ -17,6 +17,9 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: the About page, the README and the link previews no longer call every
+  collection Maldivian (the shells are thirty kinds from anywhere), nor say every species has a
+  Dhivehi name: each has its English and scientific names, and its Dhivehi name where it has one
 - 2026-10-26 | site: the sidebar's counts say where the drawings are. A family with drawings shows
   its count (`4 of 8`) in `slate-700`, medium; an empty one (`0 of 7`) stays the muted `slate-500`.
   The counts were drawn at 60% opacity, about 2.3:1 on white, below AA; both now pass
