@@ -11,9 +11,11 @@ This document is both its point of view and its practical reference.
 ![Design guide](assets/design-guide.png)
 
 The picture is drawn from the real tokens and icons by `npm run design`. The source of truth for the
-tokens is [`src/styles/main.css`](../src/styles/main.css); this guide explains the decisions behind
-them and how to apply them. The picture has a voice of its own (warm paper, a serif for statements);
-neither is a site token. The site's colours are the swatches drawn on it.
+tokens is [`src/styles/main.css`](../src/styles/main.css), with the parts the docs site shares in
+[`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css); this guide
+explains the decisions behind them and how to apply them. The picture has a voice of its own (warm
+paper, a serif for statements); neither is a site token. The site's colours are the swatches drawn
+on it.
 
 ---
 
@@ -74,8 +76,8 @@ collection-specific hue such as `teal-500`.
 
 Every collection has one accent, declared as `accent` in `public/collections.json`. It helps
 visitors know where they are: Birds use teal, Sharks blue, and Shells rose. The menu of allowed hues
-lives in `src/styles/main.css`, so a new collection can choose an approved hue without changing the
-CSS.
+lives in `src/styles/accents.css`, so a new collection can choose an approved hue without changing
+the CSS.
 
 ### Where colour belongs
 
@@ -129,8 +131,8 @@ avoid pairs such as rose and pink, or violet and purple.
 
 <!-- live: AccentRamps -->
 
-The menu is the `[data-accent]` palettes in [`src/styles/main.css`](../src/styles/main.css), shown
-in the [design guide](assets/design-guide.png); the
+The menu is the `[data-accent]` palettes in [`src/styles/accents.css`](../src/styles/accents.css),
+shown in the [design guide](assets/design-guide.png); the
 [docs site](https://seven-leven.github.io/bird_dash/docs/DESIGN.html) draws every ramp here, read
 from that file.
 

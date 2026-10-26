@@ -25,17 +25,17 @@ test("collections.json: no collection takes a page's id (#about would show the p
   assertEquals(taken, [], `collection ids that are also pages in src/pages.ts: ${taken}`);
 });
 
-test('collections.json: every accent names a palette defined in main.css', async () => {
-  const css = await readFile('./src/styles/main.css', 'utf8');
+test('collections.json: every accent names a palette defined in accents.css', async () => {
+  const css = await readFile('./src/styles/accents.css', 'utf8');
   const palettes = new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]));
-  assert(palettes.size > 0, 'no [data-accent] palettes found in main.css');
+  assert(palettes.size > 0, 'no [data-accent] palettes found in accents.css');
 
   const raw = await readJson<RawCollectionConfig[]>('./public/collections.json');
   for (const col of raw) {
     if (col.accent === undefined) continue; // falls back to the default
     assert(
       palettes.has(col.accent),
-      `${col.id}: accent "${col.accent}" has no palette in main.css (have: ${[...palettes]})`,
+      `${col.id}: accent "${col.accent}" has no palette in accents.css (have: ${[...palettes]})`,
     );
   }
 });

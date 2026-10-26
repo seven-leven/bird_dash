@@ -1,7 +1,7 @@
 /**
  * Draws docs/assets/design-guide.png and docs/assets/icons.png — the visual half of
  * docs/DESIGN.md. Run `npm run design` after changing a token in
- * src/styles/main.css or an icon in src/lib/icons.ts.
+ * src/styles/accents.css or an icon in src/lib/icons.ts.
  *
  * The colours and the contrast maths are in ./palette.ts.
  */
@@ -341,7 +341,7 @@ export async function designGuide(
   const sw = (W - 2 * X) / menu.length;
   menu.forEach((hue, i) => {
     const hex = ACCENT_HEX[hue];
-    // A guard for a new accent added to main.css without its hex values; the real data has them all.
+    // A guard for a new accent added to accents.css without its hex values; the real data has them all.
     /* c8 ignore next 3 */
     if (!hex) {
       throw new Error(`design guide: no hex values for accent "${hue}" (add it to ACCENT_HEX)`);

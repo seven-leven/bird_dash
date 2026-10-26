@@ -135,9 +135,10 @@ page cheap.
       Faruma, the type stack, the radii and the shadows from `src/styles/tokens.css`, which the
       site's `main.css` imports too, and the site's own logo and icon components. DESIGN.md's colour
       ramps and icon set render live (`<!-- live: … -->`); source links go to GitHub; headings keep
-      GitHub's anchors. Linked from the footer, the About page and the README. Still open: the slate
-      and teal values in the docs theme are named there rather than shared (the docs do not run
-      Tailwind), and VitePress is the 2.0 alpha, the one that shares the site's Vite 8.
+      GitHub's anchors. Linked from the footer, the About page and the README. The docs theme takes
+      its colours from Tailwind's theme variables and `src/styles/accents.css` too, so it names no
+      colour of its own. Still open: VitePress is the 2.0 alpha, the one that shares the site's Vite
+      8; move to 2.0 when it is released.
 - [ ] **Collections that are not species lists** (planned 2026-10-26). The practice series in the
       art notes are coming: Butterflies (colour pencil), Dynamic Animals (pen), Sweet Treats
       (fineliner), Landscapes (pencil), Digital Value Studies, Movie Character Portraits. Each is a
