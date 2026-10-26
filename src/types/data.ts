@@ -30,7 +30,7 @@ export interface RawCollectionConfig {
   emoji: string;
   /** Name of a line icon in src/lib/icons.ts; the emoji is the fallback. */
   icon?: string;
-  /** The collection's accent colour: one of the palettes in src/styles/main.css (default teal). */
+  /** The collection's accent colour: one of the palettes in src/styles/accents.css (default teal). */
   accent?: string;
   groupLabel: string;
   itemLabel: string;

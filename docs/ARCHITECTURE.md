@@ -65,7 +65,7 @@ src/
   lib/                  Small framework-free helpers, and the icon and logo drawings
                         (icons.ts, logo.ts) that both the site and the scripts use
   types/                Shared TypeScript types
-  styles/               main.css (Tailwind and the design tokens) and fonts/
+  styles/               main.css (Tailwind), tokens.css and accents.css (shared with the docs site), fonts/
   testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
                         The tests themselves sit next to the code they cover (see TESTING.md)
 script/                 One folder per command, run by Node; shared code in lib/

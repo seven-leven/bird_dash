@@ -34,6 +34,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
   rename, the npm scripts before and after, and eight phases, one pull request each. Phase 0 is
   done: camelCase file names in `script/` too (DECISIONS.md's naming entry is rewritten), `ingest`
   for taking in drawings, a local build that includes the docs, and no aliases for old command names
+- 2026-10-26 | docs: the docs site names no colour of its own. Its theme takes Tailwind's colour
+  variables (the theme file alone; a contract test keeps Tailwind's preflight out, which would reset
+  VitePress's headings, lists and tables) and the accent palettes, which move from `main.css` into
+  `src/styles/accents.css` for the site and the docs to share. The manifesto's ramps are drawn with
+  the very variables the site uses, so the build-time loader that copied their values goes
 - 2026-10-26 | docs: the docs are a site, at
   [/bird_dash/docs/](https://seven-leven.github.io/bird_dash/docs/), in the gallery's own design:
   VitePress over `docs/*.md`, built into the same Pages deploy and checked by CI, where a dead link
