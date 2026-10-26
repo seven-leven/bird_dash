@@ -11,7 +11,9 @@ const birds = makeCollection('birds', {
   label: 'Birds',
   links: [{ label: 'eBird', url: () => 'https://ebird.org/x' }],
 });
-const goose = makeItem({
+// The goose's fields, so a test can build a variant with other names (`names` is
+// built from them, so spreading a built item with new `meta` would keep the old ones).
+const gooseFields = {
   itemId: '002',
   commonName: 'Cotton Pygmy-Goose',
   scientificName: 'Nettapus coromandelianus',
@@ -19,7 +21,9 @@ const goose = makeItem({
   drawnTime: at(2024, 10, 10),
   meta: { dhiv: 'Reyru', dhiv_script: 'ރޭރު', habitat: 'Wetlands' },
   illustratorNote: 'Experimented with markers. Compare #1.',
-});
+};
+const goose = makeItem(gooseFields);
+const gooseWith = (o: Partial<CollectionItem>) => makeItem({ ...gooseFields, ...o });
 
 /** Mount the panel for `item` (reactive, so a test can swap the drawing). */
 function mount(start: CollectionItem) {
@@ -54,7 +58,7 @@ test('the names are one block, one language per line: Dhivehi (and how to say it
 });
 
 test('without a Dhivehi name, the English name is the title', () => {
-  const { host } = mount({ ...goose, meta: {} });
+  const { host } = mount(gooseWith({ meta: {} }));
   assertEquals(host.querySelector('h2')?.textContent?.trim(), 'Cotton Pygmy-Goose');
   assertStringIncludes(host.querySelector('h2')!.className, 'text-xl');
 });
@@ -138,16 +142,15 @@ test('section labels are words alone, without icons', () => {
 });
 
 test('a Dhivehi name without a romanisation is the Thaana alone', () => {
-  const { host } = mount({ ...goose, meta: { dhiv_script: 'ރޭރު' } });
+  const { host } = mount(gooseWith({ meta: { dhiv_script: 'ރޭރު' } }));
   assertEquals(host.querySelector('h2')!.parentElement!.children.length, 1);
 });
 
 test('a bird with two Dhivehi names gets a line for each, each with its own romanisation', () => {
-  const { host } = mount({
-    ...goose,
+  const { host } = mount(gooseWith({
     commonName: 'Watercock',
     meta: { dhiv_script: 'ވަލު ކުކުޅު / ކުލީ ކުކުޅު', dhiv: 'Valu Kukulhu / Kulhee Kukulhu' },
-  });
+  }));
   const title = host.querySelector('h2')!;
   const block = title.parentElement!.parentElement!;
   const [first, second, english] = [...block.children] as HTMLElement[];

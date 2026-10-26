@@ -4,9 +4,18 @@ import type {
   RawCollectionConfig,
   RawCollectionData,
 } from '../types/index.ts';
+import { buildNames, nameWords } from './itemNames.ts';
 
 /** Fields with their own place on a CollectionItem; every other string field is `meta`. */
-const KNOWN_KEYS = new Set(['id', 'name', 'sci', 'drawn', 'illustratorNote']);
+const KNOWN_KEYS = new Set([
+  'id',
+  'name',
+  'sci',
+  'dhiv',
+  'dhiv_script',
+  'drawn',
+  'illustratorNote',
+]);
 
 /** Fill a link template's `{{common}}` / `{{sci}}` placeholders for one item. */
 export function resolveUrl(template: string, item: CollectionItem): string {
@@ -56,9 +65,15 @@ export function toCollectionItems(
       const itemId = String(r.id ?? '');
       const commonName = String(r.name ?? '');
       const scientificName = String(r.sci ?? '');
+      const names = buildNames({
+        name: commonName,
+        sci: scientificName,
+        dhiv: r.dhiv,
+        dhiv_script: r.dhiv_script,
+      });
 
-      // Search haystack — includes Dhivehi name + Thaana script (any meta value).
-      const searchText = [commonName, scientificName, groupName, itemId, ...Object.values(meta)]
+      // Search haystack: every name (Thaana and how to say it included), then the rest.
+      const searchText = [...nameWords(names), groupName, itemId, ...Object.values(meta)]
         .join(' ')
         .toLowerCase();
 
@@ -67,6 +82,7 @@ export function toCollectionItems(
         itemId,
         commonName,
         scientificName,
+        names,
         group: groupName,
         imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : placeholder,
         placeholderUrl: placeholder,

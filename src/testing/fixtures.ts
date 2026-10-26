@@ -1,5 +1,6 @@
 import { effectScope } from 'vue';
 import type { CollectionConfig, CollectionItem } from '../types/index.ts';
+import { buildNames, nameWords } from '../lib/itemNames.ts';
 
 let counter = 0;
 
@@ -23,9 +24,10 @@ export function makeCollection(
 }
 
 /**
- * Build a CollectionItem for logic tests. `searchText` is derived the same way
- * the loader builds it (lowercased name/sci/group/id/meta), so filter tests are
- * faithful. Pass `drawnTime` (epoch ms) to mark an item drawn on a given date.
+ * Build a CollectionItem for logic tests. `names` and `searchText` are derived the
+ * same way the loader builds them, so filter tests are faithful: a Dhivehi name
+ * given as `meta: { dhiv, dhiv_script }` (the list's own fields) becomes names and
+ * leaves `meta`. Pass `drawnTime` (epoch ms) to mark an item drawn on a given date.
  */
 export function makeItem(overrides: Partial<CollectionItem> = {}): CollectionItem {
   counter += 1;
@@ -35,10 +37,13 @@ export function makeItem(overrides: Partial<CollectionItem> = {}): CollectionIte
   const group = overrides.group ?? 'Group A';
   const drawnTime = overrides.drawnTime ?? 0;
   const isDrawn = overrides.isDrawn ?? drawnTime > 0;
-  const meta = overrides.meta;
+  const { dhiv, dhiv_script, ...rest } = overrides.meta ?? {};
+  const meta = Object.keys(rest).length ? rest : undefined;
+  const names = overrides.names ??
+    buildNames({ name: commonName, sci: scientificName, dhiv, dhiv_script });
 
   const searchText = overrides.searchText ??
-    [commonName, scientificName, group, itemId, ...Object.values(meta ?? {})]
+    [...nameWords(names), group, itemId, ...Object.values(meta ?? {})]
       .join(' ')
       .toLowerCase();
 
@@ -47,6 +52,7 @@ export function makeItem(overrides: Partial<CollectionItem> = {}): CollectionIte
     itemId,
     commonName,
     scientificName,
+    names,
     group,
     imageUrl: overrides.imageUrl ?? `/thumb/${itemId}.webp`,
     placeholderUrl: overrides.placeholderUrl ?? '/placeholders/col.webp',

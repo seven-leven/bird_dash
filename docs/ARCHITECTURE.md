@@ -121,7 +121,8 @@ State moves one way:
 1. `collections.json` loads; the first collection's list loads; the others are fetched in the
    background and cached.
 2. Raw items are normalised once (`lib/collectionItems.ts`) and frozen: the drawn flag, sort key,
-   timestamp and search text are precomputed.
+   timestamp, names (`lib/itemNames.ts`) and search text are precomputed. Components render an
+   item's `names` list and never read a name field by name.
 3. The query and view mode feed computed values that produce the grid sections, sidebar entries,
    counts and the lightbox order. Nothing is stored that can be derived.
 4. Components render those values and call actions in response to input.

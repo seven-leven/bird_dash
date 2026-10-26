@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: an item's names are data. The loader builds each item's `names` once
+  (`src/lib/itemNames.ts`: the text, its language and its role: title, also, common or Latin), and
+  the tile, the viewer and search render whatever names an item has instead of reading `dhiv`,
+  `dhiv_script` and `sci` by name; the names leave `meta`. Nothing looks different; a collection
+  whose pieces have other names now needs no component change
+- 2026-10-26 | docs(todo): plan collections that are not species lists, the docs as a site in the
+  site's own design, and, first, making the site modular and decoupled
 - 2026-10-26 | site: the About page, the README and the link previews no longer call every
   collection Maldivian (the shells are thirty kinds from anywhere), nor say every species has a
   Dhivehi name: each has its English and scientific names, and its Dhivehi name where it has one
