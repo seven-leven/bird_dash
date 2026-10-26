@@ -51,7 +51,7 @@ export const AREAS: Area[] = [
     id: 'pipeline',
     label: 'Asset pipeline and data files',
     protects: 'image builds, the integrity check, the files in public/',
-    paths: ['script/build/', 'script/placeholders/', 'script/lib/'],
+    paths: ['script/ingest/', 'script/build/', 'script/placeholders/', 'script/lib/'],
   },
   {
     id: 'release',

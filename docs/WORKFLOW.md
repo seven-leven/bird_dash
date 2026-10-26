@@ -146,9 +146,8 @@ git branch -d test/lightbox-keys
 | Task                                            | Description                                                                                    |
 | ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | `npm run dev`                                   | Start the Vite dev server                                                                      |
-| `npm run build`                                 | Full build: transcode assets, then bundle the frontend                                         |
-| `npm run build:assets`                          | Transcode images and register new items only                                                   |
-| `npm run build:vite`                            | Bundle the frontend only (assumes assets are built)                                            |
+| `npm run ingest`                                | Take in new drawings: date them, make their WebPs, rewrite `stats.json` (`-- --dry-run` first) |
+| `npm run build`                                 | Build the site into `dist/` from what is committed; changes nothing git tracks                 |
 | `npm run check`                                 | Integrity check (missing/orphaned images); exits 1 on problems                                 |
 | `npm test`                                      | Every test tier, one summary row per tier (`npm test -- dom interface`, `npm test -- src/lib`) |
 | `npm run test:unit` (`dom`, `prop`, `contract`) | Just that tier                                                                                 |

@@ -9,6 +9,17 @@ export const EXIT = { done: 0, problem: 1, usage: 2 } as const;
 /** The marks every command's output uses. */
 export const MARK = { done: '✓', problem: '✗', skipped: '·' } as const;
 
+/** A line of a report; a problem goes to stderr. Reports are built as lines, then printed. */
+export interface Line {
+  text: string;
+  problem?: boolean;
+}
+
+/** Print a report's lines: problems on stderr, the rest on stdout. */
+export function printLines(io: Io, lines: Line[]): void {
+  for (const line of lines) (line.problem ? io.err : io.out)(line.text);
+}
+
 /** Thrown for arguments the command does not take; the command exits 2. */
 export class UsageError extends Error {}
 

@@ -1,9 +1,7 @@
 import { test } from 'vitest';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { assert, assertEquals, assertRejects } from '@std/assert';
-import { computeStats, formatStats, statsAreCurrent, writeStats } from './collection_stats.ts';
+import { computeStats, formatStats, isStatsCurrent, writeStats } from './collection_stats.ts';
+import { fakeIo } from '../lib/fakeIo.ts';
 import type { Collection } from '../lib/collections.ts';
 
 const birds = {
@@ -111,31 +109,44 @@ test('the file text is stable: the same lists always write the same bytes', () =
   assert(text.endsWith('}\n'));
 });
 
-test('writeStats writes the file, and statsAreCurrent knows when it has gone stale', async () => {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_stats_'));
-  try {
-    const json = `${dir}/birds.json`;
-    await writeFile(json, JSON.stringify(birds.groups));
-    const col = { id: 'birds', label: 'Birds', emoji: '', paths: { json } } as Collection;
-    const path = `${dir}/stats.json`;
+test('the stats are written, and known to be stale once a list changes without them', async () => {
+  const collection = {
+    id: 'birds',
+    label: 'Birds',
+    emoji: '',
+    paths: { json: './birds.json' },
+  } as Collection;
+  const io = fakeIo({ files: { './birds.json': JSON.stringify(birds.groups) } });
 
-    assertEquals(await statsAreCurrent([col], path), false); // no file yet
-    const stats = await writeStats([col], path);
-    assertEquals(stats.drawn, 3);
-    assertEquals(await statsAreCurrent([col], path), true);
+  assertEquals(await isStatsCurrent([collection], io, './stats.json'), false); // no file yet
+  const stats = await writeStats([collection], io, './stats.json');
+  assertEquals(stats.drawn, 3);
+  assertEquals(await isStatsCurrent([collection], io, './stats.json'), true);
 
-    // A drawing added to the list without a build leaves the numbers wrong.
-    await writeFile(
-      json,
-      JSON.stringify({ ...birds.groups, Owls: [{ id: '150', name: 'Owl', drawn: '2026-04-01' }] }),
-    );
-    assertEquals(await statsAreCurrent([col], path), false);
+  // A drawing added to the list without ingesting leaves the numbers wrong.
+  await io.writeText(
+    './birds.json',
+    JSON.stringify({ ...birds.groups, Owls: [{ id: '150', name: 'Owl', drawn: '2026-04-01' }] }),
+  );
+  assertEquals(await isStatsCurrent([collection], io, './stats.json'), false);
+});
 
-    // Any other failure to read is not hidden as "stale".
-    await assertRejects(() => statsAreCurrent([col], dir));
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+test('a stats file that cannot be read for another reason is a failure, not "stale"', async () => {
+  const collection = {
+    id: 'birds',
+    label: 'Birds',
+    emoji: '',
+    paths: { json: './birds.json' },
+  } as Collection;
+  const io = fakeIo({ files: { './birds.json': JSON.stringify(birds.groups) } });
+  const locked = {
+    ...io,
+    readText: (path: string) =>
+      path === './stats.json'
+        ? Promise.reject(new Error('EACCES: permission denied'))
+        : io.readText(path),
+  };
+  await assertRejects(() => isStatsCurrent([collection], locked, './stats.json'), Error, 'EACCES');
 });
 
 test('the first drawing is the oldest, the same rules breaking a tie', () => {

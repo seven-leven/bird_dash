@@ -42,12 +42,13 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173).
 
-| Command         | What it does                                                     |
-| --------------- | ---------------------------------------------------------------- |
-| `npm run dev`   | Start the dev server                                             |
-| `npm run build` | Turn new drawings into WebP images, then build the site          |
-| `npm test`      | Every test tier, one row each (`npm test -- src/lib` for a part) |
-| `npm run check` | Find missing or orphaned images and stale numbers; exits 1       |
+| Command          | What it does                                                               |
+| ---------------- | -------------------------------------------------------------------------- |
+| `npm run dev`    | Start the dev server                                                       |
+| `npm run ingest` | Take in new drawings: date them, make their WebP images (changes the repo) |
+| `npm run build`  | Build the site into `dist/` from what is committed                         |
+| `npm test`       | Every test tier, one row each (`npm test -- src/lib` for a part)           |
+| `npm run check`  | Find missing or orphaned images and stale numbers; exits 1                 |
 
 Every other command is in [WORKFLOW.md](docs/WORKFLOW.md#commands). To add a drawing or a
 collection, see the recipes in [DATA.md](docs/DATA.md#recipes).

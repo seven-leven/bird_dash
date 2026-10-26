@@ -7,14 +7,13 @@
  * The file holds nothing that changes between two builds of the same lists (no build
  * time), so `npm run check` can tell when it is stale.
  */
-import { readFile, writeFile } from 'node:fs/promises';
 import type { Collection } from '../lib/collections.ts';
-import { isErrno, readJson } from '../lib/fs.ts';
+import { isErrno } from '../lib/fs.ts';
+import { type Io, readJson, realIo } from '../lib/io.ts';
+import { PATHS } from '../lib/paths.ts';
 import type { CollectionCounts, NewestDrawing, RawItem, Stats } from '../../src/types/data.ts';
 
 export type { CollectionCounts, NewestDrawing, Stats };
-
-export const STATS_PATH = './public/stats.json';
 
 /** How many of the newest drawings the file lists. */
 export const NEWEST_COUNT = 8;
@@ -77,29 +76,34 @@ export function computeStats(lists: CollectionList[], newestCount = NEWEST_COUNT
 /** The file's exact text: stable, so an unchanged archive writes an unchanged file. */
 export const formatStats = (stats: Stats): string => JSON.stringify(stats, null, 2) + '\n';
 
-async function readLists(collections: Collection[]): Promise<CollectionList[]> {
-  return Promise.all(collections.map(async (c) => ({
-    id: c.id,
-    label: c.label,
-    groups: await readJson<Record<string, RawItem[]>>(c.paths.json),
+async function readLists(collections: Collection[], io: Io): Promise<CollectionList[]> {
+  return Promise.all(collections.map(async (collection) => ({
+    id: collection.id,
+    label: collection.label,
+    groups: await readJson<Record<string, RawItem[]>>(io, collection.paths.json),
   })));
 }
 
-/** Write the stats for these collections (the asset build's last step). */
-export async function writeStats(collections: Collection[], path = STATS_PATH): Promise<Stats> {
-  const stats = computeStats(await readLists(collections));
-  await writeFile(path, formatStats(stats));
+/** Write the stats for these collections (ingest's last step). */
+export async function writeStats(
+  collections: Collection[],
+  io: Io = realIo,
+  path: string = PATHS.stats,
+): Promise<Stats> {
+  const stats = computeStats(await readLists(collections, io));
+  await io.writeText(path, formatStats(stats));
   return stats;
 }
 
 /** True when the file on disk says what the lists say now (`npm run check`). */
-export async function statsAreCurrent(
+export async function isStatsCurrent(
   collections: Collection[],
-  path = STATS_PATH,
+  io: Io = realIo,
+  path: string = PATHS.stats,
 ): Promise<boolean> {
-  const expected = formatStats(computeStats(await readLists(collections)));
+  const expected = formatStats(computeStats(await readLists(collections, io)));
   try {
-    return (await readFile(path, 'utf8')) === expected;
+    return (await io.readText(path)) === expected;
   } catch (err) {
     if (isErrno(err, 'ENOENT')) return false;
     throw err;

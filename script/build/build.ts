@@ -1,63 +1,22 @@
 /**
- * script/build/build.ts — unified build entry point
+ * script/build/build.ts — makes the site from what is committed; never changes a file git
+ * tracks (taking in new drawings is `npm run ingest`, script/ingest/).
  *
  * Modes (pass as CLI flag):
- *   (none)           full build: assets → vite
- *   --assets-only    transcode images, register new items, bump version
- *   --vite-only      frontend bundle only (assumes assets already built)
+ *   (none)           the site: vite build into dist/
  *   --check          read-only integrity report, no writes
  */
 
 import { spawn } from 'node:child_process';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
-import { scanCollection } from './scan_sources.ts';
-import { blockingIssues, planWork } from './plan_changes.ts';
-import { executeWork } from './apply_changes.ts';
-import { STATS_PATH, statsAreCurrent, writeStats } from './collection_stats.ts';
-import { printCheckReport, printSummary, reportWarnings } from './print_build_summary.ts';
+import { realIo } from '../lib/io.ts';
+import { PATHS } from '../lib/paths.ts';
+import { scanSources } from '../ingest/scanSources.ts';
+import { countBlockingIssues, planChanges } from '../ingest/planChanges.ts';
+import { isStatsCurrent } from './collection_stats.ts';
+import { printCheckReport } from './printCheckReport.ts';
 import { computeVersion, formatVersionLine } from '../version/version.ts';
 import { errorMessage } from '../lib/error.ts';
-import type { CollectionSummary } from './print_build_summary.ts';
-
-// ---------------------------------------------------------------------------
-// Assets build
-// ---------------------------------------------------------------------------
-
-export async function buildAssets(
-  collections: Collection[] = COLLECTIONS,
-  statsPath = STATS_PATH,
-): Promise<void> {
-  const start = Date.now();
-  const date = new Date().toISOString().split('T')[0];
-  const summaries: CollectionSummary[] = [];
-
-  for (const col of collections) {
-    const state = await scanCollection(col);
-    const plan = planWork(state);
-
-    reportWarnings(col, plan);
-
-    const result = await executeWork(col, plan, date);
-    const drawnCount = state.drawnIds.size + result.registered.length;
-
-    summaries.push({ col, plan, result, drawnCount });
-  }
-
-  const version = await computeVersion();
-
-  printSummary(summaries, formatVersionLine(version), Date.now() - start);
-
-  const failed = summaries.flatMap((s) =>
-    s.result.failed.map((f) => `${s.col.id}/${f.id}: ${f.reason}`)
-  );
-  if (failed.length > 0) {
-    throw new Error(`asset build failed:\n${failed.map((f) => `  ${f}`).join('\n')}`);
-  }
-
-  // The archive's numbers, from the lists as they now stand (new drawings dated above).
-  const stats = await writeStats(collections, statsPath);
-  console.log(`  stats: ${stats.drawn} of ${stats.total} drawn → ${statsPath}`);
-}
 
 // ---------------------------------------------------------------------------
 // Vite build (subprocess)
@@ -92,45 +51,45 @@ export async function buildVite(spawn: () => Promise<number> = spawnVite): Promi
 /** Prints the integrity report and returns how many blocking issues it found. */
 export async function checkIntegrity(
   collections: Collection[] = COLLECTIONS,
-  statsPath = STATS_PATH,
+  io = realIo,
+  statsPath: string = PATHS.stats,
 ): Promise<number> {
-  const version = await computeVersion();
+  const version = await computeVersion(io);
   const rows: Array<{
     col: Collection;
-    state: Awaited<ReturnType<typeof scanCollection>>;
-    plan: ReturnType<typeof planWork>;
+    state: Awaited<ReturnType<typeof scanSources>>;
+    plan: ReturnType<typeof planChanges>;
   }> = [];
 
   for (const col of collections) {
-    const state = await scanCollection(col);
-    const plan = planWork(state);
+    const state = await scanSources(col, io);
+    const plan = planChanges(state);
     rows.push({ col, state, plan });
   }
 
   printCheckReport(rows, formatVersionLine(version));
   // A list changed without a build would leave the published numbers wrong.
-  const statsCurrent = await statsAreCurrent(collections, statsPath);
+  const statsCurrent = await isStatsCurrent(collections, io, statsPath);
   console.log(
     statsCurrent
       ? `  ✓ ${statsPath} matches the lists`
-      : `  ✗ ${statsPath} is stale: run \`npm run build:assets\` to rewrite it`,
+      : `  ✗ ${statsPath} is stale: run \`npm run ingest\` to rewrite it`,
   );
-  return rows.reduce((n, r) => n + blockingIssues(r.plan), 0) + (statsCurrent ? 0 : 1);
+  return rows.reduce((n, r) => n + countBlockingIssues(r.plan), 0) + (statsCurrent ? 0 : 1);
 }
 
 // ---------------------------------------------------------------------------
 // CLI
 // ---------------------------------------------------------------------------
 
-/** The three things the command can do — replaceable, so the dispatch can be tested. */
+/** The two things the command can do — replaceable, so the dispatch can be tested. */
 export interface Steps {
-  assets: () => Promise<void>;
   vite: () => Promise<void>;
   /** Resolves with the number of blocking issues found. */
   check: () => Promise<number>;
 }
 
-const realSteps: Steps = { assets: buildAssets, vite: buildVite, check: checkIntegrity };
+const realSteps: Steps = { vite: buildVite, check: () => checkIntegrity() };
 
 /** Run the command for these arguments and return the process exit code. */
 export async function cli(args: string[], steps: Steps = realSteps): Promise<number> {
@@ -144,16 +103,7 @@ export async function cli(args: string[], steps: Steps = realSteps): Promise<num
       }
       return 0;
     }
-    if (has('--assets-only')) {
-      await steps.assets();
-      return 0;
-    }
-    if (has('--vite-only')) {
-      await steps.vite();
-      return 0;
-    }
-    // Default: full build
-    await steps.assets();
+    // Default: the site
     await steps.vite();
     return 0;
   } catch (err) {

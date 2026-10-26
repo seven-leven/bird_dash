@@ -1,14 +1,10 @@
 import { test } from 'vitest';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
 import { assert, assertEquals, assertRejects } from '@std/assert';
-import sharp from 'sharp';
-import { buildAssets, buildVite, checkIntegrity, cli, type Steps } from './build.ts';
+import { buildVite, checkIntegrity, cli, type Steps } from './build.ts';
+import { fakeIo } from '../lib/fakeIo.ts';
+import { PATHS } from '../lib/paths.ts';
+import { writeStats } from './collection_stats.ts';
 import type { Collection } from '../lib/collections.ts';
-
-// sharp caches open files; on Windows that would keep the temporary folder locked.
-sharp.cache(false);
 
 /** Run `fn` and return everything it printed, without printing it. */
 async function captured(fn: () => unknown): Promise<string> {
@@ -31,7 +27,6 @@ async function captured(fn: () => unknown): Promise<string> {
 function fakeSteps(over: Partial<Steps> = {}) {
   const ran: string[] = [];
   const steps: Steps = {
-    assets: () => (ran.push('assets'), Promise.resolve()),
     vite: () => (ran.push('vite'), Promise.resolve()),
     check: () => (ran.push('check'), Promise.resolve(0)),
     ...over,
@@ -39,20 +34,10 @@ function fakeSteps(over: Partial<Steps> = {}) {
   return { steps, ran };
 }
 
-test('with no arguments the build makes the assets, then the site', async () => {
+test('with no arguments the build makes the site, and only the site', async () => {
   const { steps, ran } = fakeSteps();
   assertEquals(await cli([], steps), 0);
-  assertEquals(ran, ['assets', 'vite']);
-});
-
-test('--assets-only and --vite-only run just that step', async () => {
-  const a = fakeSteps();
-  assertEquals(await cli(['--assets-only'], a.steps), 0);
-  assertEquals(a.ran, ['assets']);
-
-  const v = fakeSteps();
-  assertEquals(await cli(['--vite-only'], v.steps), 0);
-  assertEquals(v.ran, ['vite']);
+  assertEquals(ran, ['vite']);
 });
 
 test('--check only checks, and exits 0 when nothing is wrong', async () => {
@@ -71,15 +56,14 @@ test('--check exits 1 and says how many issues it found', async () => {
   assert(output.includes('integrity check failed: 3 issue(s)'));
 });
 
-test('a step that fails stops the build: exit 1, the reason printed, later steps skipped', async () => {
-  const { steps, ran } = fakeSteps({ assets: () => Promise.reject(new Error('disk full')) });
+test('a step that fails stops the build: exit 1, and the reason printed', async () => {
+  const { steps } = fakeSteps({ vite: () => Promise.reject(new Error('disk full')) });
   let code = -1;
   const output = await captured(async () => {
     code = await cli([], steps);
   });
   assertEquals(code, 1);
   assert(output.includes('build failed: disk full'));
-  assertEquals(ran, [], 'vite ran after the asset step failed');
 });
 
 // ── the site build ──
@@ -91,96 +75,57 @@ test('buildVite succeeds when vite exits 0 and fails with its exit code otherwis
   );
 });
 
-// ── the asset build and the check, on a throwaway collection ──
+// ── the check, on a fake repository ──
 
-type Item = { id: string; name: string; drawn?: string };
+const birds = {
+  id: 'x',
+  label: 'Test',
+  emoji: '',
+  paths: { json: './x.json', sourceArt: './raw/', full: './full/', thumb: './thumb/' },
+} as Collection;
 
-async function withCollection(
-  items: Item[],
-  raw: string[],
-  /** The collection, and where its stats go (a temporary file, never public/stats.json). */
-  fn: (col: Collection, stats: string) => Promise<void>,
-): Promise<void> {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_build_'));
-  const col: Collection = {
-    id: 'x',
-    label: 'Test',
-    emoji: '',
-    paths: {
-      json: `${dir}/list.json`,
-      raw: `${dir}/raw/`,
-      full: `${dir}/full/`,
-      thumb: `${dir}/thumb/`,
-      placeholder: '',
-      placeholderDark: '',
+test('a clean collection with current stats passes the check', async () => {
+  const io = fakeIo({
+    files: {
+      [PATHS.baseVersion]: '{ "major": 0, "minor": 9 }',
+      './x.json': JSON.stringify({ Group: [{ id: '001', name: 'A', drawn: '2025-01-01' }] }),
+      './raw/001.png': '',
+      './full/001.webp': '',
+      './thumb/001.webp': '',
     },
-  };
-  try {
-    await writeFile(col.paths.json, JSON.stringify({ Group: items }));
-    await mkdir(col.paths.raw);
-    for (const id of raw) {
-      await sharp({ create: { width: 40, height: 40, channels: 3, background: '#3366cc' } })
-        .png().toFile(`${col.paths.raw}${id}.png`);
-    }
-    await fn(col, `${dir}/stats.json`);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
-}
+    git: { 'rev-list --count HEAD': '1', 'rev-parse --short=7 HEAD': 'abc1234' },
+  });
+  await writeStats([birds], io, './stats.json');
+  let issues = -1;
+  const report = await captured(async () => {
+    issues = await checkIntegrity([birds], io, './stats.json');
+  });
+  assertEquals(issues, 0);
+  assert(report.includes('./stats.json matches the lists'), report);
+});
 
-test('buildAssets builds a collection, prints the summary, and leaves the check clean', () =>
-  withCollection([{ id: '001', name: 'New drawing' }], ['001'], async (col, stats) => {
-    let issuesBefore = -1;
-    await captured(async () => {
-      issuesBefore = await checkIntegrity([col], stats);
-    });
-    assert(issuesBefore > 0, 'an unregistered PNG should be an issue before the build');
-
-    const output = await captured(() => buildAssets([col], stats));
-    assert(output.includes('stats: 1 of 1 drawn'), output);
-    assert(output.includes('registered') && output.includes('New drawing (001)'));
-    assert(output.includes('1 drawn') && output.includes('+1 new'), output);
-    // `0.9.161 Valu Kukulhu · 18 drawings`: the line's name sits between, when it has one.
-    assert(
-      /\d+\.\d+\.\d+( [^·]+)? · \d+ drawings?/.test(output),
-      'the summary ends with the version',
-    );
-
-    let issuesAfter = -1;
-    const report = await captured(async () => {
-      issuesAfter = await checkIntegrity([col], stats);
-    });
-    assertEquals(issuesAfter, 0);
-    assert(report.includes('✓'));
-  }));
-
-test('buildAssets fails, naming the item, when a drawing cannot be converted', () =>
-  withCollection(
-    [{ id: '007', name: 'No source', drawn: '2025-01-01' }],
-    [],
-    async (col, stats) => {
-      await captured(() =>
-        assertRejects(() => buildAssets([col], stats), Error, 'asset build failed:\n  x/007:')
-      );
+test('the check counts the blocking issues across collections, and a stale stats file', async () => {
+  const io = fakeIo({
+    files: {
+      [PATHS.baseVersion]: '{ "major": 0, "minor": 9 }',
+      './x.json': JSON.stringify({ Group: [{ id: '001', name: 'A', drawn: '2025-01-01' }] }),
     },
-  ));
-
-test('checkIntegrity counts the blocking issues across collections', () =>
-  withCollection([{ id: '001', name: 'A', drawn: '2025-01-01' }], [], async (col, stats) => {
-    let issues = -1;
-    const report = await captured(async () => {
-      issues = await checkIntegrity([col, col], stats);
-    });
-    // One missing full image, seen in each of the two entries, and stats never written.
-    assertEquals(issues, 3);
-    assert(report.includes('is stale'));
-    assert(report.includes('missing full WebP     001'));
-  }));
+    git: { 'rev-list --count HEAD': '1', 'rev-parse --short=7 HEAD': 'abc1234' },
+  });
+  let issues = -1;
+  const report = await captured(async () => {
+    issues = await checkIntegrity([birds, birds], io, './stats.json');
+  });
+  // One missing full image, seen in each of the two entries, and stats never written.
+  assertEquals(issues, 3);
+  assert(report.includes('is stale: run `npm run ingest`'), report);
+  assert(report.includes('missing full WebP     001'));
+});
 
 test('cli reports a thrown non-Error value without a stack trace', async () => {
-  const { steps } = fakeSteps({ assets: () => Promise.reject('disk full') });
+  const { steps } = fakeSteps({ vite: () => Promise.reject('disk full') });
   let code = 0;
-  const output = await captured(async () => (code = await cli(['--assets-only'], steps)));
+  const output = await captured(async () => (code = await cli([], steps)));
   assertEquals(code, 1);
   assert(output.includes('build failed: disk full'));
 });

@@ -10,7 +10,7 @@
 
 ## Verified
 
-<!-- What you ran (npm run lint, typecheck, test:coverage, check, build:vite, …) and what you could not check. -->
+<!-- What you ran (npm run lint, typecheck, test:coverage, check, build, …) and what you could not check. -->
 
 - [ ] `npm run changelog` run and the entry edited
 - [ ] Finished plans in `docs/plans/` deleted
