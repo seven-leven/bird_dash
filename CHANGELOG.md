@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs: a plan for the tests, top down (`docs/plans/TEST-OVERHAUL.md`). The tests were
+  written bottom up, a file at a time; the plan starts from the site's promises, proves each visit
+  through the whole app in new journey tests, then features, units and contracts, and gives them one
+  kit for fakes, mounting and waiting (today `fetch` is faked four ways and a browser is set up two
+  ways). Its first three phases come before the site and scripts overhauls, as their safety net. The
+  glossary gains promise, journey, fake and scenario
 - 2026-10-26 | docs: a glossary (`docs/GLOSSARY.md`): every word the project uses, for the archive,
   the site, the code, building and testing, each with one meaning, where the code says it, and the
   words to avoid (the viewer is never a lightbox or an overlay; the numbers on screen are counts,

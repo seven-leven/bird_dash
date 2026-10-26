@@ -80,15 +80,19 @@ Use the word in the first column; avoid the ones in the last.
 
 ## Testing
 
-| Word               | Means                                                                                                                       | In the code                          | Not                             |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------- |
-| **tier**           | The kind of test, by file name: **unit** `_test`, **dom** `_dom_test`, **prop** `_prop_test`, **contract** `_contract_test` | `script/test_runner/tiers.ts`        | level, suite                    |
-| **area**           | The part of the project a test protects (data and search, viewer and interface, …), by path                                 | `script/test_runner/areas.ts`        | module, category                |
-| **contract test**  | A test that reads the real files (lists, CSS, docs) and checks they agree with the code                                     | `*_contract_test.ts`                 | integration test                |
-| **property test**  | A test that checks a rule over many generated inputs (fast-check)                                                           | `*_prop_test.ts`                     | fuzz test                       |
-| **coverage floor** | The least coverage a run may have and pass: 100% of lines and branches                                                      | `--min-lines=100 --min-branches=100` | target, goal                    |
-| **deep run**       | The weekly run of the property tests with many more inputs                                                                  | `nightly.yml`, `FC_RUNS_MULTIPLIER`  | soak test                       |
-| **fixture**        | A ready-made value for tests (`makeItem`, `makeCollection`)                                                                 | `src/testing/fixtures.ts`            | mock (that is a fake behaviour) |
+| Word               | Means                                                                                                                       | In the code                              | Not                                       |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------- | ----------------------------------------- |
+| **tier**           | The kind of test, by file name: **unit** `_test`, **dom** `_dom_test`, **prop** `_prop_test`, **contract** `_contract_test` | `script/test_runner/tiers.ts`            | level, suite                              |
+| **area**           | The part of the project a test protects (data and search, viewer and interface, …), by path                                 | `script/test_runner/areas.ts`            | module, category                          |
+| **contract test**  | A test that reads the real files (lists, CSS, docs) and checks they agree with the code                                     | `*_contract_test.ts`                     | integration test                          |
+| **property test**  | A test that checks a rule over many generated inputs (fast-check)                                                           | `*_prop_test.ts`                         | fuzz test                                 |
+| **coverage floor** | The least coverage a run may have and pass: 100% of lines and branches                                                      | `--min-lines=100 --min-branches=100`     | target, goal                              |
+| **deep run**       | The weekly run of the property tests with many more inputs                                                                  | `nightly.yml`, `FC_RUNS_MULTIPLIER`      | soak test                                 |
+| **promise**        | Something the site says it does (from the manifesto's principles or the README); each is kept by tests                      | the promise list in TESTING.md (planned) | requirement, spec                         |
+| **journey**        | A whole visit through the real app, in a test: open the site, search, land in the viewer, go back                           | `*_journey_test.ts` (planned)            | end-to-end (that is a real browser), flow |
+| **fake**           | A stand-in for the outside world in a test (`fetch`, the console, a folder, the clock), from one kit                        | `src/testing/fakes/` (planned)           | mock, stub (unless it records calls)      |
+| **scenario**       | A named, shared set of test data: an archive with gaps, a bird with two Dhivehi names                                       | `src/testing/scenarios/` (planned)       | setup, seed                               |
+| **fixture**        | A ready-made value for tests (`makeItem`, `makeCollection`)                                                                 | `src/testing/fixtures.ts`                | mock (that is a fake behaviour)           |
 
 ## Words with two meanings
 

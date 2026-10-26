@@ -42,6 +42,9 @@ page cheap.
 - [ ] **7. The site's code, the same way** (planned 2026-10-26). `src/` by feature (`viewer/`,
       `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/` layers, one word
       per idea, in nine phases: see [SRC-OVERHAUL.md](SRC-OVERHAUL.md).
+- [ ] **8. The tests, top down** (planned 2026-10-26). From the site's promises to journeys through
+      the whole app, then features, units and contracts, with one kit for fakes, mounting and
+      waiting: see [TEST-OVERHAUL.md](TEST-OVERHAUL.md). Its phases 1–3 come before items 6 and 7.
 
 ## 🚀 High Priority (Fixes & Cleanup)
 
