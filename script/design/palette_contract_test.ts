@@ -23,7 +23,7 @@ test('whiteOnBlack turns an opacity into the grey it produces', () => {
 });
 
 // The rule in docs/DESIGN.md for a hue to be offered as a collection accent.
-test('every accent on the menu in main.css passes the contrast rule', async () => {
+test('every accent on the menu in accents.css passes the contrast rule', async () => {
   const menu = await accentMenu();
   assert(menu.includes('teal'), 'the default accent is missing from the menu');
   assertEquals(new Set(menu).size, menu.length);
