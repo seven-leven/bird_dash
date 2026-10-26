@@ -1,5 +1,5 @@
 import { test } from 'vitest';
-import { assert, assertEquals } from '@std/assert';
+import { assert, assertEquals, assertThrows } from '@std/assert';
 import { iconGridLayout } from './iconGrid.ts';
 import { ICON_GROUPS } from '../../src/lib/icons.ts';
 
@@ -37,4 +37,25 @@ test('the real icon set stays inside the grid at both sizes the docs use', () =>
       }
     }
   }
+});
+
+test('with tracks, every track starts in the same column in every row', () => {
+  const groups = [
+    { label: 'A', icons: ['a1', 'a2', 'a3'] },
+    { label: 'B', icons: ['b1', 'b2'] },
+    { label: 'C', icons: ['c1', 'c2'] },
+    { label: 'D', icons: ['d1', 'd2', 'd3', 'd4', 'd5', 'd6'] },
+    { label: 'E', icons: ['e1'] },
+  ];
+  const placed = iconGridLayout(groups, 13, 2).map((g) => [g.label, g.row, g.col]);
+  // Tracks of six, one empty column apart: the second starts at column 7 every time.
+  assertEquals(placed, [['A', 0, 0], ['B', 0, 4], ['C', 0, 7], ['D', 1, 0], ['E', 1, 7]]);
+});
+
+test('columns that do not split into equal tracks are refused', () => {
+  assertThrows(
+    () => iconGridLayout([], 12, 2),
+    Error,
+    '12 columns do not split into 2 equal tracks',
+  );
 });
