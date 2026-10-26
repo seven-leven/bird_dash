@@ -1,8 +1,8 @@
 # Scripts overhaul
 
-> **Status:** planned 2026-10-26, nothing started. Moves `script/` onto the rules in
-> [SCRIPTS.md](../SCRIPTS.md), one pull request per phase. Delete this page when phase 7 is done;
-> the CHANGELOG keeps what happened, and SCRIPTS.md stays as the rules.
+> **Status:** planned 2026-10-26; phase 0 done (the rules and the decisions). Moves `script/` onto
+> the rules in [SCRIPTS.md](../SCRIPTS.md), one pull request per phase. Delete this page when phase
+> 7 is done; the CHANGELOG keeps what happened, and SCRIPTS.md stays as the rules.
 
 ## Why
 
@@ -21,16 +21,16 @@ The scripts work and are fully tested, but they grew one command at a time:
 - **Names drift.** `get…`, `load…` and `read…` for the same act; `executeWork`, `WorkPlan`,
   `VersionData`; `col`, `res`, `f`; snake_case files in `script/`, camelCase in `src/`.
 
-## Decisions to make first
+## Decisions
 
-| Question                                    | Recommendation                                       | Why                                                      |
+Settled 2026-10-26, each as recommended; DECISIONS.md has the entries.
+
+| Question                                    | Decided                                              | Why                                                      |
 | ------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------- |
 | File names in `script/`                     | camelCase, named after the main export, as in `src/` | One rule for the whole repository (DECISIONS.md)         |
 | The command that takes in new drawings      | `ingest`                                             | Says it takes things in and changes the repository       |
 | Does a local `npm run build` build the docs | Yes                                                  | Local matches CI; it costs about 3 seconds               |
 | Keep the old npm script names as aliases    | No                                                   | One person runs them; WORKFLOW.md changes in the same PR |
-
-SCRIPTS.md assumes the recommendations. If one goes the other way, change SCRIPTS.md in phase 0.
 
 ## Where it ends up
 
@@ -92,7 +92,7 @@ Each phase is one pull request. In every one: behaviour unchanged unless the pha
 100% lines and branches, all four checks green, files moved with `git mv` so history follows, and
 the docs, WORKFLOW.md's command table and `areas.ts` updated in the same PR.
 
-- [ ] **0. Agree the rules.** Settle the decisions above; adjust SCRIPTS.md to match; add a
+- [x] **0. Agree the rules.** Settle the decisions above; adjust SCRIPTS.md to match; add a
       DECISIONS.md entry ("ingest changes the repository, build does not"). Link SCRIPTS.md from
       ARCHITECTURE.md and the docs site's sidebar. _Done when_ the rules are merged.
 - [ ] **1. Foundation.** `lib/paths.ts`, `lib/project.ts`, `lib/io.ts` (one `Io`: files, git,

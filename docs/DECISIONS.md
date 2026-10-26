@@ -205,24 +205,29 @@ section.
 
 ### One folder per command in `script/`
 
-**Chosen:** `script/build/`, `version/`, `changelog/`, `design/`, `placeholders/`, `test_runner/`,
-with shared code in `script/lib/`. Files are named for what they do (`plan_changes.ts`, not
-`plan.ts`); each command's entry file is named after it. The helpers that tests share live in
-`src/testing/`, because nearly all of their users are `src/` tests.
+**Chosen:** a folder per command (`script/ingest/`, `build/`, `generate/`, `check/`, `version/`,
+`changelog/`, `testRunner/`), with shared code in `script/lib/`; each command's entry file is named
+after it. The helpers that tests share live in `src/testing/`, because nearly all of their users are
+`src/` tests. Until the [scripts overhaul](plans/SCRIPTS-OVERHAUL.md) is done, some commands are
+still in their old folders (`script/build/` also takes in drawings; `design/` and `placeholders/`
+hold generators).
 
 **Why.** An entry point is easy to find, and a file name alone (in an editor tab, a stack trace)
-says what the file does.
+says what the file does. The rules for scripts are in [SCRIPTS.md](SCRIPTS.md).
 
-### One naming style per tree
+### One naming style for the whole repository
 
-**Chosen:** `src/` uses camelCase file names (`useHashRoute.ts`, `withDom.ts`) and PascalCase for
-components (`LightBox.vue`); `script/` uses snake_case (`plan_changes.ts`). A file that exports one
-main thing is named after it exactly: `useLightbox.ts` exports `useLightbox`. Test files keep their
-module's name plus the tier suffix (`useLightbox_dom_test.ts`).
+**Chosen (2026-10-26):** camelCase file names everywhere (`useHashRoute.ts`, `planChanges.ts`), and
+PascalCase for components (`LightBox.vue`). A file that exports one main thing is named after it
+exactly: `useLightbox.ts` exports `useLightbox`. Test files keep their module's name plus the tier
+suffix (`useLightbox_dom_test.ts`). Until then `script/` used snake_case (`plan_changes.ts`); its
+files are renamed as the overhaul reaches them.
 
-**Why.** Each tree follows its own ecosystem (Vue projects are camelCase; the scripts started in
-snake_case), and the rule is checkable at a glance: a snake_case name in `src/` is a mistake. When
-the file name and the export differ, even by one capital, searching for one misses the other.
+**Why.** One rule is easier to keep than two, and a file named after its export can be found by
+searching for either. snake_case in `script/` was only how the scripts happened to start; once the
+scripts are rewritten to [SCRIPTS.md](SCRIPTS.md), keeping a second style buys nothing.
+
+**Cost.** Every script file is renamed once, with `git mv` so its history follows.
 
 ### `src/` is what the code imports, `public/` is what it fetches
 
@@ -275,3 +280,34 @@ design`. A plan is deleted when its work is done.
 
 **Why.** A page about the past goes stale while looking current. The CHANGELOG records what changed,
 this page records why, and git keeps the old plans.
+
+## Scripts
+
+### `ingest` changes the repository, `build` does not
+
+**Chosen (2026-10-26):** taking in new drawings (transcoding images, dating new entries in the
+lists, rewriting `stats.json`) is its own command, `npm run ingest`, run on your machine. `npm run
+build` only makes `dist/` from what is committed, and is what CI runs.
+
+**Why.** `build:assets` used to do both, so "build" could quietly change files git tracks. With the
+two apart, a build can run anywhere without surprises, and every change to tracked files is one you
+asked for by name ([SCRIPTS.md](SCRIPTS.md), principle 2).
+
+### A local build includes the docs
+
+**Chosen (2026-10-26):** `npm run build` builds the site and then the docs site, as CI does;
+`build:site` and `build:docs` build one.
+
+**Why.** A local `dist/` that matches the deployed one catches a broken docs page before CI does. It
+costs about three seconds.
+
+**Revisit if** the docs build grows slow enough to get in the way.
+
+### Old command names are not kept as aliases
+
+**Chosen (2026-10-26):** when a command is renamed (`build:assets` to `ingest`, `build:vite` to
+`build:site`, `placeholders` and `design` to `generate:…`), the old name goes in the same pull
+request, together with WORKFLOW.md and the workflows.
+
+**Why.** One person runs these commands, and two names for one thing is what SCRIPTS.md exists to
+prevent.

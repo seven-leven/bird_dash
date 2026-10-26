@@ -157,6 +157,10 @@ and plan only, and fails if anything is missing or orphaned.
 Other scripts: `version/version.ts` (the version, see the README), `changelog/changelog.ts`,
 `placeholders/draw_placeholders.ts` and `design/draw_design_guide.ts` (generated images).
 
+Every script follows the principles and naming in [SCRIPTS.md](SCRIPTS.md). The pipeline above is
+moving to them (taking in drawings becomes `npm run ingest`, the generators move to
+`script/generate/`); [plans/SCRIPTS-OVERHAUL.md](plans/SCRIPTS-OVERHAUL.md) has the steps.
+
 ## Rules
 
 - **Imports follow the layers.** A helper in `lib/` never imports a store; a component never imports

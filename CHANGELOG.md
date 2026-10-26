@@ -22,7 +22,9 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
   side effect; decide, then do, then say; one generator and one check per generated file; one home
   for paths and I/O; one command shape; one voice) and the naming, from folders to variables, with a
   fixed list of verbs. `docs/plans/SCRIPTS-OVERHAUL.md` is the roadmap: the target layout, every
-  rename, the npm scripts before and after, and eight phases, one pull request each
+  rename, the npm scripts before and after, and eight phases, one pull request each. Phase 0 is
+  done: camelCase file names in `script/` too (DECISIONS.md's naming entry is rewritten), `ingest`
+  for taking in drawings, a local build that includes the docs, and no aliases for old command names
 - 2026-10-26 | docs: the docs are a site, at
   [/bird_dash/docs/](https://seven-leven.github.io/bird_dash/docs/), in the gallery's own design:
   VitePress over `docs/*.md`, built into the same Pages deploy and checked by CI, where a dead link
