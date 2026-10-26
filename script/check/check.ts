@@ -10,8 +10,8 @@
  * Exits 1, naming each problem and the command that fixes it, when anything is wrong.
  */
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
-import { type Io, realIo } from '../lib/io.ts';
-import { EXIT, MARK, parseArgs, printLines, runCommand } from '../lib/cli.ts';
+import type { Io } from '../lib/io.ts';
+import { command, EXIT, MARK, parseArgs, printLines } from '../lib/cli.ts';
 import { computeVersion, formatVersionLine } from '../version/version.ts';
 import { checkAssets } from './checkAssets.ts';
 import { checkGenerated } from './checkGenerated.ts';
@@ -41,15 +41,13 @@ const USAGE = `npm run check
   Checks that every drawing has its images, nothing is left to ingest, and the generated
   files are current. Changes nothing; exits 1 on a problem.`;
 
-export function main(args: string[], io: Io = realIo, options: CheckOptions = {}): Promise<number> {
-  return runCommand(io, args, USAGE, async () => {
-    parseArgs(args, []);
-    const problems = await checkRepository(io, options);
-    if (problems === 0) return EXIT.done;
-    io.err(`${MARK.problem} check failed: ${problems} problem(s)`);
-    return EXIT.problem;
-  });
-}
+export const main = command<CheckOptions>(USAGE, async (args, io, options) => {
+  parseArgs(args, []);
+  const problems = await checkRepository(io, options);
+  if (problems === 0) return EXIT.done;
+  io.err(`${MARK.problem} check failed: ${problems} problem(s)`);
+  return EXIT.problem;
+});
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */

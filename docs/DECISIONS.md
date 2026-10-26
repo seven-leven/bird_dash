@@ -112,7 +112,7 @@ script` lists every marker; each should still be true when you read it.
 ### Components outside the totals until they have tests
 
 **Chosen:** `.vue` files are not on the untested-files list (`discoverSources` in
-`script/test_runner/areas.ts`). A component counts toward coverage once a test loads it, and must
+`script/testRunner/areas.ts`). A component counts toward coverage once a test loads it, and must
 then be at 100% like everything else; one that no test loads yet does not count.
 
 **Why.** Adding all 17 at once would drop coverage far below the 100% floor and block CI until every
@@ -122,7 +122,7 @@ component had tests. They join one by one, each with its tests (see [plans/TODO.
 ### Tiers by file name, and a runner on top of Vitest
 
 **Chosen:** a test's tier comes from its name (`_test`, `_dom_test`, `_prop_test`,
-`_contract_test`). `npm test` runs `script/test_runner/run_tests.ts`, which runs Vitest once and
+`_contract_test`). `npm test` runs `script/testRunner/runTests.ts`, which runs Vitest once and
 prints one row per tier and per area.
 
 **Why.** The name tells you at a glance what a test needs (nothing, a fake DOM, many generated
@@ -259,7 +259,7 @@ uses are all in `src/` and `index.html`.
 **Why.** The drawings are plain data with no Vue in them, and two commands read them (the design
 guide and the placeholder generator). Scripts importing from `src/lib/` is expected; scripts
 reaching into `src/components/` blurred the layers. For the test report they still count under
-"viewer and interface": an area's longest matching path wins (`script/test_runner/areas.ts`).
+"viewer and interface": an area's longest matching path wins (`script/testRunner/areas.ts`).
 
 ### Generated images are committed
 

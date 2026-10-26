@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, assertEquals, assertStringIncludes, assertThrows } from '@std/assert';
-import { main, parseArgs, type RunnerDeps, withoutDots } from './run_tests.ts';
+import { main, parseArgs, type RunnerDeps, toQuietOutput } from './runTests.ts';
 
 test('no arguments means every tier, in order', () => {
   const o = parseArgs([]);
@@ -30,9 +30,9 @@ test('a coverage floor without --coverage is an error, not silently ignored', ()
   assertThrows(() => parseArgs(['--min-branches=50']), Error, '--min-branches needs --coverage');
 });
 
-test("withoutDots drops the dot reporter's progress lines and keeps the rest", () => {
+test("toQuietOutput drops the dot reporter's progress lines and keeps the rest", () => {
   const raw = ' RUN  v5\n·····x··*·-·\n\n FAIL  a_test.ts > boom\nAssertionError: bad\n··\n';
-  assertEquals(withoutDots(raw), ' RUN  v5\n FAIL  a_test.ts > boom\nAssertionError: bad');
+  assertEquals(toQuietOutput(raw), ' RUN  v5\n FAIL  a_test.ts > boom\nAssertionError: bad');
 });
 
 test('--report asks for the saved report; it is off by default', () => {

@@ -5,7 +5,7 @@ import { defineConfig } from 'vitepress';
 import tailwindcss from '@tailwindcss/vite';
 import { githubLinks, githubSlug } from '../../script/docs/links.ts';
 import { REPO_URL } from '../../script/lib/project.ts';
-import { liveBlocks } from '../../script/docs/live_blocks.ts';
+import { liveBlocks } from '../../script/docs/liveBlocks.ts';
 
 export default defineConfig({
   title: 'Wildlife Illustrated',

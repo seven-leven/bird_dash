@@ -1,6 +1,6 @@
 // What every command shares (docs/SCRIPTS.md, principles 7 and 8): reading its
 // arguments, its exit codes and how it reports a problem.
-import type { Io } from './io.ts';
+import { type Io, realIo } from './io.ts';
 import { errorMessage } from './error.ts';
 
 /** Exit codes: done; the work found a problem; the command was used wrongly. */
@@ -64,30 +64,36 @@ export function parseArgs(
   return parsed;
 }
 
+/** A command's entry: its arguments, the Io (the real one by default), any test options. */
+export type Main<Options> = (args: string[], io?: Io, options?: Options) => Promise<number>;
+
 /**
- * Run a command's body and turn the outcome into an exit code. `--help` prints `usage`
- * and exits 0; wrong arguments exit 2; anything thrown is reported, with its first line
- * after `✗`, and exits 1. The body returns its own code when it found a problem itself.
+ * Make a command's `main` from its usage and the work it does (docs/SCRIPTS.md,
+ * principle 7). The `main` turns the outcome into an exit code: `--help` prints `usage`
+ * and exits 0; wrong arguments exit 2; anything thrown is reported by its first line,
+ * after `✗`, and exits 1. The work returns its own code when it found a problem itself.
+ *
+ *   export const main = command(USAGE, async (args, io) => { … });
  */
-export async function runCommand(
-  io: Io,
-  args: string[],
+export function command<Options = Record<string, never>>(
   usage: string,
-  body: () => Promise<number | void>,
-): Promise<number> {
-  if (args.includes('--help')) {
-    io.out(usage);
-    return EXIT.done;
-  }
-  try {
-    return (await body()) ?? EXIT.done;
-  } catch (err) {
-    if (err instanceof UsageError) {
-      io.err(`${MARK.problem} ${err.message}`);
-      io.err(usage);
-      return EXIT.usage;
+  work: (args: string[], io: Io, options: Options) => Promise<number | void>,
+): Main<Options> {
+  return async (args, io = realIo, options = {} as Options) => {
+    if (args.includes('--help')) {
+      io.out(usage);
+      return EXIT.done;
     }
-    io.err(`${MARK.problem} ${errorMessage(err).split('\n')[0]}`);
-    return EXIT.problem;
-  }
+    try {
+      return (await work(args, io, options)) ?? EXIT.done;
+    } catch (err) {
+      if (err instanceof UsageError) {
+        io.err(`${MARK.problem} ${err.message}`);
+        io.err(usage);
+        return EXIT.usage;
+      }
+      io.err(`${MARK.problem} ${errorMessage(err).split('\n')[0]}`);
+      return EXIT.problem;
+    }
+  };
 }

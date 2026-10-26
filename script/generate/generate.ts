@@ -10,9 +10,9 @@
  * It changes files git tracks (unless `--into`), so it runs on your machine.
  */
 import { COLLECTIONS } from '../lib/collections.ts';
-import { type Io, readJson, realIo } from '../lib/io.ts';
+import { type Io, readJson } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
-import { EXIT, MARK, parseArgs, runCommand, UsageError } from '../lib/cli.ts';
+import { command, EXIT, MARK, parseArgs, UsageError } from '../lib/cli.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
 import { writeStats } from './stats.ts';
 import { writePlaceholders } from './placeholders.ts';
@@ -101,24 +101,22 @@ const USAGE = `npm run generate [-- <generator>…] [-- --into <dir>]
   Redraws the generated files: ${GENERATORS.map((g) => g.id).join(', ')}.
   Changes files git tracks, unless --into writes them into <dir> instead.`;
 
-export function main(args: string[], io: Io = realIo): Promise<number> {
-  return runCommand(io, args, USAGE, async () => {
-    const { words, values } = parseArgs(args, [], ['--into']);
-    const generators = pickGenerators(words);
-    const into = values.get('--into');
-    if (into) await io.makeDir(into);
-    io.out(
-      into
-        ? `generate: into ${into}, so nothing git tracks is changed`
-        : 'generate: redrawing the generated files (this changes files git tracks)',
-    );
-    for (const generator of generators) {
-      const written = await generator.write(io, into);
-      io.out(`  ${MARK.done} ${generator.id}  ${written.join(', ') || 'nothing to draw yet'}`);
-    }
-    return EXIT.done;
-  });
-}
+export const main = command(USAGE, async (args, io) => {
+  const { words, values } = parseArgs(args, [], ['--into']);
+  const generators = pickGenerators(words);
+  const into = values.get('--into');
+  if (into) await io.makeDir(into);
+  io.out(
+    into
+      ? `generate: into ${into}, so nothing git tracks is changed`
+      : 'generate: redrawing the generated files (this changes files git tracks)',
+  );
+  for (const generator of generators) {
+    const written = await generator.write(io, into);
+    io.out(`  ${MARK.done} ${generator.id}  ${written.join(', ') || 'nothing to draw yet'}`);
+  }
+  return EXIT.done;
+});
 
 // The command's entry point: it only runs as a program, never inside a test.
 /* c8 ignore next */

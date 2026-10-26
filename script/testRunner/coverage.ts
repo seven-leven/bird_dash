@@ -1,5 +1,5 @@
 /**
- * Coverage helpers for the test runner (script/test_runner/run_tests.ts): parse LCOV, total it up,
+ * Coverage helpers for the test runner (script/testRunner/runTests.ts): parse LCOV, total it up,
  * and format it for the terminal and the GitHub job summary.
  *
  * Vitest measures every file a test loads, `.vue` components included; which files
@@ -172,7 +172,7 @@ export function formatGaps(files: FileCoverage[], cwd = ''): string {
  * Fixed-width table for the terminal, lowest line coverage first. `limit` shows only
  * the N least-covered files (the total row always covers every file).
  */
-export function formatTable(files: FileCoverage[], cwd = '', limit = Infinity): string {
+export function formatCoverageText(files: FileCoverage[], cwd = '', limit = Infinity): string {
   const rel = relativeTo(cwd);
   // Worst first by whichever measure is lower, so a file short only on branches still shows.
   const worst = (f: FileCoverage) => Math.min(percent(f.lines), percent(f.branches));
@@ -191,7 +191,7 @@ export function formatTable(files: FileCoverage[], cwd = '', limit = Infinity): 
   return [head, '-'.repeat(head.length), ...body, '-'.repeat(head.length), foot].join('\n');
 }
 
-export function formatMarkdown(
+export function formatCoverageMarkdown(
   files: FileCoverage[],
   minLines: number,
   cwd = '',

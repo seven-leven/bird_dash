@@ -71,7 +71,7 @@ export const AREAS: Area[] = [
     id: 'tooling',
     label: 'Test harness and docs tooling',
     protects: 'the test runner and its reports, generated guide images, the docs site',
-    paths: ['script/test_runner/', 'script/generate/', 'script/docs/'],
+    paths: ['script/testRunner/', 'script/generate/', 'script/docs/'],
   },
 ];
 
@@ -157,7 +157,7 @@ const pct = (c: Counter | undefined): string =>
   c === undefined ? '' : c.found === 0 ? '—' : `${((c.hit / c.found) * 100).toFixed(1)}%`;
 
 /** Terminal table: one row per area. The coverage columns appear only when measured. */
-export function formatAreasConsole(rows: AreaSummary[]): string {
+export function formatAreasText(rows: AreaSummary[]): string {
   const withCoverage = rows.some((r) => r.lines !== undefined);
   const width = Math.max(4, ...rows.map((r) => r.area.label.length));
   const out = [

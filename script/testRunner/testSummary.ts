@@ -51,7 +51,7 @@ const where = (c: TestCase) => c.line > 0 ? `${c.file}:${c.line}` : c.file;
 const secs = (t: number) => t < 0.05 ? `${Math.round(t * 1000)}ms` : `${t.toFixed(2)}s`;
 
 /** The compact terminal summary: one row per tier, failures first. */
-export function formatConsole(
+export function formatTiersText(
   s: Summary,
   opts: { verbose?: boolean; cases?: TestCase[] } = {},
 ): string {
@@ -118,7 +118,7 @@ export function formatConsole(
 }
 
 /** The table shown on the GitHub Actions job summary page. */
-export function formatMarkdown(s: Summary, title: string): string {
+export function formatTiersMarkdown(s: Summary, title: string): string {
   const lines = [`### ${title}`, ''];
   lines.push(
     s.total.failed > 0

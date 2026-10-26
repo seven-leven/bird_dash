@@ -162,7 +162,7 @@ src/
 
 Each phase is one pull request. In every one: the site looks and behaves the same, 100% lines and
 branches, all four checks green, files moved with `git mv` so history follows, tests moved beside
-their files, and in the same PR the paths in `script/test_runner/areas.ts`, the imports in `script/`
+their files, and in the same PR the paths in `script/testRunner/areas.ts`, the imports in `script/`
 and `docs/.vitepress/` (which import `src/lib/icons.ts`, `logo.ts`, `pages.ts`, `types/data.ts` and
 the icon components), and the docs that name a moved file. Best done when no other pull request
 touching `src/` is open, as nearly every file moves.

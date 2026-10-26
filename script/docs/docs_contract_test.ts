@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { readdir, readFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { assert, assertEquals } from '@std/assert';
-import { liveNames } from './live_blocks.ts';
+import { liveNames } from './liveBlocks.ts';
 import { accentHues, missingSteps } from './accents.ts';
 
 // The docs site builds from these files; a mistake in them would otherwise surface only

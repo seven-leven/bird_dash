@@ -2,9 +2,9 @@ import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes, assertThrows } from '@std/assert';
 import {
   coverageAnnotations,
+  formatCoverageMarkdown,
+  formatCoverageText,
   formatGaps,
-  formatMarkdown,
-  formatTable,
   lineRanges,
   notFullyCovered,
   parseLcov,
@@ -53,8 +53,8 @@ test('totals add up across files (not an average of percentages)', () => {
   assertEquals(percent(t.lines), 75);
 });
 
-test('formatTable lists the worst-covered file first and shows relative paths', () => {
-  const table = formatTable(parseLcov(LCOV), 'C:\\proj');
+test('formatCoverageText lists the worst-covered file first and shows relative paths', () => {
+  const table = formatCoverageText(parseLcov(LCOV), 'C:\\proj');
   const lines = table.split('\n');
   assertStringIncludes(lines[2], 'src/a.ts'); // 50% comes before 100%
   assertStringIncludes(lines[3], 'src/b.ts');
@@ -68,8 +68,8 @@ test('parseMinLines reads the floor and rejects nonsense', () => {
   assertThrows(() => parseMinLines(['--min-lines=140']));
 });
 
-test('formatMarkdown leads with the total and folds the per-file table away', () => {
-  const md = formatMarkdown(parseLcov(LCOV), 70, 'C:\\proj');
+test('formatCoverageMarkdown leads with the total and folds the per-file table away', () => {
+  const md = formatCoverageMarkdown(parseLcov(LCOV), 70, 'C:\\proj');
   assertStringIncludes(md, '**75.0% of lines**');
   assertStringIncludes(md, 'floor: 70%');
   assertStringIncludes(md, 'of branches** (floor: 0%)');
@@ -83,8 +83,8 @@ test('formatMarkdown leads with the total and folds the per-file table away', ()
   assertStringIncludes(rows[1], 'src/b.ts');
 });
 
-test('formatTable with a limit shows only the worst files but totals them all', () => {
-  const lines = formatTable(parseLcov(LCOV), 'C:\\proj', 1).split('\n');
+test('formatCoverageText with a limit shows only the worst files but totals them all', () => {
+  const lines = formatCoverageText(parseLcov(LCOV), 'C:\\proj', 1).split('\n');
   assertEquals(lines.filter((l) => l.includes('src/')).length, 1);
   assertStringIncludes(lines[lines.length - 1], ' 75.0%');
 });
@@ -109,8 +109,11 @@ test('parseMinBranches reads its own flag, independent of --min-lines', () => {
   assertThrows(() => parseMinBranches(['--min-branches=-1']));
 });
 
-test('formatMarkdown shows the branch total and its floor', () => {
-  assertStringIncludes(formatMarkdown(parseLcov(LCOV), 70, '', 80), 'of branches** (floor: 80%)');
+test('formatCoverageMarkdown shows the branch total and its floor', () => {
+  assertStringIncludes(
+    formatCoverageMarkdown(parseLcov(LCOV), 70, '', 80),
+    'of branches** (floor: 80%)',
+  );
 });
 
 test('parseLcov records the lines and branches no test reached', () => {

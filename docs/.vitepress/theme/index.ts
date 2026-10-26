@@ -15,7 +15,7 @@ export default {
       'nav-bar-title-before': () => h(LogoMark, { class: 'wi-logo' }),
     }),
   enhanceApp({ app }) {
-    // The live sections of DESIGN.md (`<!-- live: Name -->`, script/docs/live_blocks.ts).
+    // The live sections of DESIGN.md (`<!-- live: Name -->`, script/docs/liveBlocks.ts).
     app.component('AccentRamps', AccentRamps);
     app.component('IconSheet', IconSheet);
   },
