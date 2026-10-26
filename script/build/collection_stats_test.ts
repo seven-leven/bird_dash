@@ -11,7 +11,13 @@ const birds = {
   label: 'Birds',
   groups: {
     Ducks: [
-      { id: '001', name: 'Lesser Whistling-Duck', drawn: '2024-10-10', dhiv_script: 'ރޭރު' },
+      {
+        id: '001',
+        name: 'Lesser Whistling-Duck',
+        drawn: '2024-10-10',
+        dhiv_script: 'ރޭރު',
+        dhiv: 'Reyru',
+      },
       { id: '002', name: 'Cotton Pygmy-Goose', drawn: '2025-10-07' },
       { id: '003', name: 'Garganey', drawn: '' }, // still a placeholder
     ],
@@ -38,6 +44,7 @@ test('each collection is counted from its list: species, drawn, groups, first an
       total: 4,
       drawn: 3,
       groups: 2,
+      named: 1,
       firstDrawn: '2024-10-10',
       lastDrawn: '2025-10-07',
     },
@@ -47,6 +54,7 @@ test('each collection is counted from its list: species, drawn, groups, first an
       total: 1,
       drawn: 0,
       groups: 1,
+      named: 0,
       firstDrawn: null,
       lastDrawn: null,
     },
@@ -56,6 +64,7 @@ test('each collection is counted from its list: species, drawn, groups, first an
       total: 1,
       drawn: 1,
       groups: 1,
+      named: 0,
       firstDrawn: '2026-03-09',
       lastDrawn: '2026-03-09',
     },
@@ -70,20 +79,30 @@ test('the newest drawings come first; a shared day keeps collection order, then 
     { collection: 'birds', id: '002', name: 'Cotton Pygmy-Goose', drawn: '2025-10-07' },
     { collection: 'birds', id: '133', name: 'Yellow Bittern', drawn: '2025-10-07' },
   ]);
-  // The Dhivehi name travels with a drawing that has one.
+  // The Dhivehi name travels with a drawing that has one, with how to say it if the
+  // list says; a romanisation with no Thaana to go with it is left behind.
+  assertEquals(
+    computeStats([{
+      ...sharks,
+      groups: { S: [{ id: '1', name: 'S', drawn: '2026-01-01', dhiv: 'Miyaru' }] },
+    }])
+      .newest[0].roman,
+    undefined,
+  );
   const all = computeStats([birds]).newest;
   assertEquals(all.at(-1), {
     collection: 'birds',
     id: '001',
     name: 'Lesser Whistling-Duck',
     dhivehi: 'ރޭރު',
+    roman: 'Reyru',
     drawn: '2024-10-10',
   });
 });
 
 test('no drawings anywhere: zero drawn and no newest, not an error', () => {
   const stats = computeStats([sharks]);
-  assertEquals([stats.drawn, stats.newest], [0, []]);
+  assertEquals([stats.drawn, stats.newest, stats.first], [0, [], null]);
 });
 
 test('the file text is stable: the same lists always write the same bytes', () => {
@@ -117,4 +136,20 @@ test('writeStats writes the file, and statsAreCurrent knows when it has gone sta
   } finally {
     await rm(dir, { recursive: true, force: true });
   }
+});
+
+test('the first drawing is the oldest, the same rules breaking a tie', () => {
+  assertEquals(computeStats([shells, birds]).first, {
+    collection: 'birds',
+    id: '001',
+    name: 'Lesser Whistling-Duck',
+    dhivehi: 'ރޭރު',
+    roman: 'Reyru',
+    drawn: '2024-10-10',
+  });
+  const sameDay = {
+    ...shells,
+    groups: { Bivalves: [{ id: '019', name: 'S', drawn: '2024-10-10' }] },
+  };
+  assertEquals(computeStats([sameDay, birds]).first?.collection, 'shells'); // listed first
 });

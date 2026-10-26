@@ -16,6 +16,15 @@ where `w` was the drawing count.
 
 ## v0.9.0 (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | site: an About page (`#about`, after the collection tabs or last in their menu): what
+  the archive is, its first drawing, progress overall and per collection, the five newest drawings,
+  how each page is made, a short history with a link to the write-up on how the site was built, and
+  the manifesto's first line. Every number comes from `public/stats.json`, so nothing is typed by
+  hand, and the page holds more collections without a redesign: six cards, then "Show all", and past
+  three collections the prose counts them instead of naming each. Dark mode follows the site. build:
+  `stats.json` also names the first drawing (`first`), counts the species named in Dhivehi
+  (`named`), and gives each drawing's romanised Dhivehi name (`roman`); its shape moves to
+  `src/types/data.ts`, shared by the build and the page
 - 2026-10-25 | build: the asset build writes `public/stats.json`, the archive's numbers worked out
   from the lists (each collection's total, drawn, groups, first and latest drawing; the totals; the
   eight newest drawings across every collection), so a page that shows them, such as a coming About

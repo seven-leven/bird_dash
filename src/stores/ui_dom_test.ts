@@ -163,3 +163,16 @@ test('"Drawn only" starts off and toggles, rebuilding the scroll-spy for the new
     assertEquals(ui.drawnOnly.value, false);
     unmount();
   }));
+
+test('showPage switches between gallery and About, and the About page closes the sidebar', () =>
+  withDom(() => {
+    const { result: ui, unmount } = mountComposable(createUiStore);
+    assertEquals(ui.page.value, 'gallery');
+    ui.toggleSidebar();
+    ui.showPage('about');
+    assertEquals([ui.page.value, ui.sidebarOpen.value], ['about', false]);
+    ui.toggleSidebar();
+    ui.showPage('gallery');
+    assertEquals([ui.page.value, ui.sidebarOpen.value], ['gallery', true]); // left as it was
+    unmount();
+  }));

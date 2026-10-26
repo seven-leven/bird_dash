@@ -14,7 +14,7 @@ import type {
 // not defined import.meta.env; the base is then '/'. Vite and Vitest always define it, so the
 // fallback never runs in a test.
 /* c8 ignore next 2 */
-const getBase = () =>
+export const getBase = (): string =>
   (import.meta as unknown as { env?: { BASE_URL?: string } }).env?.BASE_URL ?? '/';
 
 export function useCollections() {

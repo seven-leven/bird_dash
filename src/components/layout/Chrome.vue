@@ -11,14 +11,15 @@
 
       <!-- Mobile overlay -->
       <div
-        v-if="isMobile"
+        v-if="isMobile && page === 'gallery'"
         class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
         :class="sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
         @click="closeSidebar()"
         aria-hidden="true"
       />
 
-      <SideNav />
+      <!-- The About page has no sections to list. -->
+      <SideNav v-if="page === 'gallery'" />
 
       <!-- Main content -->
       <main class="relative flex flex-1 flex-col overflow-hidden">
@@ -26,7 +27,7 @@
         <!-- Active search filter. The section in view is named by its own sticky
              heading (GalleryContent), so this bar only appears while searching. -->
         <div
-          v-if="!data.loading && !data.error && query"
+          v-if="page === 'gallery' && !data.loading && !data.error && query"
           class="shrink-0 flex items-center gap-3 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
                  bg-white/95 border-slate-100 text-slate-500
                  dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-400"
@@ -50,7 +51,8 @@
           :ref="bindScrollContainer"
           class="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth custom-scrollbar"
         >
-          <GalleryContent />
+          <AboutPage v-if="page === 'about'" />
+          <GalleryContent v-else />
         </div>
 
       </main>
@@ -73,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineAsyncComponent, nextTick } from 'vue';
+import { defineAsyncComponent, nextTick, watch } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
@@ -87,12 +89,34 @@ import { matches, matchesDrawn } from '../../lib/formatCount.ts';
 // Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)
 // are only needed after the first tile click, so keep them out of first paint.
 const LightBox = defineAsyncComponent(() => import('../gallery/LightBox.vue'));
+// The About page is a page few open; it loads when it is shown.
+const AboutPage = defineAsyncComponent(() => import('../about/AboutPage.vue'));
 
 const { data, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
 // The scroll container is handed to the ui store (for the scroll-spy) as a function ref.
-const { isMobile, sidebarOpen, viewMode, bindScrollContainer, closeSidebar, setViewMode, goToSection } =
-  useUi();
+const {
+  isMobile,
+  sidebarOpen,
+  page,
+  viewMode,
+  bindScrollContainer,
+  closeSidebar,
+  setViewMode,
+  goToSection,
+  scrollToTop,
+  updateActiveSection,
+} = useUi();
+
+// Each page opens at its top; back in the gallery, its sections have just mounted again,
+// so the scroll-spy measures them afresh.
+watch(page, async (now) => {
+  scrollToTop();
+  if (now === 'gallery') {
+    await nextTick();
+    updateActiveSection();
+  }
+});
 const { expandedImage, drawnItems, close, update } = useOverlayStore();
 
 // "Ducks, Geese, and Swans" in the viewer: close it and show that group in the grid,

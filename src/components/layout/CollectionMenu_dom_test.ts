@@ -5,9 +5,10 @@ import { computed, h, nextTick, ref } from 'vue';
 import CollectionMenu from './CollectionMenu.vue';
 import { makeCollection } from '../../testing/fixtures.ts';
 import { mountComponent } from '../../testing/mountComponent.ts';
+import type { Page } from '../../types/index.ts';
 
 /** Mount the menu over three collections, Birds current; record what it switches to. */
-function mount() {
+function mount(page: Page = 'gallery') {
   const list = ref([
     makeCollection('birds', { label: 'Birds', icon: 'bird' }),
     makeCollection('sharks', { label: 'Sharks', icon: 'shark' }),
@@ -27,11 +28,13 @@ function mount() {
           activeId.value = id;
         },
       },
+      ui: { page: ref(page) },
     },
   });
   const button = host.querySelector<HTMLButtonElement>('[aria-controls="collection-menu"]')!;
   const items = () => [...host.querySelectorAll<HTMLButtonElement>('#collection-menu button')];
-  return { host, button, items, switched };
+  const about = () => host.querySelector<HTMLAnchorElement>('#collection-menu a[href="#about"]');
+  return { host, button, items, about, switched };
 }
 
 test('the button names the current collection and opens the list of all of them', async () => {
@@ -87,4 +90,26 @@ test('a press outside closes the list; a press inside does not', async () => {
   document.body.dispatchEvent(new Event('pointerdown', { bubbles: true }));
   await nextTick();
   assertEquals(items(), []);
+});
+
+test('the list ends with the About page; on it, the button says About and no collection is current', async () => {
+  const { button, items, about } = mount('about');
+  assert(button.textContent!.includes('About'));
+  assertEquals(button.querySelectorAll('svg').length, 1); // the chevron, no collection's icon
+  button.click();
+  await nextTick();
+  assertEquals(items().map((b) => b.getAttribute('aria-current')), [null, null, null]);
+  assertEquals(about()!.getAttribute('aria-current'), 'page');
+
+  // Following it closes the list (the address change does the rest).
+  about()!.click();
+  await nextTick();
+  assertEquals(items(), []);
+});
+
+test('in the gallery, About is in the list but not current', async () => {
+  const { button, about } = mount();
+  button.click();
+  await nextTick();
+  assertEquals(about()!.getAttribute('aria-current'), null);
 });

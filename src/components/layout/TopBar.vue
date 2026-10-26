@@ -10,7 +10,7 @@
 
     <!-- Mobile sidebar toggle -->
     <button
-      v-if="isMobile"
+      v-if="isMobile && page === 'gallery'"
       :class="searchOpen && 'max-[419px]:hidden'"
       @click="toggleSidebar()"
       class="btn-ghost focus-ring lg:hidden p-2.5 rounded-control shrink-0"
@@ -23,10 +23,9 @@
 
     <!-- Logo: the mark from sm up, the wordmark from md up. On a phone the row has
          room for one more thing, and the current collection's name (below) is what
-         says where you are (docs/DESIGN.md §10). -->
+         says where you are (docs/DESIGN.md §10). It leads back to the gallery. -->
     <a
-      v-once
-      href="#"
+      :href="`#${activeCollection?.id ?? ''}`"
       class="hidden sm:flex items-center justify-center gap-2 shrink-0 md:pr-1 select-none focus-ring rounded-control max-md:min-w-9 max-md:min-h-9"
       aria-label="Wildlife Illustrated"
     >
@@ -48,11 +47,19 @@
           :key="col.id"
           @click="switchCollection(col.id)"
           class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-3 py-1.5"
-          :aria-current="col.id === activeCollection?.id ? 'page' : undefined"
+          :aria-current="page === 'gallery' && col.id === activeCollection?.id ? 'page' : undefined"
         >
           <CollectionIcon :collection="col" class="size-4" />
           {{ col.label }}
         </button>
+        <!-- About sits after the collections; where they are a menu, it is in the menu. -->
+        <a
+          href="#about"
+          class="nav-item marker-b focus-ring flex items-center justify-center px-3 py-1.5"
+          :aria-current="page === 'about' ? 'page' : undefined"
+        >
+          About
+        </a>
       </div>
       <CollectionMenu :class="tabsFit && 'md:hidden'" />
     </nav>
@@ -86,7 +93,13 @@
     </button>
 
     <!-- View switch: both views are always shown; the current one is marked. -->
-    <div :class="searchOpen && 'max-[419px]:hidden'" class="flex items-center gap-0.5 shrink-0" role="group" aria-label="View">
+    <div
+      v-if="page === 'gallery'"
+      :class="searchOpen && 'max-[419px]:hidden'"
+      class="flex items-center gap-0.5 shrink-0"
+      role="group"
+      aria-label="View"
+    >
       <button
         v-for="view in views"
         :key="view.mode"
@@ -130,7 +143,7 @@ import { useSearch } from '../../stores/search.ts';
 import { viewName } from '../../lib/viewName.ts';
 
 const { list: collections, activeCollection } = useCollectionsStore();
-const { isMobile, sidebarOpen, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
+const { isMobile, sidebarOpen, page, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
 const { switchCollection } = useActions();
 const { dropdownOpen, query } = useSearch();
 

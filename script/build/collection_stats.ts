@@ -10,42 +10,14 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import type { Collection } from '../lib/collections.ts';
 import { isErrno, readJson } from '../lib/fs.ts';
-import type { RawItem } from '../../src/types/data.ts';
+import type { CollectionCounts, NewestDrawing, RawItem, Stats } from '../../src/types/data.ts';
+
+export type { CollectionCounts, NewestDrawing, Stats };
 
 export const STATS_PATH = './public/stats.json';
 
 /** How many of the newest drawings the file lists. */
 export const NEWEST_COUNT = 8;
-
-export interface CollectionStats {
-  id: string;
-  label: string;
-  /** Species in the list, drawn or not. */
-  total: number;
-  drawn: number;
-  /** Families, orders or groups: the list's top-level keys. */
-  groups: number;
-  /** `YYYY-MM-DD` of the first and the latest drawing; null while nothing is drawn. */
-  firstDrawn: string | null;
-  lastDrawn: string | null;
-}
-
-export interface NewestDrawing {
-  collection: string;
-  id: string;
-  name: string;
-  /** The Dhivehi name in Thaana, when the list has one. */
-  dhivehi?: string;
-  drawn: string;
-}
-
-export interface Stats {
-  drawn: number;
-  total: number;
-  collections: CollectionStats[];
-  /** Newest first; on the same day, in collection order and then by id. */
-  newest: NewestDrawing[];
-}
 
 /** One collection's list, as public/lists/<id>.json holds it: group name → items. */
 export interface CollectionList {
@@ -56,7 +28,7 @@ export interface CollectionList {
 
 /** Work the numbers out from the lists. Pure: the build and the check share it. */
 export function computeStats(lists: CollectionList[], newestCount = NEWEST_COUNT): Stats {
-  const collections = lists.map(({ id, label, groups }): CollectionStats => {
+  const collections = lists.map(({ id, label, groups }): CollectionCounts => {
     const items = Object.values(groups).flat();
     const dates = items.map((i) => i.drawn).filter((d): d is string => !!d).sort();
     return {
@@ -65,32 +37,39 @@ export function computeStats(lists: CollectionList[], newestCount = NEWEST_COUNT
       total: items.length,
       drawn: dates.length,
       groups: Object.keys(groups).length,
+      named: items.filter((i) => i.dhiv_script).length,
       firstDrawn: dates[0] ?? null,
       lastDrawn: dates.at(-1) ?? null,
     };
   });
 
-  const newest = lists
+  // Every drawing, oldest first (same day: collection order, then id).
+  const byDate = lists
     .flatMap(({ id, groups }, order) =>
       Object.values(groups).flat().filter((i) => i.drawn).map((i) => ({ order, item: i, id }))
     )
     .sort((a, b) =>
-      b.item.drawn!.localeCompare(a.item.drawn!) || a.order - b.order ||
+      a.item.drawn!.localeCompare(b.item.drawn!) || a.order - b.order ||
       a.item.id.localeCompare(b.item.id)
     )
-    .slice(0, newestCount)
     .map(({ id, item }): NewestDrawing => ({
       collection: id,
       id: item.id,
       name: item.name,
       ...(item.dhiv_script ? { dhivehi: item.dhiv_script } : {}),
+      ...(item.dhiv_script && item.dhiv ? { roman: item.dhiv } : {}),
       drawn: item.drawn!,
     }));
+  // Newest first, but a shared day still reads in collection order, then by id.
+  const newest = [...byDate]
+    .sort((a, b) => b.drawn.localeCompare(a.drawn))
+    .slice(0, newestCount);
 
   return {
     drawn: collections.reduce((n, c) => n + c.drawn, 0),
     total: collections.reduce((n, c) => n + c.total, 0),
     collections,
+    first: byDate[0] ?? null,
     newest,
   };
 }

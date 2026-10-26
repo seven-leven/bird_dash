@@ -3,7 +3,7 @@ import { useBreakpoints } from '../composables/core/useBreakpoints.ts';
 import { useTheme } from '../composables/core/useTheme.ts';
 import { useScrollLogic } from '../composables/ui/useScrollLogic.ts';
 import { defineInjection } from '../composables/core/injection.ts';
-import type { ViewMode } from '../types/index.ts';
+import type { Page, ViewMode } from '../types/index.ts';
 
 /**
  * Chrome/UI state: sidebar, theme, viewport, group/date view, and the
@@ -14,6 +14,7 @@ import type { ViewMode } from '../types/index.ts';
  */
 export function createUiStore() {
   const sidebarOpen = ref(false);
+  const page = ref<Page>('gallery');
   const viewMode = ref<ViewMode>('group');
   // Family view: show only what has been drawn (docs/DESIGN.md §11, a collection that is mostly gaps).
   const drawnOnly = ref(false);
@@ -25,6 +26,11 @@ export function createUiStore() {
   };
   const closeSidebar = (): void => {
     sidebarOpen.value = false;
+  };
+  /** Show the gallery or the About page; the About page has no sidebar to leave open. */
+  const showPage = (next: Page): void => {
+    page.value = next;
+    if (next === 'about') sidebarOpen.value = false;
   };
   const toggleDrawnOnly = (): void => {
     drawnOnly.value = !drawnOnly.value;
@@ -66,6 +72,7 @@ export function createUiStore() {
 
   return {
     sidebarOpen: readonly(sidebarOpen),
+    page: readonly(page),
     viewMode: readonly(viewMode),
     drawnOnly: readonly(drawnOnly),
     theme,
@@ -77,6 +84,7 @@ export function createUiStore() {
     closeSidebar,
     toggleTheme,
     toggleDrawnOnly,
+    showPage,
     setViewMode,
     goToSection,
     updateActiveSection,
