@@ -29,9 +29,11 @@ page cheap.
       has the version and commit). An `AppFooter` for both; it also shrinks `GalleryContent.vue`
       (223 lines, four stores) to the sections and the grid. _Done:_ `layout/AppFooter.vue`, with
       the pages from `src/pages.ts`; `GalleryContent` is 176 lines.
-- [ ] **5. Split the lightbox's logic.** `useLightbox.ts` (365 lines) holds three state machines:
+- [x] **5. Split the lightbox's logic.** `useLightbox.ts` (365 lines) holds three state machines:
       zoom and pan, the keyboard, moving between drawings. As three composables each is tested
-      without a DOM, and the viewer can reuse them for a series' multiple images.
+      without a DOM, and the viewer can reuse them for a series' multiple images. _Done:_
+      `useZoomPan`, `useDialogKeys` and `useDrawingNav`; `useLightbox` (136 lines) wires them and
+      keeps the image's load state, under the same API, so `LightBox.vue` did not change.
 - [ ] Afterwards: `Chrome`, `TopBar` and `GalleryContent` inject four stores each. Most of that goes
       with 2 and 4; look again then.
 
