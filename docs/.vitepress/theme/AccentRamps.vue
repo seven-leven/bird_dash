@@ -1,18 +1,18 @@
-<!-- The colour ramps, live: slate, then every accent a collection may choose, each read
-     from src/styles/main.css and Tailwind's theme when the docs are built (ramps.data.ts).
-     On GitHub the same place shows the text table. -->
+<!-- The colour ramps, live: slate, then every accent a collection may choose, in the
+     order src/styles/accents.css lists them, each swatch the very CSS variable the site
+     uses (`--color-teal-500`). On GitHub the same place shows the text. -->
 <template>
   <div class="wi-ramps">
-    <div v-for="ramp in ramps" :key="ramp.name" class="wi-ramp">
-      <code class="wi-ramp-name">{{ ramp.name }}</code>
+    <div v-for="name in ramps" :key="name" class="wi-ramp">
+      <code class="wi-ramp-name">{{ name }}</code>
       <div class="wi-ramp-steps">
         <span
-          v-for="(color, i) in ramp.colors"
-          :key="STEPS[i]"
+          v-for="step in STEPS"
+          :key="step"
           class="wi-swatch"
-          :class="STEPS[i] === '500' && 'is-marker'"
-          :style="{ background: color }"
-          :title="`${ramp.name}-${STEPS[i]}: ${color}`"
+          :class="step === '500' && 'is-marker'"
+          :style="{ background: `var(--color-${name}-${step})` }"
+          :title="`${name}-${step}`"
         />
       </div>
     </div>
@@ -30,8 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import { STEPS } from '../../../script/docs/accents.ts';
-import { data } from './ramps.data.ts';
+import { accentHues, STEPS } from '../../../script/docs/accents.ts';
+import accentsCss from '../../../src/styles/accents.css?raw';
 
-const ramps = [data.slate, ...data.accents];
+const ramps = ['slate', ...accentHues(accentsCss)];
 </script>

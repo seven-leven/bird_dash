@@ -1,8 +1,8 @@
 import { test } from 'vitest';
-import { assertEquals, assertThrows } from '@std/assert';
+import { assertEquals } from '@std/assert';
 import { githubHref, githubLinks, githubSlug, REPO_URL } from './links.ts';
 import { liveBlocks, liveNames } from './live_blocks.ts';
-import { accentHues, rampOf, STEPS } from './accents.ts';
+import { accentHues, missingSteps, STEPS } from './accents.ts';
 
 test('githubHref: a page inside docs/ stays a link to the site', () => {
   assertEquals(githubHref('TESTING.md', 'docs/README.md'), null);
@@ -92,16 +92,14 @@ test('liveBlocks: each marked section becomes its component; the rest is untouch
   assertEquals(liveBlocks('No markers.'), 'No markers.');
 });
 
-test('accentHues: the palettes main.css defines, in order', () => {
+test('accentHues: the palettes accents.css defines, in order', () => {
   const css = ":root {}\n[data-accent='teal'] {}\n[data-accent='sky-blue'] {}";
   assertEquals(accentHues(css), ['teal', 'sky-blue']);
 });
 
-test("rampOf: a colour's eleven steps from Tailwind's theme; a missing one fails", () => {
-  const theme = STEPS.map((s) => `  --color-teal-${s}: oklch(${s}% 0.1 180);`).join('\n');
-  const ramp = rampOf('teal', theme);
-  assertEquals(ramp.name, 'teal');
-  assertEquals(ramp.colors[0], 'oklch(50% 0.1 180)');
-  assertEquals(ramp.colors.length, 11);
-  assertThrows(() => rampOf('lime', theme), Error, '--color-lime-50');
+test("missingSteps: the steps of a colour Tailwind's theme does not define", () => {
+  const theme = STEPS.slice(0, -1).map((s) => `  --color-teal-${s}: oklch(${s}% 0.1 180);`)
+    .join('\n');
+  assertEquals(missingSteps('teal', theme), ['950']);
+  assertEquals(missingSteps('lime', theme), STEPS);
 });

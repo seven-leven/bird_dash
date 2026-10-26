@@ -1,0 +1,175 @@
+/*
+  The accent palettes: the menu of hues a collection may choose (`accent` in
+  public/collections.json; App.vue sets it as `data-accent` on <html>), each mapped
+  onto `--accent-50` … `--accent-950`. Plain CSS over Tailwind's colour variables
+  (`--color-teal-500`), so both the site (main.css, which turns `--accent-*` into the
+  `accent-*` utilities) and the docs site (docs/.vitepress/theme/style.css, which
+  draws every ramp in the design manifesto) import it.
+
+  This is the menu of allowed hues — more than the collections use today, so a
+  new collection can pick one without touching the CSS. Every hue on it keeps
+  white text on its 700 shade above 4.5:1 and its 500 shade no paler against
+  white than teal's (2.4:1 or more), since that shade draws the current marker
+  and the focus ring. Amber, yellow, lime and green are left out for being too
+  pale there; red is left out because it reads as an error. docs/DESIGN.md has
+  the measurements. The first rule is the default (teal), for a collection that
+  names none.
+*/
+
+:root {
+  --accent-50: var(--color-teal-50);
+  --accent-100: var(--color-teal-100);
+  --accent-200: var(--color-teal-200);
+  --accent-300: var(--color-teal-300);
+  --accent-400: var(--color-teal-400);
+  --accent-500: var(--color-teal-500);
+  --accent-600: var(--color-teal-600);
+  --accent-700: var(--color-teal-700);
+  --accent-800: var(--color-teal-800);
+  --accent-900: var(--color-teal-900);
+  --accent-950: var(--color-teal-950);
+}
+[data-accent='teal'] {
+  --accent-50: var(--color-teal-50);
+  --accent-100: var(--color-teal-100);
+  --accent-200: var(--color-teal-200);
+  --accent-300: var(--color-teal-300);
+  --accent-400: var(--color-teal-400);
+  --accent-500: var(--color-teal-500);
+  --accent-600: var(--color-teal-600);
+  --accent-700: var(--color-teal-700);
+  --accent-800: var(--color-teal-800);
+  --accent-900: var(--color-teal-900);
+  --accent-950: var(--color-teal-950);
+}
+[data-accent='emerald'] {
+  --accent-50: var(--color-emerald-50);
+  --accent-100: var(--color-emerald-100);
+  --accent-200: var(--color-emerald-200);
+  --accent-300: var(--color-emerald-300);
+  --accent-400: var(--color-emerald-400);
+  --accent-500: var(--color-emerald-500);
+  --accent-600: var(--color-emerald-600);
+  --accent-700: var(--color-emerald-700);
+  --accent-800: var(--color-emerald-800);
+  --accent-900: var(--color-emerald-900);
+  --accent-950: var(--color-emerald-950);
+}
+[data-accent='blue'] {
+  --accent-50: var(--color-blue-50);
+  --accent-100: var(--color-blue-100);
+  --accent-200: var(--color-blue-200);
+  --accent-300: var(--color-blue-300);
+  --accent-400: var(--color-blue-400);
+  --accent-500: var(--color-blue-500);
+  --accent-600: var(--color-blue-600);
+  --accent-700: var(--color-blue-700);
+  --accent-800: var(--color-blue-800);
+  --accent-900: var(--color-blue-900);
+  --accent-950: var(--color-blue-950);
+}
+[data-accent='indigo'] {
+  --accent-50: var(--color-indigo-50);
+  --accent-100: var(--color-indigo-100);
+  --accent-200: var(--color-indigo-200);
+  --accent-300: var(--color-indigo-300);
+  --accent-400: var(--color-indigo-400);
+  --accent-500: var(--color-indigo-500);
+  --accent-600: var(--color-indigo-600);
+  --accent-700: var(--color-indigo-700);
+  --accent-800: var(--color-indigo-800);
+  --accent-900: var(--color-indigo-900);
+  --accent-950: var(--color-indigo-950);
+}
+[data-accent='violet'] {
+  --accent-50: var(--color-violet-50);
+  --accent-100: var(--color-violet-100);
+  --accent-200: var(--color-violet-200);
+  --accent-300: var(--color-violet-300);
+  --accent-400: var(--color-violet-400);
+  --accent-500: var(--color-violet-500);
+  --accent-600: var(--color-violet-600);
+  --accent-700: var(--color-violet-700);
+  --accent-800: var(--color-violet-800);
+  --accent-900: var(--color-violet-900);
+  --accent-950: var(--color-violet-950);
+}
+[data-accent='rose'] {
+  --accent-50: var(--color-rose-50);
+  --accent-100: var(--color-rose-100);
+  --accent-200: var(--color-rose-200);
+  --accent-300: var(--color-rose-300);
+  --accent-400: var(--color-rose-400);
+  --accent-500: var(--color-rose-500);
+  --accent-600: var(--color-rose-600);
+  --accent-700: var(--color-rose-700);
+  --accent-800: var(--color-rose-800);
+  --accent-900: var(--color-rose-900);
+  --accent-950: var(--color-rose-950);
+}
+
+[data-accent='sky'] {
+  --accent-50: var(--color-sky-50);
+  --accent-100: var(--color-sky-100);
+  --accent-200: var(--color-sky-200);
+  --accent-300: var(--color-sky-300);
+  --accent-400: var(--color-sky-400);
+  --accent-500: var(--color-sky-500);
+  --accent-600: var(--color-sky-600);
+  --accent-700: var(--color-sky-700);
+  --accent-800: var(--color-sky-800);
+  --accent-900: var(--color-sky-900);
+  --accent-950: var(--color-sky-950);
+}
+[data-accent='purple'] {
+  --accent-50: var(--color-purple-50);
+  --accent-100: var(--color-purple-100);
+  --accent-200: var(--color-purple-200);
+  --accent-300: var(--color-purple-300);
+  --accent-400: var(--color-purple-400);
+  --accent-500: var(--color-purple-500);
+  --accent-600: var(--color-purple-600);
+  --accent-700: var(--color-purple-700);
+  --accent-800: var(--color-purple-800);
+  --accent-900: var(--color-purple-900);
+  --accent-950: var(--color-purple-950);
+}
+[data-accent='fuchsia'] {
+  --accent-50: var(--color-fuchsia-50);
+  --accent-100: var(--color-fuchsia-100);
+  --accent-200: var(--color-fuchsia-200);
+  --accent-300: var(--color-fuchsia-300);
+  --accent-400: var(--color-fuchsia-400);
+  --accent-500: var(--color-fuchsia-500);
+  --accent-600: var(--color-fuchsia-600);
+  --accent-700: var(--color-fuchsia-700);
+  --accent-800: var(--color-fuchsia-800);
+  --accent-900: var(--color-fuchsia-900);
+  --accent-950: var(--color-fuchsia-950);
+}
+[data-accent='pink'] {
+  --accent-50: var(--color-pink-50);
+  --accent-100: var(--color-pink-100);
+  --accent-200: var(--color-pink-200);
+  --accent-300: var(--color-pink-300);
+  --accent-400: var(--color-pink-400);
+  --accent-500: var(--color-pink-500);
+  --accent-600: var(--color-pink-600);
+  --accent-700: var(--color-pink-700);
+  --accent-800: var(--color-pink-800);
+  --accent-900: var(--color-pink-900);
+  --accent-950: var(--color-pink-950);
+}
+[data-accent='orange'] {
+  --accent-50: var(--color-orange-50);
+  --accent-100: var(--color-orange-100);
+  --accent-200: var(--color-orange-200);
+  --accent-300: var(--color-orange-300);
+  --accent-400: var(--color-orange-400);
+  --accent-500: var(--color-orange-500);
+  --accent-600: var(--color-orange-600);
+  --accent-700: var(--color-orange-700);
+  --accent-800: var(--color-orange-800);
+  --accent-900: var(--color-orange-900);
+  --accent-950: var(--color-orange-950);
+}

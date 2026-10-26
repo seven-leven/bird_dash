@@ -50,9 +50,9 @@ export const ACCENT_HEX: Record<string, { 500: string; 700: string }> = Object.f
     ) => [hue, { 500: oklchToHex((v as Ramp)['500']), 700: oklchToHex((v as Ramp)['700']) }]),
 );
 
-/** The accent hues on offer: the `[data-accent='…']` palettes in main.css, in file order. */
+/** The accent hues on offer: the `[data-accent='…']` palettes in accents.css, in file order. */
 export async function accentMenu(): Promise<string[]> {
-  const css = await readFile('./src/styles/main.css', 'utf8');
+  const css = await readFile('./src/styles/accents.css', 'utf8');
   return [...new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]))];
 }
 

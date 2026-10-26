@@ -2,6 +2,7 @@
 // at /bird_dash/docs/ (built into dist/docs after the site; see WORKFLOW.md). The
 // Markdown stays the source of truth, written for GitHub first.
 import { defineConfig } from 'vitepress';
+import tailwindcss from '@tailwindcss/vite';
 import { githubLinks, githubSlug, REPO_URL } from '../../script/docs/links.ts';
 import { liveBlocks } from '../../script/docs/live_blocks.ts';
 
@@ -28,11 +29,15 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [{
-      name: 'live-blocks',
-      enforce: 'pre',
-      transform: (code, id) => (id.endsWith('.md') ? liveBlocks(code) : undefined),
-    }],
+    plugins: [
+      // For Tailwind's colour variables in the theme's CSS (theme/style.css), not its utilities.
+      tailwindcss(),
+      {
+        name: 'live-blocks',
+        enforce: 'pre',
+        transform: (code, id) => (id.endsWith('.md') ? liveBlocks(code) : undefined),
+      },
+    ],
   },
 
   themeConfig: {
