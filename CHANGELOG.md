@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | build: a Content-Security-Policy (phase 3b of PLATFORM.md). The build writes it into
+  the page as a `<meta>` tag, as GitHub Pages sends no headers: scripts, styles, images, fonts and
+  data from the site only, and the inline theme script allowed by its hash, worked out at build time
+  from the page itself. Checked in a browser on the built site: nothing the site loads is blocked,
+  and a script injected into the page is
 - 2026-10-27 | build: a size budget (phase 3a of PLATFORM.md). The site's build ends by printing
   what a visitor downloads against the limits in `script/build/sizeBudget.ts` (a Vite plugin) and
   fails when one is over: the JavaScript (57 of 70 kB gzipped), the CSS (11 of 15 kB gzipped), the
