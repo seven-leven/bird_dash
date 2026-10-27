@@ -17,6 +17,17 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-26 | docs(todo): the TODO reorganised. Open work comes first, by priority and theme: fixes
+  now, the two overhauls in order, features (non-species collections, the viewer and its facts,
+  images), the design system's simplifications, data and tooling. Everything done is at the bottom,
+  newest first, one line each, as the CHANGELOG keeps the detail
+- 2026-10-26 | docs(plans): the TODO folded into the overhauls. The test overhaul's phase 4 is the
+  Vue component tests, with the up-to-date list (the 11 components that have no test of their own
+  yet). The site overhaul gains "Features that ride along": each TODO feature that needs code a
+  phase moves (a `kind` per collection, placeholders as icons, icons per series, several images per
+  item, the About page by kind, responsive thumbnails, one set of text roles, five type sizes, warm
+  paper) comes as its own pull request straight after that phase. The focus ring's contrast on light
+  pages is logged as a fix of its own
 - 2026-10-26 | docs: the design guide's final pass (V7). Nothing in it is smaller than 15px except
   the type scale's own 11 and 12px samples, as it is read at about half size; the five principles
   share one shape (each heading in two even lines, its description close beneath); the icon groups
