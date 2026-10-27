@@ -1,11 +1,12 @@
 # Test overhaul
 
-> **Status:** planned 2026-10-26, nothing started. The tests were written bottom up, one file at a
-> time, as each piece of code was; this plans them top down, from what the site promises to the
-> smallest rule, and rebuilds the kit they share. One pull request per phase, 100% coverage
-> throughout. Phases 1 to 3 come **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests
-> are what make moving every file safe. (The scripts overhaul went first, as the scripts already had
-> direct tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
+> **Status:** planned 2026-10-26; phase 0 (the rules) done 2026-10-27. The tests were written bottom
+> up, one file at a time, as each piece of code was; this plans them top down, from what the site
+> promises to the smallest rule, and rebuilds the kit they share. One pull request per phase, 100%
+> coverage throughout. Phases 1 to 3 come **before** the [site code](SRC-OVERHAUL.md) overhaul:
+> journey tests are what make moving every file safe. (The scripts overhaul went first, as the
+> scripts already had direct tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8
+> is done.
 
 ## What the tests are today
 
@@ -26,15 +27,16 @@ pieces. What bottom up left behind:
 | **Coverage leads.** A test is often added to reach a line or a branch, so the suite says _which code ran_, not _which promises hold_. Nothing maps the manifesto's principles or the README's features to the tests that keep them. | The 100% floors; no list of promises                                                                                                                                               |
 | **No real browser.** Phone layout, touch gestures, visible focus and Thaana that is not clipped are checked by hand.                                                                                                                | TESTING.md, "Not covered yet"                                                                                                                                                      |
 
-## Decisions to make first
+## Decisions (settled 2026-10-27)
 
-| Question                                        | Recommendation                                                                            | Why                                                                                          |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| A **journey** tier: the whole app in happy-dom  | Yes, `*_journey_test.ts`                                                                  | Proves a visit end to end, fast and without a browser; the safety net for the site overhaul  |
-| A **browser** tier: a real browser on the build | Yes, but last, with Playwright pinned, a handful of checks, not a required check at first | The only way to test layout, touch and clipping; costs a dependency and about a minute of CI |
-| One way to get a DOM                            | The tier sets it: every `_dom_test` and `_journey_test` runs in happy-dom; `withDom` goes | One mechanism, and no test can forget to wrap                                                |
-| Test titles                                     | Plain sentences, no `functionName:` prefix                                                | The file already says which function; a sentence says what must stay true                    |
-| Order against the other overhauls               | Phases 1–3 here first, then the site and scripts overhauls, then the rest of this plan    | Moving every file is safe only with tests that do not care where files are                   |
+| Question                                        | Settled                                                                                          | Why                                                                                          |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| A **journey** tier: the whole app in happy-dom  | Yes, `*_journey_test.ts`                                                                         | Proves a visit end to end, fast and without a browser; the safety net for the site overhaul  |
+| A **browser** tier: a real browser on the build | Yes, but last, with Playwright pinned, a handful of checks, not a required check at first        | The only way to test layout, touch and clipping; costs a dependency and about a minute of CI |
+| One way to get a DOM                            | The tier sets it: every `_dom_test` and `_journey_test` runs in happy-dom; `withDom` goes        | One mechanism, and no test can forget to wrap                                                |
+| Test titles                                     | Plain sentences, no `functionName:` prefix                                                       | The file already says which function; a sentence says what must stay true                    |
+| Order against the other overhauls               | Phases 1–3 here first, then the site overhaul, then the rest of this plan (the scripts' is done) | Moving every file is safe only with tests that do not care where files are                   |
+| Where journeys live                             | `src/journeys/`, moved into `app/journeys/` by the site overhaul's phase 6                       | `app/` does not exist until then, and journeys come first                                    |
 
 ## Top down
 
@@ -114,114 +116,10 @@ branch inside them.
 
 ## The rules it ends at
 
-Phase 0 writes these into TESTING.md; the words (journey, promise, fake, scenario) go in
+In [TESTING.md](../TESTING.md) since phase 0: "The rules" (twelve), "Promises" (the list above, with
+what keeps each) and "Conventions" (one file, many tests; file names; test titles; inside a test;
+helpers and data). The words (journey, promise, fake, scenario) are in
 [GLOSSARY.md](../GLOSSARY.md).
-
-1. **A test states a promise.** Its title is a sentence that must stay true ("an undrawn result
-   highlights its tile instead of opening the viewer"), not the name of the function.
-2. **Every promise has a test, and the list says which.** A contract test checks that each journey
-   names the promises it keeps and each promise has at least one test.
-3. **The lowest tier that can prove it.** One journey per path through the site, not per branch.
-4. **One way to fake each outside thing,** from `testing/fakes/`: `fakeFetch` (routes to answers),
-   `captureConsole`, `tempDir`, `fakeClock`, `fakeStorage`, and the scripts' `fakeIo`. A contract
-   test fails on a global swapped by hand (`globalThis.fetch =`, `console.log =`) outside
-   `testing/`.
-5. **One way to get a browser:** the tier. No wrapper to forget.
-6. **One way to mount:** `mountComponent(component, { props, stores })` and `mountComposable(fn)`;
-   `runInScope` is folded in.
-7. **One way to wait:** `settle()`: every pending promise, then Vue's next render.
-8. **Fixtures speak the domain.** `makeItem`, `makeCollection` and `at` stay; named **scenarios**
-   are shared instead of rebuilt per file: an archive with gaps, a bird with two Dhivehi names, a
-   collection with nothing drawn, a list that fails to load.
-9. **A test sits beside its file and is named after it.** A test of something that spans files (a
-   journey, a contract, a browser check) is named after what it proves.
-10. **Coverage is a floor, not the goal.** 100% of lines and branches stays, and the untested-files
-    gate covers `.vue` files too. Every `c8 ignore` says why.
-11. **Deterministic.** No real network, timers, clock or randomness without a seed; the four
-    timezones stay; the weekly deep run stays.
-12. **Small files.** A test file past about 300 lines splits by behaviour.
-
-## Conventions
-
-The everyday rules for writing a test file and the tests in it. Phase 0 writes them into TESTING.md;
-phase 8 adds a contract test for every one that can be checked mechanically (marked ✓).
-
-### One file, many tests
-
-A test file answers "what are the tests for X?". Each test in it states one thing that must stay
-true about X. Never one file per test: each file costs a worker's start-up (about 0.6 s today),
-shared setup would be copied, and the report would list hundreds of entries.
-
-| What is tested                                     | File                                                                 |
-| -------------------------------------------------- | -------------------------------------------------------------------- |
-| One source file                                    | One test file beside it, holding every test of that file in its tier |
-| The same file, in another tier                     | One more file, with that tier's suffix                               |
-| Something that spans files (a journey, a contract) | One file per journey or contract, named after what it proves         |
-| A file past about 300 lines                        | Split by behaviour, each part named for its behaviour (below)        |
-
-### File names
-
-`<subject>_<tier suffix>`, where the tier suffix is `test.ts`, `dom_test.ts`, `prop_test.ts`,
-`contract_test.ts`, `journey_test.ts` or `browser_test.ts`, and the subject is:
-
-| Kind                            | Subject                                    | Example                                                           |
-| ------------------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
-| A source file                   | Its file name, case kept ✓                 | `planChanges_test.ts`, `ItemTile_dom_test.ts`                     |
-| A split of a long file          | File name, then the behaviour in camelCase | `runTests_arguments_test.ts`, `useViewer_keys_dom_test.ts`        |
-| A journey                       | The visit, in camelCase                    | `firstVisit_journey_test.ts`, `search_journey_test.ts`            |
-| A contract not tied to one file | What it guards, in camelCase               | `thaanaLineHeight_contract_test.ts`, `iconSizes_contract_test.ts` |
-| A browser check                 | What it checks                             | `phoneWidth_browser_test.ts`                                      |
-
-Where it lives: beside its source file; journeys in the site's `app/journeys/` (the site code plan's
-`app/`), the scripts' journeys beside the command they run; browser checks in `browser/`. Test files
-only under `src/` and `script/` (and `browser/`), as today ✓.
-
-### Test titles
-
-`test('…', …)` takes a sentence that must stay true:
-
-- **Says the behaviour, not the function.** The file names the subject: `"an undrawn result
-  highlights its tile instead of opening the viewer"`, not `"select: undrawn"`. No `name:` prefix ✓,
-  except a contract test, whose subject is a file: `"collections.json: every accent is on the
-  menu"`.
-- **The situation, then the outcome:** `"with nothing drawn, the count reads Nothing drawn yet"`.
-- **Present tense, lower case, no full stop, no "should"** ✓: `"returns …"`, not `"should return
-  …"`.
-- **Unique in its file** ✓, and under about 100 characters.
-- **A property test says what holds for any input:** `"for any query, every result contains it"`.
-- **A journey reads as the visitor's steps:** `"typing a Dhivehi name finds the bird and opens it in
-  the viewer"`.
-
-### Inside a test
-
-- **Flat files: no `describe`.** The file is the group; a group big enough to need a heading is a
-  file of its own.
-- **Arrange, act, assert,** separated by a blank line when the test has all three.
-- **One behaviour per test.** Several assertions are fine when they check the same behaviour; prefer
-  one `assertEquals` on a whole value to many on its parts.
-- **Assertions from `@std/assert`:** `assertEquals` for values, `assertStringIncludes` for text,
-  `assertThrows` / `assertRejects` for failures, and `assert(condition, message)` only with a
-  message saying what was expected. Inside a loop, every assertion has a message naming the case.
-- **No `.only`, `.skip` or `.todo` committed** ✓. A test that cannot pass yet is an issue in
-  TODO.md, not a skipped test.
-- **No timeouts in a test**, except the property tests' scaled one.
-- **No real clock, network, timers or randomness** (rule 11): a fake from the kit instead.
-
-### Helpers and data
-
-| Thing                     | Name                                                               | Example                                       |
-| ------------------------- | ------------------------------------------------------------------ | --------------------------------------------- |
-| A file's own mount helper | `mount` + what it mounts, returning a named object                 | `mountTile(item) → { tile, image, clicked }`  |
-| A file's own data helper  | `make` + what it makes                                             | `makeNote(paragraphs)`                        |
-| Shared data               | A scenario from `testing/scenarios/`, by what it is                | `archiveWithGaps`, `birdWithTwoNames`         |
-| A value in a test         | Its role in the story, never a number                              | `drawn`, `undrawn`, `goose`; not `item1`      |
-| A user action             | The kit's event helpers: `press`, `type`, `click`, `swipe`         | `press('ArrowRight')`                         |
-| Waiting                   | `await settle()` only                                              |                                               |
-| A fast-check arbitrary    | `any` + what it generates                                          | `anyQuery`, `anyItem`, `anyHash`              |
-| A fake                    | `fake` + what it replaces; the console capture is `captureConsole` | `fakeFetch(routes)`, `fakeClock(at(2025, 3))` |
-
-No `setup()`: say what it sets up. Variables follow the code's rules: whole words
-([SCRIPTS.md](../SCRIPTS.md), [GLOSSARY.md](../GLOSSARY.md)).
 
 ## Duplicates to fold
 
@@ -273,8 +171,8 @@ Each phase is one pull request: 100% lines and branches, all checks green, the f
 TESTING.md, TEST-PROCEDURES.md and `script/testRunner/` (tiers, areas) updated in the same PR.
 Production code changes only where a test cannot reach it otherwise, and says so.
 
-- [ ] **0. Agree the rules.** Settle the decisions; the rules, the conventions and the promise list
-      into TESTING.md; the words into GLOSSARY.md. _Done when_ merged.
+- [x] **0. Agree the rules.** (2026-10-27) Settle the decisions; the rules, the conventions and the
+      promise list into TESTING.md; the words into GLOSSARY.md. _Done when_ merged.
 - [ ] **1. The kit.** `testing/fakes/`, `settle`, one `mount.ts`; the four `fetch` fakes, seven
       console swaps and thirteen temporary folders moved onto it; the contract test against
       hand-swapped globals; the fixture archive and the phase-1 duplicates above (the script tests

@@ -5,6 +5,59 @@ instructions (setting up a machine, what to do when a test or CI fails, maintena
 flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). The `.ts` code is at 100% coverage; tests for
 the `.vue` components are next, in the [test overhaul](plans/TEST-OVERHAUL.md) (phase 4).
 
+## The rules
+
+Where the suite is going: the [test overhaul](plans/TEST-OVERHAUL.md) moves the tests to these,
+phase by phase. Rules 4 to 8 name the kit and the tiers its phases 1 to 3 build (`testing/fakes/`,
+`settle`, scenarios, the journey tier); until they land, write a test as "Writing a test" below
+says, with the helpers that exist.
+
+1. **A test states a promise.** Its title is a sentence that must stay true ("an undrawn result
+   highlights its tile instead of opening the viewer"), not the name of the function.
+2. **Every promise has a test, and the list says which.** A contract test checks that each journey
+   names the promises it keeps and each promise has at least one test.
+3. **The lowest tier that can prove it.** One journey per path through the site, not per branch.
+4. **One way to fake each outside thing,** from `testing/fakes/`: `fakeFetch` (routes to answers),
+   `captureConsole`, `tempDir`, `fakeClock`, `fakeStorage`, and the scripts' `fakeIo`. A contract
+   test fails on a global swapped by hand (`globalThis.fetch =`, `console.log =`) outside
+   `testing/`.
+5. **One way to get a browser:** the tier. No wrapper to forget.
+6. **One way to mount:** `mountComponent(component, { props, stores })` and `mountComposable(fn)`;
+   `runInScope` is folded in.
+7. **One way to wait:** `settle()`: every pending promise, then Vue's next render.
+8. **Fixtures speak the domain.** `makeItem`, `makeCollection` and `at` stay; named **scenarios**
+   are shared instead of rebuilt per file: an archive with gaps, a bird with two Dhivehi names, a
+   collection with nothing drawn, a list that fails to load.
+9. **A test sits beside its file and is named after it.** A test of something that spans files (a
+   journey, a contract, a browser check) is named after what it proves.
+10. **Coverage is a floor, not the goal.** 100% of lines and branches stays, and the untested-files
+    gate covers `.vue` files too. Every `c8 ignore` says why.
+11. **Deterministic.** No real network, timers, clock or randomness without a seed; the four
+    timezones stay; the weekly deep run stays.
+12. **Small files.** A test file past about 300 lines splits by behaviour.
+
+## Promises
+
+What the project says it does, in the manifesto's principles (P1–P5) and the README's features, and
+the tests that keep each. A promise with no test is a gap; a test that keeps no promise is a
+question. "Journey" and "browser" name tests the overhaul adds (phases 3 and 7); phase 6 adds a
+contract test that checks this list against them.
+
+| Promise                                                                        | From       | Kept by                                                          |
+| ------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------- |
+| Every item has its place from the start, drawn or not                          | README, P2 | journey J1; unit (lists to items)                                |
+| Every count says how many are drawn of how many, and is worded the same way    | P2, P4     | unit (`formatCount`); journey J1, J3                             |
+| You can always tell where you are: collection, view, section, page             | P3         | journeys J2, J3, J6                                              |
+| A link to a collection or a drawing opens it, and the back button undoes it    | README     | journey J6; prop (hash round trip)                               |
+| Search finds an item by any of its names, in any collection, from the keyboard | README, P5 | journey J4; unit (matching)                                      |
+| The viewer works with the keyboard alone, and gives focus back when it closes  | P5         | journey J5; dom (dialog keys)                                    |
+| Thaana is never clipped                                                        | P5, DESIGN | contract (line height); browser B3                               |
+| Nothing breaks at phone width                                                  | P5         | browser B1                                                       |
+| A failure says what failed and offers to try again                             | DESIGN §11 | journey J9; dom (each loader)                                    |
+| The numbers on the About page are the archive's, worked out by the build       | README     | contract (stats current); journey J7                             |
+| The build never ships a broken site                                            | WORKFLOW   | contracts (data, generated files); CI                            |
+| A shared link to a drawing shows that drawing                                  | PLATFORM   | unit (preview pages); dom (Share); contract (a page per drawing) |
+
 ## Running them
 
 | Command                                         | What it does                                                                   |
@@ -123,7 +176,7 @@ Conventions:
 - **Code that reads the layout** (the scroll-spy) is tested by giving each fake element the position
   the test wants it to report. That checks the decision, not the browser's measuring.
 - **Use real files when the code is about files.** The asset pipeline tests
-  ([`script/build/build_pipeline_test.ts`](../script/build/build_pipeline_test.ts)) build a
+  ([`script/ingest/ingest_pipeline_test.ts`](../script/ingest/ingest_pipeline_test.ts)) build a
   throwaway collection in a temporary folder with tiny real images, run the real transcoder, and
   delete it.
 - **Fake the edges, not the logic.** Stub `fetch`, pass in a fake `git`, use a temporary directory;
@@ -180,6 +233,88 @@ assertProperty(
 - Random strings rarely hit special cases. Mix in the tokens that matter (see the highlight test,
   which feeds it `&`, `<` and entity names).
 
+## Conventions
+
+The everyday rules for a test file and the tests in it. Those marked ✓ get a contract test in the
+overhaul's last phase.
+
+### One file, many tests
+
+A test file answers "what are the tests for X?". Each test in it states one thing that must stay
+true about X. Never one file per test: each file costs a worker's start-up (about 0.6 s today),
+shared setup would be copied, and the report would list hundreds of entries.
+
+| What is tested                                     | File                                                                 |
+| -------------------------------------------------- | -------------------------------------------------------------------- |
+| One source file                                    | One test file beside it, holding every test of that file in its tier |
+| The same file, in another tier                     | One more file, with that tier's suffix                               |
+| Something that spans files (a journey, a contract) | One file per journey or contract, named after what it proves         |
+| A file past about 300 lines                        | Split by behaviour, each part named for its behaviour (below)        |
+
+### File names
+
+`<subject>_<tier suffix>`, where the tier suffix is `test.ts`, `dom_test.ts`, `prop_test.ts`,
+`contract_test.ts`, `journey_test.ts` or `browser_test.ts`, and the subject is:
+
+| Kind                            | Subject                                    | Example                                                           |
+| ------------------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
+| A source file                   | Its file name, case kept ✓                 | `planChanges_test.ts`, `ItemTile_dom_test.ts`                     |
+| A split of a long file          | File name, then the behaviour in camelCase | `runTests_arguments_test.ts`, `useViewer_keys_dom_test.ts`        |
+| A journey                       | The visit, in camelCase                    | `firstVisit_journey_test.ts`, `search_journey_test.ts`            |
+| A contract not tied to one file | What it guards, in camelCase               | `thaanaLineHeight_contract_test.ts`, `iconSizes_contract_test.ts` |
+| A browser check                 | What it checks                             | `phoneWidth_browser_test.ts`                                      |
+
+Where it lives: beside its source file; journeys in `src/journeys/` (into `app/journeys/` when the
+site overhaul makes `app/`), the scripts' journeys beside the command they run; browser checks in
+`browser/`. Test files only under `src/` and `script/` (and `browser/`), as today ✓.
+
+### Test titles
+
+`test('…', …)` takes a sentence that must stay true:
+
+- **Says the behaviour, not the function.** The file names the subject: `"an undrawn result
+  highlights its tile instead of opening the viewer"`, not `"select: undrawn"`. No `name:` prefix ✓,
+  except a contract test, whose subject is a file: `"collections.json: every accent is on the
+  menu"`.
+- **The situation, then the outcome:** `"with nothing drawn, the count reads Nothing drawn yet"`.
+- **Present tense, lower case, no full stop, no "should"** ✓: `"returns …"`, not `"should return
+  …"`.
+- **Unique in its file** ✓, and under about 100 characters.
+- **A property test says what holds for any input:** `"for any query, every result contains it"`.
+- **A journey reads as the visitor's steps:** `"typing a Dhivehi name finds the bird and opens it in
+  the viewer"`.
+
+### Inside a test
+
+- **Flat files: no `describe`.** The file is the group; a group big enough to need a heading is a
+  file of its own.
+- **Arrange, act, assert,** separated by a blank line when the test has all three.
+- **One behaviour per test.** Several assertions are fine when they check the same behaviour; prefer
+  one `assertEquals` on a whole value to many on its parts.
+- **Assertions from `@std/assert`:** `assertEquals` for values, `assertStringIncludes` for text,
+  `assertThrows` / `assertRejects` for failures, and `assert(condition, message)` only with a
+  message saying what was expected. Inside a loop, every assertion has a message naming the case.
+- **No `.only`, `.skip` or `.todo` committed** ✓. A test that cannot pass yet is an issue in
+  TODO.md, not a skipped test.
+- **No timeouts in a test**, except the property tests' scaled one.
+- **No real clock, network, timers or randomness** (rule 11): a fake from the kit instead.
+
+### Helpers and data
+
+| Thing                     | Name                                                               | Example                                       |
+| ------------------------- | ------------------------------------------------------------------ | --------------------------------------------- |
+| A file's own mount helper | `mount` + what it mounts, returning a named object                 | `mountTile(item) → { tile, image, clicked }`  |
+| A file's own data helper  | `make` + what it makes                                             | `makeNote(paragraphs)`                        |
+| Shared data               | A scenario from `testing/scenarios/`, by what it is                | `archiveWithGaps`, `birdWithTwoNames`         |
+| A value in a test         | Its role in the story, never a number                              | `drawn`, `undrawn`, `goose`; not `item1`      |
+| A user action             | The kit's event helpers: `press`, `type`, `click`, `swipe`         | `press('ArrowRight')`                         |
+| Waiting                   | `await settle()` only                                              |                                               |
+| A fast-check arbitrary    | `any` + what it generates                                          | `anyQuery`, `anyItem`, `anyHash`              |
+| A fake                    | `fake` + what it replaces; the console capture is `captureConsole` | `fakeFetch(routes)`, `fakeClock(at(2025, 3))` |
+
+No `setup()`: say what it sets up. Variables follow the code's rules: whole words
+([SCRIPTS.md](../SCRIPTS.md), [GLOSSARY.md](../GLOSSARY.md)).
+
 ## Coverage
 
 `npm run test:coverage` fails if total line or branch coverage is below its floor in `package.json`
@@ -199,9 +334,9 @@ the `.ts` code is tested, so new code needs a test (or a `c8 ignore` with its re
 CI passes.
 
 Code that cannot run in a test is marked `/* c8 ignore next */` with a comment saying why: the `if
-(import.meta.main)` line of each command, `spawnVite` (the real build), and guards for things that
-cannot happen (a key handler that only exists while the viewer is open). Grep for `c8 ignore` to see
-them all. Anything a test could reach is tested instead.
+(import.meta.main)` line of each command, the runner's `vitest` (the real Vitest), and guards for
+things that cannot happen (a key handler that only exists while the viewer is open). Grep for `c8
+ignore` to see them all. Anything a test could reach is tested instead.
 
 Two things the number does not tell you:
 
@@ -258,7 +393,7 @@ their normal depth in three timezones. If it fails, the seed is in the log.
 - **Components.** There is no real-browser tier. Things verified by hand today: layout at phone
   width, hover and focus styles, transitions, the lightbox gestures on a real touch screen.
 - **The last line of each command.** Every script's work is a tested function; what is left untested
-  is the one line that starts it (`if (import.meta.main) …`) and the function that launches the real
-  `vite build`.
+  is the one line that starts it (`if (import.meta.main) …`) and the runner's function that starts
+  the real Vitest.
 - **Real layout.** The scroll-spy and the breakpoint are tested with positions and widths the test
   supplies. Whether the browser reports the right ones is still checked by hand.
