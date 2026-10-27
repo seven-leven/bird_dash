@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | fix: the focus ring on a light page. `.focus-ring` drew `accent-500`, under WCAG's
+  3:1 for a focus indicator on white for teal (2.4:1, the Birds' accent), emerald, sky and orange.
+  On a light page the ring, the current marker under a tab, the search box's focus, the viewer's
+  buttons and the ring that flashes a found tile now draw `accent-700` (5.2:1 or more for every
+  hue); on dark they keep `accent-500` (`400` in the viewer). The palette test checks the dark ring,
+  `500` on `slate-950`, for every hue on the menu; DESIGN.md, the design guide and its contrast
+  figures say so
 - 2026-10-27 | test: the test runner on `Io` (test overhaul, phase 1d; phase 1 is done). `npm
   test`'s `main` is made with `command` like every other command and reaches the outside world
   through `Io`; its tests run it on `fakeIo` with a fake Vitest, in memory. Vitest writes its JUnit

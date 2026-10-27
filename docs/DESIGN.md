@@ -88,7 +88,8 @@ the CSS.
 | Main text                        | `slate-900` / `slate-800`    | `slate-100`                  |
 | Muted text                       | `slate-500` (`.text-muted`)  | `slate-400` (`.text-muted`)  |
 | Borders and dividers             | `slate-200` / `slate-100`    | `slate-800`                  |
-| Focus, current marker, progress  | `accent-500`                 | `accent-500`                 |
+| Focus ring, current marker       | `accent-700`                 | `accent-500`                 |
+| Progress                         | `accent-500`                 | `accent-500`                 |
 | Primary button (`.btn-primary`)  | `accent-700` with white text | `accent-700` with white text |
 | Viewer title (`.viewer-title`)   | `slate-900`                  | white                        |
 | Viewer body (`.viewer-body`)     | `slate-600`                  | white at 70%                 |
@@ -109,25 +110,31 @@ reinforces the state rather than being the only clue.
 New text colours must meet WCAG AA: at least **4.5:1 for body text** and **3:1 for large text and
 icons**.
 
-| Pair                       | Contrast |
-| -------------------------- | -------- |
-| `slate-900` on white       | 17.8:1   |
-| `slate-600` on white       | 7.6:1    |
-| `slate-500` on white       | 4.8:1    |
-| `slate-100` on `slate-950` | 18.4:1   |
-| `slate-400` on `slate-950` | 7.7:1    |
-| white on `accent-700`      | 5.4:1    |
-| white at 70% on black      | 10.0:1   |
-| white at 50% on black      | 5.3:1    |
+| Pair                        | Contrast |
+| --------------------------- | -------- |
+| `slate-900` on white        | 17.8:1   |
+| `slate-600` on white        | 7.6:1    |
+| `slate-500` on white        | 4.8:1    |
+| `slate-100` on `slate-950`  | 18.4:1   |
+| `slate-400` on `slate-950`  | 7.7:1    |
+| white on `accent-700`       | 5.4:1    |
+| `accent-700` on white       | 5.4:1    |
+| `accent-500` on white       | 2.4:1    |
+| `accent-500` on `slate-950` | 8.3:1    |
+| white at 70% on black       | 10.0:1   |
+| white at 50% on black       | 5.3:1    |
 
-`accent-500` on white is about 2.4:1: use it for markers and focus rings, not text. Accent-coloured
-text on a light background uses `accent-700`. `slate-400` on white also fails for text.
+A focus ring or marker needs **3:1** against what it sits on. `accent-500` on white is about 2.4:1,
+too pale for that and for text, so on a light page the ring, the current marker and accent-coloured
+text use `accent-700`; on a dark page the ring and marker use `accent-500`. `slate-400` on white
+also fails for text.
 
-Every hue offered to collections must pass both tests: white text on its `700` shade at least 4.5:1,
-and its `500` shade against white at least 2.4:1. A test checks the menu automatically. Amber,
-yellow, lime, green and cyan are left out because their `500` shades are too pale; red is left out
-because it reads as an error. For collections shown beside one another, choose distinct neighbours —
-avoid pairs such as rose and pink, or violet and purple.
+Every hue offered to collections must pass three tests: white text on its `700` shade at least 4.5:1
+(which also puts its ring on white past 3:1), its `500` shade against `slate-950` at least 3:1 (the
+ring on a dark page), and its `500` shade against white at least 2.4:1 (the progress bars). A test
+checks the menu automatically. Amber, yellow, lime, green and cyan are left out because their `500`
+shades are too pale; red is left out because it reads as an error. For collections shown beside one
+another, choose distinct neighbours — avoid pairs such as rose and pink, or violet and purple.
 
 <!-- live: AccentRamps -->
 

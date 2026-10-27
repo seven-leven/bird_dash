@@ -7,12 +7,6 @@ folder, and the item here points to it.
 
 ## 🔧 Fix now
 
-- [ ] **The focus ring on a light page** (found 2026-10-26, in the design guide's final review).
-      `.focus-ring` draws `accent-500`, which is below WCAG's 3:1 for a focus indicator on white for
-      teal (2.42:1, the Birds' accent), emerald (2.47), sky (2.71) and orange (2.89); every hue
-      passes on dark. Draw the ring (and the current-item marker) in `accent-700` on light surfaces
-      (5.2:1 or more for every hue), keep `500` on dark; update DESIGN.md's colour rule, the palette
-      contract test and the guide.
 - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
       24.22.1. Everything passes, but upgrade to match CI.
 
@@ -112,6 +106,8 @@ update the guide and its image with the code. All ride along with the site overh
 
 **2026-10-27**
 
+- [x] The focus ring and the current marker reach 3:1 on a light page: `accent-700` there,
+      `accent-500` on dark.
 - [x] Dark mode draws the browser's own controls dark (`color-scheme`), the month names are English
       in any browser language, the phone's browser bar takes the top bar's colour, and the dark
       variant has its current spelling ([PLATFORM.md](PLATFORM.md) phase 1).
