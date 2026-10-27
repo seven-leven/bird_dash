@@ -31,6 +31,7 @@ export function useHashRoute(deps: {
   cache: CollectionCache;
   switchCollection: (id: string) => Promise<void>;
   openOverlay: (item: CollectionItem) => void;
+  closeOverlay: () => void;
   page: Readonly<Ref<Page>>;
   showPage: (page: Page) => void;
 }) {
@@ -84,7 +85,11 @@ export function useHashRoute(deps: {
       if (collectionId !== deps.activeCollection.value?.id) {
         await deps.switchCollection(collectionId);
       }
-      if (!itemId) return;
+      if (!itemId) {
+        // An address without an item (the back button, after opening one) closes the viewer.
+        if (deps.expandedImage.isOpen) deps.closeOverlay();
+        return;
+      }
 
       await nextTick();
       const item = deps.cache[collectionId]?.find((i) => i.itemId === itemId);

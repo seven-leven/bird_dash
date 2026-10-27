@@ -44,15 +44,16 @@ export default defineConfig({
   },
   // Tests: `npm test` (script/testRunner/testRunner.ts) runs these and picks the files per tier.
   test: {
-    // The tier sets the environment (docs/TESTING.md, rule 5): a `_dom_test` file runs in
-    // happy-dom, reset before each of its tests by src/testing/domSetup.ts; the rest in Node.
+    // The tier sets the environment (docs/TESTING.md, rule 5): a `_dom_test` or `_journey_test`
+    // file runs in happy-dom, reset before each of its tests by src/testing/domSetup.ts; the rest
+    // in Node.
     projects: [
       {
         extends: true,
         test: {
           name: 'node',
           include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
-          exclude: ['**/*_dom_test.ts', '**/node_modules/**'],
+          exclude: ['**/*_dom_test.ts', '**/*_journey_test.ts', '**/node_modules/**'],
           environment: 'node',
         },
       },
@@ -60,7 +61,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'dom',
-          include: ['src/**/*_dom_test.ts'],
+          include: ['src/**/*_dom_test.ts', 'src/**/*_journey_test.ts'],
           environment: 'happy-dom',
           setupFiles: ['src/testing/domSetup.ts'],
         },

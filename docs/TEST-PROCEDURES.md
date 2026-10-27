@@ -234,12 +234,13 @@ imports it and checks its main behaviour clears the error.
 
 1. Create the file next to the code, named for its tier:
 
-   | The code…                                    | File name                |
-   | -------------------------------------------- | ------------------------ |
-   | is a plain function                          | `thing_test.ts`          |
-   | needs `document`, the address bar or storage | `thing_dom_test.ts`      |
-   | should hold for any input                    | `thing_prop_test.ts`     |
-   | is about the real files in this repo         | `thing_contract_test.ts` |
+   | The code…                                    | File name                            |
+   | -------------------------------------------- | ------------------------------------ |
+   | is a plain function                          | `thing_test.ts`                      |
+   | needs `document`, the address bar or storage | `thing_dom_test.ts`                  |
+   | is a visit through the whole site            | `src/journeys/visit_journey_test.ts` |
+   | should hold for any input                    | `thing_prop_test.ts`                 |
+   | is about the real files in this repo         | `thing_contract_test.ts`             |
 
 2. Start from this:
 
@@ -258,10 +259,12 @@ imports it and checks its main behaviour clears the error.
 5. Run `npm run test:coverage` before committing.
 
 Helpers are in `src/testing/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`), `mount.ts`
-(`mountComponent`, `mountComposable`, `runInScope`, `mountWithoutDom`), `settle.ts`, `fakes/`
-(`fakeFetch`, `captureConsole`, `tempDir`, `tempCollection`), `scenarios/` (the fixture archive),
-`scriptFixtures.ts`, `domSetup.ts` (runs itself before every dom test) and `propertyRuns.ts`
-(`assertProperty`). [TESTING.md](TESTING.md) shows how each is used.
+(`mountComponent`, `mountInDocument`, `mountComposable`, `runInScope`, `mountWithoutDom`),
+`renderApp.ts` (the whole app, for journeys), `events.ts` (`press`, `type`), `appStores.ts` (the
+real stores, nothing loaded), `settle.ts`, `fakes/` (`fakeFetch`, `captureConsole`, `tempDir`,
+`tempCollection`), `scenarios/` (the fixture archive), `scriptFixtures.ts`, `domSetup.ts` (runs
+itself before every dom and journey test), `happyDom.ts` and `propertyRuns.ts` (`assertProperty`).
+[TESTING.md](TESTING.md) shows how each is used.
 
 ## 10. Add a new folder of code
 

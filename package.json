@@ -15,6 +15,7 @@
     "test": "node script/testRunner/testRunner.ts",
     "test:unit": "node script/testRunner/testRunner.ts unit",
     "test:dom": "node script/testRunner/testRunner.ts dom",
+    "test:journey": "node script/testRunner/testRunner.ts journey",
     "test:prop": "node script/testRunner/testRunner.ts prop",
     "test:contract": "node script/testRunner/testRunner.ts contract",
     "test:watch": "vitest",

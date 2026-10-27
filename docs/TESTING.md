@@ -8,9 +8,9 @@ the `.vue` components are next, in the [test overhaul](plans/TEST-OVERHAUL.md) (
 ## The rules
 
 Where the suite is going: the [test overhaul](plans/TEST-OVERHAUL.md) moves the tests to these,
-phase by phase. Rules 4 to 8 name the kit and the tiers its phases 1 to 3 build (`testing/fakes/`,
-`settle`, scenarios, the journey tier); until they land, write a test as "Writing a test" below
-says, with the helpers that exist.
+phase by phase. The kit and the tiers that rules 4 to 8 name (`testing/fakes/`, `settle`, scenarios,
+the journey tier) are in place since its phases 1 to 3; the rest of the suite moves onto them in
+phases 4 and 5.
 
 1. **A test states a promise.** Its title is a sentence that must stay true ("an undrawn result
    highlights its tile instead of opening the viewer"), not the name of the function.
@@ -40,8 +40,8 @@ says, with the helpers that exist.
 
 What the project says it does, in the manifesto's principles (P1–P5) and the README's features, and
 the tests that keep each. A promise with no test is a gap; a test that keeps no promise is a
-question. "Journey" and "browser" name tests the overhaul adds (phases 3 and 7); phase 6 adds a
-contract test that checks this list against them.
+question. The journeys are listed under "Journey tests" below; "browser" names checks the overhaul
+adds in phase 7, and phase 6 adds a contract test that checks this list against the tests.
 
 | Promise                                                                        | From       | Kept by                                                          |
 | ------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------- |
@@ -60,20 +60,20 @@ contract test that checks this list against them.
 
 ## Running them
 
-| Command                                         | What it does                                                                   |
-| ----------------------------------------------- | ------------------------------------------------------------------------------ |
-| `npm test`                                      | Every tier, one summary row per tier                                           |
-| `npm test -- unit dom`                          | Just the tiers you name                                                        |
-| `npm test -- interface`                         | Just one area (`data`, `state`, `interface`, `pipeline`, `release`, `tooling`) |
-| `npm test -- src/components`                    | Just the tests under a folder (or one file); combines with tiers               |
-| `npm run test:unit` (`dom`, `prop`, `contract`) | One tier                                                                       |
-| `npm test -- --verbose`                         | Also list every file                                                           |
-| `npm run test:watch`                            | Re-run on every save                                                           |
-| `npm run test:coverage`                         | Every tier, a coverage table, and fail below a coverage floor                  |
-| `npm run test:report`                           | The same, and save the full report to `test-results/report.md`                 |
-| `npm run test:html`                             | The same, and an HTML coverage report in `test-results/coverage/`              |
-| `npm run typecheck`                             | Type-check every `.ts` file and `.vue` component (vue-tsc)                     |
-| `npm run check`                                 | Missing or orphaned images, and stale generated files                          |
+| Command                                   | What it does                                                            |
+| ----------------------------------------- | ----------------------------------------------------------------------- |
+| `npm test`                                | Every tier, one summary row per tier                                    |
+| `npm test -- unit dom`                    | Just the tiers you name                                                 |
+| `npm test -- interface`                   | Just one area (`data`, `state`, `interface`, `journeys`, `pipeline`, …) |
+| `npm test -- src/components`              | Just the tests under a folder (or one file); combines with tiers        |
+| `npm run test:unit` (`dom`, `journey`, …) | One tier                                                                |
+| `npm test -- --verbose`                   | Also list every file                                                    |
+| `npm run test:watch`                      | Re-run on every save                                                    |
+| `npm run test:coverage`                   | Every tier, a coverage table, and fail below a coverage floor           |
+| `npm run test:report`                     | The same, and save the full report to `test-results/report.md`          |
+| `npm run test:html`                       | The same, and an HTML coverage report in `test-results/coverage/`       |
+| `npm run typecheck`                       | Type-check every `.ts` file and `.vue` component (vue-tsc)              |
+| `npm run check`                           | Missing or orphaned images, and stale generated files                   |
 
 A passing run prints about ten lines. A failing run lists the failed tests first (file and message)
 and then Vitest's full output, with the diff and the failing line. The tests run on
@@ -89,6 +89,7 @@ tiers.
 | ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------- |
 | `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `testing/fixtures.ts`                        |
 | `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `testing/domSetup.ts`, before every test     |
+| `journey`  | `x_journey_test.ts`  | A whole visit, through the real app                      | `testing/renderApp.ts` (`renderApp`)         |
 | `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `testing/propertyRuns.ts` (`assertProperty`) |
 | `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                         |
 
@@ -101,6 +102,9 @@ The helpers are in [`src/testing/`](../src/testing/).
 - Does it touch the DOM, the address bar, focus or `localStorage`? **Dom.** The name is enough: a
   `_dom_test` file runs in happy-dom, and `testing/domSetup.ts` puts the address, storage and page
   back as they started before each of its tests.
+- Is it something a visitor does across the site: load it, search, open a drawing, go back?
+  **Journey.** The whole app in happy-dom on the fixture archive; see "Journey tests" below. A
+  journey checks that the pieces are joined, not every branch inside them.
 - Is it a rule like "nothing is lost", "the order never goes backwards" or "encode then decode gives
   back the input"? **Prop.** Describe the inputs and let fast-check generate hundreds.
 - Does it check `public/*.json`, the folder layout or git history? **Contract.** These fail when the
@@ -116,6 +120,7 @@ belongs to one area, by its folder ([`script/testRunner/areas.ts`](../script/tes
 | Site: data and search         | `src/lib` (but the icons), `src/composables/collection`, `src/composables/search` | Loading collections, filtering, grouping, search        |
 | Site: state and routing       | `src/stores`, `src/composables/core`, `src/pages.ts`                              | The stores, shareable links, the pages, theme, accent   |
 | Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`     | The lightbox, scroll-spy, icons and logo                |
+| Site: journeys                | `src/journeys`, `src/App.vue`                                                     | A whole visit, from first load to the back button       |
 | Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders             | Ingest, the integrity check, the files in `public/`     |
 | Version and changelog         | `script/version`, `script/changelog`                                              | The version in the footer, the changelog task           |
 | Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                             | The runner and its reports, guide images, the docs site |
@@ -195,14 +200,52 @@ Conventions:
   A fake kept only for its cleanup is named with a leading `_` (`using _fetch = …`). The scripts'
   outside world is `fakeIo` instead (below).
 - **Shared data before your own.** `src/testing/scenarios/archive.ts` is a small whole archive
-  (Birds and Sharks, with `archiveRoutes()` for `fakeFetch`); `scriptFixtures.ts` has the scripts'
-  `makeScriptCollection`, `twoDucks` and `fakeTranscoder`; `fakes/tempCollection.ts` puts a
-  collection with real images in a temporary folder. Write data of your own only for the edge case
-  the test is about.
+  (Birds and Sharks, with `archiveRoutes()` for `fakeFetch` and `archiveStats()`, worked out as the
+  build does); `scriptFixtures.ts` has the scripts' `makeScriptCollection`, `twoDucks` and
+  `fakeTranscoder`; `fakes/tempCollection.ts` puts a collection with real images in a temporary
+  folder. Write data of your own only for the edge case the test is about.
 - **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI
   runs the suite in four.
 - **A test must be able to fail.** After writing one, break the code it covers on purpose and
   confirm the test goes red.
+
+### Journey tests
+
+A journey is a visit, start to finish, through the real `App.vue` with its stores, router and every
+component, in happy-dom, with `fetch` answered from the fixture archive. It goes the way a visitor
+goes: by clicking what they would click and pressing the keys they would press, and it checks what
+they would see.
+
+```ts
+using app = await renderApp({ at: 'birds/003' }); // or { routes: { … } }, { width: 375 }
+app.control('Next').click(); // a button, link, tile or option, by its label or text
+press('Escape'); // testing/events.ts: press, type
+await app.until(() => !dialog(), 'the viewer to close'); // settle until it holds, or fail by name
+```
+
+- `renderApp` (in [`src/testing/renderApp.ts`](../src/testing/renderApp.ts)) waits for the app to
+  load; leaving the `using` block unmounts it and puts `fetch` back. Pass only the routes the test
+  changes, and `width` for a phone (`domSetup.ts` restores the window after the test).
+- **Wait with `app.until(check, what)`**, never a fixed delay: it settles until the check holds, and
+  a failure names what it was waiting for. The search filters the grid 120ms after typing, so wait
+  for the grid, not for the box.
+- One file per journey in `src/journeys/`, its first comment saying which promise it keeps:
+
+| Journey                   | File                                | What happens                                            |
+| ------------------------- | ----------------------------------- | ------------------------------------------------------- |
+| **J1 First visit**        | `firstVisit_journey_test.ts`        | Tiles in sections, placeholders, honest counts, footer  |
+| **J2 Another collection** | `anotherCollection_journey_test.ts` | Tab or menu; the address, accent and sidebar follow     |
+| **J3 Views**              | `views_journey_test.ts`             | By group, by month, drawn only; the sidebar jumps       |
+| **J4 Search**             | `search_journey_test.ts`            | Results by collection, folding, ↑ ↓ ↵, Ctrl+K, no match |
+| **J5 The viewer**         | `viewer_journey_test.ts`            | Opens from a tile; arrows, zoom, drag; focus comes back |
+| **J6 Links and back**     | `linksAndBack_journey_test.ts`      | Deep links, pages, the back button, links to nothing    |
+| **J7 About**              | `about_journey_test.ts`             | The archive's numbers; drawings link into the viewer    |
+| **J8 Theme**              | `theme_journey_test.ts`             | Dark and back, remembered; placeholders follow          |
+| **J9 Failures**           | `failures_journey_test.ts`          | The gallery, one collection or the numbers fail         |
+| **On a phone**            | `phone_journey_test.ts`             | The sections drawer; the search behind a button         |
+
+A journey proves the pieces are joined. What only a component can show (a state the app never
+reaches, such as the header before any collection is known) is a component test, below.
 
 ### Component tests
 
@@ -216,7 +259,8 @@ its text, roles and labels, what a click or a key does, what it emits. See
   [`src/testing/mount.ts`](../src/testing/mount.ts). It returns the host element, and everything it
   mounts is unmounted after each test. A component that injects stores gets typed stand-ins:
   `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with only the
-  members it reads.
+  members it reads; or the app's real stores, with nothing loaded, from `appStores()`
+  ([`src/testing/appStores.ts`](../src/testing/appStores.ts)).
 - One test file per component, named after it (`DrawnFilter.vue` → `DrawnFilter_dom_test.ts`), so a
   failure says which component broke.
 - happy-dom is not a full browser: it does not support the `~` sibling selector, so walk
@@ -361,9 +405,9 @@ Two things the number does not tell you:
 - **Only files a test imports are counted,** so the percentage alone could hide a file with no tests
   at all. To close that gap, `npm run test:coverage` also fails if any source file is not imported
   by at least one test, and names it.
-- **`.vue` files count only once a test imports one,** and then must be at 100% like any other file.
-  The untested-files gate covers `.ts` files only; components without a test yet are listed in
-  [plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md) (phase 4).
+- **`.vue` files are source files like `.ts` ones:** a component no test loads is named by the same
+  gate, and once loaded it must be at 100% like any other file. The journeys load every component
+  the app shows.
 
 ## In CI
 
@@ -408,8 +452,9 @@ their normal depth in three timezones. If it fails, the seed is in the log.
 
 ## Not covered yet
 
-- **Components.** There is no real-browser tier. Things verified by hand today: layout at phone
-  width, hover and focus styles, transitions, the lightbox gestures on a real touch screen.
+- **A real browser.** The journeys run the whole app in happy-dom, which has no layout. Things
+  verified by hand today: layout at phone width, hover and focus styles, transitions, the lightbox
+  gestures on a real touch screen (the overhaul's phase 7).
 - **The last line of each command.** Every script's work is a tested function; what is left untested
   is the one line that starts it (`if (import.meta.main) …`) and the runner's function that starts
   the real Vitest.

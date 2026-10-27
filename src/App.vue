@@ -52,6 +52,7 @@ const route = useHashRoute({
   cache: collections.cache,
   switchCollection: actions.switchCollection,
   openOverlay: overlay.open,
+  closeOverlay: overlay.close,
   page: ui.page,
   showPage: ui.showPage,
 });

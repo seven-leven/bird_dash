@@ -7,6 +7,10 @@ folder, and the item here points to it.
 
 ## 🔧 Fix now
 
+- [ ] **A search result in a collection with nothing drawn leads nowhere** (found 2026-10-27, by the
+      search journey). Choosing "Grey Reef Shark" opens the Sharks, which show "Nothing drawn yet"
+      instead of the list, so the tile it should ring is not there. Choosing a result should show
+      the planned list (as "Show what's planned" does) before ringing the tile.
 - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
       24.22.1. Everything passes, but upgrade to match CI.
 

@@ -27,6 +27,7 @@ function harness(items: Record<string, CollectionItem[]>) {
     expandedImage.item = item;
     expandedImage.isOpen = true;
   };
+  const closeOverlay = () => (expandedImage.isOpen = false);
 
   // onMounted has no component here, so the hashchange hook is never attached;
   // tests call apply()/start() directly instead.
@@ -39,6 +40,7 @@ function harness(items: Record<string, CollectionItem[]>) {
       cache: items,
       switchCollection,
       openOverlay,
+      closeOverlay,
       page,
       showPage,
     })
@@ -131,6 +133,20 @@ test('a deep link to an undrawn item highlights the tile instead of opening it',
   h.stop();
 });
 
+test('an address that loses its item (the back button) closes the viewer', async () => {
+  const h = harness({ birds: [drawn('019')] });
+  await h.loadFirst('birds');
+  location.hash = '#birds/019';
+  await h.route.apply();
+  assertEquals(h.expandedImage.isOpen, true);
+
+  location.hash = '#birds';
+  await h.route.apply();
+  assertEquals(h.expandedImage.isOpen, false);
+  assertEquals(h.switched, []); // the same collection: nothing to load
+  h.stop();
+});
+
 test("the router's own URL writes are not applied back as navigation", async () => {
   const h = harness({ birds: [], sharks: [] });
   await h.loadFirst('birds');
@@ -207,6 +223,7 @@ test('mounted, the router follows hashchange events, and stops when unmounted', 
         activeCollection.value = collections.find((c) => c.id === id);
       },
       openOverlay: () => {},
+      closeOverlay: () => {},
     })
   );
 

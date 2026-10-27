@@ -5,7 +5,7 @@ import { fakeIo } from '../lib/fakeIo.ts';
 
 test('no arguments means every tier, in order', () => {
   const o = parseArgs([]);
-  assertEquals(o.tiers, ['unit', 'dom', 'prop', 'contract']);
+  assertEquals(o.tiers, ['unit', 'dom', 'journey', 'prop', 'contract']);
   assertEquals([o.verbose, o.failFast, o.coverage, o.minLines], [false, false, false, 0]);
 });
 
@@ -19,7 +19,11 @@ test('flags are parsed', () => {
 });
 
 test('unknown tiers and options are rejected with a helpful message', () => {
-  assertThrows(() => parseArgs(['e2e']), Error, 'tiers: unit, dom, prop, contract; areas: data,');
+  assertThrows(
+    () => parseArgs(['e2e']),
+    Error,
+    'tiers: unit, dom, journey, prop, contract; areas: data,',
+  );
   assertThrows(() => parseArgs(['--nope']), Error, 'unknown option --nope');
 });
 
@@ -320,7 +324,7 @@ test('main: an area or a path narrows the run to its test files', async () => {
 test('main: a narrowed run with no matching files exits 2 and says what it looked for', async () => {
   const run = await runMain(['release'], { tests: ['src/lib/a_test.ts'] });
   assertEquals(run.code, 2);
-  assertStringIncludes(run.out, 'no test files for unit, dom, prop, contract, release');
+  assertStringIncludes(run.out, 'no test files for unit, dom, journey, prop, contract, release');
 });
 
 test('main: a narrowed coverage run does not report the files it did not load as untested', async () => {

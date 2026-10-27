@@ -1,12 +1,12 @@
 # Test overhaul
 
-> **Status:** planned 2026-10-26; phases 0 (the rules), 1 (the kit, in four parts) and 2 (one way to
-> a browser) done 2026-10-27. The tests were written bottom up, one file at a time, as each piece of
-> code was; this plans them top down, from what the site promises to the smallest rule, and rebuilds
-> the kit they share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 come
-> **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving every
-> file safe. (The scripts overhaul went first, as the scripts already had direct tests; see
-> [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
+> **Status:** planned 2026-10-26; phases 0 (the rules), 1 (the kit, in four parts), 2 (one way to a
+> browser) and 3 (journeys) done 2026-10-27. The tests were written bottom up, one file at a time,
+> as each piece of code was; this plans them top down, from what the site promises to the smallest
+> rule, and rebuilds the kit they share. One pull request per phase, 100% coverage throughout.
+> Phases 1 to 3 come **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests are what
+> make moving every file safe. (The scripts overhaul went first, as the scripts already had direct
+> tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
 
@@ -66,17 +66,17 @@ A visit, start to finish, through the real `App.vue` with the stores, the router
 component, in happy-dom, with `fetch` answered from a fixture archive. One test file per journey, in
 the user's words.
 
-| Journey                   | What happens                                                                                                                                               |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **J1 First visit**        | The first collection loads; tiles in sections; placeholders for the undrawn; honest counts; the footer                                                     |
-| **J2 Another collection** | Tab or menu; the accent, the URL (`#sharks`), the sidebar and the scroll position follow                                                                   |
-| **J3 Views**              | By group and by month; drawn only; the sidebar jumps to a section and marks the one in view                                                                |
-| **J4 Search**             | Typing opens results grouped by collection; long groups fold; ↑ ↓ ↵; a drawn result opens the viewer in its collection, an undrawn one highlights its tile |
-| **J5 The viewer**         | A tile opens it; ← → page in order; zoom; Escape closes and focus returns to the tile; "show the group"                                                    |
-| **J6 Links and back**     | `#birds/029` opens the viewer on load; back closes it; `#about`; an unknown id does nothing harmful                                                        |
-| **J7 About**              | The numbers and the newest drawings from `stats.json`; a drawing links into the viewer; a failure and Try again                                            |
-| **J8 Theme**              | Dark and back; remembered; placeholders follow                                                                                                             |
-| **J9 Failures**           | `collections.json` fails: the error screen and Try again; one list fails: the rest still works                                                             |
+| Journey                   | What happens                                                                                                                                    |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **J1 First visit**        | The first collection loads; tiles in sections; placeholders for the undrawn; honest counts; the footer                                          |
+| **J2 Another collection** | Tab or menu; the accent, the URL (`#sharks`), the sidebar and the scroll position follow                                                        |
+| **J3 Views**              | By group and by month; drawn only; the sidebar jumps to a section and marks the one in view                                                     |
+| **J4 Search**             | Typing opens results grouped by collection; long groups fold; ↑ ↓ ↵; the chosen result's collection opens and its tile is ringed (drawn or not) |
+| **J5 The viewer**         | A tile opens it; ← → page in order; zoom; Escape closes and focus returns to the tile; "show the group"                                         |
+| **J6 Links and back**     | `#birds/029` opens the viewer on load; back closes it; `#about`; an unknown id does nothing harmful                                             |
+| **J7 About**              | The numbers and the newest drawings from `stats.json`; a drawing links into the viewer; a failure and Try again                                 |
+| **J8 Theme**              | Dark and back; remembered; placeholders follow                                                                                                  |
+| **J9 Failures**           | `collections.json` fails: the error screen and Try again; one list fails: the rest still works                                                  |
 
 The scripts have journeys too, in a temporary copy of the data: **S1** a new drawing goes in
 (ingest), **S2** `check` catches a missing image, an orphan and a stale `stats.json`, **S3** the
@@ -207,22 +207,29 @@ Production code changes only where a test cannot reach it otherwise, and says so
       per file showed three leaks between tests, fixed at the source: `useDialogKeys` and
       `useZoomPan` clean up in `onScopeDispose` (which a stopped scope runs, not only an unmount),
       and `runInScope` stops its scope after the test.
-- [ ] **3. Journeys.** The `journey` tier in `tiers.ts` and an area for it; `renderApp` on the
-      fixture archive; J1–J9; the untested-files gate covers `.vue`. _Done when_ every component is
-      exercised by a test and every journey passes. **The site overhaul starts after this** (the
-      scripts overhaul is done).
+- [x] **3. Journeys** (2026-10-27). The `journey` tier and the `journeys` area; `renderApp` on the
+      fixture archive (which gained `archiveStats()`, worked out by the build's `computeStats`);
+      `events.ts` (`press`, `type`); J1–J9 and a phone journey in `src/journeys/`; the
+      untested-files gate counts `.vue` files. Every component is at 100%: what no journey can reach
+      (the header, sidebar, grid and viewer before any collection is known; LogoMark's tile; a name
+      order the lists never make) has a component test on `appStores()`, which starts phase 4 for
+      `TopBar`, `SideNav`, `GalleryContent`, `LightBox`, `SearchResultsList` and `LogoMark`. The
+      journeys found three bugs, fixed here: a viewer opened by a link (or before its code arrived)
+      took neither focus nor keys; the back button left the viewer open; and a drawing dated after
+      the current month counted "0 drawings". A fourth is logged in TODO.md (a search result in a
+      collection with nothing drawn). **The site overhaul starts after this** (the scripts overhaul
+      is done).
 - [ ] **4. Vue component tests.** Every `.vue` file gets its own `_dom_test.ts` beside it, for what
       a journey leaves open: every empty, loading and error state, the ARIA attributes, the keys,
-      the emitted events. Mounted with `mountComponent` and fake stores; tests check what a visitor
-      sees and does (text, ARIA state, clicks, events), not the markup. The 11 with no test today
-      (the component-test list in TODO.md, moved here): - **shell:** `App.vue` (the loading, error
-      and loaded screens), `Chrome`, `TopBar`, `SideNav` - **gallery:** `GalleryContent`,
-      `LightBox` - **search:** `GlobalSearch`, `SearchResultsList`, `SearchDropdownHeader`,
-      `SearchKeyboardHints` - **icons:** `LogoMark`
+      the emitted events. Mounted with `mountComponent` and fake stores (or `appStores()`); tests
+      check what a visitor sees and does (text, ARIA state, clicks, events), not the markup. Phase 3
+      started six (`TopBar`, `SideNav`, `GalleryContent`, `LightBox`, `SearchResultsList`,
+      `LogoMark`) with the states journeys cannot reach; still without a file of their own:
+      `App.vue` (the journeys cover its loading, error and loaded screens), `Chrome`,
+      `GlobalSearch`, `SearchDropdownHeader`, `SearchKeyboardHints`.
 
       Written against today's names; the site overhaul moves each test with its component. _Done
-      when_ every `.vue` file has a test beside it and the untested-files gate counts `.vue` files
-      as it counts `.ts`.
+      when_ every `.vue` file has a test beside it.
 
 - [ ] **5. Split and rename.** `useLightbox_dom_test.ts` into one file per composable;
       `testRunner_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
