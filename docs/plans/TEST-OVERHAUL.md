@@ -262,8 +262,10 @@ src/testing/
 browser/       the browser tier: Playwright config and its few checks (phase 7)
 ```
 
-`withDom.ts`, `mountComposable.ts` and `mountComponent.ts` fold into the above. The scripts'
-`fakeIo` is already in `script/lib/`; the runner's own `RunnerDeps` moves onto `Io` in phase 1.
+Every fake is disposable (`using fetch = fakeFetch(…)`, `await using dir = await tempDir()`;
+[PLATFORM.md](PLATFORM.md)), so no test restores anything in a `finally`. `withDom.ts`,
+`mountComposable.ts` and `mountComponent.ts` fold into the above. The scripts' `fakeIo` is already
+in `script/lib/`; the runner's own `RunnerDeps` moves onto `Io` in phase 1.
 
 ## Phases
 

@@ -247,6 +247,10 @@ themes, a phone width).
 | 7. Styles    | **Five type sizes**: drop `text-micro`, use `text-xs` for `.caps-label`, `.count-pill`, `.kbd-hint`; check 375px                                                                                                    | Same file, same pass; the guide and DESIGN.md change with it                                                   |
 | 7. Styles    | **Warm paper on the site** (slate to stone), as its own commit so it is easy to drop                                                                                                                                | The neutral ramp lives in the files phase 7 writes                                                             |
 
+[PLATFORM.md](PLATFORM.md) lists what Vue 3.5, Tailwind 4 and the browser add in the same phases
+(`defineModel`, `useId`, `<dialog>` for the viewer, popovers, `light-dark()` tokens, the data
+checked at the door); its rows are done in the phase named there.
+
 Not riding along: **the focus-ring contrast fix** (in TODO.md's fixes) is too small and too urgent
 to wait for a phase, and the series' **name decision** ("Wildlife Illustrated" over a sweet-treats
 collection) is a choice, not code; both are done on their own.

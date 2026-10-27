@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | docs(plans): a new plan, PLATFORM.md ("Use the platform"): what Node 24, TS 6, Vite
+  8, Vue 3.5, Tailwind 4 and the browser give that the code does not use yet, each row with what it
+  replaces and the overhaul phase it rides with, and the general improvements found with them (the
+  data checked at the door, an app-wide error state, axe, a size budget, link previews per drawing,
+  a Content-Security-Policy). Two bugs it found are in TODO.md's fixes: no `color-scheme` in dark
+  mode, and month names in the visitor's language
 - 2026-10-27 | docs(plans): a sweep for duplicates, folded into the overhauls. Each plan has a
   "Duplicates to fold" table, every row assigned to the phase that already moves that code: in the
   site, `plural` written four times, the project's links, the breakpoint and search delay, the drawn
