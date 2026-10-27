@@ -1,10 +1,10 @@
 import { test } from 'vitest';
 import { assertEquals, assertRejects, assertStringIncludes } from '@std/assert';
-import type { Collection } from '../lib/collections.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import { previewDescription, previewPage, previewPages } from './linkPreviews.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
-const birds = { id: 'birds', label: 'Birds', paths: { json: './lists/birds.json' } } as Collection;
+const birds = makeScriptCollection('birds', { paths: { json: './lists/birds.json' } });
 const duck = {
   id: '001',
   name: 'Lesser Whistling-Duck',

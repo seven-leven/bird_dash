@@ -2,8 +2,8 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { eachDrawnItem, markDrawn, readDrawnIds, readList } from './lists.ts';
 import { fakeIo } from './fakeIo.ts';
-import type { Collection } from './collections.ts';
 import type { RawCollectionData } from '../../src/types/data.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
 const list: RawCollectionData = {
   Ducks: [
@@ -15,7 +15,7 @@ const list: RawCollectionData = {
   ],
 };
 
-const birds = { id: 'birds', paths: { json: './public/lists/birds.json' } } as Collection;
+const birds = makeScriptCollection('birds');
 const withList = () => fakeIo({ files: { [birds.paths.json]: JSON.stringify(list) } });
 const saved = (io: ReturnType<typeof fakeIo>): RawCollectionData =>
   JSON.parse(io.files.get(birds.paths.json)!);

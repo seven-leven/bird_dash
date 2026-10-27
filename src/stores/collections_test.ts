@@ -3,40 +3,17 @@ import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createCollectionsStore } from './collections.ts';
 import type { ViewMode } from '../types/index.ts';
-import { fakeFetch, json } from '../testing/fakes/fakeFetch.ts';
+import { fakeFetch } from '../testing/fakes/fakeFetch.ts';
+import { archiveRoutes } from '../testing/scenarios/archive.ts';
 import { captureConsole } from '../testing/fakes/captureConsole.ts';
 import { settle } from '../testing/settle.ts';
 
 // The store end to end: real loading, caching, filtering and grouping, with only
 // the network replaced.
 
-const BIRDS = {
-  Ducks: [
-    { id: '001', name: 'Mallard', sci: 'Anas platyrhynchos', drawn: '2025-01-10' },
-    { id: '002', name: 'Garganey', sci: 'Spatula querquedula' },
-  ],
-  Herons: [{ id: '003', name: 'Grey Heron', sci: 'Ardea cinerea', drawn: '2025-03-05' }],
-};
-const SHARKS = {
-  Requiem: [{ id: '001', name: 'Grey Reef Shark', sci: 'Carcharhinus amblyrhynchos' }],
-};
-
-const entry = (id: string, label: string) => ({
-  id,
-  label,
-  emoji: '',
-  groupLabel: 'Family',
-  itemLabel: 'item',
-  links: [],
-});
-
-/** A store over two small collections, loaded; the fake `fetch` goes when it is disposed. */
-async function storeOverTwoCollections() {
-  const fetch = fakeFetch({
-    '/collections.json': json([entry('birds', 'Birds'), entry('sharks', 'Sharks')]),
-    '/lists/birds.json': json(BIRDS),
-    '/lists/sharks.json': json(SHARKS),
-  });
+/** A store over the fixture archive, loaded; the fake `fetch` goes when it is disposed. */
+async function storeOverTheArchive() {
+  const fetch = fakeFetch(archiveRoutes());
   const query = ref('');
   const viewMode = ref<ViewMode>('group');
   const store = createCollectionsStore({ query, viewMode });
@@ -48,7 +25,7 @@ async function storeOverTwoCollections() {
 const names = (items: readonly { commonName: string }[]) => items.map((i) => i.commonName);
 
 test('after init the first collection is active, grouped, and counted', async () => {
-  using loaded = await storeOverTwoCollections();
+  using loaded = await storeOverTheArchive();
   const { store } = loaded;
   assertEquals(store.isInitialized.value, true);
   assertEquals(store.list.value.map((c) => c.id), ['birds', 'sharks']);
@@ -60,7 +37,7 @@ test('after init the first collection is active, grouped, and counted', async ()
 });
 
 test('the query filters the grid and the counts, across name, group and id', async () => {
-  using loaded = await storeOverTwoCollections();
+  using loaded = await storeOverTheArchive();
   const { store, query } = loaded;
   query.value = 'heron';
   assertEquals(Object.keys(store.activeData.value.grouped), ['Herons']);
@@ -75,7 +52,7 @@ test('the query filters the grid and the counts, across name, group and id', asy
 });
 
 test('the same query searches every loaded collection for the dropdown', async () => {
-  using loaded = await storeOverTwoCollections();
+  using loaded = await storeOverTheArchive();
   const { store, query } = loaded;
   query.value = 'grey';
   assertEquals(
@@ -89,7 +66,7 @@ test('the same query searches every loaded collection for the dropdown', async (
 });
 
 test('date view shows only drawn items, newest first; the viewer still pages oldest to newest', async () => {
-  using loaded = await storeOverTwoCollections();
+  using loaded = await storeOverTheArchive();
   const { store, viewMode } = loaded;
   viewMode.value = 'date';
   const months = Object.keys(store.activeData.value.grouped);
@@ -99,7 +76,7 @@ test('date view shows only drawn items, newest first; the viewer still pages old
 });
 
 test('switching collection swaps the grid; the cache keeps both', async () => {
-  using loaded = await storeOverTwoCollections();
+  using loaded = await storeOverTheArchive();
   const { store } = loaded;
   await store.switch('sharks');
   assertEquals(store.activeCollection.value?.id, 'sharks');
@@ -109,7 +86,7 @@ test('switching collection swaps the grid; the cache keeps both', async () => {
 });
 
 test('components cannot change the loaded data: it is read-only outside the store', async () => {
-  using loaded = await storeOverTwoCollections();
+  using loaded = await storeOverTheArchive();
   const { store } = loaded;
   // Vue warns on each attempt; that is the behaviour under test.
   using warnings = captureConsole((line) => line.includes('target is readonly'));

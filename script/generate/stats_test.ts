@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { computeStats, formatStats, formatStatsFor, writeStats } from './stats.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
-import type { Collection } from '../lib/collections.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
 const birds = {
   id: 'birds',
@@ -110,12 +110,7 @@ test('the file text is stable: the same lists always write the same bytes', () =
 });
 
 test('the stats are written as the lists say, the same text the check expects', async () => {
-  const collection = {
-    id: 'birds',
-    label: 'Birds',
-    emoji: '',
-    paths: { json: './birds.json' },
-  } as Collection;
+  const collection = makeScriptCollection('birds', { paths: { json: './birds.json' } });
   const io = fakeIo({ files: { './birds.json': JSON.stringify(birds.groups) } });
   const stats = await writeStats([collection], io, './stats.json');
   assertEquals(stats.drawn, 3);

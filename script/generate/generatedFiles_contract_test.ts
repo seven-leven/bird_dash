@@ -7,17 +7,13 @@ import { realIo } from '../lib/io.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import { PATHS } from '../lib/paths.ts';
 import { tempDir } from '../../src/testing/fakes/tempDir.ts';
+import { imageSize } from '../../src/testing/fakes/tempCollection.ts';
 
 // Every generator, run for real into a temporary folder, against the files committed:
 // a generated file that is stale fails here (docs/SCRIPTS.md, principle 4).
 
 // sharp caches open files; on Windows that would keep the temporary folder locked.
 sharp.cache(false);
-
-const sizeOf = async (path: string) => {
-  const { width, height, format } = await sharp(await readFile(path)).metadata();
-  return { width, height, format };
-};
 
 /** Generate everything into a fresh folder, quietly, and hand `fn` the folder. */
 async function generated(fn: (dir: string) => Promise<void>): Promise<void> {
@@ -31,12 +27,12 @@ async function generated(fn: (dir: string) => Promise<void>): Promise<void> {
 
 test('every generator writes its files, at the expected sizes, into the folder given', () =>
   generated(async (dir) => {
-    const guide = await sizeOf(`${dir}/design-guide.png`);
+    const guide = await imageSize(`${dir}/design-guide.png`);
     assertEquals([guide.width, guide.format], [1400, 'png']);
     assert(guide.height! > 1500, 'the guide should be a tall page');
-    assertEquals((await sizeOf(`${dir}/icons.png`)).width, 1000);
-    assertEquals(await sizeOf(`${dir}/logo.png`), { width: 1400, height: 900, format: 'png' });
-    assertEquals(await sizeOf(`${dir}/logo/tile-512.png`), {
+    assertEquals((await imageSize(`${dir}/icons.png`)).width, 1000);
+    assertEquals(await imageSize(`${dir}/logo.png`), { width: 1400, height: 900, format: 'png' });
+    assertEquals(await imageSize(`${dir}/logo/tile-512.png`), {
       width: 512,
       height: 512,
       format: 'png',
@@ -46,9 +42,9 @@ test('every generator writes its files, at the expected sizes, into the folder g
       assert(svg.startsWith('<svg ') && svg.endsWith('</svg>\n'), name);
     }
     assertStringIncludes(await readFile(`${dir}/logo/mark-white.svg`, 'utf8'), '#ffffff');
-    assertEquals(await sizeOf(`${dir}/favicon.png`), { width: 64, height: 64, format: 'png' });
+    assertEquals(await imageSize(`${dir}/favicon.png`), { width: 64, height: 64, format: 'png' });
     // Five drawings of 240px with 16px around and between them.
-    assertEquals(await sizeOf(`${dir}/drawings.webp`), {
+    assertEquals(await imageSize(`${dir}/drawings.webp`), {
       width: 1296,
       height: 272,
       format: 'webp',
@@ -93,6 +89,6 @@ test('every generated file in the repository is up to date with the code that dr
     ];
     assert(placeholders.length > 0, 'public/placeholders/ has no placeholders');
     for (const [committed, fresh] of images) {
-      assertEquals(await sizeOf(committed), await sizeOf(fresh), stale(committed));
+      assertEquals(await imageSize(committed), await imageSize(fresh), stale(committed));
     }
   }));

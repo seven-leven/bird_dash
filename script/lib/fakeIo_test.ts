@@ -32,6 +32,13 @@ test('git answers what it was given, and fails like a missing repository otherwi
   await assertRejects(() => io.git('log'), Error, 'git log failed: not a git repository');
 });
 
+test("the commit count and id are git's answers to the version's two questions", async () => {
+  const io = fakeIo({ commits: 310, commit: 'd3c113e', git: { 'rev-parse HEAD': 'full' } });
+  assertEquals(await io.git('rev-list', '--count', 'HEAD'), '310');
+  assertEquals(await io.git('rev-parse', '--short=7', 'HEAD'), 'd3c113e');
+  assertEquals(await io.git('rev-parse', 'HEAD'), 'full'); // the rest are still given as `git`
+});
+
 test('the environment, the clock and the console are the test’s', () => {
   const io = fakeIo({ env: { CI: 'true' }, now: new Date(Date.UTC(2025, 5, 1)) });
   assertEquals([io.env('CI'), io.env('HOME')], ['true', undefined]);

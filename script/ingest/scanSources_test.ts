@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { scanSources, toIds } from './scanSources.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
-import type { Collection } from '../lib/collections.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
 test('file names become bare ids, whatever the case of the extension', () => {
   assertEquals(
@@ -13,10 +13,9 @@ test('file names become bare ids, whatever the case of the extension', () => {
 });
 
 test('a scan reads the drawn ids and the three image folders, each for its own kind of file', async () => {
-  const birds = {
-    id: 'birds',
+  const birds = makeScriptCollection('birds', {
     paths: { json: './lists/birds.json', sourceArt: './raw/', full: './full/', thumb: './thumb/' },
-  } as Collection;
+  });
   const io = fakeIo({
     files: {
       './lists/birds.json': JSON.stringify({

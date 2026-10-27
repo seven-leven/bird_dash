@@ -1,9 +1,9 @@
 # Test overhaul
 
-> **Status:** planned 2026-10-26; phase 0 (the rules) and 1a (the fakes) done 2026-10-27. The tests
-> were written bottom up, one file at a time, as each piece of code was; this plans them top down,
-> from what the site promises to the smallest rule, and rebuilds the kit they share. One pull
-> request per phase, 100% coverage throughout. Phases 1 to 3 come **before** the
+> **Status:** planned 2026-10-26; phase 0 (the rules), 1a (the fakes) and 1b (shared data) done
+> 2026-10-27. The tests were written bottom up, one file at a time, as each piece of code was; this
+> plans them top down, from what the site promises to the smallest rule, and rebuilds the kit they
+> share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 come **before** the
 > [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving every file safe. (The
 > scripts overhaul went first, as the scripts already had direct tests; see
 > [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
@@ -181,8 +181,14 @@ Production code changes only where a test cannot reach it otherwise, and says so
   - [x] **1a. The fakes** (2026-10-27): `fakeFetch`, `captureConsole`, `tempDir` (each undone by
         `using`) and `settle`; every hand-made fake moved onto them;
         `oneWayToFake_contract_test.ts`.
-  - [ ] **1b. Shared data:** one `makeCollection` for script and site tests, the fixture archive and
-        scenarios, `fakeRepository`, git's answers in `fakeIo`, `imageSize`, `tempCollection`.
+  - [x] **1b. Shared data** (2026-10-27): `makeScriptCollection` (the ten hand-built `{ … } as
+        Collection` go; the scripts' `Collection` is not the site's, so it is a fixture of its own
+        beside `makeCollection`), `fakeTranscoder` and `twoDucks`, git's answers as `fakeIo({
+        commits, commit })`, `tempCollection` and `imageSize`, and the fixture archive
+        (`scenarios/archive.ts`, with `archiveRoutes()` for `fakeFetch`). A test about an edge case
+        keeps its own data (same-day order, a missing romanisation, a slow list): one archive
+        carrying every quirk would tie unrelated tests together. So "no bird written out twice"
+        reads "no shared shape written out twice".
   - [ ] **1c. One way to mount:** `mount.ts` (`mountComponent`, `mountComposable`, `runInScope`
         folded in); the copied renderer in `injection_test.ts` goes.
   - [ ] **1d. The runner on `Io`:** `RunnerDeps` goes; the runner's own copies (GitHub escapes, path
