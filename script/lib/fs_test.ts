@@ -1,18 +1,13 @@
 import { test } from 'vitest';
-import { mkdir, mkdtemp, readFile, rm, stat, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
 import { assertEquals, assertRejects } from '@std/assert';
 import { ensureDir, listFiles, readJson, writeJson } from './fs.ts';
+import { tempDir } from '../../src/testing/fakes/tempDir.ts';
 
 /** Run `fn` with a fresh temporary directory, removed afterwards. */
 async function withTempDir(fn: (dir: string) => Promise<void>): Promise<void> {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_fs_'));
-  try {
-    await fn(dir);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+  await using dir = await tempDir('fs');
+  await fn(dir.path);
 }
 
 test('listFiles returns matching file names, sorted, and ignores folders', () =>

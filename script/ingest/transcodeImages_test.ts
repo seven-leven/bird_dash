@@ -1,11 +1,10 @@
 import { test } from 'vitest';
-import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { mkdir, readFile, rm } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import sharp from 'sharp';
 import { transcodeFull, transcodeThumb } from './transcodeImages.ts';
 import type { Collection } from '../lib/collections.ts';
+import { tempDir } from '../../src/testing/fakes/tempDir.ts';
 
 // Real (tiny) images in a temporary folder. sharp caches open files by default; on
 // Windows that keeps them locked, so the folder could not be removed afterwards.
@@ -13,21 +12,18 @@ sharp.cache(false);
 
 /** A collection on disk whose source art is one wide red picture per id in `sources`. */
 async function withCollection(sources: string[], fn: (collection: Collection) => Promise<void>) {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_transcode_'));
+  await using folder = await tempDir('transcode');
+  const dir = folder.path;
   const collection = {
     id: 'x',
     paths: { sourceArt: `${dir}/raw/`, full: `${dir}/full/`, thumb: `${dir}/thumb/` },
   } as Collection;
-  try {
-    await mkdir(collection.paths.sourceArt);
-    for (const id of sources) {
-      await sharp({ create: { width: 60, height: 30, channels: 3, background: '#cc3333' } })
-        .png().toFile(`${collection.paths.sourceArt}${id}.png`);
-    }
-    await fn(collection);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
+  await mkdir(collection.paths.sourceArt);
+  for (const id of sources) {
+    await sharp({ create: { width: 60, height: 30, channels: 3, background: '#cc3333' } })
+      .png().toFile(`${collection.paths.sourceArt}${id}.png`);
   }
+  await fn(collection);
 }
 
 const sizeOf = async (path: string) => {

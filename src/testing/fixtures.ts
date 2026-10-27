@@ -1,6 +1,7 @@
 import { effectScope } from 'vue';
 import type { CollectionConfig, CollectionItem } from '../types/index.ts';
 import { buildNames, nameWords } from '../lib/itemNames.ts';
+import { captureConsole } from './fakes/captureConsole.ts';
 
 let counter = 0;
 
@@ -78,15 +79,8 @@ export function at(year: number, month1to12: number, day = 1): number {
 export function runInScope<T>(fn: () => T): { value: T; stop: () => void } {
   // Composables register onMounted/onUnmounted; with no component around them Vue
   // warns on every call. That is expected in a test, so drop only that warning.
-  const warn = console.warn;
-  console.warn = (...args: unknown[]) => {
-    if (!String(args[0]).includes('no active component instance')) warn(...args);
-  };
-  try {
-    const scope = effectScope();
-    const value = scope.run(fn) as T;
-    return { value, stop: () => scope.stop() };
-  } finally {
-    console.warn = warn;
-  }
+  using _warnings = captureConsole((line) => line.includes('no active component instance'));
+  const scope = effectScope();
+  const value = scope.run(fn) as T;
+  return { value, stop: () => scope.stop() };
 }

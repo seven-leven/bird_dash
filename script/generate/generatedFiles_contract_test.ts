@@ -1,13 +1,12 @@
 import { test } from 'vitest';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { readFile } from 'node:fs/promises';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import sharp from 'sharp';
 import { GENERATORS, main } from './generate.ts';
 import { realIo } from '../lib/io.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import { PATHS } from '../lib/paths.ts';
+import { tempDir } from '../../src/testing/fakes/tempDir.ts';
 
 // Every generator, run for real into a temporary folder, against the files committed:
 // a generated file that is stale fails here (docs/SCRIPTS.md, principle 4).
@@ -22,16 +21,12 @@ const sizeOf = async (path: string) => {
 
 /** Generate everything into a fresh folder, quietly, and hand `fn` the folder. */
 async function generated(fn: (dir: string) => Promise<void>): Promise<void> {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_generate_'));
+  await using dir = await tempDir('generate');
   const output = fakeIo();
-  try {
-    const code = await main(['--into', dir], { ...realIo, out: output.out, err: output.err });
-    assertEquals(code, 0, output.errLines.join('\n'));
-    assertEquals(output.outLines.filter((line) => line.includes('✓')).length, GENERATORS.length);
-    await fn(dir);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+  const code = await main(['--into', dir.path], { ...realIo, out: output.out, err: output.err });
+  assertEquals(code, 0, output.errLines.join('\n'));
+  assertEquals(output.outLines.filter((line) => line.includes('✓')).length, GENERATORS.length);
+  await fn(dir.path);
 }
 
 test('every generator writes its files, at the expected sizes, into the folder given', () =>

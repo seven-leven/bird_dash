@@ -5,6 +5,7 @@ import { computed, h, nextTick, ref, shallowRef } from 'vue';
 import AboutPage from './AboutPage.vue';
 import { makeCollection } from '../../testing/fixtures.ts';
 import { mountComponent } from '../../testing/mountComponent.ts';
+import { settle } from '../../testing/settle.ts';
 import type {
   CollectionConfig,
   CollectionCounts,
@@ -106,10 +107,6 @@ function fakeStats(...answers: (Stats | string)[]) {
 }
 
 /** Wait for the load and the render after it. */
-const settle = async () => {
-  for (let i = 0; i < 5; i++) await new Promise((r) => setTimeout(r, 0));
-  await nextTick();
-};
 
 function mount(
   list: CollectionConfig[] = [birds, sharks, shells],

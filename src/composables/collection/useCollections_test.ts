@@ -1,23 +1,8 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useCollections } from './useCollections.ts';
-
-type Route = () => Response | Promise<Response>;
-
-/** Replace `fetch` with a router keyed by URL path; returns a call counter + restore. */
-function stubFetch(routes: Record<string, Route>) {
-  const original = globalThis.fetch;
-  const calls: string[] = [];
-  globalThis.fetch = ((input: string | URL | Request) => {
-    const url = String(input instanceof Request ? input.url : input);
-    calls.push(url);
-    const route = routes[url];
-    return Promise.resolve(route ? route() : new Response('not found', { status: 404 }));
-  }) as typeof fetch;
-  return { calls, restore: () => (globalThis.fetch = original) };
-}
-
-const json = (body: unknown) => new Response(JSON.stringify(body));
+import { fails, fakeFetch, json, status } from '../../testing/fakes/fakeFetch.ts';
+import { settle } from '../../testing/settle.ts';
 
 function deferred<T>() {
   let resolve!: (v: T) => void;
@@ -40,208 +25,163 @@ const list = (id: string) => ({
 });
 
 const names = (items: { commonName: string }[]) => items.map((i) => i.commonName);
-const tick = () => new Promise((r) => setTimeout(r, 0));
 
 test('init: an HTTP error sets initError instead of hanging or throwing', async () => {
-  const { restore } = stubFetch({}); // everything 404s
-  try {
-    const c = useCollections();
-    await c.init();
-    assertEquals(c.isInitialized.value, false);
-    assertEquals(c.initError.value, 'HTTP 404 loading collections.json');
-  } finally {
-    restore();
-  }
+  using _fetch = fakeFetch({}); // everything 404s
+  const c = useCollections();
+  await c.init();
+  assertEquals(c.isInitialized.value, false);
+  assertEquals(c.initError.value, 'HTTP 404 loading collections.json');
 });
 
 test('init: a non-JSON response (e.g. an SPA fallback page) gets a readable message', async () => {
-  const { restore } = stubFetch({ '/collections.json': () => new Response('<!DOCTYPE html>') });
-  try {
-    const c = useCollections();
-    await c.init();
-    assertEquals(c.isInitialized.value, false);
-    assertEquals(c.initError.value, 'collections.json is not valid JSON');
-  } finally {
-    restore();
-  }
+  using _fetch = fakeFetch({ '/collections.json': new Response('<!DOCTYPE html>') });
+  const c = useCollections();
+  await c.init();
+  assertEquals(c.isInitialized.value, false);
+  assertEquals(c.initError.value, 'collections.json is not valid JSON');
 });
 
 test('init: an empty collection list is reported, not silently ignored', async () => {
-  const { restore } = stubFetch({ '/collections.json': () => json([]) });
-  try {
-    const c = useCollections();
-    await c.init();
-    assertEquals(c.isInitialized.value, false);
-    assertEquals(c.initError.value, 'No collections are configured');
-  } finally {
-    restore();
-  }
+  using _fetch = fakeFetch({ '/collections.json': json([]) });
+  const c = useCollections();
+  await c.init();
+  assertEquals(c.isInitialized.value, false);
+  assertEquals(c.initError.value, 'No collections are configured');
 });
 
 test('init: loads the first collection and clears any previous error', async () => {
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a'), col('b')]),
-    '/lists/a.json': () => json(list('a')),
-    '/lists/b.json': () => json(list('b')),
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a'), col('b')]),
+    '/lists/a.json': json(list('a')),
+    '/lists/b.json': json(list('b')),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    assertEquals(c.isInitialized.value, true);
-    assertEquals(c.initError.value, undefined);
-    assertEquals(names(c.data.items), ['item of a']);
-    assertEquals(c.data.loading, false);
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  assertEquals(c.isInitialized.value, true);
+  assertEquals(c.initError.value, undefined);
+  assertEquals(names(c.data.items), ['item of a']);
+  assertEquals(c.data.loading, false);
 });
 
 test('a slow load for a collection the user left cannot overwrite the screen or the cache', async () => {
   const slowB = deferred<Response>();
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a'), col('b'), col('c')]),
-    '/lists/a.json': () => json(list('a')),
-    '/lists/b.json': () => slowB.promise,
-    '/lists/c.json': () => json(list('c')),
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a'), col('b'), col('c')]),
+    '/lists/a.json': json(list('a')),
+    '/lists/b.json': slowB.promise,
+    '/lists/c.json': json(list('c')),
   });
-  try {
-    const c = useCollections();
-    await c.init(); // a is shown; b (slow) and c (fast) are prefetching
-    await tick(); // let c land in the cache
+  const c = useCollections();
+  await c.init(); // a is shown; b (slow) and c (fast) are prefetching
+  await settle(); // let c land in the cache
 
-    const toB = c.switchCollection('b'); // b is still in flight
-    await c.switchCollection('c'); // user moves on to c before b returns
-    assertEquals(names(c.data.items), ['item of c']);
+  const toB = c.switchCollection('b'); // b is still in flight
+  await c.switchCollection('c'); // user moves on to c before b returns
+  assertEquals(names(c.data.items), ['item of c']);
 
-    slowB.resolve(json(list('b')));
-    await toB;
-    await tick();
+  slowB.resolve(json(list('b')));
+  await toB;
+  await settle();
 
-    // Screen still shows c; b's late response did not clobber it...
-    assertEquals(names(c.data.items), ['item of c']);
-    assertEquals(c.data.loading, false);
-    assertEquals(c.data.error, undefined);
-    // ...and each cache slot holds its own collection's items.
-    assertEquals(names(c.collectionCache['c']), ['item of c']);
-    assertEquals(names(c.collectionCache['b']), ['item of b']);
-  } finally {
-    restore();
-  }
+  // Screen still shows c; b's late response did not clobber it...
+  assertEquals(names(c.data.items), ['item of c']);
+  assertEquals(c.data.loading, false);
+  assertEquals(c.data.error, undefined);
+  // ...and each cache slot holds its own collection's items.
+  assertEquals(names(c.collectionCache['c']), ['item of c']);
+  assertEquals(names(c.collectionCache['b']), ['item of b']);
 });
 
 test('a failed load for a collection the user left does not show an error', async () => {
   const slowB = deferred<Response>();
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a'), col('b')]),
-    '/lists/a.json': () => json(list('a')),
-    '/lists/b.json': () => slowB.promise,
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a'), col('b')]),
+    '/lists/a.json': json(list('a')),
+    '/lists/b.json': slowB.promise,
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    const toB = c.switchCollection('b');
-    await c.switchCollection('a'); // back to the cached collection
-    slowB.resolve(new Response('boom', { status: 500 }));
-    await toB;
-    assertEquals(c.data.error, undefined);
-    assertEquals(names(c.data.items), ['item of a']);
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  const toB = c.switchCollection('b');
+  await c.switchCollection('a'); // back to the cached collection
+  slowB.resolve(new Response('boom', { status: 500 }));
+  await toB;
+  assertEquals(c.data.error, undefined);
+  assertEquals(names(c.data.items), ['item of a']);
 });
 
 test('prefetch and an explicit switch share one request per collection', async () => {
   const slowB = deferred<Response>();
-  const { calls, restore } = stubFetch({
-    '/collections.json': () => json([col('a'), col('b')]),
-    '/lists/a.json': () => json(list('a')),
-    '/lists/b.json': () => slowB.promise,
+  using fetch = fakeFetch({
+    '/collections.json': json([col('a'), col('b')]),
+    '/lists/a.json': json(list('a')),
+    '/lists/b.json': slowB.promise,
   });
-  try {
-    const c = useCollections();
-    await c.init(); // prefetch of b starts
-    const toB = c.switchCollection('b'); // must reuse it, not fetch again
-    slowB.resolve(json(list('b')));
-    await toB;
-    assertEquals(calls.filter((u) => u === '/lists/b.json').length, 1);
-    assertEquals(names(c.data.items), ['item of b']);
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init(); // prefetch of b starts
+  const toB = c.switchCollection('b'); // must reuse it, not fetch again
+  slowB.resolve(json(list('b')));
+  await toB;
+  assertEquals(fetch.calls.filter((u) => u === '/lists/b.json').length, 1);
+  assertEquals(names(c.data.items), ['item of b']);
 });
 
 test('switching to an unknown collection id is a no-op', async () => {
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a')]),
-    '/lists/a.json': () => json(list('a')),
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a')]),
+    '/lists/a.json': json(list('a')),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    await c.switchCollection('nope');
-    assertEquals(c.activeCollection.value?.id, 'a');
-    assertEquals(names(c.data.items), ['item of a']);
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  await c.switchCollection('nope');
+  assertEquals(c.activeCollection.value?.id, 'a');
+  assertEquals(names(c.data.items), ['item of a']);
 });
 
 test('a collection whose list fails to load shows the error, and loading stops', async () => {
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a'), col('b')]),
-    '/lists/a.json': () => json(list('a')),
-    '/lists/b.json': () => new Response('gone', { status: 404 }),
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a'), col('b')]),
+    '/lists/a.json': json(list('a')),
+    '/lists/b.json': status(404),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    await c.switchCollection('b');
-    assertEquals(c.data.error, 'HTTP 404 loading B');
-    assertEquals(c.data.loading, false);
+  const c = useCollections();
+  await c.init();
+  await c.switchCollection('b');
+  assertEquals(c.data.error, 'HTTP 404 loading B');
+  assertEquals(c.data.loading, false);
 
-    await c.switchCollection('a'); // going back to a good collection clears it
-    assertEquals(c.data.error, undefined);
-    assertEquals(names(c.data.items), ['item of a']);
-  } finally {
-    restore();
-  }
+  await c.switchCollection('a'); // going back to a good collection clears it
+  assertEquals(c.data.error, undefined);
+  assertEquals(names(c.data.items), ['item of a']);
 });
 
 test('globalStats counts drawn and total across every loaded collection', async () => {
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a'), col('b')]),
-    '/lists/a.json': () =>
-      json({ G: [{ id: '001', name: 'x', drawn: '2025-01-01' }, { id: '002', name: 'y' }] }),
-    '/lists/b.json': () => json({ G: [{ id: '001', name: 'z' }] }),
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a'), col('b')]),
+    '/lists/a.json': json({
+      G: [{ id: '001', name: 'x', drawn: '2025-01-01' }, { id: '002', name: 'y' }],
+    }),
+    '/lists/b.json': json({ G: [{ id: '001', name: 'z' }] }),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    await tick(); // let the background prefetch of b land
-    assertEquals(c.globalStats.value, { drawn: 1, total: 3 });
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  await settle(); // let the background prefetch of b land
+  assertEquals(c.globalStats.value, { drawn: 1, total: 3 });
 });
 
 test('link templates from collections.json become functions of the item', async () => {
-  const { restore } = stubFetch({
-    '/collections.json': () =>
-      json([{
-        ...col('a'),
-        links: [{ label: 'Wiki', url: 'https://w.test/?q={{common}}' }],
-      }]),
-    '/lists/a.json': () => json(list('a')),
+  using _fetch = fakeFetch({
+    '/collections.json': json([{
+      ...col('a'),
+      links: [{ label: 'Wiki', url: 'https://w.test/?q={{common}}' }],
+    }]),
+    '/lists/a.json': json(list('a')),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    const link = c.activeCollection.value!.links[0];
-    assertEquals(link.url(c.data.items[0]), 'https://w.test/?q=item%20of%20a');
-    assertEquals(c.activeCollection.value!.dataUrl, '/lists/a.json');
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  const link = c.activeCollection.value!.links[0];
+  assertEquals(link.url(c.data.items[0]), 'https://w.test/?q=item%20of%20a');
+  assertEquals(c.activeCollection.value!.dataUrl, '/lists/a.json');
 });
 
 test('before init there is no active collection', () => {
@@ -249,78 +189,55 @@ test('before init there is no active collection', () => {
 });
 
 test('switching to the collection already shown does not reload it', async () => {
-  const { calls, restore } = stubFetch({
-    '/collections.json': () => json([col('a')]),
-    '/lists/a.json': () => json(list('a')),
+  using fetch = fakeFetch({
+    '/collections.json': json([col('a')]),
+    '/lists/a.json': json(list('a')),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    const before = calls.length;
-    await c.switchCollection('a');
-    assertEquals(calls.length, before);
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  const before = fetch.calls.length;
+  await c.switchCollection('a');
+  assertEquals(fetch.calls.length, before);
 });
 
 test('a request that fails with a non-Error value still gives a readable message', async () => {
-  const original = globalThis.fetch;
-  globalThis.fetch = (() => Promise.reject('offline')) as typeof fetch;
-  try {
-    const c = useCollections();
-    await c.init();
-    assertEquals(c.initError.value, 'offline');
-  } finally {
-    globalThis.fetch = original;
-  }
+  using _fetch = fakeFetch({ '/collections.json': fails('offline') });
+  const c = useCollections();
+  await c.init();
+  assertEquals(c.initError.value, 'offline');
 });
 
 test('a list that fails with a non-Error value shows that value as the error', async () => {
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a')]),
-    '/lists/a.json': () => {
-      throw 'list unavailable';
-    },
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a')]),
+    '/lists/a.json': fails('list unavailable'),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    assertEquals(c.data.error, 'list unavailable');
-    assertEquals(c.data.loading, false);
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  assertEquals(c.data.error, 'list unavailable');
+  assertEquals(c.data.loading, false);
 });
 
 test('globalStats counts a collection whose list has not arrived as empty', async () => {
   const pending = deferred<Response>();
-  const { restore } = stubFetch({
-    '/collections.json': () => json([col('a'), col('b')]),
-    '/lists/a.json': () => json(list('a')),
-    '/lists/b.json': () => pending.promise, // never answers during the test
+  using _fetch = fakeFetch({
+    '/collections.json': json([col('a'), col('b')]),
+    '/lists/a.json': json(list('a')),
+    '/lists/b.json': pending.promise, // never answers during the test
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    assertEquals(c.globalStats.value, { drawn: 1, total: 1 });
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  assertEquals(c.globalStats.value, { drawn: 1, total: 1 });
 });
 
 test('init again (a retry) reuses the lists already loaded', async () => {
-  const { calls, restore } = stubFetch({
-    '/collections.json': () => json([col('a')]),
-    '/lists/a.json': () => json(list('a')),
+  using fetch = fakeFetch({
+    '/collections.json': json([col('a')]),
+    '/lists/a.json': json(list('a')),
   });
-  try {
-    const c = useCollections();
-    await c.init();
-    await c.init();
-    assertEquals(calls.filter((u) => u === '/lists/a.json').length, 1);
-    assertEquals(names(c.data.items), ['item of a']);
-  } finally {
-    restore();
-  }
+  const c = useCollections();
+  await c.init();
+  await c.init();
+  assertEquals(fetch.calls.filter((u) => u === '/lists/a.json').length, 1);
+  assertEquals(names(c.data.items), ['item of a']);
 });

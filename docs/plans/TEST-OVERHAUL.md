@@ -1,12 +1,12 @@
 # Test overhaul
 
-> **Status:** planned 2026-10-26; phase 0 (the rules) done 2026-10-27. The tests were written bottom
-> up, one file at a time, as each piece of code was; this plans them top down, from what the site
-> promises to the smallest rule, and rebuilds the kit they share. One pull request per phase, 100%
-> coverage throughout. Phases 1 to 3 come **before** the [site code](SRC-OVERHAUL.md) overhaul:
-> journey tests are what make moving every file safe. (The scripts overhaul went first, as the
-> scripts already had direct tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8
-> is done.
+> **Status:** planned 2026-10-26; phase 0 (the rules) and 1a (the fakes) done 2026-10-27. The tests
+> were written bottom up, one file at a time, as each piece of code was; this plans them top down,
+> from what the site promises to the smallest rule, and rebuilds the kit they share. One pull
+> request per phase, 100% coverage throughout. Phases 1 to 3 come **before** the
+> [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving every file safe. (The
+> scripts overhaul went first, as the scripts already had direct tests; see
+> [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
 
@@ -177,7 +177,16 @@ Production code changes only where a test cannot reach it otherwise, and says so
       console swaps and thirteen temporary folders moved onto it; the contract test against
       hand-swapped globals; the fixture archive and the phase-1 duplicates above (the script tests
       on the same `makeCollection` and scenarios as the site's). _Done when_ no test fakes the
-      outside world by itself and no collection or bird is written out twice.
+      outside world by itself and no collection or bird is written out twice. In four pull requests:
+  - [x] **1a. The fakes** (2026-10-27): `fakeFetch`, `captureConsole`, `tempDir` (each undone by
+        `using`) and `settle`; every hand-made fake moved onto them;
+        `oneWayToFake_contract_test.ts`.
+  - [ ] **1b. Shared data:** one `makeCollection` for script and site tests, the fixture archive and
+        scenarios, `fakeRepository`, git's answers in `fakeIo`, `imageSize`, `tempCollection`.
+  - [ ] **1c. One way to mount:** `mount.ts` (`mountComponent`, `mountComposable`, `runInScope`
+        folded in); the copied renderer in `injection_test.ts` goes.
+  - [ ] **1d. The runner on `Io`:** `RunnerDeps` goes; the runner's own copies (GitHub escapes, path
+        trimming, two `pct`s) fold.
 - [ ] **2. One way to a browser.** The runner gives `_dom_test` files happy-dom; the 83 `withDom`
       calls go, and so does `withDom.ts`. _Done when_ no test sets its own environment.
 - [ ] **3. Journeys.** The `journey` tier in `tiers.ts` and an area for it; `renderApp` on the

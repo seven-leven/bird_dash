@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: one kit of fakes (test overhaul, phase 1a). `src/testing/fakes/` has
+  `fakeFetch` (answers by URL path, records the calls), `captureConsole` (keeps the lines a test
+  expects, passes the rest through) and `tempDir`, each undone when its `using` block ends, and
+  `src/testing/settle.ts` is the one way to wait. Every test that swapped `fetch` or the console by
+  hand, or made its own temporary folder, uses them now: no `finally` restores anything, and
+  `useCollections_test.ts` alone is about a hundred lines shorter. A contract test fails on a global
+  swapped by hand outside the kit. ESLint lets a fake held only for its cleanup be named `_…`
 - 2026-10-27 | docs: the test overhaul's phase 0, the rules agreed. TESTING.md gains "The rules"
   (twelve: a test states a promise, the lowest tier that can prove it, one way to fake, to mount and
   to wait, determinism, small files), "Promises" (what the site says it does and the tests that keep
