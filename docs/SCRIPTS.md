@@ -38,6 +38,13 @@ prints what a visitor downloads (the JavaScript and the CSS gzipped, the largest
 thumbnail) against the limits written there, and fails the build when one is over. Raise a limit
 only on purpose, in the pull request that made the site grow.
 
+The build also writes the page's **Content-Security-Policy**
+(`script/build/contentSecurityPolicy.ts`, a Vite plugin): a `<meta>` tag first in `<head>`, as
+GitHub Pages cannot send headers. Scripts, styles, images, fonts and data come from the site only;
+the inline theme script in `index.html` is allowed by its hash, which the build works out from the
+page it writes, so editing the script needs nothing else. Anything that loads from another address,
+or a new inline script, is blocked, so a change like that has to change the policy too.
+
 ### 3. Decide, then do, then say
 
 Each command is three parts, in three kinds of function:
