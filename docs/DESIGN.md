@@ -383,7 +383,7 @@ name="…" />`; the logo is the only other SVG in the project. The registry, the
 - **Views:** `taxonomy`, `calendar`
 - **Search:** `search`, `noResults`
 - **Navigation:** `menu`, `chevronLeft`, `chevronRight`, `chevronDown`, `close`, `externalLink`
-- **Viewer:** `zoomIn`, `zoomOut`, `reset`
+- **Viewer:** `zoomIn`, `zoomOut`, `reset`, `share`
 - **Theme:** `sun`, `moon`
 - **Labels:** `tag`, `image`, `commit`, `layers`, `pencil`
 - **Keyboard:** `arrowsUpDown`, `enter`, `command`

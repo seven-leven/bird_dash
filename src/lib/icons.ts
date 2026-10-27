@@ -75,6 +75,11 @@ export const ICONS = {
     body:
       '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/>',
   },
+  // Sharing a drawing's link: three points joined, the common mark for "share".
+  share: {
+    body:
+      '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+  },
 
   // ── Theme ──
   sun: {
@@ -174,7 +179,7 @@ export const ICON_GROUPS: { label: string; icons: IconName[] }[] = [
     label: 'Navigation',
     icons: ['menu', 'chevronLeft', 'chevronRight', 'chevronDown', 'close', 'externalLink'],
   },
-  { label: 'Viewer', icons: ['zoomIn', 'zoomOut', 'reset'] },
+  { label: 'Viewer', icons: ['zoomIn', 'zoomOut', 'reset', 'share'] },
   { label: 'Theme', icons: ['sun', 'moon'] },
   { label: 'Labels', icons: ['tag', 'image', 'commit', 'layers', 'pencil'] },
   { label: 'Keyboard', icons: ['arrowsUpDown', 'enter', 'command'] },
