@@ -68,14 +68,17 @@ src/
   styles/               main.css (Tailwind), tokens.css and accents.css (shared with the docs site), fonts/
   testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
                         The tests themselves sit next to the code they cover (see TESTING.md)
-script/                 One folder per command, run by Node; shared code in lib/
-  build/                Transcode, register and check the images; the Vite build
+script/                 One folder per command, run by Node; shared code in lib/ (SCRIPTS.md)
+  ingest/               Take in new drawings: scan, plan, transcode, date them in the lists
+  build/                The build's stages, and its Vite plugins: the size budget, the
+                        Content-Security-Policy, a link preview per drawing
+  generate/             Every generated file: stats, placeholders, the design guide, icons, logo
+  check/                Read-only checks: the assets, and the generated files are current
   version/              The derived version; base_version.json stores major/minor only
   changelog/            Insert unlogged commits into CHANGELOG.md
-  design/               Draw the design guide, icon sheet and logo (docs/assets/)
-  placeholders/         Draw the placeholder images
-  testRunner/          The test runner (`npm test`): tiers, areas, reports, coverage
-  lib/                  Collections, list files, fs and git helpers
+  docs/                 The docs site's helpers (links, live blocks, accents)
+  testRunner/           The test runner (`npm test`): tiers, areas, reports, coverage
+  lib/                  Io, the command kit, collections, list files, paths
 docs/                   Reference guides at the top level; plans/ for work not done yet,
                         assets/ for generated images (see README.md)
 ```
@@ -180,10 +183,60 @@ only through `Io`.
 - **The data decides.** Adding a collection or an item is a JSON and image change, not a code
   change.
 
+## Rules for the site's code
+
+Where `src/` is going: the site overhaul ([plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)) moves the
+code to these rules one phase at a time, the site looking and behaving the same throughout. Until a
+phase lands, "The site, layer by layer" above describes the code as it is; new code follows these
+where the folder it needs already exists. The words are in [GLOSSARY.md](GLOSSARY.md); the choices
+behind them are in [DECISIONS.md](DECISIONS.md) ("Folders by feature", "One word per idea").
+
+### Principles
+
+1. **Organise by feature.** A feature folder (`viewer/`, `search/`, `gallery/`, `about/`, `shell/`)
+   holds its components, its composables and its store. Code two features share moves down a layer,
+   never sideways into one of them.
+2. **Layers point one way.** `app/` → features → `ui/`, `browser/`, `data/` → `domain/`. A layer
+   imports only from the layers below it. A contract test checks the imports.
+3. **`domain/` is pure.** Plain TypeScript: no Vue, no `document`, no `fetch`, no clock. The rules
+   of the archive (names, counts, wording, groups, dates) live here and are tested hardest.
+4. **One door to the outside.** Only `data/` fetches; only `browser/` (and components) touch
+   `document`, `window` or `localStorage`; only `app/buildInfo.ts` reads the build-time globals
+   (`__APP_VERSION__` and friends).
+5. **A store per feature, derived state stays derived.** A store exposes read-only state and verbs;
+   anything that can be computed is computed. Actions that touch more than one store live in
+   `app/actions.ts`.
+6. **Shared UI does not know the app.** Components in `ui/` take props and emit events; they never
+   inject a store. Feature components may inject their own store and the app's.
+7. **Types live with their owner.** A type is defined in the module that makes the value, and
+   imported from there. No barrel file, and no `types/` folder. The shapes of the files in `public/`
+   (shared with `script/`) live in `data/files.ts`.
+8. **One word per idea**, and a name never means two things: the viewer is `viewer` everywhere, the
+   month view is `'month'`, and the counts are `counts`, not `stats`.
+9. **Small files.** A component does one job and stays under about 200 lines; a page is made of
+   sections; a composable is one behaviour.
+
+### Naming
+
+| Thing             | Rule                                                                                       | Example                              |
+| ----------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
+| Folders           | A feature or a layer, one word                                                             | `viewer/`, `domain/`                 |
+| Files             | Named after the main export (DECISIONS.md)                                                 | `useScrollSpy.ts`                    |
+| Components        | PascalCase noun; prefixed with the feature when the word alone is vague                    | `ViewerDetails.vue`, `SearchBox.vue` |
+| Composables       | `use` + what it gives; never `Logic`, `Data`, `Manager`, `Helper`                          | `useScrollSpy`, `useCollectionView`  |
+| Store verbs       | `open`, `close`, `select…`, `set…`, `toggle…`, `show…`; never `update`, `switch`, `handle` | `selectCollection`                   |
+| Events            | kebab-case verbs                                                                           | `select`, `close`, `go-to-group`     |
+| Template handlers | `on` + event                                                                               | `onSelect`                           |
+| Booleans          | `is`, `has`, `should`, `can`                                                               | `isNarrow`, `hasNext`                |
+| Element refs      | end in `El`                                                                                | `dialogEl`, `scrollEl`               |
+| Types             | The noun; no `Data`, `Info`, `Config`, `Return` suffix                                     | `Collection`, `CollectionView`       |
+| Variables         | Whole words; `i` and `e` only in one-line lambdas                                          | `collection`, not `col`              |
+
 ## Known gaps
 
-- `.vue` files are type-checked (vue-tsc) but no automated test covers them yet, so component
-  behaviour is verified by hand. Vitest can mount them; component tests or a real-browser tier would
-  close this.
-- `vite.config.ts` imports `script/version/version.ts`. It is the one place the site's build depends
-  on the pipeline's code, kept so the version formula exists once.
+- Eleven `.vue` files (the shell, search, the viewer component, `LogoMark`) have no test of their
+  own, and a `.vue` file counts toward coverage only once a test imports it; the test overhaul's
+  phase 4 closes this ([plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md)).
+- `vite.config.ts` imports `script/version/version.ts` and the build's plugins in `script/build/`.
+  They are the places the site's build depends on the scripts, kept so the version formula and each
+  build step exist once.
