@@ -158,14 +158,39 @@ src/
 | `vite-env.d.ts`; `__APP_*__` read in `AppFooter.vue`                                                                 | `env.d.ts`; read once in `app/buildInfo.ts`                                                              |
 | `styles/main.css` (392 lines)                                                                                        | `main.css` imports `tokens`, `accents`, `base`, `components`, `utilities`                                |
 
+### Duplicates to fold
+
+Found by a sweep on 2026-10-27 (repeated lines, names, strings, class lists and numbers across
+`src/`, `script/` and `docs/.vitepress/`). Whole repeated blocks are rare; what repeats is small: a
+helper, a constant, a few lines of markup. Each one is folded in the phase that already moves its
+code, so it costs no extra pass.
+
+| Repeated                                                                                                                                                                                                                                                 | Becomes                                                                                                                                                                 | Phase |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| **`plural(n, word)`**, written four times: `lib/formatCount.ts` and again in `script/check/formatCheckReport.ts`, `script/ingest/formatIngestReport.ts`, `script/version/version.ts`                                                                     | `domain/countWords.ts` `plural`; the scripts import it (they already import from `src/`)                                                                                | 1     |
+| **The project's links**: the repository URL in `AppFooter.vue` (`SOURCE_URL`) and `script/lib/project.ts` (`REPO_URL`); the write-up URL in `AboutPage.vue` (`FOLIO_URL`); the site and repository URLs spelled out again in `docs/.vitepress/config.ts` | `domain/links.ts` (`REPO_URL`, `SITE_URL`, `DOCS_URL`, `WRITE_UP_URL`); `project.ts` and the docs' nav import it (the edit link stays inlined: VitePress serialises it) | 1     |
+| **The narrow breakpoint, 1024**: the default of `useBreakpoints` and passed again by `stores/ui.ts`                                                                                                                                                      | One named constant in `browser/useBreakpoint.ts`, no argument, its comment tying it to Tailwind's `lg`                                                                  | 2     |
+| **The search delay, 120 ms**: the default of `useDebouncedRef` and passed again by `stores/search.ts`                                                                                                                                                    | The search store names it (`SEARCH_DELAY`); `useDebouncedRef` takes the delay with no default                                                                           | 2     |
+| **`currentPage = computed(() => findPage(page.value))`** in `Chrome.vue` and `CollectionMenu.vue`                                                                                                                                                        | A `currentPage` getter on the layout store                                                                                                                              | 3     |
+| **The drawn filter's wiring**: the same four bindings and `(only) => only !== drawnOnly && toggleDrawnOnly()` in `GalleryContent.vue` and `SideNav.vue`, under two different conditions (only the side nav hides it at 0 drawn)                          | The view store's `showsDrawnFilter` and `setDrawnOnly(only)`; one condition, decided once                                                                               | 3     |
+| **An external link**: `target="_blank" rel="noopener noreferrer"`, the icon and "(opens in a new tab)" in `AboutPage.vue` (twice), `ItemSheet.vue` and `AppFooter.vue`, with three different class lists                                                 | `ui/ExternalLink.vue` (`href`, an optional icon, the slot)                                                                                                              | 4     |
+| **"Try again"**: the same button (`btn-primary focus-ring mt-3`, the reset icon) in `App.vue`, `AboutPage.vue` and `GalleryContent.vue`; `const reload = () => location.reload()` in two of them                                                         | `ui/RetryButton.vue`, emitting `retry`; the page reload in one place in `browser/`                                                                                      | 4     |
+| **The loading grid**: ten pulsing tiles, the same markup in `App.vue` and `GalleryContent.vue`                                                                                                                                                           | `gallery/GallerySkeleton.vue`, used by both                                                                                                                             | 5     |
+| **The viewer's props**, typed twice: `defineProps` in `LightBox.vue` and `LightboxOptions.props` in `useLightbox.ts`                                                                                                                                     | `ViewerProps` exported by `useViewer.ts`; `defineProps<ViewerProps>()`                                                                                                  | 5     |
+| **The skeleton's colours** `animate-pulse bg-slate-200 dark:bg-slate-800`, 7 times in 4 files; **a text link** `font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2`, 3 times                                            | `.skeleton` and `.link` in `components.css`                                                                                                                             | 7     |
+
+Phase 8's naming test also fails on a function defined twice under one name in `src/`, so a copy
+cannot creep back.
+
 ## Phases
 
-Each phase is one pull request. In every one: the site looks and behaves the same, 100% lines and
-branches, all four checks green, files moved with `git mv` so history follows, tests moved beside
-their files, and in the same PR the paths in `script/testRunner/areas.ts`, the imports in `script/`
-and `docs/.vitepress/` (which import `src/lib/icons.ts`, `logo.ts`, `pages.ts`, `types/data.ts` and
-the icon components), and the docs that name a moved file. Best done when no other pull request
-touching `src/` is open, as nearly every file moves.
+Each phase is one pull request, and folds the duplicates above marked for it. In every one: the site
+looks and behaves the same, 100% lines and branches, all four checks green, files moved with `git
+mv` so history follows, tests moved beside their files, and in the same PR the paths in
+`script/testRunner/areas.ts`, the imports in `script/` and `docs/.vitepress/` (which import
+`src/lib/icons.ts`, `logo.ts`, `pages.ts`, `types/data.ts` and the icon components), and the docs
+that name a moved file. Best done when no other pull request touching `src/` is open, as nearly
+every file moves.
 
 - [ ] **0. Agree the rules.** Settle the decisions above; write the principles, the glossary and the
       naming into ARCHITECTURE.md (the words are in GLOSSARY.md); a DECISIONS.md entry ("folders by
@@ -198,9 +223,9 @@ touching `src/` is open, as nearly every file moves.
       `utilities`; `main.css` keeps only Tailwind's setup and the imports. _Done when_ each file has
       one kind of rule.
 - [ ] **8. Close.** The import-direction test covers every layer; a naming test (file name matches
-      its main export; no banned word in a composable's name); the layout diagram in ARCHITECTURE.md
-      redrawn; `types/` gone; this page deleted. _Done when_ ARCHITECTURE.md describes the code as
-      it is.
+      its main export; no banned word in a composable's name; no function defined twice under one
+      name); the layout diagram in ARCHITECTURE.md redrawn; `types/` gone; this page deleted. _Done
+      when_ ARCHITECTURE.md describes the code as it is.
 
 ## Features that ride along
 

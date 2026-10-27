@@ -223,6 +223,30 @@ only under `src/` and `script/` (and `browser/`), as today ✓.
 No `setup()`: say what it sets up. Variables follow the code's rules: whole words
 ([SCRIPTS.md](../SCRIPTS.md), [GLOSSARY.md](../GLOSSARY.md)).
 
+## Duplicates to fold
+
+Found by the same sweep as the site's (SRC-OVERHAUL.md, "Duplicates to fold"), on 2026-10-27. On top
+of the patterns above, the tests repeat their **data** more than their code: the same collections
+and the same birds are written out file by file, in `script/` as much as in `src/`.
+
+| Repeated                                                                                                                                                                                                                                      | Becomes                                                                                                         | Phase |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----- |
+| **A collection built by hand** (`const birds = { … } as Collection`) in 10 script test files, each with its own shape, while the site's tests have `makeCollection`; `birds` is defined in 13 test files in all, `shells` in 5, `sharks` in 2 | One `makeCollection`, shared by the script and site tests (script tests already import from `src/`)             | 1     |
+| **The same birds by name** (Lesser Whistling-Duck, Cotton Pygmy-Goose, Grey Heron, _Spatula querquedula_, …), about 30 times in 12 files; a `STATS` object in `AboutPage_dom_test.ts` and `useStats_test.ts`                                  | The fixture archive in `testing/scenarios/`: one set of collections, lists and stats that every test draws from | 1     |
+| **`makeRepository`** in 4 script tests (`changelog`, `check`, `applyChanges`, `ingest`); the last two identical                                                                                                                               | `fakeRepository({ files, failing, log })` beside `fakeIo` in `script/lib/`                                      | 1     |
+| **git's answers** spelled out in 3 tests (`'rev-list --count HEAD': '310', 'rev-parse --short=7 HEAD': …`)                                                                                                                                    | `fakeIo({ commits, commit })`, which fills them in                                                              | 1     |
+| **`sizeOf`** (an image's size by `sharp`) in `generatedFiles_contract_test.ts` and `transcodeImages_test.ts`; **`withCollection`** (a collection in a temporary folder) in `ingest_pipeline_test.ts` and `transcodeImages_test.ts`            | `imageSize` and `tempCollection` in the kit, beside `tempDir`                                                   | 1     |
+| **The same `fetch` routes** (`collections.json` and two lists) written out 4 times in `useCollections_test.ts`                                                                                                                                | `fakeFetch` serves the fixture archive by default; a test names only the route it changes                       | 1     |
+| **A Vue renderer**, 15 lines, copied from `mountComposable.ts` into `injection_test.ts`                                                                                                                                                       | `injection_test.ts` uses `mount.ts`                                                                             | 1     |
+| **A local `mount`** in 5 component tests, each with its own shape                                                                                                                                                                             | `mount…` helpers by the conventions, on `mountComponent`                                                        | 5     |
+| **Steps repeated inside a file**: the scroll container faked with `getBoundingClientRect` in `ui_dom_test.ts`; zooming in twice with `'+'` in `useLightbox_dom_test.ts`                                                                       | Named steps in the file (`zoomIn(times)`), or the scenario                                                      | 5     |
+
+The runner's own copies go in phase 1 too, as it moves onto `Io`: `escapeData` and `escapeProp`
+(GitHub's workflow-command escapes) are in both `coverage.ts` and `testSummary.ts`; a path's leading
+`./` is stripped by hand in `areas.ts`, `junit.ts` and `runTests.ts`; and two different `pct`s show
+an area with nothing to cover as `—` in one table and `100.0` in the other. One module each
+(`githubCommands.ts`, `relativePath`), and one way to show a percentage.
+
 ## The kit, where it ends up
 
 ```
@@ -251,7 +275,9 @@ Production code changes only where a test cannot reach it otherwise, and says so
       into TESTING.md; the words into GLOSSARY.md. _Done when_ merged.
 - [ ] **1. The kit.** `testing/fakes/`, `settle`, one `mount.ts`; the four `fetch` fakes, seven
       console swaps and thirteen temporary folders moved onto it; the contract test against
-      hand-swapped globals. _Done when_ no test fakes the outside world by itself.
+      hand-swapped globals; the fixture archive and the phase-1 duplicates above (the script tests
+      on the same `makeCollection` and scenarios as the site's). _Done when_ no test fakes the
+      outside world by itself and no collection or bird is written out twice.
 - [ ] **2. One way to a browser.** The runner gives `_dom_test` files happy-dom; the 83 `withDom`
       calls go, and so does `withDom.ts`. _Done when_ no test sets its own environment.
 - [ ] **3. Journeys.** The `journey` tier in `tiers.ts` and an area for it; `renderApp` on the
@@ -270,6 +296,7 @@ Production code changes only where a test cannot reach it otherwise, and says so
       Written against today's names; the site overhaul moves each test with its component. _Done
       when_ every `.vue` file has a test beside it and the untested-files gate counts `.vue` files
       as it counts `.ts`.
+
 - [ ] **5. Split and rename.** `useLightbox_dom_test.ts` into one file per composable;
       `runTests_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
       local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer` onto the kit's
