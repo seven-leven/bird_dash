@@ -138,7 +138,7 @@ component had tests. They join one by one, each with its tests (see [plans/TODO.
 ### Tiers by file name, and a runner on top of Vitest
 
 **Chosen:** a test's tier comes from its name (`_test`, `_dom_test`, `_prop_test`,
-`_contract_test`). `npm test` runs `script/testRunner/runTests.ts`, which runs Vitest once and
+`_contract_test`). `npm test` runs `script/testRunner/testRunner.ts`, which runs Vitest once and
 prints one row per tier and per area.
 
 **Why.** The name tells you at a glance what a test needs (nothing, a fake DOM, many generated

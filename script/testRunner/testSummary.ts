@@ -1,5 +1,6 @@
 import type { TestCase } from './junit.ts';
 import { type Tier, TIER_ORDER, tierOf } from './tiers.ts';
+import { annotation } from './githubCommands.ts';
 
 export interface TierSummary {
   tier: Tier;
@@ -148,15 +149,14 @@ export function formatTiersMarkdown(s: Summary, title: string): string {
   return lines.join('\n');
 }
 
-const escapeData = (s: string) =>
-  s.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
-const escapeProp = (s: string) => escapeData(s).replaceAll(':', '%3A').replaceAll(',', '%2C');
-
 /** `::error` workflow commands: GitHub shows each failure on the changed file in the PR. */
 export function annotations(failures: TestCase[]): string[] {
   return failures.map((f) =>
-    `::error file=${escapeProp(f.file)}${f.line > 0 ? `,line=${f.line}` : ''},title=${
-      escapeProp(`Test failed: ${f.name}`)
-    }::${escapeData((f.failure ?? 'failed').split('\n')[0])}`
+    annotation('error', {
+      file: f.file,
+      line: f.line,
+      title: `Test failed: ${f.name}`,
+      message: (f.failure ?? 'failed').split('\n')[0],
+    })
   );
 }

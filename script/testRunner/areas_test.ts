@@ -31,7 +31,7 @@ test('areaOf places a file by its path, whatever the slashes', () => {
   assertEquals(areaOf('./src/composables/ui/useLightbox.ts')?.id, 'interface');
   assertEquals(areaOf('script/build/plan_changes.ts')?.id, 'pipeline');
   assertEquals(areaOf('script/changelog/changelog.ts')?.id, 'release');
-  assertEquals(areaOf('script/testRunner/runTests.ts')?.id, 'tooling');
+  assertEquals(areaOf('script/testRunner/testRunner.ts')?.id, 'tooling');
   assertEquals(areaOf('somewhere/else.ts'), undefined);
 });
 

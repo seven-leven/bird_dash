@@ -35,6 +35,9 @@ export function tierOf(path: string): Tier {
   throw new Error(`not a test file: ${path}`);
 }
 
+/** A path as the runner compares them: forward slashes, no leading `./`. */
+export const repoPath = (path: string): string => path.replaceAll('\\', '/').replace(/^\.\//, '');
+
 /** Every `*_test.ts` under the given roots, as sorted repo-relative posix paths. */
 export async function discoverTests(roots = ['src', 'script']): Promise<string[]> {
   return await findFiles(roots, '*_test.ts');

@@ -1,12 +1,13 @@
 /**
- * Coverage helpers for the test runner (script/testRunner/runTests.ts): parse LCOV, total it up,
+ * Coverage helpers for the test runner (script/testRunner/testRunner.ts): parse LCOV, total it up,
  * and format it for the terminal and the GitHub job summary.
  *
  * Vitest measures every file a test loads, `.vue` components included; which files
  * count is set in vite.config.ts (`test.coverage`).
  */
 
-import { cp, readFile, rm } from 'node:fs/promises';
+import type { Io } from '../lib/io.ts';
+import { annotation } from './githubCommands.ts';
 
 export interface Counter {
   found: number;
@@ -117,7 +118,11 @@ export function totals(files: FileCoverage[]): Omit<FileCoverage, 'file'> {
   };
 }
 
-const pct = (c: Counter) => percent(c).toFixed(1).padStart(5);
+/** A percentage as every table shows it: `93.4%`, or `—` when there is nothing to cover. */
+export const formatPercent = (c: Counter): string =>
+  c.found === 0 ? '—' : `${percent(c).toFixed(1)}%`;
+
+const pct = (c: Counter) => formatPercent(c).padStart(6);
 
 /** "3–5, 9": sorted line numbers, runs collapsed. */
 export function lineRanges(lines: number[]): string {
@@ -182,12 +187,12 @@ export function formatCoverageText(files: FileCoverage[], cwd = '', limit = Infi
     'Funcs'.padStart(6)
   }`;
   const body = rows.map((r) =>
-    `${rel(r.file).padEnd(width)}  ${pct(r.lines)}%  ${pct(r.branches)}%  ${pct(r.functions)}%`
+    `${rel(r.file).padEnd(width)}  ${pct(r.lines)}  ${pct(r.branches)}  ${pct(r.functions)}`
   );
   const t = totals(files);
-  const foot = `${'All files'.padEnd(width)}  ${pct(t.lines)}%  ${pct(t.branches)}%  ${
+  const foot = `${'All files'.padEnd(width)}  ${pct(t.lines)}  ${pct(t.branches)}  ${
     pct(t.functions)
-  }%`;
+  }`;
   return [head, '-'.repeat(head.length), ...body, '-'.repeat(head.length), foot].join('\n');
 }
 
@@ -229,10 +234,6 @@ export function formatCoverageMarkdown(
   ].join('\n');
 }
 
-const escapeData = (s: string) =>
-  s.replaceAll('%', '%25').replaceAll('\r', '%0D').replaceAll('\n', '%0A');
-const escapeProp = (s: string) => escapeData(s).replaceAll(':', '%3A').replaceAll(',', '%2C');
-
 /**
  * GitHub workflow commands that mark each gap on its file in the pull request: one per
  * file, on its first missed line, listing the rest. `error` when the run fails for it
@@ -252,9 +253,12 @@ export function coverageAnnotations(
       lines.length > 0 ? `lines ${lineRanges(lines)} never run` : '',
       branches.length > 0 ? `a branch on ${lineRanges(branches)} never taken` : '',
     ].filter(Boolean).join('; ');
-    return `::${level} file=${escapeProp(rel(f.file))}${
-      Number.isFinite(first) ? `,line=${first}` : ''
-    },title=${escapeProp('Not covered by any test')}::${escapeData(said || 'not fully covered')}`;
+    return annotation(level, {
+      file: rel(f.file),
+      line: first,
+      title: 'Not covered by any test',
+      message: said || 'not fully covered',
+    });
   });
 }
 
@@ -274,16 +278,6 @@ export const coverageArgs = (dir: string, html = false): string[] => [
 ];
 
 /** Per-file counters from the LCOV file a `vitest run` with `coverageArgs(dir)` left in `dir`. */
-export async function readCoverage(dir: string): Promise<FileCoverage[]> {
-  return parseLcov(await readFile(`${dir}/lcov.info`, 'utf8'));
-}
-
-/**
- * Copy the HTML report (from a run with `coverageArgs(dir, true)`) to `out` and
- * return the path of its index page.
- */
-export async function writeHtmlCoverage(dir: string, out: string): Promise<string> {
-  await rm(out, { recursive: true, force: true });
-  await cp(dir, out, { recursive: true });
-  return `${out}/index.html`;
+export async function readCoverage(io: Io, dir: string): Promise<FileCoverage[]> {
+  return parseLcov(await io.readText(`${dir}/lcov.info`));
 }

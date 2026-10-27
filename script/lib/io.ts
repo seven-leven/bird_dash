@@ -2,7 +2,7 @@
 // git, the environment, the clock and the console. A command's `main` takes an `Io`;
 // tests pass `fakeIo()` (fakeIo.ts) instead of touching the repository.
 import { spawn } from 'node:child_process';
-import { readFile, writeFile } from 'node:fs/promises';
+import { appendFile, readFile, writeFile } from 'node:fs/promises';
 import { styleText } from 'node:util';
 import { ensureDir, listFiles } from './fs.ts';
 import { git } from './git.ts';
@@ -10,6 +10,8 @@ import { git } from './git.ts';
 export interface Io {
   readText(path: string): Promise<string>;
   writeText(path: string, text: string): Promise<void>;
+  /** Add `text` to the end of a file, making it if it is not there (the CI job summary). */
+  appendText(path: string, text: string): Promise<void>;
   /** The names of the files in `dir` that pass `filter`, sorted; none if `dir` is missing. */
   listFiles(dir: string, filter?: (name: string) => boolean): Promise<string[]>;
   /** Make a folder and any missing parents. */
@@ -33,6 +35,7 @@ export interface Io {
 export const realIo: Io = {
   readText: (path) => readFile(path, 'utf8'),
   writeText: (path, text) => writeFile(path, text),
+  appendText: (path, text) => appendFile(path, text),
   listFiles: (dir, filter = () => true) => listFiles(dir, filter),
   makeDir: ensureDir,
   git,
