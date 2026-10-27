@@ -6,6 +6,7 @@ import ItemSheet from './ItemSheet.vue';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
 import type { CollectionItem } from '../../types/index.ts';
 import { mountComponent } from '../../testing/mountComponent.ts';
+import { settle } from '../../testing/settle.ts';
 
 const birds = makeCollection('birds', {
   label: 'Birds',
@@ -146,40 +147,67 @@ test('a Dhivehi name without a romanisation is the Thaana alone', () => {
   assertEquals(host.querySelector('h2')!.parentElement!.children.length, 1);
 });
 
-/** The share button, by what it says before it is used. */
+/** The share button, by its icon. */
 const shareButton = (host: Element) =>
-  [...host.querySelectorAll('button')].find((b) =>
-    /^(Share|Copy link)$/.test(b.textContent!.trim())
-  );
+  [...host.querySelectorAll('button')].find((b) => b.textContent!.trim() === 'Share') ??
+    [...host.querySelectorAll('button')].find((b) => /Copied|Couldn't copy/.test(b.textContent!));
 
-test("sharing a drawing copies its link preview's address, and says so", async () => {
+/** A clipboard that keeps what is copied, or refuses. */
+function fakeClipboard(refuses = false) {
   const copied: string[] = [];
   Object.defineProperty(navigator, 'clipboard', {
     configurable: true,
-    value: { writeText: (text: string) => (copied.push(text), Promise.resolve()) },
+    value: {
+      writeText: (text: string) =>
+        refuses ? Promise.reject(new Error('denied')) : (copied.push(text), Promise.resolve()),
+    },
   });
+  return copied;
+}
+
+test("sharing a drawing copies its link preview's address, and says so", async () => {
+  const copied = fakeClipboard();
   const { host, item } = mount(goose);
   const button = shareButton(host)!;
-  assertEquals(button.textContent!.trim(), 'Copy link'); // no share sheet here
+  assertEquals(button.textContent!.trim(), 'Share');
   button.click();
-  await new Promise((r) => setTimeout(r, 0));
-  await nextTick();
+  await settle();
   assertEquals(copied, [new URL('birds/002/', location.href.split('#')[0]).href]);
-  assertEquals(button.textContent!.trim(), 'Link copied');
+  // A short word on the button keeps it on the links' line; a screen reader hears it whole.
+  assertEquals(button.textContent!.trim(), 'Copied');
   assertEquals(host.querySelector('[role="status"]')!.textContent, 'Link copied');
   // The next drawing's button starts fresh.
   item.value = gooseWith({ itemId: '003', id: 'birds-003' });
   await nextTick();
-  assertEquals(shareButton(host)!.textContent!.trim(), 'Copy link');
+  assertEquals(shareButton(host)!.textContent!.trim(), 'Share');
 });
 
-test('on a device with a share sheet, the button says Share', () => {
-  Object.defineProperty(navigator, 'share', { configurable: true, value: () => Promise.resolve() });
-  try {
-    assertEquals(shareButton(mount(goose).host)!.textContent!.trim(), 'Share');
-  } finally {
-    Object.defineProperty(navigator, 'share', { configurable: true, value: undefined });
-  }
+test('when the clipboard refuses, the button says it could not copy', async () => {
+  fakeClipboard(true);
+  const { host } = mount(goose);
+  shareButton(host)!.click();
+  await settle();
+  assertEquals(shareButton(host)!.textContent!.trim(), "Couldn't copy");
+  assertEquals(host.querySelector('[role="status"]')!.textContent, "Couldn't copy the link");
+});
+
+test('Share sits at the end of the Learn more row, after the links that leave the site', () => {
+  const { host } = mount(goose);
+  const row = shareButton(host)!.parentElement!;
+  assertEquals(row.firstElementChild!.textContent!.trim().startsWith('eBird'), true);
+  assertEquals(row.lastElementChild, shareButton(host));
+  assertStringIncludes(shareButton(host)!.className, 'ml-auto');
+});
+
+test('a collection with no links still offers Share, without a Learn more label', () => {
+  const unlinked = makeCollection('birds', { label: 'Birds', links: [] });
+  const host = mountComponent(() => h(ItemSheet, { item: goose, collection: unlinked }));
+  assert(shareButton(host), 'Share is offered');
+  assert(!host.textContent!.includes('Learn more'));
+  const undrawn = mountComponent(() =>
+    h(ItemSheet, { item: gooseWith({ drawnTime: 0 }), collection: unlinked })
+  );
+  assertEquals(shareButton(undrawn), undefined);
 });
 
 test('a drawing not yet drawn has no link preview, so nothing to share', () => {

@@ -24,6 +24,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
   hand, or made its own temporary folder, uses them now: no `finally` restores anything, and
   `useCollections_test.ts` alone is about a hundred lines shorter. A contract test fails on a global
   swapped by hand outside the kit. ESLint lets a fake held only for its cleanup be named `_…`
+- 2026-10-27 | ui: Share has an icon of its own (`share`, in the viewer's group) and sits at the end
+  of the details' Learn more row, opposite the links that leave the site, instead of on a line of
+  its own under the drawing's id. It reads "Share" everywhere and "Copied" once the link is copied,
+  short enough to stay on the links' line; a screen reader hears "Link copied". The icon sheet and
+  the design guide are redrawn with it
 - 2026-10-27 | docs: the test overhaul's phase 0, the rules agreed. TESTING.md gains "The rules"
   (twelve: a test states a promise, the lowest tier that can prove it, one way to fake, to mount and
   to wait, determinism, small files), "Promises" (what the site says it does and the tests that keep
