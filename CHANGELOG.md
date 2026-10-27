@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | docs: the test overhaul's phase 0, the rules agreed. TESTING.md gains "The rules"
+  (twelve: a test states a promise, the lowest tier that can prove it, one way to fake, to mount and
+  to wait, determinism, small files), "Promises" (what the site says it does and the tests that keep
+  each) and "Conventions" (file names, test titles, inside a test, helpers and data), moved from the
+  plan. The decisions are settled, with one more: journeys live in `src/journeys/` until the site
+  overhaul makes `app/`. TESTING.md's stale paths are fixed
 - 2026-10-27 | docs: the site overhaul's phase 0, the rules agreed. ARCHITECTURE.md gains "Rules for
   the site's code" (organise by feature, layers that point one way, a pure `domain/`, one door to
   the outside, types with their owner, one word per idea, small files) and the naming table, moved
