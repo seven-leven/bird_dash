@@ -1,24 +1,11 @@
 import { test } from 'vitest';
 import { assertEquals, assertThrows } from '@std/assert';
-import { createRenderer, defineComponent, h } from 'vue';
+import { defineComponent, h } from 'vue';
 import { defineInjection } from './injection.ts';
+import { mountWithoutDom } from '../../testing/mount.ts';
 
-// provide/inject only work inside a component, so these mount real components —
-// with a renderer that draws nothing, which needs no DOM at all.
-type Node = { parent: Node | null };
-const { createApp } = createRenderer<Node, Node>({
-  insert: (el, parent) => (el.parent = parent),
-  remove: (el) => (el.parent = null),
-  createElement: () => ({ parent: null }),
-  createText: () => ({ parent: null }),
-  createComment: () => ({ parent: null }),
-  setText: () => {},
-  setElementText: () => {},
-  parentNode: (node) => node.parent,
-  nextSibling: () => null,
-  patchProp: () => {},
-});
-const root = (): Node => ({ parent: null });
+// provide/inject only work inside a component, so these mount real components, with the
+// kit's renderer that draws nothing (no DOM needed).
 
 interface Counter {
   count: number;
@@ -35,36 +22,37 @@ test('a value provided by a parent is what a child component uses', () => {
       return () => null;
     },
   });
-  const app = createApp(defineComponent({
+  mountWithoutDom(defineComponent({
     setup() {
       provideCounter(store);
       return () => h(Child);
     },
   }));
-  app.mount(root());
 
   assertEquals(seen === store, true, 'the child got a copy, not the provided object');
-  app.unmount();
 });
 
 test('using a store with no provider above throws, naming the store', () => {
   const [, useCounter] = defineInjection<Counter>('counter');
   let error: unknown;
 
-  const app = createApp(defineComponent({
-    setup() {
-      try {
-        useCounter();
-      } catch (e) {
-        error = e;
-      }
-      return () => null;
-    },
-  }));
-  // Vue warns that the injection was not found; that is the situation under test.
-  app.config.warnHandler = () => {};
-  app.mount(root());
+  const warnings: string[] = [];
+  mountWithoutDom(
+    defineComponent({
+      setup() {
+        try {
+          useCounter();
+        } catch (e) {
+          error = e;
+        }
+        return () => null;
+      },
+    }),
+    // Vue warns that the injection was not found; that is the situation under test.
+    { onWarn: (message) => warnings.push(message) },
+  );
 
+  assertEquals(warnings.length, 1);
   assertThrows(
     () => {
       throw error;
@@ -72,7 +60,6 @@ test('using a store with no provider above throws, naming the store', () => {
     Error,
     'use(counter) called outside its provider',
   );
-  app.unmount();
 });
 
 test('two injections with the same name do not collide', () => {
@@ -86,15 +73,13 @@ test('two injections with the same name do not collide', () => {
       return () => null;
     },
   });
-  const app = createApp(defineComponent({
+  mountWithoutDom(defineComponent({
     setup() {
       provideA('a');
       provideB('b');
       return () => h(Child);
     },
   }));
-  app.mount(root());
 
   assertEquals(seen, ['a', 'b']);
-  app.unmount();
 });

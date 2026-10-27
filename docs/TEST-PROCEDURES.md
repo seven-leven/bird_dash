@@ -257,9 +257,11 @@ imports it and checks its main behaviour clears the error.
 4. **Prove it can fail:** break the code on purpose, see the test go red, undo the break.
 5. Run `npm run test:coverage` before committing.
 
-Helpers are in `src/testing/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`, `runInScope`),
-`withDom.ts` (`withDom`), `mountComposable.ts` (`mountComposable`) and `propertyRuns.ts`
-(`assertProperty`). [TESTING.md](TESTING.md) shows how each is used.
+Helpers are in `src/testing/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`), `mount.ts`
+(`mountComponent`, `mountComposable`, `runInScope`, `mountWithoutDom`), `settle.ts`, `fakes/`
+(`fakeFetch`, `captureConsole`, `tempDir`, `tempCollection`), `scenarios/` (the fixture archive),
+`scriptFixtures.ts`, `withDom.ts` (`withDom`) and `propertyRuns.ts` (`assertProperty`).
+[TESTING.md](TESTING.md) shows how each is used.
 
 ## 10. Add a new folder of code
 

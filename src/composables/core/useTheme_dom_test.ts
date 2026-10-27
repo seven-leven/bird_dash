@@ -2,8 +2,8 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { nextTick } from 'vue';
 import { BAR_COLOR, useTheme } from './useTheme.ts';
-import { runInScope } from '../../testing/fixtures.ts';
 import { withDom } from '../../testing/withDom.ts';
+import { runInScope } from '../../testing/mount.ts';
 
 const isDarkClass = () => document.documentElement.classList.contains('dark');
 const barColor = () => document.querySelector('meta[name="theme-color"]')?.getAttribute('content');

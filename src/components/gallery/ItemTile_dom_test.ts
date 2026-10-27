@@ -6,8 +6,8 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { h } from 'vue';
 import ItemTile from './ItemTile.vue';
 import { at, makeItem } from '../../testing/fixtures.ts';
-import { mountComponent } from '../../testing/mountComponent.ts';
 import type { CollectionItem } from '../../types/index.ts';
+import { mountComponent } from '../../testing/mount.ts';
 
 const drawn = makeItem({
   itemId: '042',
