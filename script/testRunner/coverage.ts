@@ -258,19 +258,12 @@ export function coverageAnnotations(
   });
 }
 
-/** Read a percentage floor such as `--min-lines=N` from the arguments (default 0 = report only). */
-function parseFloor(args: string[], flag: string): number {
-  const arg = args.find((a) => a.startsWith(`${flag}=`));
-  const n = arg ? Number(arg.split('=')[1]) : 0;
-  if (!Number.isFinite(n) || n < 0 || n > 100) throw new Error(`invalid ${arg}`);
+/** A percentage floor, the value of `--min-lines` or `--min-branches` (absent: 0, report only). */
+export function parseFloor(flag: string, value: string | undefined): number {
+  const n = value === undefined ? 0 : Number(value);
+  if (!Number.isFinite(n) || n < 0 || n > 100) throw new Error(`invalid ${flag}=${value}`);
   return n;
 }
-
-/** `--min-lines=N`: the line-coverage floor. */
-export const parseMinLines = (args: string[]): number => parseFloor(args, '--min-lines');
-
-/** `--min-branches=N`: the branch-coverage floor. */
-export const parseMinBranches = (args: string[]): number => parseFloor(args, '--min-branches');
 
 /** The coverage arguments for `vitest run`: LCOV always, plus HTML when asked for. */
 export const coverageArgs = (dir: string, html = false): string[] => [

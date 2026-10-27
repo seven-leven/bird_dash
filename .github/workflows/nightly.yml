@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Property tests at 25x depth
-        run: npm run test:prop
+        run: node --run test:prop
         env:
           TZ: ${{ matrix.tz }}
           FC_RUNS_MULTIPLIER: '25'

@@ -3,7 +3,9 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { assert, assertEquals } from '@std/assert';
-import { readJson, realIo, writeJson } from './io.ts';
+import { PassThrough } from 'node:stream';
+import { styleText } from 'node:util';
+import { colorMarks, readJson, realIo, writeJson } from './io.ts';
 
 // The real Io, against a real (temporary) folder and the real console.
 
@@ -34,6 +36,26 @@ test('the real Io reaches the environment, the clock and the console', () => {
     [console.log, console.error] = [log, error];
   }
   assertEquals(printed, ['out a', 'err b']);
+});
+
+test('the marks are coloured on a terminal and plain anywhere else', () => {
+  // Whatever the machine says about colour, this test decides.
+  const env = process.env;
+  process.env = { ...env, NO_COLOR: undefined, FORCE_COLOR: undefined };
+  try {
+    const terminal = Object.assign(new PassThrough(), { isTTY: true, getColorDepth: () => 8 });
+    const pipe = new PassThrough();
+    const line = '✓ done · ✗ 2 issues';
+    assertEquals(
+      colorMarks(line, terminal as unknown as NodeJS.WriteStream),
+      `${styleText('green', '✓', { validateStream: false })} done · ${
+        styleText('red', '✗', { validateStream: false })
+      } 2 issues`,
+    );
+    assertEquals(colorMarks(line, pipe as unknown as NodeJS.WriteStream), line);
+  } finally {
+    process.env = env;
+  }
 });
 
 test('the real Io runs a script with this Node and gives back its exit code', async () => {

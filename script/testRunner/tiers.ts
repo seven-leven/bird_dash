@@ -11,7 +11,7 @@
  * Browser tests (a real Chrome against the built site) would be a fifth tier.
  */
 
-import { readdir } from 'node:fs/promises';
+import { glob } from 'node:fs/promises';
 
 export const TIERS = {
   unit: 'pure logic, no environment',
@@ -37,19 +37,15 @@ export function tierOf(path: string): Tier {
 
 /** Every `*_test.ts` under the given roots, as sorted repo-relative posix paths. */
 export async function discoverTests(roots = ['src', 'script']): Promise<string[]> {
-  return (await walkFiles(roots)).filter((path) => path.endsWith('_test.ts'));
+  return await findFiles(roots, '*_test.ts');
 }
 
-/** Every file under the given roots (skipping node_modules), as sorted posix paths. */
-export async function walkFiles(roots: string[]): Promise<string[]> {
-  const found: string[] = [];
-  for (const root of roots) {
-    for (const entry of await readdir(root, { withFileTypes: true, recursive: true })) {
-      const path = `${entry.parentPath}/${entry.name}`.replaceAll('\\', '/');
-      if (entry.isFile() && !path.split('/').includes('node_modules')) found.push(path);
-    }
-  }
-  return found.sort();
+/** Every file matching `pattern` under the given roots (skipping node_modules), as sorted posix paths. */
+export async function findFiles(roots: string[], pattern: string): Promise<string[]> {
+  const found = await Array.fromAsync(glob(roots.map((root) => `${root}/**/${pattern}`), {
+    exclude: (path) => path.includes('node_modules'),
+  }));
+  return found.map((path) => path.replaceAll('\\', '/')).sort();
 }
 
 export function groupByTier(files: string[]): Record<Tier, string[]> {

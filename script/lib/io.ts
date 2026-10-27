@@ -3,6 +3,7 @@
 // tests pass `fakeIo()` (fakeIo.ts) instead of touching the repository.
 import { spawn } from 'node:child_process';
 import { readFile, writeFile } from 'node:fs/promises';
+import { styleText } from 'node:util';
 import { ensureDir, listFiles } from './fs.ts';
 import { git } from './git.ts';
 
@@ -47,9 +48,16 @@ export const realIo: Io = {
     }),
   env: (name) => process.env[name],
   now: () => new Date(),
-  out: (line) => console.log(line),
-  err: (line) => console.error(line),
+  out: (line) => console.log(colorMarks(line, process.stdout)),
+  err: (line) => console.error(colorMarks(line, process.stderr)),
 };
+
+/**
+ * The reports' marks in colour, ✓ green and ✗ red, when `stream` is a terminal that shows
+ * colour; Node's `styleText` leaves them plain anywhere else, and under `NO_COLOR`.
+ */
+export const colorMarks = (line: string, stream: NodeJS.WriteStream): string =>
+  line.replace(/[✓✗]/g, (mark) => styleText(mark === '✓' ? 'green' : 'red', mark, { stream }));
 
 /** Read and parse a JSON file. */
 export async function readJson<T>(io: Io, path: string): Promise<T> {

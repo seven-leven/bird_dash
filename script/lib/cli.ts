@@ -1,7 +1,9 @@
 // What every command shares (docs/SCRIPTS.md, principles 7 and 8): reading its
 // arguments, its exit codes and how it reports a problem.
+import { parseArgs as parseNodeArgs } from 'node:util';
 import { type Io, realIo } from './io.ts';
 import { errorMessage } from './error.ts';
+import { isErrno } from './fs.ts';
 
 /** Exit codes: done; the work found a problem; the command was used wrongly. */
 export const EXIT = { done: 0, problem: 1, usage: 2 } as const;
@@ -32,8 +34,9 @@ export interface Args {
 }
 
 /**
- * Split `args` into flags, options with a value, and words, accepting only `flags` and
- * `options` (and `--help`). A bare `--` (which npm passes through) is ignored. Throws
+ * Split `args` into flags, options with a value (`--into <dir>` or `--into=<dir>`), and
+ * words, accepting only `flags` and `options` (and `--help`), with Node's own parser. A
+ * bare `--` (which npm passes through) is ignored, so flags after it still count. Throws
  * UsageError for any other flag, or for an option with no value after it.
  */
 export function parseArgs(
@@ -41,27 +44,39 @@ export function parseArgs(
   flags: readonly string[],
   options: readonly string[] = [],
 ): Args {
-  const known = new Set([...flags, ...options, '--help']);
-  const parsed: Args = { flags: new Set(), values: new Map(), words: [] };
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (arg === '--') continue;
-    if (!arg.startsWith('-')) {
-      parsed.words.push(arg);
-      continue;
-    }
-    if (!known.has(arg)) {
-      throw new UsageError(`unknown option ${arg} (this command takes: ${[...known].join(', ')})`);
-    }
-    if (!options.includes(arg)) {
-      parsed.flags.add(arg);
-      continue;
-    }
-    const value = args[++i];
-    if (value === undefined || value.startsWith('-')) throw new UsageError(`${arg} needs a value`);
-    parsed.values.set(arg, value);
+  const known = [...flags, ...options, '--help'];
+  const config = Object.fromEntries(known.map((name) => [
+    name.slice(2),
+    { type: options.includes(name) ? 'string' as const : 'boolean' as const },
+  ]));
+  let values: Record<string, string | boolean | undefined>;
+  let words: string[];
+  try {
+    ({ values, positionals: words } = parseNodeArgs({
+      args: args.filter((arg) => arg !== '--'),
+      options: config,
+      strict: true,
+      allowPositionals: true,
+    }));
+  } catch (err) {
+    throw new UsageError(usageProblem(err, known));
+  }
+  const parsed: Args = { flags: new Set(), values: new Map(), words };
+  for (const [name, value] of Object.entries(values)) {
+    if (typeof value === 'string') parsed.values.set(`--${name}`, value);
+    else parsed.flags.add(`--${name}`);
   }
   return parsed;
+}
+
+/** Node's parse error, in the words every command uses. */
+function usageProblem(err: unknown, known: string[]): string {
+  const message = errorMessage(err);
+  const option = /'(-[^' ]+)/.exec(message)![1];
+  if (isErrno(err, 'ERR_PARSE_ARGS_UNKNOWN_OPTION')) {
+    return `unknown option ${option} (this command takes: ${known.join(', ')})`;
+  }
+  return message.includes('does not take') ? `${option} takes no value` : `${option} needs a value`;
 }
 
 /** A command's entry: its arguments, the Io (the real one by default), any test options. */

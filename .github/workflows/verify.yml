@@ -34,14 +34,14 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
+        run: node --run lint
 
       - name: Format check
-        run: npm run format:check
+        run: node --run format:check
 
       # vue-tsc: the .ts files and the .vue components
       - name: Type check
-        run: npm run typecheck
+        run: node --run typecheck
 
       # Every test tier (script/testRunner/tiers.ts) plus the coverage floors from package.json.
       # The runner writes a per-tier table and the coverage table to the job summary,
@@ -50,7 +50,7 @@ jobs:
       # uses local time fails here instead of for some viewers; the other zones run
       # in `timezones` below.
       - name: Tests (all tiers) with coverage
-        run: npm run test:coverage
+        run: node --run test:coverage
         env:
           TZ: America/Los_Angeles
 
@@ -63,11 +63,11 @@ jobs:
           retention-days: 14
 
       - name: Check the repository (images and generated files)
-        run: npm run check
+        run: node --run check
 
       # The site, then the docs site into dist/docs/; a dead link in docs/ fails it.
       - name: Build the site and the docs
-        run: npm run build
+        run: node --run build
 
       - name: Upload Pages artifact
         if: ${{ inputs.upload-pages }}
@@ -98,6 +98,6 @@ jobs:
         run: npm ci
 
       - name: Tests (all tiers)
-        run: npm test
+        run: node --run test
         env:
           TZ: ${{ matrix.tz }}

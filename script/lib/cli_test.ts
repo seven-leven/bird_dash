@@ -62,6 +62,15 @@ test('an option with a value is read, and one with none is a usage error', () =>
   assertThrows(() => parseArgs(['--into', '--x'], [], ['--into']), UsageError, 'needs a value');
 });
 
+test('an option can take its value after an equals sign, and a flag cannot take one', () => {
+  assertEquals(parseArgs(['--into=./out'], [], ['--into']).values.get('--into'), './out');
+  assertThrows(
+    () => parseArgs(['--dry-run=yes'], ['--dry-run']),
+    UsageError,
+    '--dry-run takes no value',
+  );
+});
+
 test('a report prints its problems on stderr and the rest on stdout', () => {
   const io = fakeIo();
   printLines(io, [{ text: 'fine' }, { text: 'broken', problem: true }]);

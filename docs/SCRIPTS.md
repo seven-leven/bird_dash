@@ -88,7 +88,9 @@ if (import.meta.main) process.exit(await main(process.argv.slice(2)));
 
 `command` (`script/lib/cli.ts`) gives every `main` the same `(args, io = realIo, options?)` and
 turns what the work does into an exit code: `--help` prints the usage, wrong arguments exit 2,
-anything thrown is one `✗` line and exit 1.
+anything thrown is one `✗` line and exit 1. Arguments are read by `parseArgs` in the same file, on
+Node's own `util.parseArgs`: an option takes its value as `--into <dir>` or `--into=<dir>`, and the
+test runner reads its flags with it too.
 
 Exit codes mean the same everywhere: `0` done, `1` the work found a problem (a failed check, a
 failed image), `2` the command was used wrongly (an unknown flag). Shared flags mean the same
@@ -98,8 +100,10 @@ everywhere: `--dry-run` (plan and report, change nothing), `--verbose` (say more
 
 All output goes through the reporter in `script/lib/cli.ts`: the same marks (`✓` done, `✗` problem,
 `·` skipped or nothing to do), the same two-space indent, a timing at the end, problems on stderr.
-Only `print*` functions write to the console, and only the command calls them. A message names the
-file and says what to run to fix it: `✗ public/stats.json is stale: run npm run ingest`.
+On a terminal the real `Io` colours `✓` green and `✗` red with Node's `styleText`; piped, in CI logs
+or under `NO_COLOR` they stay plain. Only `print*` functions write to the console, and only the
+command calls them. A message names the file and says what to run to fix it: `✗ public/stats.json is
+stale: run npm run ingest`.
 
 ## Naming
 

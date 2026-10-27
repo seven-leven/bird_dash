@@ -8,7 +8,7 @@
  */
 import type { TestCase } from './junit.ts';
 import type { Counter, FileCoverage } from './coverage.ts';
-import { walkFiles } from './tiers.ts';
+import { findFiles } from './tiers.ts';
 
 export interface Area {
   id: string;
@@ -101,7 +101,7 @@ export async function discoverSources(roots = ['src', 'script']): Promise<string
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
     path.startsWith('src/testing/') || path.startsWith('src/types/') ||
     path === 'src/main.ts'; // only mounts App.vue into the page
-  return (await walkFiles(roots)).filter((path) => path.endsWith('.ts') && !skip(path));
+  return (await findFiles(roots, '*.ts')).filter((path) => !skip(path));
 }
 
 export interface AreaSummary {
