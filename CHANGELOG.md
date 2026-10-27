@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | scripts: Node 24's own tools in place of hand-written ones (phase 2 of PLATFORM.md).
+  Every command and the test runner read their arguments with `util.parseArgs` under `cli.ts`'s
+  `parseArgs`, so the runner's own flag scan goes and `--into=<dir>` works as well as
+  `--into <dir>`; the real `Io` colours `✓` and `✗` on a terminal with `styleText` (plain when piped
+  or under `NO_COLOR`); the runner finds its files with `fs.glob` instead of a recursive `readdir`;
+  CI runs its steps with `node --run`. Vite 8 builds the `vue` chunk with no warning, so
+  `manualChunks` stays
 - 2026-10-27 | fix: dark mode draws the browser's own parts dark too (`color-scheme`: scrollbars,
   the search box), the month view's names are English whatever the browser's language (they followed
   it), a phone's browser bar takes the top bar's colour in each theme (`theme-color`, kept in step

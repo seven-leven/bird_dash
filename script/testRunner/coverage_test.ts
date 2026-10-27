@@ -7,9 +7,8 @@ import {
   formatGaps,
   lineRanges,
   notFullyCovered,
+  parseFloor,
   parseLcov,
-  parseMinBranches,
-  parseMinLines,
   percent,
   totals,
 } from './coverage.ts';
@@ -61,11 +60,12 @@ test('formatCoverageText lists the worst-covered file first and shows relative p
   assertStringIncludes(lines[lines.length - 1], ' 75.0%');
 });
 
-test('parseMinLines reads the floor and rejects nonsense', () => {
-  assertEquals(parseMinLines([]), 0);
-  assertEquals(parseMinLines(['--min-lines=62.5']), 62.5);
-  assertThrows(() => parseMinLines(['--min-lines=abc']));
-  assertThrows(() => parseMinLines(['--min-lines=140']));
+test('a floor is a percentage, 0 when not given, and nonsense is rejected', () => {
+  assertEquals(parseFloor('--min-lines', undefined), 0);
+  assertEquals(parseFloor('--min-lines', '62.5'), 62.5);
+  assertThrows(() => parseFloor('--min-lines', 'abc'), Error, 'invalid --min-lines=abc');
+  assertThrows(() => parseFloor('--min-lines', '140'));
+  assertThrows(() => parseFloor('--min-branches', '-1'));
 });
 
 test('formatCoverageMarkdown leads with the total and folds the per-file table away', () => {
@@ -101,12 +101,6 @@ test('parseLcov ignores counters that come before any SF line', () => {
       missedBranches: [],
     },
   ]);
-});
-
-test('parseMinBranches reads its own flag, independent of --min-lines', () => {
-  assertEquals(parseMinBranches(['--min-lines=90']), 0);
-  assertEquals(parseMinBranches(['--min-branches=95']), 95);
-  assertThrows(() => parseMinBranches(['--min-branches=-1']));
 });
 
 test('formatCoverageMarkdown shows the branch total and its floor', () => {

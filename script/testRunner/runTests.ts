@@ -21,6 +21,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { discoverTests, groupByTier, isTier, type Tier, TIER_ORDER } from './tiers.ts';
 import { parseJunit } from './junit.ts';
+import { parseArgs as parseCommandArgs } from '../lib/cli.ts';
 import { annotations, formatTiersMarkdown, formatTiersText, summarize } from './testSummary.ts';
 import {
   areaOf,
@@ -38,8 +39,7 @@ import {
   formatCoverageText,
   formatGaps,
   notFullyCovered,
-  parseMinBranches,
-  parseMinLines,
+  parseFloor,
   percent,
   readCoverage,
   totals,
@@ -72,15 +72,18 @@ const isPath = (arg: string) => arg.includes('/') || arg.includes('\\') || arg.e
  * `npm test -- src/components` runs the tests under that folder.
  */
 export function parseArgs(args: string[]): Options {
-  // A bare `--` (as in `npm test -- -- --verbose`) is a separator, not an option.
-  args = args.filter((a) => a !== '--');
-  const flags = args.filter((a) => a.startsWith('-'));
-  const positional = args.filter((a) => !a.startsWith('-'));
-  const names = positional.filter((n) => isTier(n));
-  const areas = positional.filter((n) => AREA_IDS.includes(n));
-  const paths = positional.filter(isPath).map((p) => p.replaceAll('\\', '/').replace(/^\.\//, ''));
+  // The commands' own parser, Node's underneath (a bare `--`, as in `npm test -- --
+  // --verbose`, is ignored there); `-v` is the one short flag.
+  const { flags, values, words } = parseCommandArgs(
+    args.map((arg) => (arg === '-v' ? '--verbose' : arg)),
+    ['--verbose', '--fail-fast', '--coverage', '--report', '--html'],
+    ['--min-lines', '--min-branches'],
+  );
+  const names = words.filter((n) => isTier(n));
+  const areas = words.filter((n) => AREA_IDS.includes(n));
+  const paths = words.filter(isPath).map((p) => p.replaceAll('\\', '/').replace(/^\.\//, ''));
 
-  const unknown = positional.filter((n) => !isTier(n) && !AREA_IDS.includes(n) && !isPath(n));
+  const unknown = words.filter((n) => !isTier(n) && !AREA_IDS.includes(n) && !isPath(n));
   if (unknown.length > 0) {
     throw new Error(
       `unknown tier or area "${unknown[0]}" (tiers: ${TIER_ORDER.join(', ')}; areas: ${
@@ -88,18 +91,12 @@ export function parseArgs(args: string[]): Options {
       }; or a path such as src/components)`,
     );
   }
-  const known = new Set(['--verbose', '-v', '--fail-fast', '--coverage', '--report', '--html']);
-  const bad = flags.find((f) =>
-    !known.has(f) && !f.startsWith('--min-lines=') && !f.startsWith('--min-branches=')
-  );
-  if (bad) throw new Error(`unknown option ${bad}`);
-
-  const minLines = parseMinLines(flags);
-  const coverage = flags.includes('--coverage');
+  const minLines = parseFloor('--min-lines', values.get('--min-lines'));
+  const coverage = flags.has('--coverage');
   if (minLines > 0 && !coverage) throw new Error('--min-lines needs --coverage');
-  const minBranches = parseMinBranches(flags);
+  const minBranches = parseFloor('--min-branches', values.get('--min-branches'));
   if (minBranches > 0 && !coverage) throw new Error('--min-branches needs --coverage');
-  if (flags.includes('--html') && !coverage) throw new Error('--html needs --coverage');
+  if (flags.has('--html') && !coverage) throw new Error('--html needs --coverage');
   // A floor is a promise about the whole suite; part of it would fail for files it skipped.
   if ((minLines > 0 || minBranches > 0) && (areas.length > 0 || paths.length > 0)) {
     throw new Error('coverage floors apply to the whole suite, not to an area or a path');
@@ -109,13 +106,13 @@ export function parseArgs(args: string[]): Options {
     tiers: names.length > 0 ? TIER_ORDER.filter((t) => names.includes(t)) : [...TIER_ORDER],
     areas,
     paths,
-    verbose: flags.includes('--verbose') || flags.includes('-v'),
-    failFast: flags.includes('--fail-fast'),
+    verbose: flags.has('--verbose'),
+    failFast: flags.has('--fail-fast'),
     coverage,
     minLines,
     minBranches,
-    report: flags.includes('--report'),
-    html: flags.includes('--html'),
+    report: flags.has('--report'),
+    html: flags.has('--html'),
   };
 }
 
