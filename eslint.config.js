@@ -30,6 +30,9 @@ export default tseslint.config(
       'no-undef': 'off',
       // Style only: Icon and Chrome read fine as they are.
       'vue/multi-word-component-names': 'off',
+      // A test's fake is often held only for its cleanup (`using _fetch = fakeFetch(…)`):
+      // a name starting with `_` says so.
+      '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^_' }],
     },
   },
   {

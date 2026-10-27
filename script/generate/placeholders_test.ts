@@ -1,11 +1,10 @@
 import { test } from 'vitest';
-import { mkdtemp, readdir, readFile, rm } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { readdir, readFile } from 'node:fs/promises';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import sharp from 'sharp';
 import { drawPlaceholder, THEMES, writePlaceholders } from './placeholders.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
+import { tempDir } from '../../src/testing/fakes/tempDir.ts';
 
 // Files are read into memory and the cache is off, so Windows can delete the temporary folder.
 sharp.cache(false);
@@ -32,12 +31,8 @@ test('the light and dark files differ only by the "-dark" suffix', () => {
 
 /** Run `fn` with a fresh temporary directory, removed afterwards. */
 async function withTempDir(fn: (dir: string) => Promise<void>): Promise<void> {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_placeholders_'));
-  try {
-    await fn(dir);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+  await using dir = await tempDir('placeholders');
+  await fn(dir.path);
 }
 
 const collection = (id: string, icon?: string) => ({ id, icon }) as RawCollectionConfig;

@@ -1,7 +1,5 @@
 import { test } from 'vitest';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import sharp from 'sharp';
 import { scanSources } from './scanSources.ts';
@@ -11,6 +9,7 @@ import { transcodeFull } from './transcodeImages.ts';
 import { realIo } from '../lib/io.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import type { Collection } from '../lib/collections.ts';
+import { tempDir } from '../../src/testing/fakes/tempDir.ts';
 
 // Ingesting end to end, on real (tiny) images in a temporary folder, with the real Io
 // and sharp: scan → plan → apply → scan again. Nothing here touches public/ or raw_png/.
@@ -24,7 +23,8 @@ async function withCollection(
   sources: string[],
   fn: (collection: Collection) => Promise<void>,
 ): Promise<void> {
-  const dir = await mkdtemp(join(tmpdir(), 'bird_dash_ingest_'));
+  await using folder = await tempDir('ingest');
+  const dir = folder.path;
   const collection = {
     id: 'x',
     label: 'Test',
@@ -36,17 +36,13 @@ async function withCollection(
       thumb: `${dir}/thumb/`,
     },
   } as Collection;
-  try {
-    await writeFile(collection.paths.json, JSON.stringify({ Group: items }));
-    await mkdir(collection.paths.sourceArt);
-    for (const id of sources) {
-      await sharp({ create: { width: 40, height: 40, channels: 3, background: '#3366cc' } })
-        .png().toFile(`${collection.paths.sourceArt}${id}.png`);
-    }
-    await fn(collection);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
+  await writeFile(collection.paths.json, JSON.stringify({ Group: items }));
+  await mkdir(collection.paths.sourceArt);
+  for (const id of sources) {
+    await sharp({ create: { width: 40, height: 40, channels: 3, background: '#3366cc' } })
+      .png().toFile(`${collection.paths.sourceArt}${id}.png`);
   }
+  await fn(collection);
 }
 
 /** The real Io, with what it prints kept for the test. */

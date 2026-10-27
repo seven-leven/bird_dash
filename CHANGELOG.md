@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: one kit of fakes (test overhaul, phase 1a). `src/testing/fakes/` has
+  `fakeFetch` (answers by URL path, records the calls), `captureConsole` (keeps the lines a test
+  expects, passes the rest through) and `tempDir`, each undone when its `using` block ends, and
+  `src/testing/settle.ts` is the one way to wait. Every test that swapped `fetch` or the console by
+  hand, or made its own temporary folder, uses them now: no `finally` restores anything, and
+  `useCollections_test.ts` alone is about a hundred lines shorter. A contract test fails on a global
+  swapped by hand outside the kit. ESLint lets a fake held only for its cleanup be named `_…`
 - 2026-10-27 | ui: Share has an icon of its own (`share`, in the viewer's group) and sits at the end
   of the details' Learn more row, opposite the links that leave the site, instead of on a line of
   its own under the drawing's id. It reads "Share" everywhere and "Copied" once the link is copied,

@@ -1,9 +1,9 @@
 import { test } from 'vitest';
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { mkdir, writeFile } from 'node:fs/promises';
 import { assertEquals, assertRejects } from '@std/assert';
 import type { ResolvedConfig } from 'vite';
+import { tempDir } from '../../src/testing/fakes/tempDir.ts';
+import { captureConsole } from '../../src/testing/fakes/captureConsole.ts';
 import {
   type Budget,
   type BuiltFile,
@@ -44,15 +44,11 @@ test('a budget with no files to measure is within it', () => {
 });
 
 async function withBuild(fn: (dir: string) => Promise<void>) {
-  const dir = await mkdtemp(join(tmpdir(), 'budget-'));
-  try {
-    await mkdir(join(dir, 'thumb'), { recursive: true });
-    await writeFile(join(dir, 'app.js'), 'x'.repeat(1000)); // compresses to a few bytes
-    await writeFile(join(dir, 'thumb', '1.webp'), 'y'.repeat(60));
-    await fn(dir);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+  await using dir = await tempDir('budget');
+  await mkdir(dir.join('thumb'), { recursive: true });
+  await writeFile(dir.join('app.js'), 'x'.repeat(1000)); // compresses to a few bytes
+  await writeFile(dir.join('thumb', '1.webp'), 'y'.repeat(60));
+  await fn(dir.path);
 }
 
 test('the built files are measured by their path in dist/, as stored and gzipped', () =>
@@ -70,16 +66,13 @@ test('the plugin fails the build when dist/ is over the budget', () =>
       (plugin.configResolved as (config: ResolvedConfig) => void)(config);
       return plugin.closeBundle as () => Promise<void>;
     };
-    const log = console.log;
-    console.log = () => {};
-    try {
+    using _printed = captureConsole();
+    {
       await assertRejects(
         afterBuild(BUDGETS),
         Error,
         'over the size budget: thumb/1.webp is 0.1 kB',
       );
       await afterBuild([BUDGETS[0]])(); // the JavaScript alone is within its limit
-    } finally {
-      console.log = log;
     }
   }));

@@ -179,8 +179,19 @@ Conventions:
   ([`script/ingest/ingest_pipeline_test.ts`](../script/ingest/ingest_pipeline_test.ts)) build a
   throwaway collection in a temporary folder with tiny real images, run the real transcoder, and
   delete it.
-- **Fake the edges, not the logic.** Stub `fetch`, pass in a fake `git`, use a temporary directory;
-  run the real code in between.
+- **Fake the edges, not the logic,** with the kit in [`src/testing/fakes/`](../src/testing/fakes/),
+  and run the real code in between. Each fake undoes itself when its `using` block ends, so a test
+  never restores anything in a `finally`; a contract test fails on a global swapped by hand:
+
+  ```ts
+  using fetch = fakeFetch({ '/stats.json': inTurn(status(500), json(stats)) }); // fetch.calls
+  using warnings = captureConsole((line) => line.includes('readonly')); // warnings.lines
+  await using dir = await tempDir('ingest'); // dir.path, dir.join('a.png')
+  await settle(); // every settled promise has run, and Vue has drawn it
+  ```
+
+  A fake kept only for its cleanup is named with a leading `_` (`using _fetch = …`). The scripts'
+  outside world is `fakeIo` instead (below).
 - **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI
   runs the suite in four.
 - **A test must be able to fail.** After writing one, break the code it covers on purpose and

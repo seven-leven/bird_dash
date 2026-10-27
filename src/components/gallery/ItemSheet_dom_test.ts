@@ -6,6 +6,7 @@ import ItemSheet from './ItemSheet.vue';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
 import type { CollectionItem } from '../../types/index.ts';
 import { mountComponent } from '../../testing/mountComponent.ts';
+import { settle } from '../../testing/settle.ts';
 
 const birds = makeCollection('birds', {
   label: 'Birds',
@@ -164,18 +165,13 @@ function fakeClipboard(refuses = false) {
   return copied;
 }
 
-const afterShare = async () => {
-  await new Promise((r) => setTimeout(r, 0));
-  await nextTick();
-};
-
 test("sharing a drawing copies its link preview's address, and says so", async () => {
   const copied = fakeClipboard();
   const { host, item } = mount(goose);
   const button = shareButton(host)!;
   assertEquals(button.textContent!.trim(), 'Share');
   button.click();
-  await afterShare();
+  await settle();
   assertEquals(copied, [new URL('birds/002/', location.href.split('#')[0]).href]);
   // A short word on the button keeps it on the links' line; a screen reader hears it whole.
   assertEquals(button.textContent!.trim(), 'Copied');
@@ -190,7 +186,7 @@ test('when the clipboard refuses, the button says it could not copy', async () =
   fakeClipboard(true);
   const { host } = mount(goose);
   shareButton(host)!.click();
-  await afterShare();
+  await settle();
   assertEquals(shareButton(host)!.textContent!.trim(), "Couldn't copy");
   assertEquals(host.querySelector('[role="status"]')!.textContent, "Couldn't copy the link");
 });
