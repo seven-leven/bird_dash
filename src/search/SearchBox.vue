@@ -1,7 +1,7 @@
 <!-- components/search/SearchBox.vue -->
 <template>
   <!-- Width is set by the header (full row on phones, capped from md up). -->
-  <div class="relative min-w-0 transition-[max-width] duration-fast" ref="searchWrapperRef">
+  <div class="relative min-w-0 transition-[max-width] duration-fast" ref="wrapperEl">
     <!-- ==================== INPUT FIELD ==================== -->
     <div class="relative w-full">
       <!-- Search Icon -->
@@ -11,7 +11,7 @@
 
       <!-- Input -->
       <input
-        ref="searchInputRef"
+        ref="inputEl"
         type="text"
         role="combobox"
         aria-label="Search all collections"
@@ -62,74 +62,39 @@
     <!-- Announces the result count to screen readers as the query changes -->
     <div class="sr-only" role="status" aria-live="polite">{{ liveMessage }}</div>
 
-    <!-- ==================== DROPDOWN ==================== -->
-    <Transition v-bind="dropdownTransition">
-      <div
-        v-if="shouldShowDropdown"
-        class="absolute right-0 top-full mt-1.5 w-full md:min-w-90 max-w-130
-               rounded-card border shadow-float z-50 overflow-hidden
-               bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
-      >
-        <!-- Header -->
-        <SearchSummary :count="globalResultCount" :drawn="globalDrawnCount" />
-
-        <!-- States -->
-        <EmptyState v-if="globalResultCount === 0" :title="`No matches for '${query}'`" class="py-6">
-          <template #icon>
-            <Icon name="noResults" class="size-6" />
-          </template>
-        </EmptyState>
-
-        <div
-          v-else
-          id="global-search-listbox"
-          role="listbox"
-          aria-label="Search results"
-          class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800"
-        >
-          <SearchResults
-            :results="visibleResults"
-            :focused-index="focusedIndex"
-            :get-flat-index="getFlatIndex"
-            :highlight="highlight"
-            @mouseenter="focusedIndex = $event"
-            @select="onSelectResult"
-            @expand="expandGroup"
-          />
-        </div>
-
-        <!-- Keyboard Hints -->
-        <SearchKeyHints />
-      </div>
-    </Transition>
+    <SearchDropdown
+      :open="shouldShowDropdown"
+      :query="query"
+      :results="visibleResults"
+      :count="globalResultCount"
+      :drawn="globalDrawnCount"
+      :focused-index="focusedIndex"
+      :get-flat-index="getFlatIndex"
+      :highlight="highlight"
+      @focus="focusedIndex = $event"
+      @select="onSelectResult"
+      @expand="expandGroup"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import type { SearchResult } from '../types/index.ts';
 import { matches } from '../domain/countWords.ts';
 
-// Composables
 import { useResultKeys } from './useResultKeys.ts';
 import { useHighlight } from './useHighlight.ts';
 import { useClickOutside } from '../browser/useClickOutside.ts';
+import { useFocusShortcut } from '../browser/useFocusShortcut.ts';
 import { COLLAPSED_SIZE, collapseGroups } from '../domain/collapseGroups.ts';
 
-// Stores
 import { useSearchStore } from './searchStore.ts';
 import { useActions } from '../app/actions.ts';
 
-// Shared UI
 import Icon from '../ui/Icon.vue';
-import EmptyState from '../ui/EmptyState.vue';
-import SearchSummary from './SearchSummary.vue';
-import SearchResults from './SearchResults.vue';
-import SearchKeyHints from './SearchKeyHints.vue';
+import SearchDropdown from './SearchDropdown.vue';
 
-// ---------------------------------------------------------------------------
-// STORES
-// ---------------------------------------------------------------------------
 const {
   query,
   dropdownOpen,
@@ -141,15 +106,9 @@ const {
 } = useSearchStore();
 const { selectGlobalResult } = useActions();
 
-// ---------------------------------------------------------------------------
-// REFS
-// ---------------------------------------------------------------------------
-const searchInputRef = ref<HTMLInputElement | null>(null);
-const searchWrapperRef = ref<HTMLElement | null>(null);
+const inputEl = ref<HTMLInputElement | null>(null);
+const wrapperEl = ref<HTMLElement | null>(null);
 
-// ---------------------------------------------------------------------------
-// COMPOSABLES
-// ---------------------------------------------------------------------------
 // Long groups start collapsed ("Show 32 more in Birds") so the next collection
 // is not buried; a new query collapses them again. The arrow keys move through
 // what is listed, so navigation works on the visible groups.
@@ -160,30 +119,16 @@ watch(query, () => {
 });
 
 const { focusedIndex, getFlatIndex, moveFocus, resetFocus, getFocusedResult } =
-  useResultKeys(() => visibleResults.value, () => searchWrapperRef.value);
+  useResultKeys(() => visibleResults.value, () => wrapperEl.value);
 
 const { highlightText } = useHighlight();
 const highlight = (text: string) => highlightText(text, query.value);
-useClickOutside(() => searchWrapperRef.value, closeDropdown);
+useClickOutside(() => wrapperEl.value, closeDropdown);
 
-// ---------------------------------------------------------------------------
-// KEYBOARD SHORTCUT (Ctrl/Cmd + K)
-// ---------------------------------------------------------------------------
+// Ctrl+K (⌘K on a Mac) finds the box from anywhere; the hint in it says which.
 const isMac = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
+useFocusShortcut('k', () => inputEl.value);
 
-function onGlobalKeydown(e: KeyboardEvent) {
-  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-    e.preventDefault();
-    searchInputRef.value?.focus();
-  }
-}
-
-onMounted(() => window.addEventListener('keydown', onGlobalKeydown));
-onUnmounted(() => window.removeEventListener('keydown', onGlobalKeydown));
-
-// ---------------------------------------------------------------------------
-// COMPUTED
-// ---------------------------------------------------------------------------
 const hasQuery = computed(() => query.value.length > 0);
 const shouldShowDropdown = computed(() => dropdownOpen.value && query.value.trim() !== '');
 
@@ -200,18 +145,6 @@ const liveMessage = computed(() => {
   return n === 0 ? 'No matches found' : matches(n);
 });
 
-const dropdownTransition = {
-  enterActiveClass: 'transition duration-fast ease-out',
-  enterFromClass: 'opacity-0 translate-y-1 scale-95',
-  enterToClass: 'opacity-100 translate-y-0 scale-100',
-  leaveActiveClass: 'transition duration-fast ease-in',
-  leaveFromClass: 'opacity-100 translate-y-0 scale-100',
-  leaveToClass: 'opacity-0 translate-y-1 scale-95',
-} as const;
-
-// ---------------------------------------------------------------------------
-// HANDLERS
-// ---------------------------------------------------------------------------
 function onInput(value: string) {
   resetFocus();
   setQuery(value); // opens the dropdown when the query is non-empty
@@ -229,7 +162,7 @@ function closeDropdown() {
 function clearSearch() {
   setQuery('');
   setDropdown(false);
-  searchInputRef.value?.focus();
+  inputEl.value?.focus();
 }
 
 // Reveal the rest of a group, put the keyboard cursor on the first newly shown
@@ -237,9 +170,9 @@ function clearSearch() {
 async function expandGroup(collectionId: string) {
   expandedGroups.value = new Set([...expandedGroups.value, collectionId]);
   focusedIndex.value = getFlatIndex(collectionId, COLLAPSED_SIZE);
-  searchInputRef.value?.focus();
+  inputEl.value?.focus();
   await nextTick();
-  searchWrapperRef.value
+  wrapperEl.value
     ?.querySelector(`[data-result-idx="${focusedIndex.value}"]`)
     ?.scrollIntoView({ block: 'nearest' });
 }

@@ -137,20 +137,14 @@
 <script setup lang="ts">
 import ViewerDetails from './ViewerDetails.vue';
 import Icon from '../ui/Icon.vue';
-import type { Item, Collection } from '../types/index.ts';
-import { useViewer } from './useViewer.ts';
+import type { Item } from '../types/index.ts';
+import { useViewer, type ViewerProps } from './useViewer.ts';
 import { useSearchStore } from '../search/searchStore.ts';
 
 // When a search narrows what the viewer pages through, the counter says so.
 const { query } = useSearchStore();
 
-const props = defineProps<{
-  isOpen:           boolean;
-  item?:            Item;
-  drawnItems:       Item[];
-  fullImageBaseUrl: string;
-  collection:       Collection;
-}>();
+const props = defineProps<ViewerProps>();
 
 const emit = defineEmits<{
   (e: 'close'): void;

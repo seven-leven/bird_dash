@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertThrows } from '@std/assert';
-import { tileImage, toCollection, toCollectionItems } from './toCollectionItems.ts';
+import { toCollection, toCollectionItems } from './toCollectionItems.ts';
 import { makeItem } from '../testing/fixtures.ts';
 
 const col = { id: 'birds', imageBase: '/thumb/birds/' };
@@ -103,22 +103,6 @@ test('toCollection: derives the data and image URLs from the id and base', () =>
   assertEquals(config.fullImageBase, './full/sharks/');
   const item = makeItem({ scientificName: 'Carcharhinus melanopterus' });
   assertEquals(config.links[0].url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');
-});
-
-test('tileImage: a drawing is the same in both themes; a placeholder follows the theme', () => {
-  const drawn = makeItem({ drawnTime: 1, imageUrl: '/thumb/x/001.webp' });
-  assertEquals(tileImage(drawn, false), '/thumb/x/001.webp');
-  assertEquals(tileImage(drawn, true), '/thumb/x/001.webp');
-
-  const undrawn = makeItem({ isDrawn: false });
-  assertEquals(tileImage(undrawn, false), undrawn.placeholderUrl);
-  assertEquals(tileImage(undrawn, true), undrawn.placeholderDarkUrl);
-});
-
-test('tileImage: a drawing that failed to load falls back to the themed placeholder', () => {
-  const drawn = makeItem({ drawnTime: 1 });
-  assertEquals(tileImage(drawn, false, true), drawn.placeholderUrl);
-  assertEquals(tileImage(drawn, true, true), drawn.placeholderDarkUrl);
 });
 
 test('toCollectionItems: missing fields become empty, a non-numeric id sorts as 0, a bad date as 0', () => {

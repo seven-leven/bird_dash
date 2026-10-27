@@ -6,14 +6,18 @@ import { useDrawingNav } from './useDrawingNav.ts';
 import { useZoomPan } from './useZoomPan.ts';
 import type { Collection, Item } from '../types/index.ts';
 
+/** The viewer component's props, typed once: Viewer.vue declares them with this. */
+export interface ViewerProps {
+  isOpen: boolean;
+  item?: Item;
+  /** What it pages through, in time order. */
+  drawnItems: Item[];
+  fullImageBaseUrl: string;
+  collection: Collection;
+}
+
 interface ViewerOptions {
-  props: {
-    isOpen: boolean;
-    item?: Item;
-    drawnItems: Item[];
-    fullImageBaseUrl: string;
-    collection: Collection;
-  };
+  props: ViewerProps;
   emit: {
     (e: 'close'): void;
     (e: 'update:item', item: Item): void;

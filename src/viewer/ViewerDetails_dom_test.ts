@@ -194,7 +194,8 @@ test('Share sits at the end of the Learn more row, after the links that leave th
   const { host } = mount(goose);
   const row = shareButton(host)!.parentElement!;
   assertEquals(row.firstElementChild!.textContent!.trim().startsWith('eBird'), true);
-  assertEquals(row.lastElementChild, shareButton(host));
+  // Its note for screen readers follows it, unseen; Share is the row's last control.
+  assert([...row.querySelectorAll('a, button')].at(-1) === shareButton(host));
   assertStringIncludes(shareButton(host)!.className, 'ml-auto');
 });
 

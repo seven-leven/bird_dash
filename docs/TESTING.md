@@ -98,7 +98,7 @@ The helpers are in [`src/testing/`](../src/testing/).
 ### Which tier?
 
 - Can it be a plain function with inputs and outputs? **Unit.** If the code is tangled with the
-  browser, first move the logic into `src/lib/` and test that.
+  browser, first move the logic into `src/domain/` and test that.
 - Does it touch the DOM, the address bar, focus or `localStorage`? **Dom.** The name is enough: a
   `_dom_test` file runs in happy-dom, and `testing/domSetup.ts` puts the address, storage and page
   back as they started before each of its tests.
@@ -115,18 +115,18 @@ The helpers are in [`src/testing/`](../src/testing/).
 Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
 belongs to one area, by its folder ([`script/testRunner/areas.ts`](../script/testRunner/areas.ts)):
 
-| Area                          | Folders                                                                            | Protects                                                |
-| ----------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Site: data and search         | `src/domain`, `src/lib` (but the icons), `src/composables/collection` and `search` | Loading collections, filtering, grouping, search        |
-| Site: state and routing       | `src/stores`, `src/composables/core`, `src/pages.ts`                               | The stores, shareable links, the pages, theme, accent   |
-| Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`      | The lightbox, scroll-spy, icons and logo                |
-| Site: journeys                | `src/journeys`, `src/App.vue`                                                      | A whole visit, from first load to the back button       |
-| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders              | Ingest, the integrity check, the files in `public/`     |
-| Version and changelog         | `script/version`, `script/changelog`                                               | The version in the footer, the changelog task           |
-| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                              | The runner and its reports, guide images, the docs site |
+| Area                          | Folders                                                               | Protects                                                |
+| ----------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------- |
+| Site: data and search         | `src/domain`, `src/data`, `src/search`                                | The archive's rules, loading collections, search        |
+| Site: state and routing       | `src/browser`, `src/app`, `src/shell`, `src/pages.ts`                 | The shell and its stores, links, the pages, theme       |
+| Site: viewer and interface    | `src/viewer`, `src/gallery`, `src/about`, `src/ui`, `src/styles`      | The viewer, the gallery, About, icons and logo          |
+| Site: journeys                | `src/journeys`, `src/App.vue`                                         | A whole visit, from first load to the back button       |
+| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders | Ingest, the integrity check, the files in `public/`     |
+| Version and changelog         | `script/version`, `script/changelog`                                  | The version in the footer, the changelog task           |
+| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                 | The runner and its reports, guide images, the docs site |
 
-When two areas' folders overlap, the longer path wins: `src/lib/icons.ts` is interface, the rest of
-`src/lib` is data.
+When two areas' folders overlap, the longer path wins: the generated data files in `script/generate`
+(stats, placeholders) are pipeline, the rest of the folder tooling.
 
 A new folder must be added to an area, or a contract test fails.
 
@@ -251,7 +251,7 @@ reaches, such as the header before any collection is known) is a component test,
 
 A `.vue` component is tested by mounting it into a fake DOM and checking what a visitor would get:
 its text, roles and labels, what a click or a key does, what it emits. See
-[`ItemTile_dom_test.ts`](../src/components/gallery/ItemTile_dom_test.ts):
+[`ItemTile_dom_test.ts`](../src/gallery/ItemTile_dom_test.ts):
 
 - Name the file `_dom_test.ts`. That gives it a document from the start, which Vue's DOM renderer
   looks up when it is first imported.
@@ -385,7 +385,7 @@ files included, with the lines to look at:
 
 ```
 not fully covered (1):
-  src/components/gallery/ItemSheet.vue
+  src/viewer/ViewerDetails.vue
     branches 21/23, missed on: 141, 152
 ```
 

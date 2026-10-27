@@ -1,21 +1,7 @@
-<!-- components/gallery/Gallery.vue -->
+<!-- gallery/Gallery.vue: the collection on screen, in sections, or why it is not. -->
 <template>
   <div class="space-y-12">
-    <!-- Loading: tiles shaped like the real ones (image and caption), so nothing jumps -->
-    <div
-      v-if="loadState.loading"
-      class="tile-grid"
-      aria-busy="true"
-    >
-      <div
-        v-for="n in 10"
-        :key="n"
-        class="rounded-card overflow-hidden animate-pulse bg-slate-200 dark:bg-slate-800"
-      >
-        <div class="aspect-square" />
-        <div class="h-14" />
-      </div>
-    </div>
+    <GallerySkeleton v-if="loadState.loading" aria-busy="true" />
 
     <!-- Failed to load: name what failed, and offer to try again -->
     <EmptyState
@@ -82,40 +68,14 @@
         </p>
       </div>
 
-      <!-- Grouped Sections. The section is what the scroll-spy watches; its heading
-           sticks to the top while you are in it, so it is the only label it needs. -->
-      <section
+      <GallerySection
         v-for="(items, groupName, groupIndex) in activeData.grouped"
         :key="groupName"
-        :ref="el => registerHeader(String(groupName), el)"
-        class="mb-12"
-      >
-        <!-- A stuck element stays clear of its scroll container's padding (p-4 / sm:p-6 in
-             AppShell.vue), so the negative top cancels it and the heading meets the top edge. -->
-        <h2
-          class="sticky -top-4 sm:-top-6 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-4 text-base font-semibold
-                 flex items-center justify-between gap-3 border-b transition-colors duration-fast
-                 bg-slate-50/95 text-slate-800 border-slate-200 backdrop-blur-sm
-                 dark:bg-slate-950/95 dark:text-slate-100 dark:border-slate-800"
-        >
-          <span class="truncate">{{ groupName }}</span>
-          <span class="with-icon shrink-0 text-xs font-normal tabular-nums text-muted">
-            <Icon name="pencil" aria-hidden="true" />
-            {{ sectionCount(String(groupName), items.length) }}
-          </span>
-        </h2>
-
-        <div class="tile-grid">
-          <ItemTile
-            v-for="(item, itemIndex) in items"
-            :key="item.id"
-            :item="item"
-            :dark="theme.isDark"
-            :eager="groupIndex === 0 && itemIndex < 6"
-            @card-click="openItem($event)"
-          />
-        </div>
-      </section>
+        :name="String(groupName)"
+        :items="items"
+        :count="sectionCount(String(groupName), items.length)"
+        :first="groupIndex === 0"
+      />
 
       <AppFooter />
     </template>
@@ -124,7 +84,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import ItemTile from './ItemTile.vue';
+import GallerySection from './GallerySection.vue';
+import GallerySkeleton from './GallerySkeleton.vue';
 import EmptyState from '../ui/EmptyState.vue';
 import RetryButton from '../ui/RetryButton.vue';
 import DrawnFilter from '../ui/DrawnFilter.vue';
@@ -134,13 +95,10 @@ import CollectionIcon from '../ui/CollectionIcon.vue';
 import { useCollectionsStore } from './collectionsStore.ts';
 import { useViewStore } from './viewStore.ts';
 import { useSearchStore } from '../search/searchStore.ts';
-import { useThemeStore } from '../shell/themeStore.ts';
-import { useViewerStore } from '../viewer/viewerStore.ts';
 import { drawings, drawnOf } from '../domain/countWords.ts';
 import { reloadPage } from '../browser/reloadPage.ts';
 
 const { loadState, activeCollection } = useCollectionsStore();
-// The template registers each section with the view store for the scroll-spy.
 const {
   activeData,
   counts,
@@ -148,13 +106,10 @@ const {
   drawnOnly,
   showPlanned,
   showsDrawnFilter,
-  registerHeader,
   setDrawnOnly,
   showUndrawn,
 } = useViewStore();
 const { query, clear } = useSearchStore();
-const { theme } = useThemeStore();
-const { open: openItem } = useViewerStore();
 
 // ---------------------------------------------------------------------------
 // COMPUTED

@@ -5,6 +5,7 @@ import AppShell from './app/AppShell.vue';
 import EmptyState from './ui/EmptyState.vue';
 import Icon from './ui/Icon.vue';
 import RetryButton from './ui/RetryButton.vue';
+import GallerySkeleton from './gallery/GallerySkeleton.vue';
 import { useHashRoute } from './app/useHashRoute.ts';
 import { createThemeStore, provideThemeStore } from './shell/themeStore.ts';
 import { createLayoutStore, provideLayoutStore } from './shell/layoutStore.ts';
@@ -114,16 +115,7 @@ onMounted(async () => {
        on screen; screen readers are told what is happening. -->
   <div v-else class="min-h-screen bg-slate-50 dark:bg-slate-950" aria-busy="true">
     <div class="h-12 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950" />
-    <div class="tile-grid p-4 sm:p-6">
-      <div
-        v-for="n in 10"
-        :key="n"
-        class="rounded-card overflow-hidden animate-pulse bg-slate-200 dark:bg-slate-800"
-      >
-        <div class="aspect-square" />
-        <div class="h-14" />
-      </div>
-    </div>
+    <GallerySkeleton class="p-4 sm:p-6" />
     <p class="sr-only" role="status">Loading the gallery</p>
   </div>
 </template>

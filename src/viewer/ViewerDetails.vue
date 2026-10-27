@@ -119,19 +119,15 @@
         >
           {{ link.label }}
         </ExternalLink>
-        <!-- Hands out the drawing's link preview, which has its own title and image; at the
-             row's far end, in the accent, as it stays within the site. -->
-        <button
+        <!-- At the row's far end. -->
+        <ViewerShare
           v-if="item.isDrawn"
-          class="ml-auto focus-ring rounded-control inline-flex items-center gap-1 text-sm font-medium
-                 text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
-          @click="share"
-        >
-          <Icon name="share" class="size-3" />
-          {{ shareLabel }}
-        </button>
+          :key="item.id"
+          :collection-id="collection.id"
+          :item-id="item.itemId"
+          :title="item.commonName"
+        />
       </div>
-      <span role="status" class="sr-only">{{ shareNote }}</span>
     </div>
 
   </div>
@@ -140,9 +136,8 @@
 import ExternalLink from '../ui/ExternalLink.vue';
 import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
-import Icon from '../ui/Icon.vue';
 import { noteSegments } from '../domain/noteLinks.ts';
-import { previewUrl, type ShareOutcome, shareLink } from './shareLink.ts';
+import ViewerShare from './ViewerShare.vue';
 import { monthName } from '../domain/dates.ts';
 import type { Item, Collection } from '../types/index.ts';
 
@@ -160,22 +155,6 @@ const emit = defineEmits<{
 const drawnMonth = computed(() =>
   props.item.drawnTime ? monthName(new Date(props.item.drawnTime)) : ''
 );
-
-// Sharing: a phone's share sheet, else the link copied. What happened shows on the button,
-// in a word that keeps it on the links' line, until the next drawing; a screen reader hears
-// the whole sentence.
-const SHARE_OUTCOMES: Record<ShareOutcome, { label: string; note: string }> = {
-  sheet: { label: 'Share', note: '' },
-  copied: { label: 'Copied', note: 'Link copied' },
-  failed: { label: "Couldn't copy", note: "Couldn't copy the link" },
-};
-const shareOutcome = ref<ShareOutcome>('sheet');
-const shareLabel = computed(() => SHARE_OUTCOMES[shareOutcome.value].label);
-const shareNote = computed(() => SHARE_OUTCOMES[shareOutcome.value].note);
-async function share() {
-  const url = previewUrl(location.href, props.collection.id, props.item.itemId);
-  shareOutcome.value = await shareLink(url, props.item.commonName);
-}
 
 const note = computed(() => props.item.illustratorNote ?? '');
 
@@ -197,11 +176,8 @@ const isLong = computed(() =>
 );
 const expanded = ref(false);
 const folded = computed(() => isLong.value && !expanded.value);
-// Each drawing's note starts folded, and its share button fresh.
-watch(() => props.item.id, () => {
-  expanded.value = false;
-  shareOutcome.value = 'sheet';
-});
+// Each drawing's note starts folded.
+watch(() => props.item.id, () => (expanded.value = false));
 
 // Links come straight from the collection config
 const links = computed(() => props.collection.links);

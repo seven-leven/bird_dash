@@ -17,6 +17,16 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | refactor: the site by feature (site overhaul, phases 2 to 5). `src/` is now
+  `domain/`, `data/` (the network), `browser/`, `ui/` (shared components that inject no store) and
+  one folder per feature: `gallery/`, `viewer/`, `search/`, `about/`, `shell/`, with `app/` over
+  them; `components/`, `composables/`, `stores/` and `lib/` are gone. The ui store is three
+  (`theme`, `layout`, `view`), the gallery's derivations and scroll-spy live in the view store, the
+  search store finds its own results, and the overlay is the `viewer` store. Everything is named
+  once: the viewer is `Viewer` and `useViewer`, the month view is `'month'`, the counts are
+  `counts`. Folded: `ExternalLink`, `RetryButton`, `GallerySkeleton`, the drawn filter's wiring,
+  `currentPage`, the viewer's props. The About page is six sections, and no file is over 200 lines.
+  The site looks and behaves the same; the journeys run after every phase
 - 2026-10-27 | refactor: `src/domain/`, the archive's rules in one place (site overhaul, phase 1).
   The pure half of `lib/` moves there: names, counts and their wording (`countWords`, was
   `formatCount`), groups, notes, queries, view names, and the items and collections themselves

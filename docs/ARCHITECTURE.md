@@ -52,21 +52,27 @@ public/                 Static assets, served as-is
   thumb/<id>/           Grid thumbnails (generated)
   placeholders/<id>.webp  Shown for undrawn items (<id>-dark.webp in the dark theme)
 src/
-  components/
-    layout/             Chrome, TopBar, SideNav — the app shell
-    about/              The About page (#about), numbered from stats.json
-    gallery/            Grid, tiles, lightbox, info sheet
-    search/             Global search dropdown and sub-components
-    icons/              Icon, CollectionIcon and LogoMark (the drawings are in lib/)
-    ui/                 Reusable primitives (IdBadge, EmptyState)
-  stores/               Domain state — search, ui, collections, overlay, stats — each with readonly
-                        state + actions, shared through provide/inject (defineInjection)
-  composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
+  App.vue               Makes the stores, provides them, starts the router (phase 6 moves it to app/)
+  app/                  AppShell (the frame), the router, actions that touch more than one store
+  shell/                TopBar, CollectionMenu, SideNav, AppFooter; the theme and layout stores
+  gallery/              Gallery, its sections and tiles, the scroll-spy, the view over a
+                        collection; the collections and view stores
+  viewer/               Viewer, ViewerDetails, ViewerShare; zoom, paging, the dialog's keys;
+                        the viewer store
+  search/               SearchBox and its dropdown; finding, folding and highlighting results;
+                        the search store
+  about/                The About page (#about) in sections, numbered from stats.json; the stats store
+  ui/                   Shared components that take props and inject no store (Icon, LogoMark,
+                        IdBadge, EmptyState, DrawnFilter, ExternalLink, RetryButton), and the icon
+                        and logo drawings (icons.ts, logo.ts) that the scripts use too
+  browser/              The browser: theme, breakpoint, debounce, click outside, the accent,
+                        the Ctrl+K shortcut, reloading, defineInjection
+  data/                 The network: fetchJson, the collection and stats loaders, files.ts (the
+                        shapes of the files in public/, which the scripts share)
   domain/               The archive's rules, pure: items and collections, names, counts and their
                         wording, dates, the project's links (the scripts use some of it too)
-  lib/                  The browser and network helpers, and the icon and logo drawings
-                        (icons.ts, logo.ts) that both the site and the scripts use
-  types/                Shared TypeScript types
+  journeys/             Whole visits through the real app (TESTING.md, the journey tier)
+  types/                Types still shared from one place, until the site overhaul's phase 8
   styles/               main.css (Tailwind), tokens.css and accents.css (shared with the docs site), fonts/
   testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
                         The tests themselves sit next to the code they cover (see TESTING.md)
@@ -89,38 +95,39 @@ docs/                   Reference guides at the top level; plans/ for work not d
 
 Imports only point leftwards in this list; nothing imports from a layer to its right.
 
-| Layer            | Folder             | What lives there                                                                                                                                                |
-| ---------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Types            | `src/types/`       | Shapes only. `data.ts` is the raw files; `collections.ts` the app's own                                                                                         |
-| Domain           | `src/domain/`      | The archive's rules, plain TypeScript: items and collections, names, counts and their wording, dates, search groups. A contract test keeps it pure              |
-| Helpers          | `src/lib/`         | The browser and the network (`fetchJson`, the accent, the tile ring) until phase 2 moves them, and the icon and logo drawings, which the build scripts read too |
-| Composables      | `src/composables/` | Reusable logic that uses Vue reactivity or the browser: loading and caching, filtering and grouping, the lightbox, scroll-spy, URL routing                      |
-| Stores           | `src/stores/`      | The app's state, one per domain, each exposing read-only state and actions                                                                                      |
-| Components       | `src/components/`  | Templates. They read stores and call actions; they hold no shared state                                                                                         |
-| Composition root | `src/App.vue`      | Creates the stores, provides them, starts the router                                                                                                            |
+| Layer            | Folder                                     | What lives there                                                                            |
+| ---------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Domain           | `src/domain/`                              | The archive's rules, plain TypeScript. A contract test keeps it pure                        |
+| Data and browser | `src/data/`, `src/browser/`                | The network (only `data/` fetches) and the browser's APIs                                   |
+| Shared UI        | `src/ui/`                                  | Components that take props and emit events, and inject no store; the icon and logo drawings |
+| Features         | `src/{gallery,viewer,search,about,shell}/` | Each feature's components, composables and store. A feature does not import another's code  |
+| App              | `src/app/`, `src/App.vue`                  | The frame, the router, the actions across stores; `App.vue` makes and provides the stores   |
 
 ### Stores
 
-There are five, created in dependency order and shared with `provide`/`inject` (through
-`defineInjection`, which throws if a store is used outside its provider):
+One per job, made in dependency order in `App.vue` and shared with `provide`/`inject` (through
+`defineInjection`, which throws if a store is used outside its provider). A store that needs
+another's state is handed it, so no feature imports another:
 
 ```
-search ──(debounced query)──┐
-                            ├──► collections ──(drawn items)──► overlay
-ui ─────(view mode)─────────┘
-stats   (on its own)
+collections ──(collections, items by collection)──► search ──(debounced query)──┐
+     └──────────────(the items on screen)────────────────────────────────────────┼──► view ──(drawings)──► viewer
+layout ──(the scroll element, narrow, close the sidebar)──────────────────────────┘
+theme, stats   (on their own)
 ```
 
-| Store         | Owns                                                                                |
-| ------------- | ----------------------------------------------------------------------------------- |
-| `search`      | The query and whether the dropdown is open                                          |
-| `ui`          | Sidebar, theme, view mode (group or date), scroll-spy                               |
-| `collections` | The collection list, the active one, loaded items, and every view derived from them |
-| `overlay`     | Which item is open in the lightbox                                                  |
-| `stats`       | The archive's numbers (`stats.json`), loaded the first time a page asks, then kept  |
+| Store         | Folder     | Owns                                                                               |
+| ------------- | ---------- | ---------------------------------------------------------------------------------- |
+| `theme`       | `shell/`   | Light or dark, remembered once chosen                                              |
+| `layout`      | `shell/`   | Whether the window is narrow, the sidebar drawer, the page, the scroll element     |
+| `collections` | `gallery/` | The collections, the one on screen and its load state, every list loaded so far    |
+| `view`        | `gallery/` | Group or month, drawn only, the planned list; the sections, counts and scroll-spy  |
+| `search`      | `search/`  | The query, whether the results are open, and the results                           |
+| `viewer`      | `viewer/`  | Whether the viewer is open, and on which drawing                                   |
+| `stats`       | `about/`   | The archive's numbers (`stats.json`), loaded the first time a page asks, then kept |
 
-Actions that touch more than one store live in [`src/stores/actions.ts`](../src/stores/actions.ts)
-(`switchCollection`, `selectGlobalResult`).
+Actions that touch more than one store live in [`src/app/actions.ts`](../src/app/actions.ts)
+(`selectCollection`, `selectGlobalResult`, `ringTile`).
 
 ### Data flow
 
@@ -132,14 +139,14 @@ State moves one way:
    key, timestamp, names (`domain/itemNames.ts`) and search text are precomputed. Components render
    an item's `names` list and never read a name field by name.
 3. The query and view mode feed computed values that produce the grid sections, sidebar entries,
-   counts and the lightbox order. Nothing is stored that can be derived.
+   counts and the viewer's order. Nothing is stored that can be derived.
 4. Components render those values and call actions in response to input.
 
 ### The URL
 
-[`useHashRoute`](../src/composables/core/useHashRoute.ts) is the only code that reads or writes the
-address. The grammar is `#<collection>`, `#<collection>/<item>` or `#<page>`. State changes are
-mirrored to the hash, and a hash change (a deep link, the back button) is applied to the stores.
+[`useHashRoute`](../src/app/useHashRoute.ts) is the only code that reads or writes the address. The
+grammar is `#<collection>`, `#<collection>/<item>` or `#<page>`. State changes are mirrored to the
+hash, and a hash change (a deep link, the back button) is applied to the stores.
 
 The pages that are not a collection (today, About) are one list, [`src/pages.ts`](../src/pages.ts):
 an id, a label and a component each. The route, the top bar's tabs, the collection menu and the main
@@ -188,11 +195,10 @@ only through `Io`.
 
 ## Rules for the site's code
 
-Where `src/` is going: the site overhaul ([plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)) moves the
-code to these rules one phase at a time, the site looking and behaving the same throughout. Until a
-phase lands, "The site, layer by layer" above describes the code as it is; new code follows these
-where the folder it needs already exists. The words are in [GLOSSARY.md](GLOSSARY.md); the choices
-behind them are in [DECISIONS.md](DECISIONS.md) ("Folders by feature", "One word per idea").
+The site overhaul ([plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)) moved the code to these rules
+(phases 1 to 5); phases 6 to 8 finish `app/`, the styles and the checks that keep them. The words
+are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md](DECISIONS.md)
+("Folders by feature", "One word per idea").
 
 ### Principles
 
@@ -237,9 +243,8 @@ behind them are in [DECISIONS.md](DECISIONS.md) ("Folders by feature", "One word
 
 ## Known gaps
 
-- Eleven `.vue` files (the shell, search, the viewer component, `LogoMark`) have no test of their
-  own, and a `.vue` file counts toward coverage only once a test imports it; the test overhaul's
-  phase 4 closes this ([plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md)).
+- Some `.vue` files have no test of their own; the journeys load and cover every one, and the test
+  overhaul's phase 4 gives each its own ([plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md)).
 - `vite.config.ts` imports `script/version/version.ts` and the build's plugins in `script/build/`.
   They are the places the site's build depends on the scripts, kept so the version formula and each
   build step exist once.

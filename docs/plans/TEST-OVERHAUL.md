@@ -223,20 +223,24 @@ Production code changes only where a test cannot reach it otherwise, and says so
       a journey leaves open: every empty, loading and error state, the ARIA attributes, the keys,
       the emitted events. Mounted with `mountComponent` and fake stores (or `appStores()`); tests
       check what a visitor sees and does (text, ARIA state, clicks, events), not the markup. Phase 3
-      started six (`TopBar`, `SideNav`, `GalleryContent`, `LightBox`, `SearchResultsList`,
-      `LogoMark`) with the states journeys cannot reach; still without a file of their own:
-      `App.vue` (the journeys cover its loading, error and loaded screens), `Chrome`,
-      `GlobalSearch`, `SearchDropdownHeader`, `SearchKeyboardHints`.
+      started six (`TopBar`, `SideNav`, `Gallery`, `Viewer`, `SearchResults`, `LogoMark`) with the
+      states journeys cannot reach. After the site overhaul's phases 2 to 5, 15 of the 33 `.vue`
+      files have no test of their own: - **never tested alone:** `App.vue` (the journeys cover its
+      loading, error and loaded screens), `app/AppShell`, `search/SearchBox`, `SearchSummary`,
+      `SearchKeyHints`; - **split out of a tested parent, tested through it:** the About page's six
+      sections (`AboutPage_dom_test.ts`), `GallerySection` and `GallerySkeleton` (`Gallery`),
+      `SearchDropdown` (the search journey), `ViewerShare` (`ViewerDetails_dom_test.ts`).
 
-      Written against today's names; the site overhaul moves each test with its component. _Done
+      The second group's tests move to the part they test. _Done
       when_ every `.vue` file has a test beside it.
 
-- [ ] **5. Split and rename.** `useLightbox_dom_test.ts` into one file per composable;
-      `testRunner_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
-      local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer` onto the kit's
-      events; the arbitraries named `any…`; the contracts not tied to a file renamed for what they
-      guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`). _Done when_ no test
-      file is over about 300 lines and every title and file name follows the conventions.
+- [ ] **5. Split and rename.** `useViewer_dom_test.ts` (was `useLightbox_dom_test.ts`) into one file
+      per composable; `testRunner_test.ts` by concern; the 116 `functionName:` titles rewritten as
+      sentences; the 18 local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer`
+      onto the kit's events; the arbitraries named `any…`; the contracts not tied to a file renamed
+      for what they guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`). _Done
+      when_ no test file is over about 300 lines and every title and file name follows the
+      conventions.
 - [ ] **6. The promise map.** Each journey names its promises (`// Keeps: P2, P3`); a contract test
       checks the list in TESTING.md against them. _Done when_ every promise is kept by a test.
 - [ ] **7. A real browser.** Playwright, pinned, on the built `dist/`, as a CI job that does not

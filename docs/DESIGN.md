@@ -99,8 +99,8 @@ the CSS.
 The accent is a signal, not decoration. Reserve it for keyboard focus, the current item, progress,
 search matches, the primary action, and links that move you within the site (in the viewer: the
 group, "#11" in a note, "Read more"), in `accent-700` so they read as text. Links that leave the
-site stay neutral, with `externalLink`. If the accent appears in lots of places at once, it has
-stopped communicating.
+site stay neutral, with `.link-out` (and `ExternalLink`, which opens them in a new tab). If the
+accent appears in lots of places at once, it has stopped communicating.
 
 Never make colour carry meaning alone. A current tab also has a fill and stronger text; colour
 reinforces the state rather than being the only clue.
@@ -352,7 +352,7 @@ reverses the mark onto a solid square. These are variations of one identity, not
 
 ![Logo sheet](assets/logo.png)
 
-The source lives in [`src/lib/logo.ts`](../src/lib/logo.ts). `<LogoMark />` draws it, and `npm run
+The source lives in [`src/ui/logo.ts`](../src/ui/logo.ts). `<LogoMark />` draws it, and `npm run
 design` writes the files to `docs/assets/logo/`.
 
 | Version           | Use                                             | File or implementation            |
@@ -381,7 +381,7 @@ icon.
 
 _P4 One way to do each thing · P5 For everyone, on every screen_
 
-Every interface icon lives in [`src/lib/icons.ts`](../src/lib/icons.ts) and is drawn through `<Icon
+Every interface icon lives in [`src/ui/icons.ts`](../src/ui/icons.ts) and is drawn through `<Icon
 name="…" />`; the logo is the only other SVG in the project. The registry, the icon sheet
 ([`assets/icons.png`](assets/icons.png)) and the guide use the same groups, in the same order:
 

@@ -83,7 +83,7 @@
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
-import { tileImage } from '../domain/toCollectionItems.ts';
+import { tileImage } from '../domain/tileImage.ts';
 import { nameLines } from '../domain/itemNames.ts';
 import { useThemeStore } from '../shell/themeStore.ts';
 import type { Item, SearchResult } from '../types/index.ts';
