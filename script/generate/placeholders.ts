@@ -1,13 +1,13 @@
 /**
  * Draws the placeholder shown for items that are not drawn yet: the collection's
- * line icon (src/lib/icons.ts), once for the light theme (grey on
+ * line icon (src/ui/icons.ts), once for the light theme (grey on
  * white) and once for the dark theme (`<id>-dark.webp`, slate on slate).
  * Written by `npm run generate` (or `npm run generate -- placeholders`).
  */
 import sharp from 'sharp';
-import { ICONS, isIconName } from '../../src/lib/icons.ts';
+import { ICONS, isIconName } from '../../src/ui/icons.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { RawCollectionConfig } from '../../src/types/data.ts';
+import type { CollectionEntry } from '../../src/data/files.ts';
 import { SLATE } from './palette.ts';
 
 /** One image per theme. Light keeps the palette of the silhouettes these replaced. */
@@ -41,7 +41,7 @@ export function drawPlaceholder(iconBody: string, theme: Theme = 'light'): strin
  * an icon is skipped, and `skipped` hears its id.
  */
 export async function writePlaceholders(
-  collections: RawCollectionConfig[],
+  collections: CollectionEntry[],
   dir: string = PATHS.placeholders,
   skipped: (collectionId: string) => void = () => {},
 ): Promise<string[]> {

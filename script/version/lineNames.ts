@@ -17,7 +17,7 @@ import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { eachDrawnItem, readList } from '../lib/lists.ts';
 import { type Io, realIo } from '../lib/io.ts';
 import { dhivehiNames } from '../../src/domain/dhivehiNames.ts';
-import type { RawCollectionData, RawItem } from '../../src/types/data.ts';
+import type { ListEntry, ListFile } from '../../src/data/files.ts';
 
 export interface LineName {
   /** Romanised, as it is shown: "Valu Kukulhu". */
@@ -29,8 +29,8 @@ export interface LineName {
 }
 
 /** Every line name the lists give, in order (pure; `readLineNames` reads the lists). */
-export function lineNames(lists: { id: string; data: RawCollectionData }[]): LineName[] {
-  const drawn: { order: number; item: RawItem }[] = [];
+export function lineNames(lists: { id: string; data: ListFile }[]): LineName[] {
+  const drawn: { order: number; item: ListEntry }[] = [];
   lists.forEach(({ data }, order) => {
     for (const item of eachDrawnItem(data)) drawn.push({ order, item });
   });

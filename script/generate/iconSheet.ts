@@ -1,4 +1,4 @@
-// Draws docs/assets/icons.png: every icon in src/lib/icons.ts, in its group, on the
+// Draws docs/assets/icons.png: every icon in src/ui/icons.ts, in its group, on the
 // same grid as the design guide's icon section.
 import sharp from 'sharp';
 import { PATHS } from '../lib/paths.ts';

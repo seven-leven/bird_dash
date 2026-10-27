@@ -4,8 +4,8 @@ import { assert, assertEquals } from '@std/assert';
 import { COLLECTIONS } from './collections.ts';
 import { readList } from './lists.ts';
 import { readJson } from './fs.ts';
-import type { RawCollectionConfig } from '../../src/types/data.ts';
-import { isIconName } from '../../src/lib/icons.ts';
+import type { CollectionEntry } from '../../src/data/files.ts';
+import { isIconName } from '../../src/ui/icons.ts';
 import { PAGES } from '../../src/pages.ts';
 
 // The app is data-driven: a typo in public/*.json silently breaks routing, search
@@ -30,7 +30,7 @@ test('collections.json: every accent names a palette defined in accents.css', as
   const palettes = new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]));
   assert(palettes.size > 0, 'no [data-accent] palettes found in accents.css');
 
-  const raw = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  const raw = await readJson<CollectionEntry[]>('./public/collections.json');
   for (const col of raw) {
     if (col.accent === undefined) continue; // falls back to the default
     assert(
@@ -41,7 +41,7 @@ test('collections.json: every accent names a palette defined in accents.css', as
 });
 
 test('collections.json: link templates only use known placeholders', async () => {
-  const raw = await readJson<RawCollectionConfig[]>('./public/collections.json');
+  const raw = await readJson<CollectionEntry[]>('./public/collections.json');
   for (const col of raw) {
     // A missing icon falls back to the emoji; a misspelt one would do so silently.
     if (col.icon !== undefined) {

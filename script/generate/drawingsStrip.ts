@@ -6,7 +6,7 @@
 import sharp, { type Sharp } from 'sharp';
 import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { Stats } from '../../src/types/data.ts';
+import type { Stats } from '../../src/data/files.ts';
 
 /** How many drawings, how big each is, and the room around and between them (px). */
 export const STRIP = { count: 5, tile: 240, gap: 16 } as const;

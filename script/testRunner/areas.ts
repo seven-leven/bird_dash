@@ -18,7 +18,7 @@ export interface Area {
   protects: string;
   /**
    * Repo-relative path prefixes. The longest prefix that matches a path wins, so an
-   * area can claim a file out of a folder another area owns (the icons in src/lib/).
+   * area can claim a file out of a folder another area owns (the data files in script/generate/).
    */
   paths: string[];
 }
@@ -27,25 +27,29 @@ export const AREAS: Area[] = [
   {
     id: 'data',
     label: 'Site: data and search',
-    protects: 'loading collections, filtering, grouping, search results',
-    paths: ['src/domain/', 'src/lib/', 'src/composables/collection/', 'src/composables/search/'],
+    protects: "the archive's rules, loading collections, search and its results",
+    paths: [
+      'src/domain/',
+      'src/data/',
+      'src/search/',
+    ],
   },
   {
     id: 'state',
     label: 'Site: state and routing',
-    protects: 'the stores, shareable links, the pages, theme, accent',
-    paths: ['src/stores/', 'src/composables/core/', 'src/pages'], // pages.ts and its test,
+    protects: 'the shell and its stores, shareable links, the pages, theme, accent',
+    paths: ['src/browser/', 'src/app/', 'src/shell/', 'src/pages'], // pages.ts and its test
   },
   {
     id: 'interface',
     label: 'Site: viewer and interface',
-    protects: 'the lightbox, scroll-spy, icons and logo',
+    protects: 'the viewer, the gallery and its scroll-spy, the About page, icons and logo',
     paths: [
-      'src/composables/ui/',
-      'src/components/',
+      'src/viewer/',
+      'src/gallery/',
+      'src/ui/',
+      'src/about/',
       'src/styles/',
-      'src/lib/icons',
-      'src/lib/logo',
     ],
   },
   {
@@ -106,6 +110,7 @@ export async function discoverSources(roots = ['src', 'script']): Promise<string
   const skip = (path: string) =>
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
     path.startsWith('src/testing/') || path.startsWith('src/types/') ||
+    path === 'src/data/files.ts' || // types only: the shapes of the files in public/
     path === 'src/main.ts'; // only mounts App.vue into the page
   const files = [...await findFiles(roots, '*.ts'), ...await findFiles(roots, '*.vue')];
   return files.filter((path) => !skip(path)).sort();

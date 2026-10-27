@@ -22,7 +22,7 @@ folder, and the item here points to it.
       (`viewer/`, `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/`
       layers, one word per idea, in nine phases. Most features below ride along with it, each as its
       own pull request straight after the phase that prepares it ("Features that ride along").
-      Includes fewer stores per component (`Chrome`, `TopBar` and `GalleryContent` inject four each
+      Includes fewer stores per component (`AppShell`, `TopBar` and `Gallery` inject four each
       today), after phase 3.
 - [ ] **3. Use the platform** ([PLATFORM.md](PLATFORM.md)). What Node 24, TS 6, Vite 8, Vue 3.5,
       Tailwind 4 and the browser give that the code does not use yet (`<dialog>` for the viewer,

@@ -1,4 +1,4 @@
-import type { RawCollectionConfig, RawCollectionData } from '../types/data.ts';
+import type { CollectionEntry, ListFile } from '../data/files.ts';
 import type { ItemName } from './itemNames.ts';
 import { buildNames, nameWords } from './itemNames.ts';
 import { linkUrl } from './linkUrl.ts';
@@ -63,7 +63,7 @@ const KNOWN_KEYS = new Set([
 ]);
 
 /** A `collections.json` entry plus the URLs the app derives from its id. */
-export function toCollection(raw: RawCollectionConfig, base: string): Collection {
+export function toCollection(raw: CollectionEntry, base: string): Collection {
   return {
     ...raw,
     dataUrl: `${base}lists/${raw.id}.json`,
@@ -84,7 +84,7 @@ export function toCollection(raw: RawCollectionConfig, base: string): Collection
  */
 export function toCollectionItems(
   col: Pick<Collection, 'id' | 'imageBase'>,
-  raw: RawCollectionData,
+  raw: ListFile,
   base: string,
 ): Item[] {
   const items: Item[] = [];
@@ -135,14 +135,4 @@ export function toCollectionItems(
     }
   }
   return items;
-}
-
-/**
- * The image to show in a grid tile or a result row: the drawing, or — for an
- * item that is not drawn yet, or whose image failed — the placeholder that
- * matches the theme.
- */
-export function tileImage(item: Item, dark: boolean, failed = false): string {
-  if (item.isDrawn && !failed) return item.imageUrl;
-  return dark ? item.placeholderDarkUrl : item.placeholderUrl;
 }

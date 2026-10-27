@@ -224,7 +224,7 @@ The coverage run can also fail with every test passing and the percentage fine:
 
 ```
 ✗ 1 source file(s) are not imported by any test:
-    src/lib/newThing.ts
+    src/domain/newThing.ts
 ```
 
 You added a file and no test loads it. Add a test file next to it (section 9); even one test that

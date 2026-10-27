@@ -4,23 +4,23 @@
 
 import type { Ref } from 'vue';
 import type { Collection, Item } from '../domain/toCollectionItems.ts';
-import type { SidebarItem } from './ui.ts';
+import type { SectionEntry } from './ui.ts';
 
-// ViewMode lives in ui.ts; re-exported here for the composable
+// View lives in ui.ts; re-exported here for the composable
 // types and consumers that import it from this module.
-export type { ViewMode } from './ui.ts';
+export type { View } from './ui.ts';
 
 // -----------------------------------------------------------------------------
-// useCollectionData Types
+// useCollectionView Types
 // -----------------------------------------------------------------------------
 
-/** Sectioned grid data — sections are groups in group mode, months in date mode. */
-export interface GroupedData {
+/** Sectioned grid data — sections are groups in group mode, months in month view. */
+export interface CollectionView {
   grouped: Record<string, Item[]>;
-  sidebarItems: SidebarItem[];
+  sidebarItems: SectionEntry[];
 }
 
-export interface CollectionStats {
+export interface ViewCounts {
   total: number;
   filtered: number;
   /** How many of the filtered items are drawn. */
@@ -29,7 +29,7 @@ export interface CollectionStats {
 }
 
 // -----------------------------------------------------------------------------
-// useScrollLogic Types
+// useScrollSpy Types
 // -----------------------------------------------------------------------------
 
 export interface UseScrollLogicReturn {
@@ -44,14 +44,14 @@ export interface UseScrollLogicReturn {
 
 export type MatchedField = 'id' | 'commonName' | 'scientificName' | 'group';
 
-export interface GlobalSearchResult {
+export interface SearchResult {
   item: Item;
   collection: Collection;
   matchedFields: MatchedField[];
 }
 
-export interface GlobalSearchCollectionGroup {
+export interface SearchResultGroup {
   collection: Collection;
-  results: GlobalSearchResult[];
+  results: SearchResult[];
   count: number;
 }

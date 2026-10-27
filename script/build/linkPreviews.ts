@@ -2,13 +2,13 @@
 // the drawing after `#`, which a link preview never sees, so every shared link showed the
 // same picture. The build writes a small page per drawn item, `<collection>/<id>/`, with its
 // own title, description and image, which sends a visitor on to the drawing in the gallery.
-// The viewer's Share button hands out its address (src/lib/shareLink.ts).
+// The viewer's Share button hands out its address (src/viewer/shareLink.ts).
 import type { Plugin } from 'vite';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { eachDrawnItem, readList } from '../lib/lists.ts';
 import { realIo } from '../lib/io.ts';
 import { SITE_URL } from '../../src/domain/links.ts';
-import type { RawItem } from '../../src/types/data.ts';
+import type { ListEntry } from '../../src/data/files.ts';
 
 /** Folders the built site already has; a collection with one of these ids would collide. */
 export const TAKEN = ['assets', 'docs', 'full', 'thumb', 'lists', 'placeholders'];
@@ -27,7 +27,7 @@ const longDate = (date: string): string =>
   });
 
 /** The one sentence a preview shows under the title. */
-export function previewDescription(collection: Collection, item: RawItem): string {
+export function previewDescription(collection: Collection, item: ListEntry): string {
   const sci = item.sci ? ` (${item.sci})` : '';
   const dhivehi = item.dhiv ? `, ${item.dhiv} in Dhivehi` : '';
   return `${item.name}${sci}${dhivehi}. Drawn ${
@@ -38,7 +38,7 @@ export function previewDescription(collection: Collection, item: RawItem): strin
 /** The preview page for one drawn item: where it lives in dist/, and its HTML. */
 export function previewPage(
   collection: Collection,
-  item: RawItem,
+  item: ListEntry,
   siteUrl = SITE_URL,
 ): { fileName: string; html: string } {
   const path = `${collection.id}/${item.id}/`;

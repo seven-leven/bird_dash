@@ -6,7 +6,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import type { Collection } from '../../../script/lib/collections.ts';
-import type { RawItem } from '../../types/data.ts';
+import type { ListEntry } from '../../data/files.ts';
 import { makeScriptCollection } from '../scriptFixtures.ts';
 import { tempDir } from './tempDir.ts';
 
@@ -26,7 +26,7 @@ export interface Picture {
  * when none are given), and every id in `sources` has source art, a PNG of `picture`.
  */
 export async function tempCollection(options: {
-  items?: RawItem[];
+  items?: ListEntry[];
   sources?: string[];
   picture?: Picture;
 }): Promise<Collection & AsyncDisposable> {

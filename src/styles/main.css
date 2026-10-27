@@ -83,6 +83,12 @@
 }
 
 @layer components {
+  /* A link that leaves the site, or out to the docs: neutral, never the accent (docs/DESIGN.md §01). */
+  .link-out {
+    @apply font-medium text-slate-600 underline underline-offset-2
+      hover:text-slate-900 dark:text-slate-300 dark:hover:text-white;
+  }
+
   /* Neutral icon/text button used across the chrome (header, sidebar). */
   /* The one primary action on a screen (accent-700 with white, 5.5:1). */
   .btn-primary {

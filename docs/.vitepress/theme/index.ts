@@ -3,7 +3,7 @@
 import { h } from 'vue';
 import type { Theme } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
-import LogoMark from '../../../src/components/icons/LogoMark.vue';
+import LogoMark from '../../../src/ui/LogoMark.vue';
 import AccentRamps from './AccentRamps.vue';
 import IconSheet from './IconSheet.vue';
 import './style.css';

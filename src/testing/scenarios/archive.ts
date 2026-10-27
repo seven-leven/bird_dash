@@ -6,12 +6,12 @@
 //   Sharks  Requiem: 001 Grey Reef Shark (not drawn); the accent sky (the Birds' is the default)
 //
 // Each call returns fresh objects, so a test may change what it is given.
-import type { RawCollectionConfig, RawCollectionData, Stats } from '../../types/data.ts';
+import type { CollectionEntry, ListFile, Stats } from '../../data/files.ts';
 import { computeStats } from '../../../script/generate/stats.ts';
 import { json, type Route } from '../fakes/fakeFetch.ts';
 
 /** `public/collections.json`. */
-export const archiveCollections = (): RawCollectionConfig[] => [
+export const archiveCollections = (): CollectionEntry[] => [
   { id: 'birds', label: 'Birds', emoji: '', groupLabel: 'Family', itemLabel: 'item', links: [] },
   {
     id: 'sharks',
@@ -25,7 +25,7 @@ export const archiveCollections = (): RawCollectionConfig[] => [
 ];
 
 /** `public/lists/<id>.json`, by collection. */
-export const archiveLists = (): Record<'birds' | 'sharks', RawCollectionData> => ({
+export const archiveLists = (): Record<'birds' | 'sharks', ListFile> => ({
   birds: {
     Ducks: [
       { id: '001', name: 'Mallard', sci: 'Anas platyrhynchos', drawn: '2025-01-10' },

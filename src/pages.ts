@@ -18,7 +18,7 @@ export const PAGES = [
   {
     id: 'about',
     label: 'About',
-    component: defineAsyncComponent(() => import('./components/about/AboutPage.vue')),
+    component: defineAsyncComponent(() => import('./about/AboutPage.vue')),
   },
 ] as const satisfies readonly PageEntry[];
 

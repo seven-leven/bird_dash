@@ -3,7 +3,7 @@ import { access } from 'node:fs/promises';
 import { assertEquals } from '@std/assert';
 import { readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { Stats } from '../../src/types/data.ts';
+import type { Stats } from '../../src/data/files.ts';
 import { linkPreviews } from './linkPreviews.ts';
 
 // The build's preview pages, from the real lists: one per drawing, each pointing at an image

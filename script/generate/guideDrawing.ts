@@ -2,7 +2,7 @@
 // (warm paper, a serif for statements), text and shape helpers that write SVG, Thaana set
 // in Faruma, and the icon groups on their grid.
 import sharp from 'sharp';
-import { ICON_GROUPS, type IconDef, ICONS } from '../../src/lib/icons.ts';
+import { ICON_GROUPS, type IconDef, ICONS } from '../../src/ui/icons.ts';
 import { PATHS } from '../lib/paths.ts';
 import { iconGridLayout } from './iconGrid.ts';
 import { SLATE } from './palette.ts';

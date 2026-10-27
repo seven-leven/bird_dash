@@ -45,7 +45,7 @@ import {
 
 export interface Options {
   tiers: Tier[];
-  /** Area ids (`interface`, `data`…) and path prefixes (`src/components`) to narrow the run to. */
+  /** Area ids (`interface`, `data`…) and path prefixes (`src/viewer`) to narrow the run to. */
   areas: string[];
   paths: string[];
   verbose: boolean;
@@ -66,7 +66,7 @@ const isPath = (arg: string) => arg.includes('/') || arg.includes('\\') || arg.e
 /**
  * Positional arguments are tier names, area ids or path prefixes; everything else is
  * a flag. `npm test -- dom interface` runs the interface area's DOM tests;
- * `npm test -- src/components` runs the tests under that folder.
+ * `npm test -- src/viewer` runs the tests under that folder.
  */
 export function parseArgs(args: string[]): Options {
   // The commands' own parser, Node's underneath (a bare `--`, as in `npm test -- --
@@ -85,7 +85,7 @@ export function parseArgs(args: string[]): Options {
     throw new UsageError(
       `unknown tier or area "${unknown[0]}" (tiers: ${TIER_ORDER.join(', ')}; areas: ${
         AREA_IDS.join(', ')
-      }; or a path such as src/components)`,
+      }; or a path such as src/viewer)`,
     );
   }
   const minLines = parseFloor('--min-lines', values.get('--min-lines'));

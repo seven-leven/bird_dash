@@ -2,7 +2,7 @@
 
 Everything the site shows comes from the files in `public/`. Adding a drawing or a whole collection
 is a change to these files, not to the code. Their shape is typed in
-[`src/types/data.ts`](../src/types/data.ts) and checked by the contract tests
+[`src/data/files.ts`](../src/data/files.ts) and checked by the contract tests
 ([`script/lib/collections_contract_test.ts`](../script/lib/collections_contract_test.ts)), which run
 on every pull request.
 
@@ -42,7 +42,7 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 | `id`         | yes      | Used in the URL (`#birds`), file names and folder names. Lowercase, no spaces, unique           |
 | `label`      | yes      | The name on the tab                                                                             |
 | `emoji`      | yes      | Shown in terminal reports, and on the tab if there is no `icon`                                 |
-| `icon`       | no       | Name of an icon in `src/lib/icons.ts`. Also what the placeholder is drawn from                  |
+| `icon`       | no       | Name of an icon in `src/ui/icons.ts`. Also what the placeholder is drawn from                   |
 | `accent`     | no       | The collection's accent colour: a hue from the menu in `src/styles/accents.css`. Default `teal` |
 | `groupLabel` | yes      | What a group is called ("Family", "Order"); labels the group view and the sidebar               |
 | `itemLabel`  | yes      | The singular noun for an item ("bird")                                                          |
@@ -113,7 +113,7 @@ while nothing is drawn); the `drawn` and `total` across every collection; the ar
 drawing (`null` if none); and the `newest` eight drawings across all of them, newest first (on the
 same day, in collection order, then by id). Each drawing has its collection, id, name, date, and,
 when the list gives them, its Dhivehi name in Thaana (`dhivehi`) and how to say it (`roman`). The
-shape is `Stats` in [`src/types/data.ts`](../src/types/data.ts), which the build and the page share.
+shape is `Stats` in [`src/data/files.ts`](../src/data/files.ts), which the build and the page share.
 [`script/generate/stats.ts`](../script/generate/stats.ts) writes it as the last step of the asset
 build. It holds no build time, so the same lists always write the same file. A new collection
 appears in it with no other change.
@@ -158,4 +158,5 @@ appears in it with no other change.
 
 **Add a new kind of information** (a habitat, where it was seen): add a string field to the items.
 It appears in the viewer and in search with no code change. Give it its own treatment later by
-adding it to `RawItem` in `src/types/data.ts` and handling it in `src/domain/toCollectionItems.ts`.
+adding it to `ListEntry` in `src/data/files.ts` and handling it in
+`src/domain/toCollectionItems.ts`.

@@ -3,14 +3,14 @@
 import { type Io, readJson, realIo, writeJson } from './io.ts';
 import type { Collection } from './collections.ts';
 // The list-file shape is defined once, next to the app's own types.
-import type { RawCollectionData, RawItem } from '../../src/types/data.ts';
+import type { ListEntry, ListFile } from '../../src/data/files.ts';
 
-export function readList(collection: Collection, io: Io = realIo): Promise<RawCollectionData> {
-  return readJson<RawCollectionData>(io, collection.paths.json);
+export function readList(collection: Collection, io: Io = realIo): Promise<ListFile> {
+  return readJson<ListFile>(io, collection.paths.json);
 }
 
 /** Every item in the list that has a drawing, across all its groups, in list order. */
-export function eachDrawnItem(list: RawCollectionData): RawItem[] {
+export function eachDrawnItem(list: ListFile): ListEntry[] {
   return Object.values(list).flatMap((group) => group.filter((item) => item.drawn));
 }
 

@@ -1,6 +1,6 @@
 # Site code overhaul
 
-> **Status:** planned 2026-10-26; phases 0 (the rules) and 1 (domain) done 2026-10-27, after the
+> **Status:** planned 2026-10-26; phases 0 (the rules) to 5 (features) done 2026-10-27, after the
 > test overhaul's phases 1–3 (its journey tests are the safety net for moving files). Rebuilds the
 > layout and naming of `src/` (the site's code: components, composables, lib, stores, styles, types)
 > from the ground up, one pull request per phase, with the site looking and behaving the same
@@ -164,25 +164,38 @@ every file moves.
       re-exports them until phase 8. Folded: `plural` (the scripts import it) and the project's
       links (`domain/links.ts`; `script/lib/project.ts` goes). `pureDomain_contract_test.ts` keeps
       it pure. `tileImage` waits in `toCollectionItems.ts` for `gallery/` (phase 5).
-- [ ] **2. Data and browser.** `data/` (`fetchJson`, the loaders, `files.ts` with the file shapes,
-      which `script/` now imports from there) and `browser/` (injection, theme, breakpoint,
-      debounce, click-outside, accent, scroll behaviour). _Done when_ `lib/` holds only `ui/`'s
-      drawings, ready to move.
-- [ ] **3. Stores.** The ui store split into `theme`, `layout` and `view`; the grid's derivations
-      move from the collections store to the view store; `overlay` becomes `viewer`; `stats` (the
-      counts) becomes `counts`; the verbs renamed (`selectCollection`, `show`). _Done when_ every
-      store has one job and no name means two things.
-- [ ] **4. Shared UI.** `ui/` from `components/icons/`, `components/ui/`, `lib/icons.ts` and
-      `lib/logo.ts`; none of them injects a store. _Done when_ `components/icons` and
-      `components/ui` are gone.
-- [ ] **5. Features.** `viewer/`, `search/`, `gallery/`, `about/` and `shell/`, each with its
-      components, composables and store, renamed to the tables above. `AboutPage.vue` becomes
-      sections; `GlobalSearch.vue` and `GalleryContent.vue` split where they do two jobs. `ViewMode`
-      becomes `View` with `'month'`. _Done when_ `components/`, `composables/` and `stores/` are
-      gone and no file is over about 200 lines.
-- [ ] **6. App.** `app/` with `App.vue`, `AppShell.vue`, `pages.ts`, `useHashRoute.ts`, `actions.ts`
-      and `buildInfo.ts`; `vite-env.d.ts` becomes `env.d.ts`. _Done when_ `src/` holds only
-      `main.ts`, `env.d.ts` and the folders above.
+- [x] **2. Data and browser** (2026-10-27). `data/`: `fetchJson`, `useCollectionLoader`
+      (`collections`, `itemsByCollection`, `loadState`, `selectCollection`; the types `LoadState`,
+      `ArchiveCounts`, `ItemsByCollection`), `useStatsLoader`, `files.ts` (`ListEntry`, `ListFile`,
+      `CollectionEntry`, the stats shapes). `browser/`: `defineInjection`, `useTheme`,
+      `useBreakpoint` (`isNarrow`, below `NARROW_BELOW`), `useDebouncedRef` (no default; the search
+      store names `SEARCH_DELAY`), `useClickOutside`, `applyAccent`, `scrollBehavior`. `domain/` may
+      import the file shapes, types only. `flashItem` and `shareLink` waited in `lib/` for their
+      features (phase 5).
+- [x] **3. Stores** (2026-10-27), each made straight into its feature: `shell/themeStore`,
+      `shell/layoutStore` (narrow, sidebar, page and `currentPage`, the scroll element),
+      `gallery/collectionsStore` (what is loaded), `gallery/viewStore` (view, drawn only, the
+      planned list, the sections and `counts`, the drawings the viewer pages, and the scroll-spy,
+      which the plan had in the layout store: it is the gallery's, and the layout's narrow flag,
+      scroll element and sidebar are handed to it, so no feature imports another),
+      `search/searchStore` (now finding its own results), `viewer/viewerStore` (`isOpen`, `item`,
+      `open`, `close`, `show`), `about/statsStore`, and `app/actions.ts` (`selectCollection`).
+      Folded: `currentPage` and the drawn filter (`showsDrawnFilter`, `setDrawnOnly`).
+- [x] **4. Shared UI** (2026-10-27). `ui/` from `components/icons/`, `components/ui/`,
+      `lib/icons.ts` and `lib/logo.ts`; none injects a store. Folded: `ExternalLink.vue` and
+      `RetryButton.vue` (the reload once, in `browser/reloadPage.ts`).
+- [x] **5. Features** (2026-10-27), renamed to the tables above. `AboutPage.vue` is six sections
+      (`AboutIntro`, `Progress`, `Newest`, `Making`, `History`, `Design`) with `aboutSentences.ts`,
+      `drawingLinks.ts` and a `.link-out` class; `SearchBox` keeps the box, `SearchDropdown` draws
+      the results, and Ctrl+K is `browser/useFocusShortcut`; `Gallery` has `GallerySection` and
+      `GallerySkeleton` (also `App.vue`'s); `ViewerDetails` has `ViewerShare`; `ViewerProps` is
+      typed once. `View` is `'group' | 'month'`. Two departures: `tileImage` is
+      `domain/tileImage.ts`, as the search results use it too; and `components/`, `composables/` and
+      `stores/` could only go with `AppShell` (was `Chrome`), `useHashRoute` and `actions` in
+      `app/`, so they moved ahead of phase 6. No file is over 200 lines.
+- [ ] **6. App.** `App.vue`, `pages.ts` and `buildInfo.ts` into `app/` (`AppShell.vue`,
+      `useHashRoute.ts` and `actions.ts` went in phases 3 and 5); `vite-env.d.ts` becomes
+      `env.d.ts`. _Done when_ `src/` holds only `main.ts`, `env.d.ts` and the folders above.
 - [ ] **7. Styles.** `main.css` split into `tokens`, `accents` (if not already), `base`
       (`.font-dhivehi`, reduced motion), `components` (the `@layer components` classes) and
       `utilities`; `main.css` keeps only Tailwind's setup and the imports. _Done when_ each file has
