@@ -1,6 +1,6 @@
 /**
  * Draws the placeholder shown for items that are not drawn yet: the collection's
- * line icon (src/lib/icons.ts), once for the light theme (grey on
+ * line icon (src/ui/icons.ts), once for the light theme (grey on
  * white) and once for the dark theme (`<id>-dark.webp`, slate on slate).
  * Written by `npm run generate` (or `npm run generate -- placeholders`).
  */

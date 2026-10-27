@@ -1,7 +1,7 @@
 import { readonly, type Ref, ref } from 'vue';
 import { useDebouncedRef } from '../browser/useDebouncedRef.ts';
 import { defineInjection } from '../browser/defineInjection.ts';
-import { useGlobalSearch } from '../composables/collection/useGlobalSearch.ts';
+import { useSearchResults } from './useSearchResults.ts';
 import type { Collection } from '../domain/toCollectionItems.ts';
 import type { ItemsByCollection } from '../data/useCollectionLoader.ts';
 
@@ -21,7 +21,7 @@ export function createSearchStore(deps: {
   // Debounced view of the query, consumed by the collections store's filter →
   // group → sort pipeline and the cross-collection results.
   const debouncedQuery = useDebouncedRef(query, SEARCH_DELAY);
-  const { globalResults, globalResultCount, globalDrawnCount } = useGlobalSearch(
+  const { globalResults, globalResultCount, globalDrawnCount } = useSearchResults(
     deps.collections,
     deps.itemsByCollection,
     debouncedQuery,

@@ -28,7 +28,7 @@ const cov = (file: string, hit: number, found: number): FileCoverage => ({
 test('areaOf places a file by its path, whatever the slashes', () => {
   assertEquals(areaOf('src/domain/countWords.ts')?.id, 'data');
   assertEquals(areaOf('src\\shell\\layoutStore.ts')?.id, 'state');
-  assertEquals(areaOf('./src/composables/ui/useLightbox.ts')?.id, 'interface');
+  assertEquals(areaOf('./src/viewer/useViewer.ts')?.id, 'interface');
   assertEquals(areaOf('script/build/plan_changes.ts')?.id, 'pipeline');
   assertEquals(areaOf('script/changelog/changelog.ts')?.id, 'release');
   assertEquals(areaOf('script/testRunner/testRunner.ts')?.id, 'tooling');
@@ -42,9 +42,9 @@ test('area ids are unique and every area claims at least one path', () => {
 
 test('summarizeAreas counts tests and failures per area', () => {
   const rows = summarizeAreas([
-    testCase('src/lib/a_test.ts'),
-    testCase('src/lib/a_test.ts', 'boom'),
-    testCase('src/lib/b_test.ts'),
+    testCase('src/domain/a_test.ts'),
+    testCase('src/domain/a_test.ts', 'boom'),
+    testCase('src/domain/b_test.ts'),
     testCase('script/build/plan_test.ts'),
   ]);
   const data = rows.find((r) => r.area.id === 'data')!;
@@ -55,30 +55,35 @@ test('summarizeAreas counts tests and failures per area', () => {
 });
 
 test('summarizeAreas adds coverage per area and lists files no test loaded', () => {
-  const rows = summarizeAreas([testCase('src/lib/a_test.ts')], {
+  const rows = summarizeAreas([testCase('src/domain/a_test.ts')], {
     coverage: [
-      cov('src/lib/a.ts', 8, 10),
-      cov('src/lib/b.ts', 10, 10),
+      cov('src/domain/a.ts', 8, 10),
+      cov('src/domain/b.ts', 10, 10),
       cov('src/shell/layoutStore.ts', 1, 4),
     ],
-    sources: ['src/lib/a.ts', 'src/lib/b.ts', 'src/lib/never.ts', 'src/shell/layoutStore.ts'],
+    sources: [
+      'src/domain/a.ts',
+      'src/domain/b.ts',
+      'src/domain/never.ts',
+      'src/shell/layoutStore.ts',
+    ],
   });
   const data = rows.find((r) => r.area.id === 'data')!;
   assertEquals(data.lines, { hit: 18, found: 20 });
-  assertEquals(data.unloaded, ['src/lib/never.ts']);
+  assertEquals(data.unloaded, ['src/domain/never.ts']);
   assertEquals(rows.find((r) => r.area.id === 'state')!.lines, { hit: 1, found: 4 });
   assertEquals(rows.find((r) => r.area.id === 'release')!.lines, { hit: 0, found: 0 });
 });
 
 test('the console table shows coverage columns only when coverage was measured', () => {
-  const plain = formatAreasText(summarizeAreas([testCase('src/lib/a_test.ts')]));
+  const plain = formatAreasText(summarizeAreas([testCase('src/domain/a_test.ts')]));
   assert(!plain.includes('lines'));
   assertStringIncludes(plain, '– no tests'); // areas with nothing are called out
 
   const withCov = formatAreasText(
-    summarizeAreas([testCase('src/lib/a_test.ts', 'x')], {
-      coverage: [cov('src/lib/a.ts', 9, 10)],
-      sources: ['src/lib/a.ts', 'src/lib/never.ts'],
+    summarizeAreas([testCase('src/domain/a_test.ts', 'x')], {
+      coverage: [cov('src/domain/a.ts', 9, 10)],
+      sources: ['src/domain/a.ts', 'src/domain/never.ts'],
     }),
   );
   assertStringIncludes(withCov, 'untested files');
@@ -88,9 +93,9 @@ test('the console table shows coverage columns only when coverage was measured',
 
 test('the markdown report names what each area protects and lists unloaded files', () => {
   const md = formatAreasMarkdown(
-    summarizeAreas([testCase('src/lib/a_test.ts')], {
-      coverage: [cov('src/lib/a.ts', 9, 10)],
-      sources: ['src/lib/a.ts', 'script/build/build.ts'],
+    summarizeAreas([testCase('src/domain/a_test.ts')], {
+      coverage: [cov('src/domain/a.ts', 9, 10)],
+      sources: ['src/domain/a.ts', 'script/build/build.ts'],
     }),
   );
   assertStringIncludes(md, '### By area');
@@ -102,21 +107,21 @@ test('the markdown report names what each area protects and lists unloaded files
 
 test('untestedFiles gathers the unloaded files of every area; empty when all are loaded', () => {
   const some = summarizeAreas([], {
-    coverage: [cov('src/lib/a.ts', 1, 1)],
-    sources: ['src/lib/a.ts', 'src/lib/never.ts', 'script/build/build.ts'],
+    coverage: [cov('src/domain/a.ts', 1, 1)],
+    sources: ['src/domain/a.ts', 'src/domain/never.ts', 'script/build/build.ts'],
   });
-  assertEquals(untestedFiles(some).sort(), ['script/build/build.ts', 'src/lib/never.ts']);
+  assertEquals(untestedFiles(some).sort(), ['script/build/build.ts', 'src/domain/never.ts']);
 
   const none = summarizeAreas([], {
-    coverage: [cov('src/lib/a.ts', 1, 1)],
-    sources: ['src/lib/a.ts'],
+    coverage: [cov('src/domain/a.ts', 1, 1)],
+    sources: ['src/domain/a.ts'],
   });
   assertEquals(untestedFiles(none), []);
 });
 
 test('with coverage but no source list, nothing is reported unloaded', () => {
-  const rows = summarizeAreas([testCase('src/lib/a_test.ts')], {
-    coverage: [cov('src/lib/a.ts', 0, 0)],
+  const rows = summarizeAreas([testCase('src/domain/a_test.ts')], {
+    coverage: [cov('src/domain/a.ts', 0, 0)],
   });
   assertEquals(untestedFiles(rows), []);
   // An area whose loaded files have no lines shows a dash, not 0% or NaN.

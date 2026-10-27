@@ -1,8 +1,8 @@
 import { computed, nextTick, readonly, type Ref, ref } from 'vue';
 import { defineInjection } from '../browser/defineInjection.ts';
-import { useCollectionData } from '../composables/collection/useCollectionData.ts';
-import { useScrollLogic } from '../composables/ui/useScrollLogic.ts';
-import type { Item, ViewMode } from '../types/index.ts';
+import { useCollectionView } from './useCollectionView.ts';
+import { useScrollSpy } from './useScrollSpy.ts';
+import type { Item, View } from '../types/index.ts';
 
 /**
  * How the gallery shows the collection on screen: by group or by month, drawn only or not,
@@ -20,14 +20,14 @@ export function createViewStore(deps: {
   isNarrow: Readonly<Ref<boolean>>;
   closeSidebar: () => void;
 }) {
-  const viewMode = ref<ViewMode>('group');
+  const viewMode = ref<View>('group');
   // Family view: show only what has been drawn (docs/DESIGN.md §11, a collection that is mostly gaps).
   const drawnOnly = ref(false);
   // A collection with nothing drawn says so instead of listing its gaps; asked, it lists
   // what is planned, until another collection is chosen.
   const showPlanned = ref(false);
 
-  const { activeData, stats, searchedDrawnItems } = useCollectionData(
+  const { activeData, stats, searchedDrawnItems } = useCollectionView(
     deps.items,
     deps.query,
     viewMode,
@@ -35,7 +35,7 @@ export function createViewStore(deps: {
   );
 
   const headerRefs = ref<Record<string, HTMLElement | null>>({});
-  const { activeSection, updateActiveSection, goToSection } = useScrollLogic(
+  const { activeSection, updateActiveSection, goToSection } = useScrollSpy(
     deps.scrollEl,
     headerRefs,
     { isNarrow: deps.isNarrow, closeSidebar: deps.closeSidebar },
@@ -49,7 +49,7 @@ export function createViewStore(deps: {
     headerRefs.value = {};
   };
 
-  const setViewMode = (mode: ViewMode): void => {
+  const setViewMode = (mode: View): void => {
     if (mode === viewMode.value) return;
     viewMode.value = mode;
     nextTick(updateActiveSection); // the section headers are different in each view

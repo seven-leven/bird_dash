@@ -62,8 +62,8 @@ test('the view starts on groups; choosing the current view again changes nothing
   await nextTick();
   assertEquals(observers.created, 0, 'the scroll-spy was rebuilt for no reason');
 
-  view.setViewMode('date');
-  assertEquals(view.viewMode.value, 'date');
+  view.setViewMode('month');
+  assertEquals(view.viewMode.value, 'month');
   await nextTick();
   assertEquals(observers.created, 1, 'a new view has new headers, so the spy is rebuilt');
 });
@@ -127,13 +127,13 @@ test('the drawn filter is offered only where it filters: the family view, partly
   assertEquals(setup({ items: [undrawn] }).view.showsDrawnFilter.value, false); // none drawn
 
   const { view } = setup();
-  view.setViewMode('date');
+  view.setViewMode('month');
   assertEquals(view.showsDrawnFilter.value, false);
 });
 
 test('showUndrawn brings back what is not drawn: the family view, every item, the plan', () => {
   const { view } = setup();
-  view.setViewMode('date');
+  view.setViewMode('month');
   view.setDrawnOnly(true);
   view.showUndrawn();
   assertEquals([view.viewMode.value, view.drawnOnly.value, view.showPlanned.value], [

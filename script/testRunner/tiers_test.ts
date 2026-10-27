@@ -3,10 +3,10 @@ import { assertEquals, assertThrows } from '@std/assert';
 import { groupByTier, isTier, TIER_ORDER, tierOf } from './tiers.ts';
 
 test('the tier comes from the file-name suffix', () => {
-  assertEquals(tierOf('src/composables/core/useHashRoute_test.ts'), 'unit');
-  assertEquals(tierOf('src/composables/core/useHashRoute_dom_test.ts'), 'dom');
+  assertEquals(tierOf('src/app/useHashRoute_test.ts'), 'unit');
+  assertEquals(tierOf('src/app/useHashRoute_dom_test.ts'), 'dom');
   assertEquals(tierOf('src/journeys/search_journey_test.ts'), 'journey');
-  assertEquals(tierOf('src/composables/core/useHashRoute_prop_test.ts'), 'prop');
+  assertEquals(tierOf('src/app/useHashRoute_prop_test.ts'), 'prop');
   assertEquals(tierOf('script/lib/collections_contract_test.ts'), 'contract');
 });
 
@@ -22,7 +22,7 @@ test('Windows-style paths are understood', () => {
 });
 
 test('a file that is not a test is rejected rather than guessed', () => {
-  assertThrows(() => tierOf('src/lib/flashItem.ts'), Error, 'not a test file');
+  assertThrows(() => tierOf('src/gallery/flashTile.ts'), Error, 'not a test file');
 });
 
 test('groupByTier puts every file in exactly one tier and keeps empty tiers', () => {

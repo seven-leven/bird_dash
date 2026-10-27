@@ -2,7 +2,7 @@
 // the drawing after `#`, which a link preview never sees, so every shared link showed the
 // same picture. The build writes a small page per drawn item, `<collection>/<id>/`, with its
 // own title, description and image, which sends a visitor on to the drawing in the gallery.
-// The viewer's Share button hands out its address (src/lib/shareLink.ts).
+// The viewer's Share button hands out its address (src/viewer/shareLink.ts).
 import type { Plugin } from 'vite';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { eachDrawnItem, readList } from '../lib/lists.ts';

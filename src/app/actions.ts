@@ -1,6 +1,6 @@
 import { nextTick } from 'vue';
 import { defineInjection } from '../browser/defineInjection.ts';
-import { flashItem } from '../lib/flashItem.ts';
+import { flashTile } from '../gallery/flashTile.ts';
 import type { CollectionsStore } from '../gallery/collectionsStore.ts';
 import type { SearchStore } from '../search/searchStore.ts';
 import type { LayoutStore } from '../shell/layoutStore.ts';
@@ -46,7 +46,7 @@ export function createAppActions(deps: {
   const ringTile = async (item: Item): Promise<void> => {
     if (!item.isDrawn) view.showUndrawn();
     await nextTick();
-    flashItem(item.itemId);
+    flashTile(item.itemId);
   };
 
   const selectGlobalResult = async (collectionId: string, item: Item): Promise<void> => {

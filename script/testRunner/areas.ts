@@ -27,33 +27,28 @@ export const AREAS: Area[] = [
   {
     id: 'data',
     label: 'Site: data and search',
-    protects: 'loading collections, filtering, grouping, search results',
+    protects: "the archive's rules, loading collections, search and its results",
     paths: [
       'src/domain/',
       'src/data/',
       'src/search/',
-      'src/lib/',
-      'src/composables/collection/',
-      'src/composables/search/',
     ],
   },
   {
     id: 'state',
     label: 'Site: state and routing',
-    protects: 'the stores, shareable links, the pages, theme, accent',
-    paths: ['src/browser/', 'src/app/', 'src/shell/', 'src/composables/core/', 'src/pages'], // pages.ts and its test
+    protects: 'the shell and its stores, shareable links, the pages, theme, accent',
+    paths: ['src/browser/', 'src/app/', 'src/shell/', 'src/pages'], // pages.ts and its test
   },
   {
     id: 'interface',
     label: 'Site: viewer and interface',
-    protects: 'the lightbox, scroll-spy, icons and logo',
+    protects: 'the viewer, the gallery and its scroll-spy, the About page, icons and logo',
     paths: [
       'src/viewer/',
       'src/gallery/',
       'src/ui/',
       'src/about/',
-      'src/composables/ui/',
-      'src/components/',
       'src/styles/',
     ],
   },

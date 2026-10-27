@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { nextTick, onMounted, watch } from 'vue';
 
-import Chrome from './components/layout/Chrome.vue';
+import AppShell from './app/AppShell.vue';
 import EmptyState from './ui/EmptyState.vue';
 import Icon from './ui/Icon.vue';
 import RetryButton from './ui/RetryButton.vue';
-import { useHashRoute } from './composables/core/useHashRoute.ts';
+import { useHashRoute } from './app/useHashRoute.ts';
 import { createThemeStore, provideThemeStore } from './shell/themeStore.ts';
 import { createLayoutStore, provideLayoutStore } from './shell/layoutStore.ts';
 import { createCollectionsStore, provideCollectionsStore } from './gallery/collectionsStore.ts';
@@ -95,7 +95,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <Chrome v-if="isInitialized" />
+  <AppShell v-if="isInitialized" />
 
   <div
     v-else-if="initError"

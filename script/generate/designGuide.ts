@@ -1,7 +1,7 @@
 /**
  * Draws docs/assets/design-guide.png — the visual half of docs/DESIGN.md. Run
  * `npm run generate` after changing a token in src/styles/accents.css or an icon in
- * src/lib/icons.ts. The colours and the contrast maths are in ./palette.ts; the drawing
+ * src/ui/icons.ts. The colours and the contrast maths are in ./palette.ts; the drawing
  * kit it shares with the icon sheet is in ./guideDrawing.ts.
  */
 import { readFile } from 'node:fs/promises';

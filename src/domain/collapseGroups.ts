@@ -1,4 +1,4 @@
-import type { GlobalSearchCollectionGroup } from '../types/index.ts';
+import type { SearchResultGroup } from '../types/index.ts';
 
 /** A group with this many results or more starts collapsed… */
 export const COLLAPSE_AT = 10;
@@ -6,7 +6,7 @@ export const COLLAPSE_AT = 10;
 export const COLLAPSED_SIZE = 7;
 
 /** A search group as shown in the dropdown: maybe shortened, with a count of what is held back. */
-export type VisibleGroup = GlobalSearchCollectionGroup & { hidden: number };
+export type VisibleGroup = SearchResultGroup & { hidden: number };
 
 /**
  * Shorten long groups so a collection with dozens of matches does not push the
@@ -15,7 +15,7 @@ export type VisibleGroup = GlobalSearchCollectionGroup & { hidden: number };
  * a "show more" row would reveal. Groups named in `expanded` are left whole.
  */
 export function collapseGroups(
-  groups: GlobalSearchCollectionGroup[],
+  groups: SearchResultGroup[],
   expanded: ReadonlySet<string>,
 ): VisibleGroup[] {
   return groups.map((group) => {

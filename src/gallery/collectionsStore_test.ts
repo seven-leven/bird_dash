@@ -61,10 +61,10 @@ test('the query filters the grid and the counts, across name, group and id', asy
   assertEquals(view.counts.value.filtered, 0);
 });
 
-test('date view shows only drawn items, newest first; the viewer still pages oldest to newest', async () => {
+test('month view shows only drawn items, newest first; the viewer still pages oldest to newest', async () => {
   using loaded = await storesOverTheArchive();
   const { view } = loaded;
-  view.setViewMode('date');
+  view.setViewMode('month');
   const months = Object.keys(view.activeData.value.grouped);
   assertEquals(months, ['March 2025', 'January 2025']);
   assertEquals(view.counts.value.total, 2); // undrawn items are not part of this view

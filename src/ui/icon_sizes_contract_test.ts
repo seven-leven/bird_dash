@@ -26,5 +26,5 @@ test('every icon in a component is drawn at one of the four sizes', async () => 
   }
   assert(icons > 20, `expected to find the site's icons, found ${icons}`);
   assertEquals(offScale, []);
-  assertEquals(emblems.map((f) => f.replace(/\\/g, '/')), ['src/components/layout/SideNav.vue']);
+  assertEquals(emblems.map((f) => f.replace(/\\/g, '/')), ['src/shell/SideNav.vue']);
 });
