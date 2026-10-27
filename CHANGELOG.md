@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | docs(plans): a sweep for duplicates, folded into the overhauls. Each plan has a
+  "Duplicates to fold" table, every row assigned to the phase that already moves that code: in the
+  site, `plural` written four times, the project's links, the breakpoint and search delay, the drawn
+  filter's wiring, external links, "Try again", the loading grid and the viewer's props; in the
+  tests, collections and birds written out file by file in `script/` and `src/`, `makeRepository`,
+  git's answers and the runner's own copies. What neither overhaul reaches is one item in TODO.md
 - 2026-10-26 | docs(todo): the TODO reorganised. Open work comes first, by priority and theme: fixes
   now, the two overhauls in order, features (non-species collections, the viewer and its facts,
   images), the design system's simplifications, data and tooling. Everything done is at the bottom,

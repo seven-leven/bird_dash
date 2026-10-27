@@ -91,6 +91,13 @@ update the guide and its image with the code. All ride along with the site overh
 - [ ] **Proper group names** throughout each collection: the right taxonomy per item in
       `public/lists/*.json` (a data task).
 - [ ] **Group images by collection**, matching the storage layout (needs a spec first).
+- [ ] **Script duplicates** the overhauls do not reach (one small PR, any time): the report frame
+      (`ID_WIDTH`, `DIVIDER`) in both `formatCheckReport.ts` and `formatIngestReport.ts`, into
+      `script/lib/report.ts`; `script/generate/logo.ts` redefines `INK`, `MUTED`, `FONT` and
+      `text()` that `guideDrawing.ts` exports; the `<svg xmlns=…>` opening written in five
+      generators, into one `svgDocument(width, height, body)`; `readJson` and `writeJson` in both
+      `lib/fs.ts` and `lib/io.ts`, with `designGuide.ts` reading around `Io`. The rest of the sweep
+      is in SRC-OVERHAUL.md and TEST-OVERHAUL.md ("Duplicates to fold").
 - [ ] **VitePress 2.0** when it is released: the docs site runs the 2.0 alpha, the one that shares
       the site's Vite 8.
 
