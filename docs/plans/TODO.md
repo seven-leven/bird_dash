@@ -13,11 +13,6 @@ folder, and the item here points to it.
       passes on dark. Draw the ring (and the current-item marker) in `accent-700` on light surfaces
       (5.2:1 or more for every hue), keep `500` on dark; update DESIGN.md's colour rule, the palette
       contract test and the guide.
-- [ ] **Dark mode and month names** ([PLATFORM.md](PLATFORM.md) phase 1, found 2026-10-27). No
-      `color-scheme` is set, so in dark mode the scrollbars and the search input stay light; and
-      `monthKey` formats with the visitor's language (`toLocaleString('default', …)`), so the month
-      view's names change language with the browser. With the dark variant's current spelling and a
-      `theme-color` for phones.
 - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
       24.22.1. Everything passes, but upgrade to match CI.
 
@@ -114,6 +109,12 @@ update the guide and its image with the code. All ride along with the site overh
       the site's Vite 8.
 
 ## ✅ Done
+
+**2026-10-27**
+
+- [x] Dark mode draws the browser's own controls dark (`color-scheme`), the month names are English
+      in any browser language, the phone's browser bar takes the top bar's colour, and the dark
+      variant has its current spelling ([PLATFORM.md](PLATFORM.md) phase 1).
 
 **2026-10-26**
 

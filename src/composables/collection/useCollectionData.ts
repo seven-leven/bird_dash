@@ -12,7 +12,7 @@ import type {
 // their UTC month so a drawing dated the 1st never slips into the previous month
 // for viewers west of UTC.
 export const monthKey = (d: Date) =>
-  `${d.toLocaleString('default', { month: 'long', timeZone: 'UTC' })} ${d.getUTCFullYear()}`;
+  `${d.toLocaleString('en', { month: 'long', timeZone: 'UTC' })} ${d.getUTCFullYear()}`;
 
 const firstOfMonthUTC = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
 

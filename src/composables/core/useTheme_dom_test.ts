@@ -1,11 +1,12 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { nextTick } from 'vue';
-import { useTheme } from './useTheme.ts';
+import { BAR_COLOR, useTheme } from './useTheme.ts';
 import { runInScope } from '../../testing/fixtures.ts';
 import { withDom } from '../../testing/withDom.ts';
 
 const isDarkClass = () => document.documentElement.classList.contains('dark');
+const barColor = () => document.querySelector('meta[name="theme-color"]')?.getAttribute('content');
 
 /** Pretend the OS reports a colour-scheme preference. */
 const osPrefersDark = (dark: boolean) => {
@@ -48,6 +49,20 @@ test('toggling flips the class and persists the choice', () =>
     await nextTick();
     assertEquals(isDarkClass(), false);
     assertEquals(localStorage.getItem('theme'), 'light');
+    stop();
+  }));
+
+test("the phone's browser bar follows the theme", () =>
+  withDom(async () => {
+    osPrefersDark(false);
+    const meta = document.createElement('meta');
+    meta.name = 'theme-color';
+    document.head.append(meta);
+    const { value: t, stop } = runInScope(() => useTheme());
+    assertEquals(barColor(), BAR_COLOR.light);
+    t.toggleTheme();
+    await nextTick();
+    assertEquals(barColor(), BAR_COLOR.dark);
     stop();
   }));
 

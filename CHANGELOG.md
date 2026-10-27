@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | fix: dark mode draws the browser's own parts dark too (`color-scheme`: scrollbars,
+  the search box), the month view's names are English whatever the browser's language (they followed
+  it), a phone's browser bar takes the top bar's colour in each theme (`theme-color`, kept in step
+  by `useTheme` and the theme script in `index.html`, with a contract test), and the dark variant
+  has Tailwind 4's current spelling (`@custom-variant`). Phase 1 of PLATFORM.md; "Prefer the
+  platform" is in DECISIONS.md
 - 2026-10-27 | docs(plans): a new plan, PLATFORM.md ("Use the platform"): what Node 24, TS 6, Vite
   8, Vue 3.5, Tailwind 4 and the browser give that the code does not use yet, each row with what it
   replaces and the overhaul phase it rides with, and the general improvements found with them (the

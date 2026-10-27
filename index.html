@@ -5,6 +5,9 @@
     <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- A phone's browser bar, in the top bar's colour; the script below and useTheme
+         set it for the theme in use. -->
+    <meta name="theme-color" content="#ffffff" />
     <title>Wildlife Illustrated</title>
     <meta
       name="description"
@@ -36,6 +39,8 @@
       var dark = stored === 'dark' ||
         (stored !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
       document.documentElement.classList.toggle('dark', dark);
+      document.querySelector('meta[name="theme-color"]')
+        .setAttribute('content', dark ? '#020617' : '#ffffff');
     } catch (e) {}
     </script>
   </head>

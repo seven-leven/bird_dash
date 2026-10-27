@@ -1,7 +1,7 @@
 # Use the platform
 
-> **Status:** planned 2026-10-27, nothing started. What Node 24, TypeScript 6, Vite 8, Vue 3.5,
-> Tailwind 4 and the browser already give this project that it does not use yet, and the
+> **Status:** planned 2026-10-27; phase 1 done 2026-10-27. What Node 24, TypeScript 6, Vite 8, Vue
+> 3.5, Tailwind 4 and the browser already give this project that it does not use yet, and the
 > architectural and general improvements found in the same look. Most of it rides along with the
 > [test](TEST-OVERHAUL.md) and [site code](SRC-OVERHAUL.md) overhauls; the rest is small and stands
 > alone. Delete this page when every row is done or dropped.
@@ -25,14 +25,14 @@ with phase 1.
 
 ## Fixes first
 
-Small, visible, and none needs a phase. Phase 1 below.
+Small, visible, and none needs a phase. Phase 1 below; all four done 2026-10-27 (✓).
 
-| What                                                                                                                                                                                                                                 | Fix                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
-| **No `color-scheme`.** In dark mode the browser still draws the scrollbars, the search input and other native controls light.                                                                                                        | `color-scheme: light` on `:root` and `dark` on `.dark` (Tailwind's `scheme-light` and `dark:scheme-dark`), in `main.css`     |
-| **Month names follow the visitor's language.** `monthKey` formats with `toLocaleString('default', …)`, so a browser set to another language shows its own month names among English text. Tests vary the timezone, not the language. | `Intl.DateTimeFormat('en', { month: 'long', timeZone: 'UTC' })`, made once; a test that runs it under another `LANG`         |
-| **The dark variant's old spelling.** `@variant dark (…)` at the top of `main.css` is the early Tailwind 4 form.                                                                                                                      | `@custom-variant dark (&:where(.dark, .dark *));`                                                                            |
-| **No `theme-color`.** A phone's browser bar stays its default colour over the page.                                                                                                                                                  | Two `<meta name="theme-color">` tags in `index.html`, one per `prefers-color-scheme`, from the paper colours in `tokens.css` |
+| What                                                                                                                                                                                                                                    | Fix                                                                                                                                                                                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **No `color-scheme`.** In dark mode the browser still draws the scrollbars, the search input and other native controls light.                                                                                                           | ✓ `color-scheme: light` on `:root` and `dark` on `.dark` (Tailwind's `scheme-light` and `dark:scheme-dark`), in `main.css`                                                                                              |
+| **Month names follow the visitor's language.** `monthKey` formatted with `toLocaleString('default', …)`, so a browser set to another language showed its own month names among English text. Tests vary the timezone, not the language. | ✓ `toLocaleString('en', …)`; a test stands in a German browser                                                                                                                                                          |
+| **The dark variant's old spelling.** `@variant dark (…)` at the top of `main.css` is the early Tailwind 4 form.                                                                                                                         | ✓ `@custom-variant dark (&:where(.dark, .dark *));`                                                                                                                                                                     |
+| **No `theme-color`.** A phone's browser bar stayed its default colour over the page.                                                                                                                                                    | ✓ One `<meta name="theme-color">` in the top bar's colour, set by the theme script in `index.html` and by `useTheme`, so it follows the site's own switch, not only the OS; a contract test keeps the two colours alike |
 
 ## What the stack gives
 
@@ -79,8 +79,9 @@ Each phase is one pull request: 100% lines and branches, all checks green, DESIG
 ARCHITECTURE.md or SCRIPTS.md updated in the same PR when a rule changes. The rows marked for an
 overhaul's phase are done there, not here; this page only ticks them.
 
-- [ ] **1. Fixes.** The four fixes above, and "Prefer the platform" in DECISIONS.md. _Done when_
-      dark mode draws native controls dark and the months read in English under any language.
+- [x] **1. Fixes.** (2026-10-27) The four fixes above, and "Prefer the platform" in DECISIONS.md.
+      _Done when_ dark mode draws native controls dark and the months read in English under any
+      language.
 - [ ] **2. Node in the scripts.** `util.parseArgs` under `cli.ts` and the runner, `styleText` for
       the reports, `fs.glob` for `listFiles`, `node --run` in CI, and the Vite chunking check. _Done
       when_ the scripts have one argument parser, Node's.
