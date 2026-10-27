@@ -17,15 +17,6 @@
         <span aria-hidden="true">·</span>
         <span>Drawn {{ drawnMonth }}</span>
       </template>
-      <!-- Hands out the drawing's link preview, which has its own title and image. -->
-      <button
-        v-if="item.isDrawn"
-        class="ml-auto focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
-        @click="share"
-      >
-        {{ shareLabel }}
-      </button>
-      <span role="status" class="sr-only">{{ shareNote }}</span>
     </div>
 
     <!-- The names, as one block in the tile's order: Dhivehi first and largest, then
@@ -114,11 +105,11 @@
     <!-- External links: plain links in a row, the least important thing in the panel. They
          leave the site, so they stay neutral; links within it (the group, "#11", Read more)
          are in the accent (docs/DESIGN.md §01). -->
-    <div v-if="links.length">
-      <p class="caps-label viewer-label mb-2">
+    <div v-if="links.length || item.isDrawn">
+      <p v-if="links.length" class="caps-label viewer-label mb-2">
         Learn more
       </p>
-      <div class="flex flex-wrap gap-x-4 gap-y-1">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
         <a
           v-for="link in links"
           :key="link.label"
@@ -132,7 +123,19 @@
           <Icon name="externalLink" class="size-3 opacity-60" />
           <span class="sr-only">(opens in a new tab)</span>
         </a>
+        <!-- Hands out the drawing's link preview, which has its own title and image; at the
+             row's far end, in the accent, as it stays within the site. -->
+        <button
+          v-if="item.isDrawn"
+          class="ml-auto focus-ring rounded-control inline-flex items-center gap-1 text-sm font-medium
+                 text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+          @click="share"
+        >
+          <Icon name="share" class="size-3" />
+          {{ shareLabel }}
+        </button>
       </div>
+      <span role="status" class="sr-only">{{ shareNote }}</span>
     </div>
 
   </div>
@@ -161,18 +164,20 @@ const drawnMonth = computed(() =>
   props.item.drawnTime ? monthKey(new Date(props.item.drawnTime)) : ''
 );
 
-// Sharing: a phone's share sheet, else the link copied; what happened shows on the button
-// until the next drawing.
-const SHARE_NOTES: Record<ShareOutcome, string> = {
-  sheet: '',
-  copied: 'Link copied',
-  failed: "Couldn't copy the link",
+// Sharing: a phone's share sheet, else the link copied. What happened shows on the button,
+// in a word that keeps it on the links' line, until the next drawing; a screen reader hears
+// the whole sentence.
+const SHARE_OUTCOMES: Record<ShareOutcome, { label: string; note: string }> = {
+  sheet: { label: 'Share', note: '' },
+  copied: { label: 'Copied', note: 'Link copied' },
+  failed: { label: "Couldn't copy", note: "Couldn't copy the link" },
 };
-const shareNote = ref('');
-const shareLabel = computed(() => shareNote.value || (typeof navigator.share === 'function' ? 'Share' : 'Copy link'));
+const shareOutcome = ref<ShareOutcome>('sheet');
+const shareLabel = computed(() => SHARE_OUTCOMES[shareOutcome.value].label);
+const shareNote = computed(() => SHARE_OUTCOMES[shareOutcome.value].note);
 async function share() {
   const url = previewUrl(location.href, props.collection.id, props.item.itemId);
-  shareNote.value = SHARE_NOTES[await shareLink(url, props.item.commonName)];
+  shareOutcome.value = await shareLink(url, props.item.commonName);
 }
 
 const note = computed(() => props.item.illustratorNote ?? '');
@@ -198,7 +203,7 @@ const folded = computed(() => isLong.value && !expanded.value);
 // Each drawing's note starts folded, and its share button fresh.
 watch(() => props.item.id, () => {
   expanded.value = false;
-  shareNote.value = '';
+  shareOutcome.value = 'sheet';
 });
 
 // Links come straight from the collection config
