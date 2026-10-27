@@ -1,5 +1,5 @@
 import { test } from 'vitest';
-import { assert, assertEquals } from '@std/assert';
+import { assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
@@ -16,6 +16,7 @@ function harness(items: Record<string, CollectionItem[]>) {
   const expandedImage = reactive({ isOpen: false, item: undefined as CollectionItem | undefined });
   const switched: string[] = [];
   const opened: string[] = [];
+  const ringed: string[] = [];
 
   const switchCollection = async (id: string) => {
     switched.push(id);
@@ -28,6 +29,7 @@ function harness(items: Record<string, CollectionItem[]>) {
     expandedImage.isOpen = true;
   };
   const closeOverlay = () => (expandedImage.isOpen = false);
+  const ringTile = async (item: CollectionItem) => void ringed.push(item.itemId);
 
   // onMounted has no component here, so the hashchange hook is never attached;
   // tests call apply()/start() directly instead.
@@ -41,6 +43,7 @@ function harness(items: Record<string, CollectionItem[]>) {
       switchCollection,
       openOverlay,
       closeOverlay,
+      ringTile,
       page,
       showPage,
     })
@@ -54,6 +57,7 @@ function harness(items: Record<string, CollectionItem[]>) {
     expandedImage,
     switched,
     opened,
+    ringed,
     switchCollection,
     /** The app's first collection finishing its load (the first state settle). */
     async loadFirst(id: string) {
@@ -116,12 +120,7 @@ test('a deep link switches collection, opens the item, and is not clobbered on t
   h.stop();
 });
 
-test('a deep link to an undrawn item highlights the tile instead of opening it', async () => {
-  const tile = document.createElement('div');
-  tile.id = 'item-005';
-  tile.scrollIntoView = () => {}; // layout does not exist in the fake DOM
-  document.body.append(tile);
-
+test('a deep link to an undrawn item rings its tile instead of opening it', async () => {
   const h = harness({ birds: [undrawn('005')] });
   await h.loadFirst('birds');
 
@@ -129,7 +128,7 @@ test('a deep link to an undrawn item highlights the tile instead of opening it',
   await h.route.apply();
 
   assertEquals(h.opened, []);
-  assert(tile.classList.contains('ring-2'), 'tile should be flashed');
+  assertEquals(h.ringed, ['005']);
   h.stop();
 });
 
@@ -224,6 +223,7 @@ test('mounted, the router follows hashchange events, and stops when unmounted', 
       },
       openOverlay: () => {},
       closeOverlay: () => {},
+      ringTile: async () => {},
     })
   );
 

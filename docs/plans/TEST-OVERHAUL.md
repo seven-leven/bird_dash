@@ -216,9 +216,9 @@ Production code changes only where a test cannot reach it otherwise, and says so
       `TopBar`, `SideNav`, `GalleryContent`, `LightBox`, `SearchResultsList` and `LogoMark`. The
       journeys found three bugs, fixed here: a viewer opened by a link (or before its code arrived)
       took neither focus nor keys; the back button left the viewer open; and a drawing dated after
-      the current month counted "0 drawings". A fourth is logged in TODO.md (a search result in a
-      collection with nothing drawn). **The site overhaul starts after this** (the scripts overhaul
-      is done).
+      the current month counted "0 drawings". A fourth (a search result in a collection with nothing
+      drawn) was fixed right after. **The site overhaul starts after this** (the scripts overhaul is
+      done).
 - [ ] **4. Vue component tests.** Every `.vue` file gets its own `_dom_test.ts` beside it, for what
       a journey leaves open: every empty, loading and error state, the ARIA attributes, the keys,
       the emitted events. Mounted with `mountComponent` and fake stores (or `appStores()`); tests

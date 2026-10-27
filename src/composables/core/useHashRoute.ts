@@ -1,5 +1,4 @@
 import { nextTick, onMounted, onUnmounted, type Ref, watch } from 'vue';
-import { flashItem } from '../../lib/flashItem.ts';
 import { findPage, type PageId } from '../../pages.ts';
 import type { CollectionCache, CollectionConfig, CollectionItem, Page } from '../../types/index.ts';
 
@@ -32,6 +31,7 @@ export function useHashRoute(deps: {
   switchCollection: (id: string) => Promise<void>;
   openOverlay: (item: CollectionItem) => void;
   closeOverlay: () => void;
+  ringTile: (item: CollectionItem) => Promise<void>;
   page: Readonly<Ref<Page>>;
   showPage: (page: Page) => void;
 }) {
@@ -94,7 +94,7 @@ export function useHashRoute(deps: {
       await nextTick();
       const item = deps.cache[collectionId]?.find((i) => i.itemId === itemId);
       if (item?.isDrawn) deps.openOverlay(item); // drawn → open the image
-      else flashItem(itemId); // undrawn → just highlight the tile
+      else if (item) await deps.ringTile(item); // not drawn yet → show and ring its tile
     } finally {
       applying = false;
     }

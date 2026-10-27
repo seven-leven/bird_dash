@@ -60,7 +60,7 @@
       <button
         v-if="viewMode === 'group'"
         class="btn-ghost focus-ring mt-2 px-3 py-1.5 text-sm font-medium"
-        @click="showPlanned = true"
+        @click="showUndrawn()"
       >
         Show what's planned
       </button>
@@ -126,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import ItemTile from './ItemTile.vue';
 import EmptyState from '../ui/EmptyState.vue';
 import DrawnFilter from '../ui/DrawnFilter.vue';
@@ -142,7 +142,8 @@ import { drawings, drawnOf } from '../../lib/formatCount.ts';
 const { data, activeData, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
 // The template registers each section with the ui store for the scroll-spy.
-const { viewMode, theme, drawnOnly, registerHeader, toggleDrawnOnly } = useUi();
+const { viewMode, theme, drawnOnly, showPlanned, registerHeader, toggleDrawnOnly, showUndrawn } =
+  useUi();
 const { open: openItem } = useOverlayStore();
 
 // ---------------------------------------------------------------------------
@@ -151,9 +152,7 @@ const { open: openItem } = useOverlayStore();
 const isEmpty = computed(() => Object.keys(activeData.value.grouped).length === 0);
 
 // A collection with nothing drawn shows "Nothing drawn yet"; in the family view the
-// visitor can still ask to see the planned list (reset when the collection changes).
-const showPlanned = ref(false);
-watch(() => activeCollection.value?.id, () => (showPlanned.value = false));
+// visitor can still ask to see the planned list (the ui store's, until the collection changes).
 const nothingDrawn = computed(() =>
   stats.value.drawn === 0 && (viewMode.value === 'date' || !showPlanned.value)
 );

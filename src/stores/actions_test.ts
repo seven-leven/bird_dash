@@ -17,6 +17,8 @@ function setup(known: string[]) {
       resetHeaders: () => calls.push('resetHeaders'),
       scrollToTop: () => calls.push('scrollToTop'),
       showPage: (page) => pages.push(page),
+      showUndrawn: () => calls.push('showUndrawn'),
+      hidePlanned: () => calls.push('hidePlanned'),
     },
     collections: {
       activeCollection: active as never,
@@ -35,7 +37,8 @@ function setup(known: string[]) {
 test('switchCollection: clears the search, then scrolls to the top once the data is in', async () => {
   const { actions, calls } = setup(['a', 'b']);
   await actions.switchCollection('b');
-  assertEquals(calls, ['clear', 'resetHeaders', 'scrollToTop']);
+  // The planned list folds away: the next collection opens as itself.
+  assertEquals(calls, ['clear', 'hidePlanned', 'resetHeaders', 'scrollToTop']);
 });
 
 test('switchCollection: a collection that has to be fetched is scrolled to the top too', async () => {

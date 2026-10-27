@@ -53,6 +53,7 @@ const route = useHashRoute({
   switchCollection: actions.switchCollection,
   openOverlay: overlay.open,
   closeOverlay: overlay.close,
+  ringTile: actions.ringTile,
   page: ui.page,
   showPage: ui.showPage,
 });

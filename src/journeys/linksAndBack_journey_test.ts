@@ -67,3 +67,11 @@ test('a link to something that is not there leaves the gallery as it is', async 
     assertStringIncludes(app.text(), 'Mallard', at);
   }
 });
+
+test('a link to an item not drawn yet shows its tile, even where nothing is drawn', async () => {
+  using _app = await renderApp({ at: 'sharks/001' });
+  await _app.until(
+    () => document.getElementById('item-001')?.classList.contains('ring-2'),
+    'the shark, ringed',
+  );
+});
