@@ -33,6 +33,11 @@ Commands split by what they write:
 CI runs only builds and reads. A command that changes tracked files says so in its name and in its
 first line of output.
 
+The site's build ends with its **size budget** (`script/build/sizeBudget.ts`, a Vite plugin): it
+prints what a visitor downloads (the JavaScript and the CSS gzipped, the largest full drawing and
+thumbnail) against the limits written there, and fails the build when one is over. Raise a limit
+only on purpose, in the pull request that made the site grow.
+
 ### 3. Decide, then do, then say
 
 Each command is three parts, in three kinds of function:
