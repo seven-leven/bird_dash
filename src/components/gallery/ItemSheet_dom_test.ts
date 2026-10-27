@@ -146,6 +146,47 @@ test('a Dhivehi name without a romanisation is the Thaana alone', () => {
   assertEquals(host.querySelector('h2')!.parentElement!.children.length, 1);
 });
 
+/** The share button, by what it says before it is used. */
+const shareButton = (host: Element) =>
+  [...host.querySelectorAll('button')].find((b) =>
+    /^(Share|Copy link)$/.test(b.textContent!.trim())
+  );
+
+test("sharing a drawing copies its link preview's address, and says so", async () => {
+  const copied: string[] = [];
+  Object.defineProperty(navigator, 'clipboard', {
+    configurable: true,
+    value: { writeText: (text: string) => (copied.push(text), Promise.resolve()) },
+  });
+  const { host, item } = mount(goose);
+  const button = shareButton(host)!;
+  assertEquals(button.textContent!.trim(), 'Copy link'); // no share sheet here
+  button.click();
+  await new Promise((r) => setTimeout(r, 0));
+  await nextTick();
+  assertEquals(copied, [new URL('birds/002/', location.href.split('#')[0]).href]);
+  assertEquals(button.textContent!.trim(), 'Link copied');
+  assertEquals(host.querySelector('[role="status"]')!.textContent, 'Link copied');
+  // The next drawing's button starts fresh.
+  item.value = gooseWith({ itemId: '003', id: 'birds-003' });
+  await nextTick();
+  assertEquals(shareButton(host)!.textContent!.trim(), 'Copy link');
+});
+
+test('on a device with a share sheet, the button says Share', () => {
+  Object.defineProperty(navigator, 'share', { configurable: true, value: () => Promise.resolve() });
+  try {
+    assertEquals(shareButton(mount(goose).host)!.textContent!.trim(), 'Share');
+  } finally {
+    Object.defineProperty(navigator, 'share', { configurable: true, value: undefined });
+  }
+});
+
+test('a drawing not yet drawn has no link preview, so nothing to share', () => {
+  const { host } = mount(gooseWith({ drawnTime: 0 }));
+  assertEquals(shareButton(host), undefined);
+});
+
 test('a bird with two Dhivehi names gets a line for each, each with its own romanisation', () => {
   const { host } = mount(gooseWith({
     commonName: 'Watercock',

@@ -17,6 +17,15 @@
         <span aria-hidden="true">·</span>
         <span>Drawn {{ drawnMonth }}</span>
       </template>
+      <!-- Hands out the drawing's link preview, which has its own title and image. -->
+      <button
+        v-if="item.isDrawn"
+        class="ml-auto focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+        @click="share"
+      >
+        {{ shareLabel }}
+      </button>
+      <span role="status" class="sr-only">{{ shareNote }}</span>
     </div>
 
     <!-- The names, as one block in the tile's order: Dhivehi first and largest, then
@@ -133,6 +142,7 @@ import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import Icon from '../icons/Icon.vue';
 import { noteSegments } from '../../lib/noteLinks.ts';
+import { previewUrl, type ShareOutcome, shareLink } from '../../lib/shareLink.ts';
 import { monthKey } from '../../composables/collection/useCollectionData.ts';
 import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
 
@@ -150,6 +160,20 @@ const emit = defineEmits<{
 const drawnMonth = computed(() =>
   props.item.drawnTime ? monthKey(new Date(props.item.drawnTime)) : ''
 );
+
+// Sharing: a phone's share sheet, else the link copied; what happened shows on the button
+// until the next drawing.
+const SHARE_NOTES: Record<ShareOutcome, string> = {
+  sheet: '',
+  copied: 'Link copied',
+  failed: "Couldn't copy the link",
+};
+const shareNote = ref('');
+const shareLabel = computed(() => shareNote.value || (typeof navigator.share === 'function' ? 'Share' : 'Copy link'));
+async function share() {
+  const url = previewUrl(location.href, props.collection.id, props.item.itemId);
+  shareNote.value = SHARE_NOTES[await shareLink(url, props.item.commonName)];
+}
 
 const note = computed(() => props.item.illustratorNote ?? '');
 
@@ -171,8 +195,11 @@ const isLong = computed(() =>
 );
 const expanded = ref(false);
 const folded = computed(() => isLong.value && !expanded.value);
-// Each drawing's note starts folded.
-watch(() => props.item.id, () => (expanded.value = false));
+// Each drawing's note starts folded, and its share button fresh.
+watch(() => props.item.id, () => {
+  expanded.value = false;
+  shareNote.value = '';
+});
 
 // Links come straight from the collection config
 const links = computed(() => props.collection.links);

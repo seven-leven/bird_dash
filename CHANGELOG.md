@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | feat: a link preview per drawing, and a Share button in the viewer (phase 3c of
+  PLATFORM.md). A shared link always showed the same duck, because the drawing is named after `#`,
+  which a link preview never reads. The build now writes a small page for every drawing,
+  `<collection>/<id>/`, with its own title, description and image, which sends a visitor straight on
+  to the drawing; the viewer's Share button opens a phone's share sheet with that address, or copies
+  it ("Link copied")
 - 2026-10-27 | build: a Content-Security-Policy (phase 3b of PLATFORM.md). The build writes it into
   the page as a `<meta>` tag, as GitHub Pages sends no headers: scripts, styles, images, fonts and
   data from the site only, and the inline theme script allowed by its hash, worked out at build time
