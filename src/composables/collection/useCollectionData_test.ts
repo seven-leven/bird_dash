@@ -91,6 +91,28 @@ test('monthKey buckets by UTC month, so a date on the 1st never slips back a mon
   assertEquals(monthKey(new Date('2025-12-31')), 'December 2025');
 });
 
+test("monthKey names the month in English whatever the visitor's language", () => {
+  // A browser set to German: any date formatted without a language comes out in German.
+  const original = Date.prototype.toLocaleString;
+  Date.prototype.toLocaleString = function (
+    this: Date,
+    locales?: Intl.LocalesArgument,
+    options?: Intl.DateTimeFormatOptions,
+  ) {
+    return original.call(
+      this,
+      locales === undefined || locales === 'default' ? 'de' : locales,
+      options,
+    );
+  };
+  try {
+    assertEquals(new Date('2025-10-01').toLocaleString('default', { month: 'long' }), 'Oktober');
+    assertEquals(monthKey(new Date('2025-10-01')), 'October 2025');
+  } finally {
+    Date.prototype.toLocaleString = original;
+  }
+});
+
 test('date mode: a drawing dated the 1st lands in its own month, the oldest end of the timeline', () => {
   const items = [makeItem({ drawnTime: at(2025, 10, 1) })];
   const { activeData } = setup(items, '', 'date');

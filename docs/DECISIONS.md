@@ -10,6 +10,22 @@ rather than deleting it, when the answer changes.
 
 ## Toolchain
 
+### Prefer the platform
+
+**Chosen:** what Node, TypeScript, Vite, Vue, Tailwind or the browser already provide comes before
+code written here, and code written here comes before a new dependency
+([plans/PLATFORM.md](plans/PLATFORM.md)).
+
+**Why.** A built-in is maintained, documented and usually handles the edge a hand-written one
+misses: the browser's `color-scheme` draws every native control dark, where the site could only
+restyle the ones it knew about. Each adoption has to remove code, fix something, or make something
+better for a visitor; being new is not a reason.
+
+**Costs.** Now and then a feature needs a recent browser; the site then keeps working without it,
+only plainer.
+
+**Revisit** never as a rule; per feature, when what the platform gives changes.
+
 ### Node and npm, not Deno
 
 **Chosen** (October 2026): Node 24 and npm for everything outside the browser: scripts, tests, type

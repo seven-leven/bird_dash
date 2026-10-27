@@ -11,7 +11,18 @@
 @source not '../../.github';
 
 /* Dark mode is class-based (.dark on <html>), driven by useTheme — not the OS. */
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* The browser's own parts (scrollbars, the search box, form controls) follow the page's
+   theme too, so they are not drawn light on a dark page. */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  :root.dark {
+    color-scheme: dark;
+  }
+}
 
 /*
   Design tokens — the whole app draws from these, so a change here is a change
