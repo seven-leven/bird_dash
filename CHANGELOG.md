@@ -17,6 +17,10 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | build: a size budget (phase 3a of PLATFORM.md). The site's build ends by printing
+  what a visitor downloads against the limits in `script/build/sizeBudget.ts` (a Vite plugin) and
+  fails when one is over: the JavaScript (57 of 70 kB gzipped), the CSS (11 of 15 kB gzipped), the
+  largest full drawing (313 of 400 kB) and the largest thumbnail (43 of 60 kB)
 - 2026-10-27 | scripts: Node 24's own tools in place of hand-written ones (phase 2 of PLATFORM.md).
   Every command and the test runner read their arguments with `util.parseArgs` under `cli.ts`'s
   `parseArgs`, so the runner's own flag scan goes and `--into=<dir>` works as well as
