@@ -29,7 +29,7 @@
         placeholder="Search all collections…"
         autocomplete="off"
         class="block w-full pl-7 pr-12 py-1.5 rounded-control text-sm border transition-colors duration-fast
-               focus:outline-none focus:ring-1 focus:ring-accent-500 focus:border-accent-500
+               focus:outline-none focus:ring-1 focus:ring-accent-700 focus:border-accent-700
                bg-slate-100/80 border-transparent text-slate-900 placeholder-slate-400
                dark:bg-slate-800/80 dark:border-transparent dark:text-slate-100 dark:placeholder-slate-500
                dark:focus:ring-accent-500 dark:focus:border-accent-500"

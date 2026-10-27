@@ -98,7 +98,7 @@
   /*
     A choice among siblings: collection tabs, the view switch, sidebar sections.
     The one look for "this is the current one" is a quiet grey fill, strong text
-    and a teal marker — driven by the ARIA state, so the styling cannot disagree
+    and an accent marker — driven by the ARIA state, so the styling cannot disagree
     with what assistive tech is told. Solid teal is kept for primary actions.
   */
   .nav-item {
@@ -112,7 +112,11 @@
   }
   .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true'])::after {
     content: '';
-    @apply absolute rounded-full bg-accent-500;
+    @apply absolute rounded-full bg-accent-700;
+  }
+  /* `dark:` cannot follow a pseudo-element, so the dark theme's marker has a rule of its own. */
+  .dark .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true'])::after {
+    @apply bg-accent-500;
   }
   /* Marker under a horizontal item, or beside a vertical one. */
   .nav-item.marker-b::after {
@@ -146,7 +150,8 @@
       text-slate-500 transition-colors duration-fast
       hover:text-slate-800 hover:bg-slate-900/5
       dark:text-white/50 dark:hover:text-white/70 dark:hover:bg-white/10
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400;
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
+      dark:focus-visible:ring-accent-400;
   }
 
   /* Previous/next arrows beside the lightbox image. */
@@ -156,12 +161,15 @@
       transition-colors duration-fast hover:bg-white hover:text-slate-900
       dark:bg-black/40 dark:text-white/70 dark:shadow-none dark:ring-0
       dark:hover:bg-black/60 dark:hover:text-white
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-400;
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
+      dark:focus-visible:ring-accent-400;
   }
 
-  /* Shared keyboard focus treatment. */
+  /* Shared keyboard focus treatment. A ring needs 3:1 against what it sits on: `500` is too
+     pale on white for some hues (teal 2.4:1), so a light page draws it in `700`. */
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-500
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
+      dark:focus-visible:ring-accent-500
       focus-visible:ring-offset-2 focus-visible:ring-offset-white
       dark:focus-visible:ring-offset-slate-950;
   }

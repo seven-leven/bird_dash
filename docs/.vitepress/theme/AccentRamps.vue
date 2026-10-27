@@ -24,7 +24,8 @@
     </div>
     <p class="wi-note">
       Slate is the interface; the rest are the accents on offer, the default first. The 500 step
-      (outlined) draws the current marker and the focus ring; 700 carries white text.
+      (outlined) draws the current marker and the focus ring on a dark page; 700 draws them on a
+      light one, and carries white text.
     </p>
   </div>
 </template>

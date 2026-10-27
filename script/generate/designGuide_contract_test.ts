@@ -42,7 +42,7 @@ test('the guide shows both placeholders of every collection', async () => {
 
 test('the contrast report gives a ratio for every pair the guide quotes', () => {
   const lines = contrastReport();
-  assertEquals(lines.length, 10);
+  assertEquals(lines.length, 12);
   for (const line of lines) assertMatch(line, /^ {2}\d+\.\d:1 {2}\S/);
   assertStringIncludes(lines.join('\n'), 'muted slate-500 on white');
 });
