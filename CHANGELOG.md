@@ -17,6 +17,10 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: one way to mount (test overhaul, phase 1c). `src/testing/mount.ts` holds
+  `mountComponent`, `mountComposable`, `runInScope` and `mountWithoutDom`, and unmounts whatever a
+  test mounted after it; `mountComponent.ts`, `mountComposable.ts` and the Vue renderer that
+  `injection_test.ts` had copied go. The injection test now checks the warning it used to silence
 - 2026-10-27 | test: shared test data (test overhaul, phase 1b). A fixture archive
   (`src/testing/scenarios/archive.ts`, Birds and Sharks, served to `fakeFetch` by `archiveRoutes()`)
   that the collections store's test now runs on; `makeScriptCollection` in place of ten collections

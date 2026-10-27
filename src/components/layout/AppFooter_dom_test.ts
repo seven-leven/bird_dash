@@ -3,9 +3,9 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { h, ref } from 'vue';
 import AppFooter from './AppFooter.vue';
-import { mountComponent } from '../../testing/mountComponent.ts';
 import { PAGES } from '../../pages.ts';
 import type { Page } from '../../types/index.ts';
+import { mountComponent } from '../../testing/mount.ts';
 
 function mount(page: Page) {
   const host = mountComponent(() => h(AppFooter), { stores: { ui: { page: ref(page) } } });

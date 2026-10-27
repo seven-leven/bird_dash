@@ -4,8 +4,8 @@ import { assert, assertEquals } from '@std/assert';
 import { computed, h, nextTick, ref, shallowRef } from 'vue';
 import AboutPage from './AboutPage.vue';
 import { makeCollection } from '../../testing/fixtures.ts';
-import { mountComponent } from '../../testing/mountComponent.ts';
 import { settle } from '../../testing/settle.ts';
+import { mountComponent } from '../../testing/mount.ts';
 import type {
   CollectionConfig,
   CollectionCounts,

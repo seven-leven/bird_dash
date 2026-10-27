@@ -5,8 +5,8 @@ import { h, nextTick, ref } from 'vue';
 import ItemSheet from './ItemSheet.vue';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
 import type { CollectionItem } from '../../types/index.ts';
-import { mountComponent } from '../../testing/mountComponent.ts';
 import { settle } from '../../testing/settle.ts';
+import { mountComponent } from '../../testing/mount.ts';
 
 const birds = makeCollection('birds', {
   label: 'Birds',

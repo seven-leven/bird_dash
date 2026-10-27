@@ -3,7 +3,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { h } from 'vue';
 import Icon from './Icon.vue';
-import { mountComponent } from '../../testing/mountComponent.ts';
+import { mountComponent } from '../../testing/mount.ts';
 
 test('Icon draws line icons with a stroke and brand marks filled', () => {
   const host = mountComponent(() =>

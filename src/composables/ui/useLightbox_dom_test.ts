@@ -2,10 +2,10 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive } from 'vue';
 import { useLightbox } from './useLightbox.ts';
-import { at, makeCollection, makeItem, runInScope } from '../../testing/fixtures.ts';
-import { mountComposable } from '../../testing/mountComposable.ts';
+import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
 import { withDom } from '../../testing/withDom.ts';
 import type { CollectionItem } from '../../types/index.ts';
+import { mountComposable, runInScope } from '../../testing/mount.ts';
 
 const items = [
   makeItem({ itemId: '001', drawnTime: at(2025, 1, 10) }),

@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { createSearchStore } from './search.ts';
-import { runInScope } from '../testing/fixtures.ts';
+import { runInScope } from '../testing/mount.ts';
 
 test('setQuery updates the query and opens the dropdown for non-empty input', () => {
   const { value: s, stop } = runInScope(() => createSearchStore());

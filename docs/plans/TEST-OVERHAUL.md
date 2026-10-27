@@ -1,11 +1,11 @@
 # Test overhaul
 
-> **Status:** planned 2026-10-26; phase 0 (the rules), 1a (the fakes) and 1b (shared data) done
-> 2026-10-27. The tests were written bottom up, one file at a time, as each piece of code was; this
-> plans them top down, from what the site promises to the smallest rule, and rebuilds the kit they
-> share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 come **before** the
-> [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving every file safe. (The
-> scripts overhaul went first, as the scripts already had direct tests; see
+> **Status:** planned 2026-10-26; phase 0 (the rules), 1a (the fakes), 1b (shared data) and 1c (one
+> way to mount) done 2026-10-27. The tests were written bottom up, one file at a time, as each piece
+> of code was; this plans them top down, from what the site promises to the smallest rule, and
+> rebuilds the kit they share. One pull request per phase, 100% coverage throughout. Phases 1 to 3
+> come **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving
+> every file safe. (The scripts overhaul went first, as the scripts already had direct tests; see
 > [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
@@ -189,8 +189,11 @@ Production code changes only where a test cannot reach it otherwise, and says so
         keeps its own data (same-day order, a missing romanisation, a slow list): one archive
         carrying every quirk would tie unrelated tests together. So "no bird written out twice"
         reads "no shared shape written out twice".
-  - [ ] **1c. One way to mount:** `mount.ts` (`mountComponent`, `mountComposable`, `runInScope`
-        folded in); the copied renderer in `injection_test.ts` goes.
+  - [x] **1c. One way to mount** (2026-10-27): `src/testing/mount.ts` holds `mountComponent`,
+        `mountComposable`, `runInScope` (from `fixtures.ts`) and `mountWithoutDom`, the renderer
+        that draws nothing, which `injection_test.ts` had copied; `mountComponent.ts` and
+        `mountComposable.ts` go. `runInScope` stays a way of its own: mounting would fire the
+        `onMounted` hooks its seven files never ran.
   - [ ] **1d. The runner on `Io`:** `RunnerDeps` goes; the runner's own copies (GitHub escapes, path
         trimming, two `pct`s) fold.
 - [ ] **2. One way to a browser.** The runner gives `_dom_test` files happy-dom; the 83 `withDom`

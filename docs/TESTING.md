@@ -168,11 +168,12 @@ Conventions:
   "handleBackdropClick works".
 - **Build data with the fixtures** (`makeItem`, `makeCollection`, `at(year, month, day)`) so a test
   states only what matters to it.
-- **Composables that only need a reactive scope** run inside `runInScope(...)`, which also gives you
-  a `stop()` to clean up.
-- **Composables whose `onMounted` / `onUnmounted` must really fire** (a window listener, say) run
-  inside `mountComposable(...)`, which mounts a real component that draws nothing and gives you
-  `unmount()`.
+- **Mount with `src/testing/mount.ts`**, by what you mount; everything is unmounted after the test:
+  a component with `mountComponent` (below); a composable whose `onMounted` / `onUnmounted` must
+  really fire (a window listener, say) with `mountComposable(...)`, which mounts a real component
+  that draws nothing; a composable or store that only needs a reactive scope with `runInScope(...)`
+  (its hooks never fire; `stop()` tears it down); components with no document at all (provide /
+  inject) with `mountWithoutDom(component)`.
 - **Code that reads the layout** (the scroll-spy) is tested by giving each fake element the position
   the test wants it to report. That checks the decision, not the browser's measuring.
 - **Use real files when the code is about files.** The asset pipeline tests
@@ -211,10 +212,10 @@ its text, roles and labels, what a click or a key does, what it emits. See
 - Start the file with `// @vitest-environment happy-dom`. Vue's DOM renderer looks up `document`
   when it is first imported, which happens before `withDom` could set one up.
 - Mount with `mountComponent(() => h(Component, props))` from
-  [`src/testing/mountComponent.ts`](../src/testing/mountComponent.ts). It returns the host element,
-  and everything it mounts is unmounted after each test. A component that injects stores gets typed
-  stand-ins: `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with
-  only the members it reads.
+  [`src/testing/mount.ts`](../src/testing/mount.ts). It returns the host element, and everything it
+  mounts is unmounted after each test. A component that injects stores gets typed stand-ins:
+  `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with only the
+  members it reads.
 - One test file per component, named after it (`DrawnFilter.vue` → `DrawnFilter_dom_test.ts`), so a
   failure says which component broke.
 - happy-dom is not a full browser: it does not support the `~` sibling selector, so walk
