@@ -110,6 +110,7 @@ const theme = (dark: boolean) =>
       muted: SLATE['400'],
       border: SLATE['800'],
       viewer: ['#ffffff', whiteOnBlack(0.7), whiteOnBlack(0.5)],
+      ring: TEAL['500'],
     }
     : {
       card: '#ffffff',
@@ -121,6 +122,7 @@ const theme = (dark: boolean) =>
       muted: SLATE['500'],
       border: SLATE['200'],
       viewer: [SLATE['900'], SLATE['600'], SLATE['500']],
+      ring: TEAL['700'], // 500 is too pale on white for a ring
     };
 
 /** A card in one theme's colours, labelled in the corner. */
@@ -156,9 +158,9 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
       (sx, sy) => rect(sx, sy, 56, 28, 'none', 6, `stroke="${t.border}" stroke-width="2"`),
     ],
     [
-      'Focus, current marker, progress',
-      'accent-500',
-      (sx, sy) => rect(sx, sy + 12, 56, 4, TEAL['500'], 2),
+      'Focus ring, current marker',
+      dark ? 'accent-500' : 'accent-700',
+      (sx, sy) => rect(sx, sy + 12, 56, 4, t.ring, 2),
     ],
     [
       'Primary button',
@@ -195,9 +197,9 @@ function navStates(x: number, y: number, w: number, dark: boolean): string {
   const focusX = x + 24 + 3 * 140;
   return themeCard(x, y, w, 128, dark) + item(0, 'Default', t.muted, false) +
     item(1, 'Hover', t.hover, true) + item(2, 'Current', t.ink, true) +
-    rect(x + 24 + 2 * 140 + 10, y + 94, 104, 2.5, TEAL['500'], 2) +
+    rect(x + 24 + 2 * 140 + 10, y + 94, 104, 2.5, t.ring, 2) +
     item(3, 'Focus', t.muted, false) +
-    rect(focusX - 4, y + 52, 132, 48, 'none', 9, `stroke="${TEAL['500']}" stroke-width="2.5"`);
+    rect(focusX - 4, y + 52, 132, 48, 'none', 9, `stroke="${t.ring}" stroke-width="2.5"`);
 }
 
 type Overlay = OverlayOptions;
@@ -457,7 +459,9 @@ export function contrastReport(): string[] {
     ['muted slate-400 on slate-950', SLATE['400'], SLATE['950']],
     ['text slate-100 on slate-950', SLATE['100'], SLATE['950']],
     ['white on accent-700 (button)', '#ffffff', TEAL['700']],
-    ['accent-500 marker on white', TEAL['500'], '#ffffff'],
+    ['accent-500 progress on white', TEAL['500'], '#ffffff'],
+    ['accent-700 ring on white', TEAL['700'], '#ffffff'],
+    ['accent-500 ring on slate-950', TEAL['500'], SLATE['950']],
     ['white 70% on black', whiteOnBlack(0.7), '#000000'],
     ['white 50% on black', whiteOnBlack(0.5), '#000000'],
     ['placeholder #a1a1a1 on white', '#a1a1a1', '#ffffff'],
