@@ -26,7 +26,7 @@ const cov = (file: string, hit: number, found: number): FileCoverage => ({
 });
 
 test('areaOf places a file by its path, whatever the slashes', () => {
-  assertEquals(areaOf('src/lib/formatCount.ts')?.id, 'data');
+  assertEquals(areaOf('src/domain/countWords.ts')?.id, 'data');
   assertEquals(areaOf('src\\stores\\ui.ts')?.id, 'state');
   assertEquals(areaOf('./src/composables/ui/useLightbox.ts')?.id, 'interface');
   assertEquals(areaOf('script/build/plan_changes.ts')?.id, 'pipeline');
@@ -126,5 +126,5 @@ test('with coverage but no source list, nothing is reported unloaded', () => {
 test('the longest matching prefix wins: the icon registry is interface, the rest of lib/ is data', () => {
   assertEquals(areaOf('src/lib/icons.ts')?.id, 'interface');
   assertEquals(areaOf('src/lib/logo_test.ts')?.id, 'interface');
-  assertEquals(areaOf('src/lib/formatCount.ts')?.id, 'data');
+  assertEquals(areaOf('src/domain/countWords.ts')?.id, 'data');
 });

@@ -16,7 +16,7 @@
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { eachDrawnItem, readList } from '../lib/lists.ts';
 import { type Io, realIo } from '../lib/io.ts';
-import { dhivehiNames } from '../../src/lib/dhivehiNames.ts';
+import { dhivehiNames } from '../../src/domain/dhivehiNames.ts';
 import type { RawCollectionData, RawItem } from '../../src/types/data.ts';
 
 export interface LineName {

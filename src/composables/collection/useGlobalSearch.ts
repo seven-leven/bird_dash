@@ -1,11 +1,11 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
-import { normalizeQuery } from '../../lib/normalizeQuery.ts';
+import { normalizeQuery } from '../../domain/normalizeQuery.ts';
 import type {
+  Collection,
   CollectionCache,
-  CollectionConfig,
-  CollectionItem,
   GlobalSearchCollectionGroup,
   GlobalSearchResult,
+  Item,
   MatchedField,
 } from '../../types/index.ts';
 
@@ -13,7 +13,7 @@ import type {
 // HELPERS
 // ---------------------------------------------------------------------------
 /** Which fields match — `ql` is expected already lowercased/trimmed by the caller. */
-function matchedFields(item: CollectionItem, ql: string): MatchedField[] {
+function matchedFields(item: Item, ql: string): MatchedField[] {
   const fields: MatchedField[] = [];
   if (item.itemId.toLowerCase().includes(ql)) fields.push('id');
   if (item.commonName.toLowerCase().includes(ql)) fields.push('commonName');
@@ -28,7 +28,7 @@ function matchedFields(item: CollectionItem, ql: string): MatchedField[] {
 // COMPOSABLE
 // ---------------------------------------------------------------------------
 export function useGlobalSearch(
-  collections: Ref<CollectionConfig[]>,
+  collections: Ref<Collection[]>,
   collectionCache: CollectionCache,
   query: Ref<string>,
 ) {
@@ -42,7 +42,7 @@ export function useGlobalSearch(
 
     const groups: GlobalSearchCollectionGroup[] = [];
     for (const col of collections.value) {
-      const cached: CollectionItem[] = collectionCache[col.id] ?? [];
+      const cached: Item[] = collectionCache[col.id] ?? [];
       const results: GlobalSearchResult[] = [];
       for (const item of cached) {
         // Match against the full haystack (name, sci, id, Dhivehi, …); compute

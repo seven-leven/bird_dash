@@ -1,18 +1,18 @@
 import { computed, type ComputedRef, ref, shallowReactive } from 'vue';
-import { toCollectionConfig, toCollectionItems } from '../../lib/collectionItems.ts';
+import { toCollection, toCollectionItems } from '../../domain/toCollectionItems.ts';
 import { fetchJson, getBase } from '../../lib/fetchJson.ts';
 import type {
+  Collection,
   CollectionCache,
-  CollectionConfig,
-  CollectionItem,
   DataState,
   GlobalStats,
+  Item,
   RawCollectionConfig,
   RawCollectionData,
 } from '../../types/index.ts';
 
 export function useCollections() {
-  const collections = ref<CollectionConfig[]>([]);
+  const collections = ref<Collection[]>([]);
   const isInitialized = ref(false);
   const activeCollectionId = ref('');
   // shallowReactive: track the per-collection array references, but don't deeply
@@ -25,17 +25,17 @@ export function useCollections() {
     error: undefined,
   });
 
-  const activeCollection: ComputedRef<CollectionConfig | undefined> = computed(() => {
+  const activeCollection: ComputedRef<Collection | undefined> = computed(() => {
     if (!isInitialized.value) return undefined;
     // The fallback cannot run: the active id always comes from this list.
     /* c8 ignore next 2 */
-    return collections.value.find((c: CollectionConfig) => c.id === activeCollectionId.value) ??
+    return collections.value.find((c: Collection) => c.id === activeCollectionId.value) ??
       collections.value[0];
   });
 
   const globalStats: ComputedRef<GlobalStats> = computed(() => {
     let drawn = 0, total = 0;
-    collections.value.forEach((col: CollectionConfig) => {
+    collections.value.forEach((col: Collection) => {
       const cached = collectionCache[col.id] ?? [];
       total += cached.length;
       for (const i of cached) if (i.isDrawn) drawn++;
@@ -43,16 +43,16 @@ export function useCollections() {
     return { drawn, total };
   });
 
-  const fetchCollectionData = async (col: CollectionConfig): Promise<CollectionItem[]> => {
+  const fetchCollectionData = async (col: Collection): Promise<Item[]> => {
     const raw = await fetchJson<RawCollectionData>(col.dataUrl, col.label);
     return toCollectionItems(col, raw, getBase());
   };
 
   // One in-flight request per collection, shared by the active load and the
   // background prefetch so neither duplicates the other's fetch.
-  const inflight = new Map<string, Promise<CollectionItem[]>>();
+  const inflight = new Map<string, Promise<Item[]>>();
 
-  const loadCollection = (col: CollectionConfig): Promise<CollectionItem[]> => {
+  const loadCollection = (col: Collection): Promise<Item[]> => {
     const cached = collectionCache[col.id];
     if (cached) return Promise.resolve(cached);
 
@@ -72,7 +72,7 @@ export function useCollections() {
   // Everything after the await is guarded on `col` still being the active
   // collection: a response for a collection the user has already left must not
   // overwrite what's on screen.
-  const loadData = async (col: CollectionConfig): Promise<void> => {
+  const loadData = async (col: Collection): Promise<void> => {
     const isActive = () => activeCollection.value?.id === col.id;
     data.loading = true;
     data.error = undefined;
@@ -125,7 +125,7 @@ export function useCollections() {
         throw new Error('No collections are configured');
       }
 
-      collections.value = rawData.map((c) => toCollectionConfig(c, getBase()));
+      collections.value = rawData.map((c) => toCollection(c, getBase()));
     } catch (e: unknown) {
       initError.value = e instanceof Error ? e.message : String(e);
       return;

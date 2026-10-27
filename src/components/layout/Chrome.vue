@@ -84,7 +84,7 @@ import { useCollectionsStore } from '../../stores/collections.ts';
 import { useSearch } from '../../stores/search.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useOverlayStore } from '../../stores/overlay.ts';
-import { matches, matchesDrawn } from '../../lib/formatCount.ts';
+import { matches, matchesDrawn } from '../../domain/countWords.ts';
 import { findPage } from '../../pages.ts';
 
 // Code-split the overlay: its zoom/pan/drag/keyboard machinery (and ItemSheet)

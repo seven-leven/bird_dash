@@ -1,6 +1,6 @@
 // =============================================================================
 // The shape of the files in public/ — the contract between the build scripts
-// (script/), the app's loader (src/lib/collectionItems.ts) and the data contract
+// (script/), the app's loader (src/domain/toCollectionItems.ts) and the data contract
 // test. Change a field here and all three see it.
 // =============================================================================
 

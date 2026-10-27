@@ -206,7 +206,8 @@ data that actually exists, and let every control explain what it does.
 
 ### Counts describe the view
 
-Counts come from [`src/lib/formatCount.ts`](../src/lib/formatCount.ts); never compose them by hand.
+Counts come from [`src/domain/countWords.ts`](../src/domain/countWords.ts); never compose them by
+hand.
 
 | What the view contains                    | Under the collection's name         | Sidebar pill |
 | ----------------------------------------- | ----------------------------------- | ------------ |
@@ -233,7 +234,7 @@ the sidebar is a drawer, so the count sits above the grid instead. The sidebar's
 total across every collection.
 
 A view has one name, in the header's tab and over the sidebar's list alike: the collection's groups
-in the plural ("Families", "Orders"), or "Months". `src/lib/viewName.ts` makes it.
+in the plural ("Families", "Orders"), or "Months". `src/domain/viewName.ts` makes it.
 
 Use **sentence case** for buttons, labels and headings: "Clear search", not "Clear Search".
 `.caps-label` handles the small uppercase treatment; its markup is still written in sentence case.

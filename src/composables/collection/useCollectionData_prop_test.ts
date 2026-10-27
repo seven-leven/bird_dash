@@ -3,7 +3,8 @@ import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';
 import { assertProperty } from '../../testing/propertyRuns.ts';
 import { ref } from 'vue';
-import { monthKey, useCollectionData } from './useCollectionData.ts';
+import { useCollectionData } from './useCollectionData.ts';
+import { monthName } from '../../domain/dates.ts';
 import { at, makeItem } from '../../testing/fixtures.ts';
 import type { ViewMode } from '../../types/index.ts';
 
@@ -84,7 +85,7 @@ test('property: date mode puts each drawn item in its UTC month, newest month fi
       const grouped = data.activeData.value.grouped;
 
       for (const [month, bucket] of Object.entries(grouped)) {
-        for (const item of bucket) assertEquals(monthKey(new Date(item.drawnTime)), month);
+        for (const item of bucket) assertEquals(monthName(new Date(item.drawnTime)), month);
       }
       const expected = list.filter((i) => i.isDrawn && i.searchText.includes(norm(q))).length;
       assertEquals(Object.values(grouped).flat().length, expected);

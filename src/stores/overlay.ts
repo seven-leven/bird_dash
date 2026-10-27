@@ -1,18 +1,18 @@
 import { reactive, readonly, type Ref } from 'vue';
 import { defineInjection } from '../composables/core/injection.ts';
-import type { CollectionItem } from '../types/index.ts';
+import type { Item } from '../types/index.ts';
 
 /**
  * Lightbox overlay state. `drawnItems` (the chronological list the lightbox
  * pages through) is derived in the collections store and passed in.
  */
-export function createOverlayStore(deps: { drawnItems: Ref<CollectionItem[]> }) {
+export function createOverlayStore(deps: { drawnItems: Ref<Item[]> }) {
   const expandedImage = reactive({
     isOpen: false,
-    item: undefined as CollectionItem | undefined,
+    item: undefined as Item | undefined,
   });
 
-  const open = (item: CollectionItem): void => {
+  const open = (item: Item): void => {
     if (!item.isDrawn) return; // nothing to show for a placeholder
     expandedImage.item = item;
     expandedImage.isOpen = true;
@@ -21,7 +21,7 @@ export function createOverlayStore(deps: { drawnItems: Ref<CollectionItem[]> }) 
   const close = (): void => {
     expandedImage.isOpen = false;
   };
-  const update = (item: CollectionItem): void => {
+  const update = (item: Item): void => {
     expandedImage.item = item;
   };
 

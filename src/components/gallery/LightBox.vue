@@ -137,7 +137,7 @@
 <script setup lang="ts">
 import ItemSheet from './ItemSheet.vue';
 import Icon from '../icons/Icon.vue';
-import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
+import type { Item, Collection } from '../../types/index.ts';
 import { useLightbox } from '../../composables/ui/useLightbox.ts';
 import { useSearch } from '../../stores/search.ts';
 
@@ -146,16 +146,16 @@ const { query } = useSearch();
 
 const props = defineProps<{
   isOpen:           boolean;
-  item?:            CollectionItem;
-  drawnItems:       CollectionItem[];
+  item?:            Item;
+  drawnItems:       Item[];
   fullImageBaseUrl: string;
-  collection:       CollectionConfig;
+  collection:       Collection;
 }>();
 
 const emit = defineEmits<{
   (e: 'close'): void;
   (e: 'go-to-group', group: string): void;
-  (e: 'update:item', item: CollectionItem): void;
+  (e: 'update:item', item: Item): void;
 }>();
 
 const {

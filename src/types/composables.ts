@@ -3,7 +3,7 @@
 // =============================================================================
 
 import type { Ref } from 'vue';
-import type { CollectionConfig, CollectionItem } from './collections.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
 import type { SidebarItem } from './ui.ts';
 
 // ViewMode lives in ui.ts; re-exported here for the composable
@@ -16,7 +16,7 @@ export type { ViewMode } from './ui.ts';
 
 /** Sectioned grid data — sections are groups in group mode, months in date mode. */
 export interface GroupedData {
-  grouped: Record<string, CollectionItem[]>;
+  grouped: Record<string, Item[]>;
   sidebarItems: SidebarItem[];
 }
 
@@ -45,13 +45,13 @@ export interface UseScrollLogicReturn {
 export type MatchedField = 'id' | 'commonName' | 'scientificName' | 'group';
 
 export interface GlobalSearchResult {
-  item: CollectionItem;
-  collection: CollectionConfig;
+  item: Item;
+  collection: Collection;
   matchedFields: MatchedField[];
 }
 
 export interface GlobalSearchCollectionGroup {
-  collection: CollectionConfig;
+  collection: Collection;
   results: GlobalSearchResult[];
   count: number;
 }

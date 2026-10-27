@@ -158,4 +158,4 @@ appears in it with no other change.
 
 **Add a new kind of information** (a habitat, where it was seen): add a string field to the items.
 It appears in the viewer and in search with no code change. Give it its own treatment later by
-adding it to `RawItem` in `src/types/data.ts` and handling it in `src/lib/collectionItems.ts`.
+adding it to `RawItem` in `src/types/data.ts` and handling it in `src/domain/toCollectionItems.ts`.

@@ -3,7 +3,7 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { h, nextTick, ref } from 'vue';
 import ItemSheet from './ItemSheet.vue';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
-import type { CollectionItem } from '../../types/index.ts';
+import type { Item } from '../../types/index.ts';
 import { settle } from '../../testing/settle.ts';
 import { mountComponent } from '../../testing/mount.ts';
 
@@ -23,10 +23,10 @@ const gooseFields = {
   illustratorNote: 'Experimented with markers. Compare #1.',
 };
 const goose = makeItem(gooseFields);
-const gooseWith = (o: Partial<CollectionItem>) => makeItem({ ...gooseFields, ...o });
+const gooseWith = (o: Partial<Item>) => makeItem({ ...gooseFields, ...o });
 
 /** Mount the panel for `item` (reactive, so a test can swap the drawing). */
-function mount(start: CollectionItem) {
+function mount(start: Item) {
   const item = ref(start);
   const groups: string[] = [];
   const host = mountComponent(() =>

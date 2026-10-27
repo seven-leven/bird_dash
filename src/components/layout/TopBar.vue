@@ -142,7 +142,7 @@ import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useActions } from '../../stores/actions.ts';
 import { useSearch } from '../../stores/search.ts';
-import { viewName } from '../../lib/viewName.ts';
+import { viewName } from '../../domain/viewName.ts';
 import { PAGES } from '../../pages.ts';
 
 const { list: collections, activeCollection } = useCollectionsStore();

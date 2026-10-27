@@ -1,12 +1,57 @@
-import type {
-  CollectionConfig,
-  CollectionItem,
-  RawCollectionConfig,
-  RawCollectionData,
-} from '../types/index.ts';
+import type { RawCollectionConfig, RawCollectionData } from '../types/data.ts';
+import type { ItemName } from './itemNames.ts';
 import { buildNames, nameWords } from './itemNames.ts';
+import { linkUrl } from './linkUrl.ts';
 
-/** Fields with their own place on a CollectionItem; every other string field is `meta`. */
+export interface Item {
+  id: string;
+  itemId: string;
+  commonName: string;
+  scientificName: string;
+  /**
+   * Every name the item has, in display order, built once at load
+   * (./itemNames.ts). Components render names from here; `commonName` and
+   * `scientificName` stay for link templates, search matching and labels.
+   */
+  names: readonly ItemName[];
+  group: string;
+  imageUrl: string;
+  placeholderUrl: string;
+  /** The same placeholder drawn for the dark theme. */
+  placeholderDarkUrl: string;
+  /** Precomputed once at load — avoids repeated `imageUrl !== placeholderUrl` checks. */
+  isDrawn: boolean;
+  /** Numeric form of `itemId`, precomputed for sort comparators. */
+  sortKey: number;
+  /** Drawn date as an epoch ms timestamp (0 if undrawn/invalid), for date sorting/grouping. */
+  drawnTime: number;
+  /**
+   * Lowercased haystack for search — every name (Thaana and romanisation included),
+   * group, id and all meta values. Built once at load.
+   */
+  searchText: string;
+  illustratorNote?: string;
+  meta?: Record<string, string>;
+}
+
+export interface Collection {
+  id: string;
+  label: string;
+  emoji: string;
+  icon?: string;
+  accent?: string;
+  dataUrl: string;
+  imageBase: string;
+  fullImageBase: string;
+  groupLabel: string;
+  itemLabel: string;
+  links: {
+    label: string;
+    url: (item: Item) => string;
+  }[];
+}
+
+/** Fields with their own place on a Item; every other string field is `meta`. */
 const KNOWN_KEYS = new Set([
   'id',
   'name',
@@ -17,15 +62,8 @@ const KNOWN_KEYS = new Set([
   'illustratorNote',
 ]);
 
-/** Fill a link template's `{{common}}` / `{{sci}}` placeholders for one item. */
-export function resolveUrl(template: string, item: CollectionItem): string {
-  return template
-    .replace(/{{common}}/g, encodeURIComponent(item.commonName))
-    .replace(/{{sci}}/g, encodeURIComponent(item.scientificName));
-}
-
 /** A `collections.json` entry plus the URLs the app derives from its id. */
-export function toCollectionConfig(raw: RawCollectionConfig, base: string): CollectionConfig {
+export function toCollection(raw: RawCollectionConfig, base: string): Collection {
   return {
     ...raw,
     dataUrl: `${base}lists/${raw.id}.json`,
@@ -33,7 +71,7 @@ export function toCollectionConfig(raw: RawCollectionConfig, base: string): Coll
     fullImageBase: `${base}full/${raw.id}/`,
     links: raw.links.map((l) => ({
       label: l.label,
-      url: (item: CollectionItem) => resolveUrl(l.url, item),
+      url: (item: Item) => linkUrl(l.url, item),
     })),
   };
 }
@@ -45,11 +83,11 @@ export function toCollectionConfig(raw: RawCollectionConfig, base: string): Coll
  * also lets the shallowReactive cache skip proxying them.
  */
 export function toCollectionItems(
-  col: Pick<CollectionConfig, 'id' | 'imageBase'>,
+  col: Pick<Collection, 'id' | 'imageBase'>,
   raw: RawCollectionData,
   base: string,
-): CollectionItem[] {
-  const items: CollectionItem[] = [];
+): Item[] {
+  const items: Item[] = [];
   const placeholder = `${base}placeholders/${col.id}.webp`;
   const placeholderDark = `${base}placeholders/${col.id}-dark.webp`;
 
@@ -104,7 +142,7 @@ export function toCollectionItems(
  * item that is not drawn yet, or whose image failed — the placeholder that
  * matches the theme.
  */
-export function tileImage(item: CollectionItem, dark: boolean, failed = false): string {
+export function tileImage(item: Item, dark: boolean, failed = false): string {
   if (item.isDrawn && !failed) return item.imageUrl;
   return dark ? item.placeholderDarkUrl : item.placeholderUrl;
 }

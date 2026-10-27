@@ -108,13 +108,13 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import type { GlobalSearchResult } from '../../types/index.ts';
-import { matches } from '../../lib/formatCount.ts';
+import { matches } from '../../domain/countWords.ts';
 
 // Composables
 import { useSearchNavigation } from '../../composables/search/useSearchNavigation.ts';
 import { useSearchHighlight } from '../../composables/search/useSearchHighlight.ts';
 import { useClickOutside } from '../../composables/search/useClickOutside.ts';
-import { COLLAPSED_SIZE, collapseGroups } from '../../lib/collapseGroups.ts';
+import { COLLAPSED_SIZE, collapseGroups } from '../../domain/collapseGroups.ts';
 
 // Stores
 import { useSearch } from '../../stores/search.ts';

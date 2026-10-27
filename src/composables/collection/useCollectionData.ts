@@ -1,18 +1,13 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue';
-import { normalizeQuery } from '../../lib/normalizeQuery.ts';
+import { normalizeQuery } from '../../domain/normalizeQuery.ts';
+import { monthName } from '../../domain/dates.ts';
 import type {
-  CollectionItem,
   CollectionStats,
   GroupedData,
+  Item,
   SidebarItem,
   ViewMode,
 } from '../../types/index.ts';
-
-// Drawn dates are `YYYY-MM-DD`, which JS parses as UTC midnight. Bucket them by
-// their UTC month so a drawing dated the 1st never slips into the previous month
-// for viewers west of UTC.
-export const monthKey = (d: Date) =>
-  `${d.toLocaleString('en', { month: 'long', timeZone: 'UTC' })} ${d.getUTCFullYear()}`;
 
 const firstOfMonthUTC = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
 
@@ -59,7 +54,7 @@ export function monthRows(
 }
 
 export function useCollectionData(
-  items: Ref<CollectionItem[]>,
+  items: Ref<Item[]>,
   searchQuery: Ref<string>,
   viewMode: Ref<ViewMode>,
   /** Family view: show drawn items only (and only the groups that have some). */
@@ -92,7 +87,7 @@ export function useCollectionData(
   // GROUP MODE LOGIC
   // =============================================================================
   const groupData: ComputedRef<GroupedData> = computed(() => {
-    const grouped: Record<string, CollectionItem[]> = {};
+    const grouped: Record<string, Item[]> = {};
 
     allFilteredItems.value.forEach((item) => {
       if (!grouped[item.group]) grouped[item.group] = [];
@@ -151,7 +146,7 @@ export function useCollectionData(
     const end = firstOfMonthUTC(new Date());
 
     while (current <= end) {
-      months.push(monthKey(current));
+      months.push(monthName(current));
       current.setUTCMonth(current.getUTCMonth() + 1);
     }
     return months;
@@ -161,11 +156,11 @@ export function useCollectionData(
   // is new (docs/DESIGN.md §10). The viewer still pages in time order.
   const dateData: ComputedRef<GroupedData> = computed(() => {
     // searchedDrawnItems is in (drawnTime, sortKey) order; walk it backwards.
-    const grouped: Record<string, CollectionItem[]> = {};
+    const grouped: Record<string, Item[]> = {};
     for (let n = searchedDrawnItems.value.length - 1; n >= 0; n--) {
       const i = searchedDrawnItems.value[n];
       if (!i.drawnTime) continue;
-      const key = monthKey(new Date(i.drawnTime));
+      const key = monthName(new Date(i.drawnTime));
       if (!grouped[key]) grouped[key] = [];
       grouped[key].push(i);
     }

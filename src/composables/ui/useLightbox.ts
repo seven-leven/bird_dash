@@ -4,19 +4,19 @@ import { computed, ref, watch } from 'vue';
 import { useDialogKeys } from './useDialogKeys.ts';
 import { useDrawingNav } from './useDrawingNav.ts';
 import { useZoomPan } from './useZoomPan.ts';
-import type { CollectionConfig, CollectionItem } from '../../types/index.ts';
+import type { Collection, Item } from '../../types/index.ts';
 
 interface LightboxOptions {
   props: {
     isOpen: boolean;
-    item?: CollectionItem;
-    drawnItems: CollectionItem[];
+    item?: Item;
+    drawnItems: Item[];
     fullImageBaseUrl: string;
-    collection: CollectionConfig;
+    collection: Collection;
   };
   emit: {
     (e: 'close'): void;
-    (e: 'update:item', item: CollectionItem): void;
+    (e: 'update:item', item: Item): void;
   };
 }
 

@@ -1,11 +1,11 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
-import { monthKey, monthRows, useCollectionData } from './useCollectionData.ts';
+import { monthRows, useCollectionData } from './useCollectionData.ts';
 import { at, makeItem } from '../../testing/fixtures.ts';
-import type { CollectionItem, ViewMode } from '../../types/index.ts';
+import type { Item, ViewMode } from '../../types/index.ts';
 
-function setup(items: CollectionItem[], query = '', mode: ViewMode = 'group') {
+function setup(items: Item[], query = '', mode: ViewMode = 'group') {
   return useCollectionData(ref(items), ref(query), ref(mode));
 }
 
@@ -81,39 +81,6 @@ test('date mode: the months are continuous and an empty one is shown, disabled',
   const feb = activeData.value.sidebarItems.find((s) => s.id === 'February 2025')!;
   assertEquals(feb.disabled, true);
   assertEquals(feb.count, 0);
-});
-
-test('monthKey buckets by UTC month, so a date on the 1st never slips back a month', () => {
-  // `YYYY-MM-DD` parses as UTC midnight; a local-time month would report
-  // September for this instant anywhere west of UTC.
-  assertEquals(monthKey(new Date('2025-10-01')), 'October 2025');
-  assertEquals(monthKey(new Date('2025-01-01')), 'January 2025');
-  assertEquals(monthKey(new Date('2025-12-31')), 'December 2025');
-});
-
-test("monthKey names the month in English whatever the visitor's language", () => {
-  // A browser set to German: any date formatted without a language comes out in German.
-  const original = Date.prototype.toLocaleString;
-  Date.prototype.toLocaleString = function (
-    this: Date,
-    locales?: Intl.LocalesArgument,
-    options?: Intl.DateTimeFormatOptions,
-  ) {
-    return original.call(
-      this,
-      locales === undefined || locales === 'default' ? 'de' : locales,
-      options,
-    );
-  };
-  try {
-    assertEquals(
-      new Date('2025-10-01').toLocaleString('default', { month: 'long', timeZone: 'UTC' }),
-      'Oktober',
-    );
-    assertEquals(monthKey(new Date('2025-10-01')), 'October 2025');
-  } finally {
-    Date.prototype.toLocaleString = original;
-  }
 });
 
 test('date mode: a drawing dated the 1st lands in its own month, the oldest end of the timeline', () => {

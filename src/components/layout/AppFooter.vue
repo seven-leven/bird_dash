@@ -42,7 +42,7 @@
         Docs
       </a>
       <a
-        :href="SOURCE_URL"
+        :href="REPO_URL"
         target="_blank"
         rel="noopener noreferrer"
         class="focus-ring inline-flex items-center gap-1 rounded-control underline underline-offset-2
@@ -60,10 +60,9 @@
 <script setup lang="ts">
 import Icon from '../icons/Icon.vue';
 import { useUi } from '../../stores/ui.ts';
-import { drawings } from '../../lib/formatCount.ts';
+import { drawings } from '../../domain/countWords.ts';
+import { REPO_URL } from '../../domain/links.ts';
 import { PAGES } from '../../pages.ts';
-
-const SOURCE_URL = 'https://github.com/seven-leven/bird_dash';
 
 const { page } = useUi();
 

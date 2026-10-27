@@ -75,7 +75,7 @@ generated file is never edited by hand.
 | What                                                  | Where                   |
 | ----------------------------------------------------- | ----------------------- |
 | Paths in the repository (`public/lists/`, `dist/`, …) | `script/lib/paths.ts`   |
-| Project facts (repository URL, the site's base path)  | `script/lib/project.ts` |
+| Project links (repository, site, docs, write-up)      | `src/domain/links.ts`   |
 | Files, git, child processes, the clock                | `script/lib/io.ts`      |
 | Running a command, printing, exit codes               | `script/lib/cli.ts`     |
 | The collections and their lists                       | `script/lib/`, as today |

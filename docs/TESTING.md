@@ -115,15 +115,15 @@ The helpers are in [`src/testing/`](../src/testing/).
 Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
 belongs to one area, by its folder ([`script/testRunner/areas.ts`](../script/testRunner/areas.ts)):
 
-| Area                          | Folders                                                                           | Protects                                                |
-| ----------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| Site: data and search         | `src/lib` (but the icons), `src/composables/collection`, `src/composables/search` | Loading collections, filtering, grouping, search        |
-| Site: state and routing       | `src/stores`, `src/composables/core`, `src/pages.ts`                              | The stores, shareable links, the pages, theme, accent   |
-| Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`     | The lightbox, scroll-spy, icons and logo                |
-| Site: journeys                | `src/journeys`, `src/App.vue`                                                     | A whole visit, from first load to the back button       |
-| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders             | Ingest, the integrity check, the files in `public/`     |
-| Version and changelog         | `script/version`, `script/changelog`                                              | The version in the footer, the changelog task           |
-| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                             | The runner and its reports, guide images, the docs site |
+| Area                          | Folders                                                                            | Protects                                                |
+| ----------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Site: data and search         | `src/domain`, `src/lib` (but the icons), `src/composables/collection` and `search` | Loading collections, filtering, grouping, search        |
+| Site: state and routing       | `src/stores`, `src/composables/core`, `src/pages.ts`                               | The stores, shareable links, the pages, theme, accent   |
+| Site: viewer and interface    | `src/composables/ui`, `src/components`, `src/lib/icons.ts`, `src/lib/logo.ts`      | The lightbox, scroll-spy, icons and logo                |
+| Site: journeys                | `src/journeys`, `src/App.vue`                                                      | A whole visit, from first load to the back button       |
+| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders              | Ingest, the integrity check, the files in `public/`     |
+| Version and changelog         | `script/version`, `script/changelog`                                               | The version in the footer, the changelog task           |
+| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                              | The runner and its reports, guide images, the docs site |
 
 When two areas' folders overlap, the longer path wins: `src/lib/icons.ts` is interface, the rest of
 `src/lib` is data.

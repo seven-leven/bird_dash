@@ -62,7 +62,9 @@ src/
   stores/               Domain state — search, ui, collections, overlay, stats — each with readonly
                         state + actions, shared through provide/inject (defineInjection)
   composables/          Reusable logic (data pipeline, scroll-spy, lightbox, URL routing)
-  lib/                  Small framework-free helpers, and the icon and logo drawings
+  domain/               The archive's rules, pure: items and collections, names, counts and their
+                        wording, dates, the project's links (the scripts use some of it too)
+  lib/                  The browser and network helpers, and the icon and logo drawings
                         (icons.ts, logo.ts) that both the site and the scripts use
   types/                Shared TypeScript types
   styles/               main.css (Tailwind), tokens.css and accents.css (shared with the docs site), fonts/
@@ -87,14 +89,15 @@ docs/                   Reference guides at the top level; plans/ for work not d
 
 Imports only point leftwards in this list; nothing imports from a layer to its right.
 
-| Layer            | Folder             | What lives there                                                                                                                                                  |
-| ---------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Types            | `src/types/`       | Shapes only. `data.ts` is the raw files; `collections.ts` the app's own                                                                                           |
-| Pure helpers     | `src/lib/`         | Functions with no Vue and no DOM state: normalising items, wording counts, collapsing search groups; the icon and logo drawings, which the build scripts read too |
-| Composables      | `src/composables/` | Reusable logic that uses Vue reactivity or the browser: loading and caching, filtering and grouping, the lightbox, scroll-spy, URL routing                        |
-| Stores           | `src/stores/`      | The app's state, one per domain, each exposing read-only state and actions                                                                                        |
-| Components       | `src/components/`  | Templates. They read stores and call actions; they hold no shared state                                                                                           |
-| Composition root | `src/App.vue`      | Creates the stores, provides them, starts the router                                                                                                              |
+| Layer            | Folder             | What lives there                                                                                                                                                |
+| ---------------- | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Types            | `src/types/`       | Shapes only. `data.ts` is the raw files; `collections.ts` the app's own                                                                                         |
+| Domain           | `src/domain/`      | The archive's rules, plain TypeScript: items and collections, names, counts and their wording, dates, search groups. A contract test keeps it pure              |
+| Helpers          | `src/lib/`         | The browser and the network (`fetchJson`, the accent, the tile ring) until phase 2 moves them, and the icon and logo drawings, which the build scripts read too |
+| Composables      | `src/composables/` | Reusable logic that uses Vue reactivity or the browser: loading and caching, filtering and grouping, the lightbox, scroll-spy, URL routing                      |
+| Stores           | `src/stores/`      | The app's state, one per domain, each exposing read-only state and actions                                                                                      |
+| Components       | `src/components/`  | Templates. They read stores and call actions; they hold no shared state                                                                                         |
+| Composition root | `src/App.vue`      | Creates the stores, provides them, starts the router                                                                                                            |
 
 ### Stores
 
@@ -125,9 +128,9 @@ State moves one way:
 
 1. `collections.json` loads; the first collection's list loads; the others are fetched in the
    background and cached.
-2. Raw items are normalised once (`lib/collectionItems.ts`) and frozen: the drawn flag, sort key,
-   timestamp, names (`lib/itemNames.ts`) and search text are precomputed. Components render an
-   item's `names` list and never read a name field by name.
+2. Raw items are normalised once (`domain/toCollectionItems.ts`) and frozen: the drawn flag, sort
+   key, timestamp, names (`domain/itemNames.ts`) and search text are precomputed. Components render
+   an item's `names` list and never read a name field by name.
 3. The query and view mode feed computed values that produce the grid sections, sidebar entries,
    counts and the lightbox order. Nothing is stored that can be derived.
 4. Components render those values and call actions in response to input.
@@ -168,8 +171,8 @@ only through `Io`.
 
 ## Rules
 
-- **Imports follow the layers.** A helper in `lib/` never imports a store; a component never imports
-  a data composable directly.
+- **Imports follow the layers.** `domain/` imports nothing but itself; a helper in `lib/` never
+  imports a store; a component never imports a data composable directly.
 - **`src/` never imports from `public/`.** It fetches, through one helper (`lib/fetchJson.ts`), and
   only in the loaders (`useCollections`, `useStats`): a page is a view of a store and never fetches.
   `script/` may import `collections.json`.
@@ -178,8 +181,8 @@ only through `Io`.
   all derived.
 - **One owner per concern:** one URL owner, one icon registry, one place that words counts, one
   place that types the data files.
-- **Pure first.** Put logic in `lib/` as a plain function when you can; it is the cheapest thing to
-  test. Reach for a composable only when you need reactivity or the browser.
+- **Pure first.** Put logic in `domain/` as a plain function when you can; it is the cheapest thing
+  to test. Reach for a composable only when you need reactivity or the browser.
 - **The data decides.** Adding a collection or an item is a JSON and image change, not a code
   change.
 

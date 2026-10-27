@@ -1,12 +1,12 @@
 # Site code overhaul
 
-> **Status:** planned 2026-10-26; phase 0 (the rules) done 2026-10-27, phase 1 waits for the test
-> overhaul's phases 1–3 (its journey tests are the safety net for moving files). Rebuilds the layout
-> and naming of `src/` (the site's code: components, composables, lib, stores, styles, types) from
-> the ground up, one pull request per phase, with the site looking and behaving the same throughout.
-> `src/testing/` is out of scope except where its imports have to follow a move. The scripts went
-> through the same (done 2026-10-26: [SCRIPTS.md](../SCRIPTS.md) and the CHANGELOG). Delete this
-> page when phase 8 is done.
+> **Status:** planned 2026-10-26; phases 0 (the rules) and 1 (domain) done 2026-10-27, after the
+> test overhaul's phases 1–3 (its journey tests are the safety net for moving files). Rebuilds the
+> layout and naming of `src/` (the site's code: components, composables, lib, stores, styles, types)
+> from the ground up, one pull request per phase, with the site looking and behaving the same
+> throughout. `src/testing/` is out of scope except where its imports have to follow a move. The
+> scripts went through the same (done 2026-10-26: [SCRIPTS.md](../SCRIPTS.md) and the CHANGELOG).
+> Delete this page when phase 8 is done.
 
 ## Why
 
@@ -155,10 +155,15 @@ every file moves.
 - [x] **0. Agree the rules.** (2026-10-27) Settle the decisions above; write the principles, the
       glossary and the naming into ARCHITECTURE.md (the words are in GLOSSARY.md); a DECISIONS.md
       entry ("folders by feature"). _Done when_ the rules are merged.
-- [ ] **1. Domain.** `domain/` from the pure half of `lib/` and the domain types; `monthKey` out of
-      the composable into `domain/dates.ts`; the `Collection` and `Item` types. A contract test:
-      nothing in `domain/` imports `vue` or touches `document`, `window` or `fetch`. _Done when_ no
-      component imports a composable to format something.
+- [x] **1. Domain** (2026-10-27). `domain/` from the pure half of `lib/`: `itemNames`,
+      `dhivehiNames`, `collapseGroups`, `noteLinks`, `normalizeQuery`, `viewName`, `countWords` (was
+      `formatCount`), `toCollectionItems` (was `collectionItems`, with `toCollection`), `linkUrl`
+      (was `resolveUrl`), and `dates.ts` (`monthName`, was the composable's `monthKey`, with
+      `parseDay` and `dayName` from the About page). The `Collection` and `Item` types (were
+      `CollectionConfig` and `CollectionItem`) live in `toCollectionItems.ts`; `types/index.ts`
+      re-exports them until phase 8. Folded: `plural` (the scripts import it) and the project's
+      links (`domain/links.ts`; `script/lib/project.ts` goes). `pureDomain_contract_test.ts` keeps
+      it pure. `tileImage` waits in `toCollectionItems.ts` for `gallery/` (phase 5).
 - [ ] **2. Data and browser.** `data/` (`fetchJson`, the loaders, `files.ts` with the file shapes,
       which `script/` now imports from there) and `browser/` (injection, theme, breakpoint,
       debounce, click-outside, accent, scroll behaviour). _Done when_ `lib/` holds only `ui/`'s

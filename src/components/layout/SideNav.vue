@@ -118,8 +118,8 @@ import Icon from '../icons/Icon.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useSearch } from '../../stores/search.ts';
-import { drawings, drawnOf, ratio } from '../../lib/formatCount.ts';
-import { viewName } from '../../lib/viewName.ts';
+import { drawings, drawnOf, ratio } from '../../domain/countWords.ts';
+import { viewName } from '../../domain/viewName.ts';
 
 // The sidebar's counts: slate-700 (10.4:1 on white) where something is drawn, the muted
 // slate-500 (4.8:1) where nothing is yet.

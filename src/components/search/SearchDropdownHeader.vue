@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import { matchesDrawn } from '../../lib/formatCount.ts';
+import { matchesDrawn } from '../../domain/countWords.ts';
 
 defineProps<{ count: number; drawn: number }>();
 </script>

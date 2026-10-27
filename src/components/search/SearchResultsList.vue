@@ -83,16 +83,16 @@
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
-import { tileImage } from '../../lib/collectionItems.ts';
-import { nameLines } from '../../lib/itemNames.ts';
+import { tileImage } from '../../domain/toCollectionItems.ts';
+import { nameLines } from '../../domain/itemNames.ts';
 import { useUi } from '../../stores/ui.ts';
-import type { CollectionItem, GlobalSearchResult } from '../../types/index.ts';
-import type { VisibleGroup } from '../../lib/collapseGroups.ts';
+import type { Item, GlobalSearchResult } from '../../types/index.ts';
+import type { VisibleGroup } from '../../domain/collapseGroups.ts';
 
 const { theme } = useUi();
 
 // A result's names, the ones a query matches (English, Latin) before the Thaana.
-const resultLines = (item: CollectionItem) => {
+const resultLines = (item: Item) => {
   const lines = nameLines(item.names);
   return [...lines.filter((l) => l.lang !== 'dv'), ...lines.filter((l) => l.lang === 'dv')];
 };

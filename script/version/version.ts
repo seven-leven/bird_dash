@@ -18,6 +18,7 @@
  * injects it into the page footer). See docs/WORKFLOW.md ("Versioning") for the overview.
  */
 
+import { plural } from '../../src/domain/countWords.ts';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { readDrawnIds } from '../lib/lists.ts';
 import { type Io, readJson, realIo } from '../lib/io.ts';
@@ -85,8 +86,6 @@ export async function computeVersion(
 export function formatVersion(version: Version): string {
   return `${version.major}.${version.minor}.${version.patch}`;
 }
-
-const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
 
 /** Everything on one line, for logs: `0.9.161 Valu Kukulhu · 18 drawings · a1b2c3d`. */
 export function formatVersionLine(version: Version): string {

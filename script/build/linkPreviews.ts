@@ -7,7 +7,7 @@ import type { Plugin } from 'vite';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
 import { eachDrawnItem, readList } from '../lib/lists.ts';
 import { realIo } from '../lib/io.ts';
-import { SITE_URL } from '../lib/project.ts';
+import { SITE_URL } from '../../src/domain/links.ts';
 import type { RawItem } from '../../src/types/data.ts';
 
 /** Folders the built site already has; a collection with one of these ids would collide. */
