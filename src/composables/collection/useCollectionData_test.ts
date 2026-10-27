@@ -106,7 +106,10 @@ test("monthKey names the month in English whatever the visitor's language", () =
     );
   };
   try {
-    assertEquals(new Date('2025-10-01').toLocaleString('default', { month: 'long' }), 'Oktober');
+    assertEquals(
+      new Date('2025-10-01').toLocaleString('default', { month: 'long', timeZone: 'UTC' }),
+      'Oktober',
+    );
     assertEquals(monthKey(new Date('2025-10-01')), 'October 2025');
   } finally {
     Date.prototype.toLocaleString = original;
