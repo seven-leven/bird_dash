@@ -4,6 +4,7 @@
  * src/lib/icons.ts. The colours and the contrast maths are in ./palette.ts; the drawing
  * kit it shares with the icon sheet is in ./guideDrawing.ts.
  */
+import { readFile } from 'node:fs/promises';
 import sharp, { type OverlayOptions } from 'sharp';
 import { PRINCIPLES } from './principles.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
@@ -11,6 +12,7 @@ import { readJson } from '../lib/fs.ts';
 import { PATHS } from '../lib/paths.ts';
 import type { RawCollectionConfig } from '../../src/types/data.ts';
 import {
+  balanceTwoLines,
   caps,
   FONT,
   icon,
@@ -24,6 +26,7 @@ import {
   rect,
   RULE,
   rule,
+  RULE_SOFT,
   serif,
   SERIF_FACE,
   statement,
@@ -33,6 +36,43 @@ import {
   wrapText,
   X,
 } from './guideDrawing.ts';
+
+/** The corner radii and the two speeds, as the site's CSS defines them (px and ms). */
+export interface FormTokens {
+  controlPx: number;
+  cardPx: number;
+  fastMs: number;
+  slowMs: number;
+}
+
+/**
+ * The form tokens, from the text of tokens.css and main.css (rem at 16px to the rem).
+ * Throws when one is missing, so a renamed token fails the guide instead of a number
+ * going stale on it.
+ */
+export function formTokensFrom(tokensCss: string, mainCss: string): FormTokens {
+  const rem = (name: string) => {
+    const found = tokensCss.match(new RegExp(`--wi-radius-${name}:\\s*([\\d.]+)rem`));
+    if (!found) throw new Error(`tokens.css has no --wi-radius-${name} in rem`);
+    return Number(found[1]) * 16;
+  };
+  const ms = (name: string) => {
+    const found = mainCss.match(
+      new RegExp(`@utility duration-${name} \\{\\s*transition-duration:\\s*(\\d+)ms`),
+    );
+    if (!found) throw new Error(`main.css has no duration-${name} in ms`);
+    return Number(found[1]);
+  };
+  return { controlPx: rem('control'), cardPx: rem('card'), fastMs: ms('fast'), slowMs: ms('slow') };
+}
+
+/** The form tokens as the site's CSS defines them now, so the guide quotes what the site uses. */
+export async function readFormTokens(): Promise<FormTokens> {
+  return formTokensFrom(
+    await readFile(PATHS.tokensCss, 'utf8'),
+    await readFile(PATHS.mainCss, 'utf8'),
+  );
+}
 
 /**
  * Every section has the same shape: a fine rule, a small label, a statement in
@@ -53,7 +93,7 @@ function ramp(y: number, name: string, colors: Record<string, string>): string {
     const on = contrast(hex, '#ffffff') > 3 ? '#ffffff' : INK;
     const x = X + i * w;
     return rect(x, y, w - 6, 78, hex, 8, `stroke="${RULE}"`) +
-      text(x + 10, y + 30, `${name}-${step}`, 16, on, 600) + text(x + 10, y + 56, hex, 14, on);
+      text(x + 10, y + 30, `${name}-${step}`, 16, on, 600) + text(x + 10, y + 56, hex, 15, on);
   }).join('');
 }
 
@@ -138,7 +178,7 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
     const ry = top + i * row;
     svg += line(x + 24, ry, x + w - 24, ry, t.border) + sample(x + 24, ry + 9) +
       text(x + 100, ry + 29, name, 15, t.ink) +
-      text(x + w - 24, ry + 29, tokens, 14, t.muted, 400, 'text-anchor="end"');
+      text(x + w - 24, ry + 29, tokens, 15, t.muted, 400, 'text-anchor="end"');
   });
   return { svg, bottom: top + roles.length * row + 12 };
 }
@@ -187,13 +227,27 @@ export async function designGuide(
   PRINCIPLES.forEach((p, i) => {
     const x = X + i * colW + (i ? 28 : 0);
     parts.push(
-      (i ? line(x - 28, y + 72, x - 28, y + 452) : '') + icon(p.icon, x, y + 72, 36, INK) +
+      (i ? line(x - 28, y + 72, x - 28, y + 420, RULE_SOFT) : '') +
+        icon(p.icon, x, y + 72, 36, INK) +
         caps(x, y + 164, `P${i + 1}`) +
-        para(x, y + 214, wrapText(p.title, 15), 38, `${SERIF_FACE} font-size="30" fill="${INK}"`) +
-        para(x, y + 336, wrapText(p.summary, 24), 32, `${FONT} font-size="18" fill="${LABEL}"`),
+        // Every heading in two even lines, so the five share one shape and one top.
+        para(
+          x,
+          y + 214,
+          balanceTwoLines(p.title),
+          38,
+          `${SERIF_FACE} font-size="30" fill="${INK}"`,
+        ) +
+        para(
+          x,
+          y + 304,
+          wrapText(p.summary, 24),
+          29,
+          `${FONT} font-size="18" fill="${SLATE['700']}"`,
+        ),
     );
   });
-  y += 524;
+  y += 492;
 
   // ── Colour ──
   let s = section(
@@ -214,7 +268,7 @@ export async function designGuide(
   const ry = card.bottom + 48;
   parts.push(
     caps(X, ry, 'Accent menu') +
-      serif(X + 156, ry, 'picked per collection in collections.json; the marker shade beneath', 15),
+      serif(X + 168, ry, 'picked per collection in collections.json; the marker shade beneath', 16),
   );
   const sw = (W - 2 * X) / menu.length;
   menu.forEach((hue, i) => {
@@ -227,12 +281,12 @@ export async function designGuide(
     const x = X + i * sw;
     const who = usedBy(hue);
     parts.push(
-      rect(x, ry + 14, sw - 6, 24, hex[700], 5) + text(x + 8, ry + 31, hue, 13, '#ffffff', 600) +
-        rect(x, ry + 41, sw - 6, 3, hex[500], 1.5) +
-        text(x, ry + 62, who || 'free', 13, who ? INK : LABEL, who ? 600 : 400),
+      rect(x, ry + 16, sw - 6, 30, hex[700], 6) + text(x + 9, ry + 36, hue, 15, '#ffffff', 600) +
+        rect(x, ry + 50, sw - 6, 3, hex[500], 1.5) +
+        text(x, ry + 76, who || 'free', 15, who ? INK : LABEL, who ? 600 : 400),
     );
   });
-  y = ry + 104;
+  y = ry + 118;
 
   // ── Type: one name as the specimen, then the scale ──
   s = section(
@@ -246,7 +300,7 @@ export async function designGuide(
   // Dhivehi first and largest, English second, the scientific name small and italic.
   const hero = s.top + 64;
   const names: [string, number, string][] = [
-    ['Dhivehi', hero, 'first, and one step larger: Faruma reads small'],
+    ['Dhivehi', hero, 'first, a step larger: Faruma reads small'],
     ['English', hero + 64, 'second; what search results lead with'],
     ['Scientific', hero + 102, 'last, italic; it can wait for the viewer'],
   ];
@@ -255,7 +309,7 @@ export async function designGuide(
     text(X, hero + 64, 'Lesser Whistling-Duck', 44, INK, 600, 'letter-spacing="-0.5"') +
       text(X, hero + 102, 'Dendrocygna javanica', 20, MUTED, 400, 'font-style="italic"') +
       names.map(([label, base, note]) =>
-        caps(X + 820, base, label) + text(X + 950, base, note, 14, LABEL)
+        caps(X + 820, base, label) + text(X + 950, base, note, 15, LABEL)
       )
         .join(''),
   );
@@ -272,8 +326,8 @@ export async function designGuide(
     if (token === 'text-3xl') dhivehi.push(await thaana(sample, X, ty, px));
     else parts.push(text(X, ty, sample, px, INK, weight));
     parts.push(
-      text(X + 820, ty, token, 14, INK, 600) + text(X + 920, ty, `${px}px`, 14, MUTED) +
-        text(X + 980, ty, use, 14, MUTED),
+      text(X + 820, ty, token, 15, INK, 600) + text(X + 920, ty, `${px}px`, 15, MUTED) +
+        text(X + 980, ty, use, 15, MUTED),
     );
     ty += 46;
   }
@@ -290,24 +344,31 @@ export async function designGuide(
   const sy = s.top;
   const corner = (x: number, rx: number, h: number, name: string, use: string) =>
     rect(x, sy + (52 - h) / 2, 150, h, '#ffffff', rx, `stroke="${SLATE['300']}"`) +
-    text(x, sy + 80, name, 14, INK, 600) + text(x, sy + 100, use, 14, LABEL);
+    text(x, sy + 80, name, 15, INK, 600) + text(x, sy + 101, use, 15, LABEL);
+  const form = await readFormTokens();
   parts.push(
-    corner(X, 6, 52, 'rounded-control · 6px', 'buttons, inputs, badges') +
-      corner(X + 200, 12, 52, 'rounded-card · 12px', 'tiles, panels, menus') +
+    corner(
+      X,
+      form.controlPx,
+      52,
+      `rounded-control · ${form.controlPx}px`,
+      'buttons, inputs, badges',
+    ) +
+      corner(X + 200, form.cardPx, 52, `rounded-card · ${form.cardPx}px`, 'tiles, panels, menus') +
       corner(X + 400, 14, 28, 'rounded-full', 'count pills, progress bar'),
   );
   [4, 8, 12, 16, 24, 48].forEach((px, i) => {
     const x = X + 640 + i * 60;
     parts.push(
-      rect(x, sy + 52 - px, px, px, TEAL['500'], 2) + text(x, sy + 80, `${px}`, 14, INK, 600),
+      rect(x, sy + 52 - px, px, px, TEAL['500'], 2) + text(x, sy + 80, `${px}`, 15, INK, 600),
     );
   });
-  parts.push(text(X + 640, sy + 100, 'spacing steps (px)', 14, LABEL));
+  parts.push(text(X + 640, sy + 101, 'spacing steps (px)', 15, LABEL));
   parts.push(
-    text(X + 1040, sy + 20, 'duration-fast · 150ms', 14, INK, 600) +
-      text(X + 1040, sy + 40, 'hover, colour', 14, LABEL) +
-      text(X + 1040, sy + 80, 'duration-slow · 300ms', 14, INK, 600) +
-      text(X + 1040, sy + 100, 'things that move', 14, LABEL),
+    text(X + 1040, sy + 20, `duration-fast · ${form.fastMs}ms`, 15, INK, 600) +
+      text(X + 1040, sy + 41, 'hover, colour', 15, LABEL) +
+      text(X + 1040, sy + 80, `duration-slow · ${form.slowMs}ms`, 15, INK, 600) +
+      text(X + 1040, sy + 101, 'things that move', 15, LABEL),
   );
   y = sy + 156;
 
@@ -334,12 +395,13 @@ export async function designGuide(
   );
   parts.push(s.svg);
   const groups = iconGroups(X, s.top + 10, {
-    cols: 15,
+    cols: 13, // two tracks of six, one empty column between them
+    tracks: 2,
     size: 30,
-    cell: 82,
-    row: 148,
-    label: 13,
-    name: 12,
+    cell: 95,
+    row: 152,
+    label: 14,
+    name: 14,
     gap: 30,
   }, INK);
   parts.push(groups.svg);

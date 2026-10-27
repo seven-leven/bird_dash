@@ -1,6 +1,6 @@
 import { test } from 'vitest';
-import { assertEquals, assertMatch, assertStringIncludes } from '@std/assert';
-import { contrastReport, designGuide } from './designGuide.ts';
+import { assertEquals, assertMatch, assertStringIncludes, assertThrows } from '@std/assert';
+import { contrastReport, designGuide, formTokensFrom, readFormTokens } from './designGuide.ts';
 import { iconSheetSvg } from './iconSheet.ts';
 import { accentMenu } from './palette.ts';
 import { ICON_GROUPS, ICONS } from '../../src/lib/icons.ts';
@@ -54,4 +54,27 @@ test('a collection with no accent set is listed under teal, the default', async 
   );
   const { svg } = await designGuide(unset);
   assertMatch(svg, />[^<]*Unaccented[^<]*<\/text>/);
+});
+
+test('the guide quotes the corner radii and the speeds the site’s CSS defines', async () => {
+  const form = await readFormTokens();
+  assertEquals(form, { controlPx: 6, cardPx: 12, fastMs: 150, slowMs: 300 });
+  const { svg } = await designGuide();
+  for (
+    const quoted of [
+      `rounded-control · ${form.controlPx}px`,
+      `rounded-card · ${form.cardPx}px`,
+      `duration-fast · ${form.fastMs}ms`,
+      `duration-slow · ${form.slowMs}ms`,
+    ]
+  ) assertStringIncludes(svg, quoted);
+});
+
+test('a form token missing from the CSS fails the guide instead of going stale on it', () => {
+  const tokens = '--wi-radius-control: 0.375rem; --wi-radius-card: 0.75rem;';
+  const main = '@utility duration-fast {\n  transition-duration: 150ms;\n}\n' +
+    '@utility duration-slow {\n  transition-duration: 300ms;\n}';
+  assertEquals(formTokensFrom(tokens, main).cardPx, 12);
+  assertThrows(() => formTokensFrom('', main), Error, 'tokens.css has no --wi-radius-control');
+  assertThrows(() => formTokensFrom(tokens, ''), Error, 'main.css has no duration-fast');
 });
