@@ -3,12 +3,12 @@ import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useDrawingNav } from './useDrawingNav.ts';
 import { makeItem } from '../../testing/fixtures.ts';
-import type { CollectionItem } from '../../types/index.ts';
+import type { Item } from '../../types/index.ts';
 
 const items = ['001', '002', '003'].map((itemId) => makeItem({ itemId }));
 
 /** The nav over `items`, with the open item as a ref the caller owns (as the viewer's prop). */
-function nav(start: CollectionItem | undefined) {
+function nav(start: Item | undefined) {
   const item = ref(start);
   const asked: string[] = [];
   const n = useDrawingNav({

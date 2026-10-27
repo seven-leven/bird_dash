@@ -108,7 +108,7 @@ The task runner works on tiers. For anything finer, call Vitest directly.
 One file:
 
 ```bash
-npx vitest run src/lib/formatCount_test.ts
+npx vitest run src/domain/countWords_test.ts
 ```
 
 One test by name (any part of the name matches):
@@ -130,7 +130,7 @@ npm test -- --fail-fast --verbose
    ```
    ✗ 1 failing
 
-     src/lib/formatCount_test.ts
+     src/domain/countWords_test.ts
        drawnOf words a share the same way everywhere
        Values are not equal.
    ```

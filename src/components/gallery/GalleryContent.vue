@@ -137,7 +137,7 @@ import { useCollectionsStore } from '../../stores/collections.ts';
 import { useSearch } from '../../stores/search.ts';
 import { useUi } from '../../stores/ui.ts';
 import { useOverlayStore } from '../../stores/overlay.ts';
-import { drawings, drawnOf } from '../../lib/formatCount.ts';
+import { drawings, drawnOf } from '../../domain/countWords.ts';
 
 const { data, activeData, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();

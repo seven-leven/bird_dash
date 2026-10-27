@@ -6,7 +6,7 @@ import { makeCollection } from '../../testing/fixtures.ts';
 import { settle } from '../../testing/settle.ts';
 import { mountComponent } from '../../testing/mount.ts';
 import type {
-  CollectionConfig,
+  Collection,
   CollectionCounts,
   NewestDrawing,
   Page,
@@ -108,8 +108,8 @@ function fakeStats(...answers: (Stats | string)[]) {
 /** Wait for the load and the render after it. */
 
 function mount(
-  list: CollectionConfig[] = [birds, sharks, shells],
-  active?: CollectionConfig,
+  list: Collection[] = [birds, sharks, shells],
+  active?: Collection,
   stats = fakeStats(STATS),
 ) {
   const host = mountComponent(() => h(AboutPage), {

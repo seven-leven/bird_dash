@@ -64,13 +64,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
-import { tileImage } from '../../lib/collectionItems.ts';
-import { nameLines } from '../../lib/itemNames.ts';
-import type { CollectionItem } from '../../types/index.ts';
+import { tileImage } from '../../domain/toCollectionItems.ts';
+import { nameLines } from '../../domain/itemNames.ts';
+import type { Item } from '../../types/index.ts';
 
 const props = withDefaults(
   defineProps<{
-    item: CollectionItem;
+    item: Item;
     /** Above-the-fold tiles load eagerly with high priority (helps LCP). */
     eager?: boolean;
     /** Dark theme: undrawn items show the dark placeholder. */
@@ -79,7 +79,7 @@ const props = withDefaults(
   { eager: false, dark: false },
 );
 
-const emit = defineEmits<{ (e: 'cardClick', item: CollectionItem): void }>();
+const emit = defineEmits<{ (e: 'cardClick', item: Item): void }>();
 
 // Only drawn items open the viewer. A placeholder is not a button: it gets no
 // role, tab stop or hover lift, so nothing promises an action that never happens.

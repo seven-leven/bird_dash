@@ -3,7 +3,7 @@ import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive } from 'vue';
 import { useLightbox } from './useLightbox.ts';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
-import type { CollectionItem } from '../../types/index.ts';
+import type { Item } from '../../types/index.ts';
 import { mountComposable, runInScope } from '../../testing/mount.ts';
 
 const items = [
@@ -16,14 +16,13 @@ const items = [
 function setup(startAt = 0) {
   const props = reactive({
     isOpen: false,
-    item: items[startAt] as CollectionItem | undefined,
+    item: items[startAt] as Item | undefined,
     drawnItems: items,
     fullImageBaseUrl: '/full/x/',
     collection: makeCollection('x'),
   });
-  const emitted: Array<[string, CollectionItem | undefined]> = [];
-  const emit =
-    ((event: string, payload?: CollectionItem) => emitted.push([event, payload])) as never;
+  const emitted: Array<[string, Item | undefined]> = [];
+  const emit = ((event: string, payload?: Item) => emitted.push([event, payload])) as never;
 
   const dialog = document.createElement('div');
   dialog.tabIndex = -1;
@@ -447,7 +446,7 @@ test('if nothing focusable had focus when it opened, closing leaves focus alone'
 test('unmounting while open unlocks the page and stops listening for keys', async () => {
   const props = reactive({
     isOpen: false,
-    item: items[0] as CollectionItem | undefined,
+    item: items[0] as Item | undefined,
     drawnItems: items,
     fullImageBaseUrl: '/full/x/',
     collection: makeCollection('x'),

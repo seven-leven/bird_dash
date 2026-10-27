@@ -3,7 +3,7 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { h } from 'vue';
 import ItemTile from './ItemTile.vue';
 import { at, makeItem } from '../../testing/fixtures.ts';
-import type { CollectionItem } from '../../types/index.ts';
+import type { Item } from '../../types/index.ts';
 import { mountComponent } from '../../testing/mount.ts';
 
 const drawn = makeItem({
@@ -17,10 +17,10 @@ const teal = { itemId: '005', commonName: 'Green-winged Teal', isDrawn: false };
 const undrawn = makeItem(teal);
 
 /** Mount a tile and record what it emits. */
-function mount(props: { item: CollectionItem; dark?: boolean; eager?: boolean }) {
-  const clicked: CollectionItem[] = [];
+function mount(props: { item: Item; dark?: boolean; eager?: boolean }) {
+  const clicked: Item[] = [];
   const host = mountComponent(() =>
-    h(ItemTile, { ...props, onCardClick: (item: CollectionItem) => clicked.push(item) })
+    h(ItemTile, { ...props, onCardClick: (item: Item) => clicked.push(item) })
   );
   const tile = host.querySelector<HTMLElement>(`#item-${props.item.itemId}`)!;
   return { tile, clicked, img: tile.querySelector('img')! };

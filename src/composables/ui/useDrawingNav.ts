@@ -1,7 +1,7 @@
 // useDrawingNav.ts — moving between drawings: where the open one sits, and the ones beside it.
 import { computed } from 'vue';
-import { ratio } from '../../lib/formatCount.ts';
-import type { CollectionItem } from '../../types/index.ts';
+import { ratio } from '../../domain/countWords.ts';
+import type { Item } from '../../types/index.ts';
 
 /**
  * The open drawing's place in the order the viewer pages through, and the moves to the
@@ -9,9 +9,9 @@ import type { CollectionItem } from '../../types/index.ts';
  * the new item through `onNavigate`, and the caller feeds it back.
  */
 export function useDrawingNav(deps: {
-  item: () => CollectionItem | undefined;
-  items: () => readonly CollectionItem[];
-  onNavigate: (item: CollectionItem) => void;
+  item: () => Item | undefined;
+  items: () => readonly Item[];
+  onNavigate: (item: Item) => void;
 }) {
   const currentItem = computed(deps.item);
 

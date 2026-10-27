@@ -23,7 +23,7 @@
         </p>
         <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
           <a :href="`#${browseId}`" class="btn-primary focus-ring">Browse the collections</a>
-          <a :href="FOLIO_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
+          <a :href="WRITE_UP_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
             How the site was built
             <Icon name="externalLink" class="size-3 opacity-60" />
             <span class="sr-only">(opens in a new tab)</span>
@@ -179,7 +179,7 @@
         </li>
       </ol>
       <p class="mt-6 text-sm">
-        <a :href="FOLIO_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
+        <a :href="WRITE_UP_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
           How the site was built, in the write-up
             <Icon name="externalLink" class="size-3 opacity-60" />
           <span class="sr-only">(opens in a new tab)</span>
@@ -215,13 +215,13 @@ import CollectionIcon from '../icons/CollectionIcon.vue';
 import AppFooter from '../layout/AppFooter.vue';
 import { useCollectionsStore } from '../../stores/collections.ts';
 import { useStatsStore } from '../../stores/stats.ts';
-import { drawnOf, plural } from '../../lib/formatCount.ts';
-import { viewName } from '../../lib/viewName.ts';
-import { dhivehiNames } from '../../lib/dhivehiNames.ts';
-import { monthKey } from '../../composables/collection/useCollectionData.ts';
+import { drawnOf, plural } from '../../domain/countWords.ts';
+import { viewName } from '../../domain/viewName.ts';
+import { dhivehiNames } from '../../domain/dhivehiNames.ts';
+import { dayName, monthName, parseDay } from '../../domain/dates.ts';
+import { WRITE_UP_URL } from '../../domain/links.ts';
 import type { NewestDrawing } from '../../types/index.ts';
 
-const FOLIO_URL = 'https://seven-leven.github.io/folio/code-wildlife.html';
 // On the docs site, served beside the gallery (docs/.vitepress), so the link is relative.
 const MANIFESTO_URL = 'docs/DESIGN.html';
 /** How many of the newest drawings the page shows (stats.json lists more). */
@@ -273,10 +273,9 @@ const subject = computed(() =>
     : `the ${joinAnd(list.value.map((c) => c.label.toLowerCase()))} in its lists`
 );
 
-// Dates in the lists are `YYYY-MM-DD`; read them as UTC, as the month view does.
-const dateOf = (iso: string) => new Date(`${iso}T00:00:00Z`);
-const monthOf = (iso: string) => monthKey(dateOf(iso));
-const dayOf = (iso: string) => `${dateOf(iso).getUTCDate()} ${monthOf(iso)}`;
+// Dates in the lists are `YYYY-MM-DD`, read as UTC like the month view's (domain/dates.ts).
+const monthOf = (iso: string) => monthName(parseDay(iso));
+const dayOf = (iso: string) => dayName(parseDay(iso));
 
 const itemHref = (d: NewestDrawing) => `#${d.collection}/${d.id}`;
 const imageOf = (d: NewestDrawing) => `${byId.value.get(d.collection)?.imageBase ?? ''}${d.id}.webp`;

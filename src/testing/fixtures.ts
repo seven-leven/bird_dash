@@ -1,13 +1,13 @@
-import type { CollectionConfig, CollectionItem } from '../types/index.ts';
-import { buildNames, nameWords } from '../lib/itemNames.ts';
+import type { Collection, Item } from '../types/index.ts';
+import { buildNames, nameWords } from '../domain/itemNames.ts';
 
 let counter = 0;
 
-/** Minimal CollectionConfig for logic tests (only `id` is read by search logic). */
+/** Minimal Collection for logic tests (only `id` is read by search logic). */
 export function makeCollection(
   id: string,
-  overrides: Partial<CollectionConfig> = {},
-): CollectionConfig {
+  overrides: Partial<Collection> = {},
+): Collection {
   return {
     id,
     label: id,
@@ -23,12 +23,12 @@ export function makeCollection(
 }
 
 /**
- * Build a CollectionItem for logic tests. `names` and `searchText` are derived the
+ * Build a Item for logic tests. `names` and `searchText` are derived the
  * same way the loader builds them, so filter tests are faithful: a Dhivehi name
  * given as `meta: { dhiv, dhiv_script }` (the list's own fields) becomes names and
  * leaves `meta`. Pass `drawnTime` (epoch ms) to mark an item drawn on a given date.
  */
-export function makeItem(overrides: Partial<CollectionItem> = {}): CollectionItem {
+export function makeItem(overrides: Partial<Item> = {}): Item {
   counter += 1;
   const itemId = overrides.itemId ?? String(counter).padStart(3, '0');
   const commonName = overrides.commonName ?? `Common ${itemId}`;

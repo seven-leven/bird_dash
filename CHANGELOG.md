@@ -17,6 +17,15 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | refactor: `src/domain/`, the archive's rules in one place (site overhaul, phase 1).
+  The pure half of `lib/` moves there: names, counts and their wording (`countWords`, was
+  `formatCount`), groups, notes, queries, view names, and the items and collections themselves
+  (`toCollectionItems`, with the `Item` and `Collection` types, were `CollectionItem` and
+  `CollectionConfig`). Dates get `dates.ts`, so no component imports a composable to name a month
+  any more; a link template is filled by `linkUrl`. The scripts' three copies of `plural` import the
+  domain's, and the project's links live in `domain/links.ts` for the site, the scripts and the docs
+  (`script/lib/project.ts` goes). A contract test keeps `domain/` pure: no Vue, no browser, no
+  network, no clock
 - 2026-10-27 | fix: a search result or a link to an item not drawn yet shows its tile. Its tile is
   hidden in a collection with nothing drawn ("Nothing drawn yet"), in the month view and under
   "drawn only", so choosing the Whale Shark found nothing to ring. A new action, `ringTile`, first

@@ -3,17 +3,17 @@ import { assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
-import type { CollectionConfig, CollectionItem, Page } from '../../types/index.ts';
+import type { Collection, Item, Page } from '../../types/index.ts';
 import { mountComposable, runInScope } from '../../testing/mount.ts';
 
 // The router is a small state machine (bare load / reflect / deep link / own
 // writes). These tests pin the two bugs that only showed up in a browser:
 // a bare load rewriting the URL, and a deep link being clobbered mid-switch.
 
-function harness(items: Record<string, CollectionItem[]>) {
+function harness(items: Record<string, Item[]>) {
   const collections = Object.keys(items).map((id) => makeCollection(id));
-  const activeCollection = ref<CollectionConfig | undefined>(undefined);
-  const expandedImage = reactive({ isOpen: false, item: undefined as CollectionItem | undefined });
+  const activeCollection = ref<Collection | undefined>(undefined);
+  const expandedImage = reactive({ isOpen: false, item: undefined as Item | undefined });
   const switched: string[] = [];
   const opened: string[] = [];
   const ringed: string[] = [];
@@ -23,13 +23,13 @@ function harness(items: Record<string, CollectionItem[]>) {
     activeCollection.value = collections.find((c) => c.id === id);
     await nextTick();
   };
-  const openOverlay = (item: CollectionItem) => {
+  const openOverlay = (item: Item) => {
     opened.push(item.itemId);
     expandedImage.item = item;
     expandedImage.isOpen = true;
   };
   const closeOverlay = () => (expandedImage.isOpen = false);
-  const ringTile = async (item: CollectionItem) => void ringed.push(item.itemId);
+  const ringTile = async (item: Item) => void ringed.push(item.itemId);
 
   // onMounted has no component here, so the hashchange hook is never attached;
   // tests call apply()/start() directly instead.
@@ -208,7 +208,7 @@ test('a state whose hash is already in the address bar adds no history entry', a
 
 test('mounted, the router follows hashchange events, and stops when unmounted', async () => {
   const collections = [makeCollection('birds'), makeCollection('sharks')];
-  const activeCollection = ref<CollectionConfig | undefined>(collections[0]);
+  const activeCollection = ref<Collection | undefined>(collections[0]);
   const switched: string[] = [];
   const { unmount } = mountComposable(() =>
     useHashRoute({

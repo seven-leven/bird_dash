@@ -26,7 +26,7 @@
          one Dhivehi name gets a line per name: the first as the title, each other smaller,
          "also …", every Thaana name with its own romanisation. A gloss that does not fit
          beside its name wraps under it instead of splitting it. Each name's role
-         (src/lib/itemNames.ts) picks its line; the block reads no field by name. -->
+         (src/domain/itemNames.ts) picks its line; the block reads no field by name. -->
     <div>
       <template v-for="(name, n) in item.names" :key="n">
         <div
@@ -144,14 +144,14 @@
 import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import Icon from '../icons/Icon.vue';
-import { noteSegments } from '../../lib/noteLinks.ts';
+import { noteSegments } from '../../domain/noteLinks.ts';
 import { previewUrl, type ShareOutcome, shareLink } from '../../lib/shareLink.ts';
-import { monthKey } from '../../composables/collection/useCollectionData.ts';
-import type { CollectionItem, CollectionConfig } from '../../types/index.ts';
+import { monthName } from '../../domain/dates.ts';
+import type { Item, Collection } from '../../types/index.ts';
 
 const props = defineProps<{
-  item:       CollectionItem;
-  collection: CollectionConfig;
+  item:       Item;
+  collection: Collection;
 }>();
 
 const emit = defineEmits<{
@@ -161,7 +161,7 @@ const emit = defineEmits<{
 
 // "October 2024", as the month view heads it; nothing for an undated drawing.
 const drawnMonth = computed(() =>
-  props.item.drawnTime ? monthKey(new Date(props.item.drawnTime)) : ''
+  props.item.drawnTime ? monthName(new Date(props.item.drawnTime)) : ''
 );
 
 // Sharing: a phone's share sheet, else the link copied. What happened shows on the button,

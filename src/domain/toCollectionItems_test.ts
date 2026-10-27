@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertThrows } from '@std/assert';
-import { resolveUrl, tileImage, toCollectionConfig, toCollectionItems } from './collectionItems.ts';
+import { tileImage, toCollection, toCollectionItems } from './toCollectionItems.ts';
 import { makeItem } from '../testing/fixtures.ts';
 
 const col = { id: 'birds', imageBase: '/thumb/birds/' };
@@ -89,8 +89,8 @@ test('toCollectionItems: ids are unique across groups and items are frozen', () 
   }, TypeError);
 });
 
-test('toCollectionConfig: derives the data and image URLs from the id and base', () => {
-  const config = toCollectionConfig({
+test('toCollection: derives the data and image URLs from the id and base', () => {
+  const config = toCollection({
     id: 'sharks',
     label: 'Sharks',
     emoji: '🦈',
@@ -103,14 +103,6 @@ test('toCollectionConfig: derives the data and image URLs from the id and base',
   assertEquals(config.fullImageBase, './full/sharks/');
   const item = makeItem({ scientificName: 'Carcharhinus melanopterus' });
   assertEquals(config.links[0].url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');
-});
-
-test('resolveUrl: fills every placeholder and encodes the values', () => {
-  const item = makeItem({ commonName: 'Black & White Tern', scientificName: 'A b' });
-  assertEquals(
-    resolveUrl('https://x.test/{{common}}/{{sci}}?again={{common}}', item),
-    'https://x.test/Black%20%26%20White%20Tern/A%20b?again=Black%20%26%20White%20Tern',
-  );
 });
 
 test('tileImage: a drawing is the same in both themes; a placeholder follows the theme', () => {

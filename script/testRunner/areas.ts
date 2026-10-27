@@ -28,7 +28,7 @@ export const AREAS: Area[] = [
     id: 'data',
     label: 'Site: data and search',
     protects: 'loading collections, filtering, grouping, search results',
-    paths: ['src/lib/', 'src/composables/collection/', 'src/composables/search/'],
+    paths: ['src/domain/', 'src/lib/', 'src/composables/collection/', 'src/composables/search/'],
   },
   {
     id: 'state',

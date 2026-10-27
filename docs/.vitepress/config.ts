@@ -4,7 +4,7 @@
 import { defineConfig } from 'vitepress';
 import tailwindcss from '@tailwindcss/vite';
 import { githubLinks, githubSlug } from '../../script/docs/links.ts';
-import { REPO_URL } from '../../script/lib/project.ts';
+import { REPO_URL, SITE_URL } from '../../src/domain/links.ts';
 import { liveBlocks } from '../../script/docs/liveBlocks.ts';
 
 export default defineConfig({
@@ -44,7 +44,7 @@ export default defineConfig({
   themeConfig: {
     siteTitle: 'Wildlife Illustrated',
     nav: [
-      { text: 'The gallery', link: 'https://seven-leven.github.io/bird_dash/' },
+      { text: 'The gallery', link: SITE_URL },
       { text: 'Changelog', link: `${REPO_URL}/blob/main/CHANGELOG.md` },
     ],
     sidebar: [

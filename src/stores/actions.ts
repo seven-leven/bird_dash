@@ -4,7 +4,7 @@ import { flashItem } from '../lib/flashItem.ts';
 import type { CollectionsStore } from './collections.ts';
 import type { SearchStore } from './search.ts';
 import type { UiStore } from './ui.ts';
-import type { CollectionItem } from '../types/index.ts';
+import type { Item } from '../types/index.ts';
 
 /**
  * The few genuinely cross-store orchestrations. Everything single-domain lives
@@ -14,9 +14,9 @@ export interface AppActions {
   /** Switch collection, clearing the search and resetting the scroll/spy. */
   switchCollection: (id: string) => Promise<void>;
   /** From a global-search result: switch collection if needed, then ring the tile. */
-  selectGlobalResult: (collectionId: string, item: CollectionItem) => Promise<void>;
+  selectGlobalResult: (collectionId: string, item: Item) => Promise<void>;
   /** Ring an item's tile, first making the grid show it if it is not drawn yet. */
-  ringTile: (item: CollectionItem) => Promise<void>;
+  ringTile: (item: Item) => Promise<void>;
 }
 
 export function createAppActions(deps: {
@@ -41,13 +41,13 @@ export function createAppActions(deps: {
 
   // A tile not drawn yet is hidden by the month view, by "drawn only", and in a collection
   // with nothing drawn; it is shown before it is ringed, or the ring would find nothing.
-  const ringTile = async (item: CollectionItem): Promise<void> => {
+  const ringTile = async (item: Item): Promise<void> => {
     if (!item.isDrawn) ui.showUndrawn();
     await nextTick();
     flashItem(item.itemId);
   };
 
-  const selectGlobalResult = async (collectionId: string, item: CollectionItem): Promise<void> => {
+  const selectGlobalResult = async (collectionId: string, item: Item): Promise<void> => {
     search.setDropdown(false);
     ui.showPage('gallery');
     if (collectionId !== collections.activeCollection.value?.id) {

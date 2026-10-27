@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { drawings, drawnOf, matches, matchesDrawn, plural, ratio } from './formatCount.ts';
+import { drawings, drawnOf, matches, matchesDrawn, plural, ratio } from './countWords.ts';
 
 test('plural: singular only for exactly one', () => {
   assertEquals(plural(0, 'result'), '0 results');
