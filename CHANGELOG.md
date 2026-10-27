@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | docs: the site overhaul's phase 0, the rules agreed. ARCHITECTURE.md gains "Rules for
+  the site's code" (organise by feature, layers that point one way, a pure `domain/`, one door to
+  the outside, types with their owner, one word per idea, small files) and the naming table, moved
+  from the plan; DECISIONS.md records "Folders by feature" and "One word per idea" (the viewer,
+  `'month'`, the ui store in three). ARCHITECTURE.md's list of script folders and its known gaps
+  match the code again
 - 2026-10-27 | feat: a link preview per drawing, and a Share button in the viewer (phase 3c of
   PLATFORM.md). A shared link always showed the same duck, because the drawing is named after `#`,
   which a link preview never reads. The build now writes a small page for every drawing,

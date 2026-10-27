@@ -1,10 +1,12 @@
 # Site code overhaul
 
-> **Status:** planned 2026-10-26, nothing started. Rebuilds the layout and naming of `src/` (the
-> site's code: components, composables, lib, stores, styles, types) from the ground up, one pull
-> request per phase, with the site looking and behaving the same throughout. `src/testing/` is out
-> of scope except where its imports have to follow a move. The scripts went through the same (done
-> 2026-10-26: [SCRIPTS.md](../SCRIPTS.md) and the CHANGELOG). Delete this page when phase 8 is done.
+> **Status:** planned 2026-10-26; phase 0 (the rules) done 2026-10-27, phase 1 waits for the test
+> overhaul's phases 1–3 (its journey tests are the safety net for moving files). Rebuilds the layout
+> and naming of `src/` (the site's code: components, composables, lib, stores, styles, types) from
+> the ground up, one pull request per phase, with the site looking and behaving the same throughout.
+> `src/testing/` is out of scope except where its imports have to follow a move. The scripts went
+> through the same (done 2026-10-26: [SCRIPTS.md](../SCRIPTS.md) and the CHANGELOG). Delete this
+> page when phase 8 is done.
 
 ## Why
 
@@ -36,63 +38,21 @@ left is how the code is arranged and named, which grew a folder of each _kind_ a
   `GlobalSearch.vue` 256, `useCollectionData.ts` 201, `main.css` 392 (Tailwind setup, tokens,
   palettes, utilities and component classes in one file).
 
-## Decisions to make first
+## Decisions (settled 2026-10-27)
 
-| Question                      | Recommendation                                                                                          | Why                                                                              |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Folders by feature or kind    | By feature (`viewer/`, `search/`, `gallery/`, …), with shared layers below them                         | A change to one feature stays in one folder; the import rules below keep it tidy |
-| One name for the viewer       | `viewer` everywhere (`Viewer.vue`, `useViewer`, the `viewer` store)                                     | It is what DESIGN.md and the interface call it                                   |
-| The month view's name         | `'month'`, not `'date'` (the `ViewMode` value)                                                          | The view is "Months" on screen; `'date'` is a field, not a view                  |
-| How far to split the ui store | Three: `theme`, `layout` (viewport, sidebar, page, scroll-spy), `view` (mode, filter, the derived grid) | One job each, and the grid's derivations leave the collections store too         |
+| Question                      | Settled                                                                                                 | Why                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Folders by feature or kind    | By feature (`viewer/`, `search/`, `gallery/`, …), with shared layers below them                         | A change to one feature stays in one folder; the import rules keep it tidy |
+| One name for the viewer       | `viewer` everywhere (`Viewer.vue`, `useViewer`, the `viewer` store)                                     | It is what DESIGN.md and the interface call it                             |
+| The month view's name         | `'month'`, not `'date'` (the `ViewMode` value)                                                          | The view is "Months" on screen; `'date'` is a field, not a view            |
+| How far to split the ui store | Three: `theme`, `layout` (viewport, sidebar, page, scroll-spy), `view` (mode, filter, the derived grid) | One job each, and the grid's derivations leave the collections store too   |
 
 ## The rules it ends at
 
-Phase 0 moves these into ARCHITECTURE.md ("Rules"), as SCRIPTS.md did for the scripts; the words are
-already in [GLOSSARY.md](../GLOSSARY.md).
-
-### Principles
-
-1. **Organise by feature.** A feature folder holds its components, its composables and its store.
-   Code two features share moves down a layer, never sideways into one of them.
-2. **Layers point one way.** `app/` → features → `ui/`, `browser/`, `data/` → `domain/`. A layer
-   imports only from the layers below it. A contract test checks the imports.
-3. **`domain/` is pure.** Plain TypeScript: no Vue, no `document`, no `fetch`, no clock. The rules
-   of the archive (names, counts, wording, groups, dates) live here and are tested hardest.
-4. **One door to the outside.** Only `data/` fetches; only `browser/` (and components) touch
-   `document`, `window` or `localStorage`; only `app/buildInfo.ts` reads the build-time globals
-   (`__APP_VERSION__` and friends).
-5. **A store per feature, derived state stays derived.** A store exposes read-only state and verbs;
-   anything that can be computed is computed. Actions that touch more than one store live in
-   `app/actions.ts`, as today.
-6. **Shared UI does not know the app.** Components in `ui/` take props and emit events; they never
-   inject a store. Feature components may inject their own store and the app's.
-7. **Types live with their owner.** A type is defined in the module that makes the value, and
-   imported from there. No barrel file; `types/` is gone. The shapes of the files in `public/`
-   (shared with `script/`) live in `data/files.ts`.
-8. **One word per idea** (the glossary below), and a name never means two things.
-9. **Small files.** A component does one job and stays under about 200 lines; a page is made of
-   sections; a composable is one behaviour.
-
-### Glossary
-
-The words are in [GLOSSARY.md](../GLOSSARY.md), each with where the code still says something else.
-Every "to be …" there is a rename in the table below; phase 8 checks none is left.
-
-### Naming
-
-| Thing             | Rule                                                                                       | Example                              |
-| ----------------- | ------------------------------------------------------------------------------------------ | ------------------------------------ |
-| Folders           | A feature or a layer, one word                                                             | `viewer/`, `domain/`                 |
-| Files             | Named after the main export (DECISIONS.md)                                                 | `useScrollSpy.ts`                    |
-| Components        | PascalCase noun; prefixed with the feature when the word alone is vague                    | `ViewerDetails.vue`, `SearchBox.vue` |
-| Composables       | `use` + what it gives; never `Logic`, `Data`, `Manager`, `Helper`                          | `useScrollSpy`, `useCollectionView`  |
-| Store verbs       | `open`, `close`, `select…`, `set…`, `toggle…`, `show…`; never `update`, `switch`, `handle` | `selectCollection`                   |
-| Events            | kebab-case verbs                                                                           | `select`, `close`, `go-to-group`     |
-| Template handlers | `on` + event                                                                               | `onSelect`                           |
-| Booleans          | `is`, `has`, `should`, `can`                                                               | `isNarrow`, `hasNext`                |
-| Element refs      | end in `El`                                                                                | `dialogEl`, `scrollEl`               |
-| Types             | The noun; no `Data`, `Info`, `Config`, `Return` suffix                                     | `Collection`, `CollectionView`       |
-| Variables         | Whole words; `i` and `e` only in one-line lambdas                                          | `collection`, not `col`              |
+In [ARCHITECTURE.md](../ARCHITECTURE.md), "Rules for the site's code" (phase 0): the principles and
+the naming. The words are in [GLOSSARY.md](../GLOSSARY.md), each with where the code still says
+something else; every "to be …" there is a rename in the table below, and phase 8 checks none is
+left.
 
 ## Where it ends up
 
@@ -192,9 +152,9 @@ mv` so history follows, tests moved beside their files, and in the same PR the p
 that name a moved file. Best done when no other pull request touching `src/` is open, as nearly
 every file moves.
 
-- [ ] **0. Agree the rules.** Settle the decisions above; write the principles, the glossary and the
-      naming into ARCHITECTURE.md (the words are in GLOSSARY.md); a DECISIONS.md entry ("folders by
-      feature"). _Done when_ the rules are merged.
+- [x] **0. Agree the rules.** (2026-10-27) Settle the decisions above; write the principles, the
+      glossary and the naming into ARCHITECTURE.md (the words are in GLOSSARY.md); a DECISIONS.md
+      entry ("folders by feature"). _Done when_ the rules are merged.
 - [ ] **1. Domain.** `domain/` from the pure half of `lib/` and the domain types; `monthKey` out of
       the composable into `domain/dates.ts`; the `Collection` and `Item` types. A contract test:
       nothing in `domain/` imports `vue` or touches `document`, `window` or `fetch`. _Done when_ no

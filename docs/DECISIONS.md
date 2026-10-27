@@ -165,6 +165,37 @@ Windows ignores `TZ`, so this can only be reproduced on macOS, Linux or in CI.
 **Why.** The site is static files on GitHub Pages, which cannot send every path to `index.html`. A
 path such as `/birds/001` would be a 404 when reloaded or shared; a hash never reaches the server.
 
+### Folders by feature
+
+**Chosen:** `src/` is organised by feature (`viewer/`, `search/`, `gallery/`, `about/`, `shell/`),
+over shared layers (`ui/`, `browser/`, `data/`, `domain/`), not by kind (`components/`,
+`composables/`, `stores/`). The rules are in ARCHITECTURE.md ("Rules for the site's code"); the site
+overhaul moves the code there.
+
+**Why.** The viewer was spread over five folders: a change to one feature meant visiting all of
+them. By feature, a change stays in one folder, and the import rules (layers point one way, shared
+UI knows no store) stop the folders from reaching into each other.
+
+**Costs.** Nearly every file moves once, in the overhaul's phases; a reader used to `components/`
+has to learn the features. Something two features share has to be moved down a layer, not copied.
+
+**Revisit** if a feature folder grows past what one person holds in their head (about 15 files):
+split the feature, not the layout.
+
+### One word per idea
+
+**Chosen:** the viewer is `viewer` everywhere (component, composable, store), the month view is
+`'month'`, and the ui store becomes three stores with one job each: `theme`, `layout` (viewport,
+sidebar, page, scroll-spy) and `view` (mode, filter, the derived grid).
+
+**Why.** One thing had three names (`LightBox`, `useLightbox`, `overlay`), the month view was
+`'date'` in code and "Months" on screen, and one store held seven concerns. The word the visitor
+sees (DESIGN.md) is the word in the code, and a store's name says its one job.
+
+**Costs.** Renames across components, tests and docs, done in the overhaul's phases 3 and 5.
+
+**Revisit** never as a rule; a new word goes into GLOSSARY.md first.
+
 ### Names beside a drawing, never on it
 
 **Chosen** (October 2026): a tile's names sit in a caption under the image; only the small id badge
