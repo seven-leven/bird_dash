@@ -3,16 +3,25 @@
 //
 //   Birds   Ducks: 001 Mallard (drawn 2025-01-10), 002 Garganey (not drawn)
 //           Herons: 003 Grey Heron (drawn 2025-03-05)
-//   Sharks  Requiem: 001 Grey Reef Shark (not drawn)
+//   Sharks  Requiem: 001 Grey Reef Shark (not drawn); the accent sky (the Birds' is the default)
 //
 // Each call returns fresh objects, so a test may change what it is given.
-import type { RawCollectionConfig, RawCollectionData } from '../../types/data.ts';
+import type { RawCollectionConfig, RawCollectionData, Stats } from '../../types/data.ts';
+import { computeStats } from '../../../script/generate/stats.ts';
 import { json, type Route } from '../fakes/fakeFetch.ts';
 
 /** `public/collections.json`. */
 export const archiveCollections = (): RawCollectionConfig[] => [
   { id: 'birds', label: 'Birds', emoji: '', groupLabel: 'Family', itemLabel: 'item', links: [] },
-  { id: 'sharks', label: 'Sharks', emoji: '', groupLabel: 'Family', itemLabel: 'item', links: [] },
+  {
+    id: 'sharks',
+    label: 'Sharks',
+    emoji: '',
+    groupLabel: 'Family',
+    itemLabel: 'item',
+    links: [],
+    accent: 'sky',
+  },
 ];
 
 /** `public/lists/<id>.json`, by collection. */
@@ -29,6 +38,18 @@ export const archiveLists = (): Record<'birds' | 'sharks', RawCollectionData> =>
   },
 });
 
+/** `public/stats.json`, worked out from the lists as the build does it. */
+export const archiveStats = (): Stats => {
+  const lists = archiveLists();
+  return computeStats(
+    archiveCollections().map(({ id, label }) => ({
+      id,
+      label,
+      groups: lists[id as keyof typeof lists],
+    })),
+  );
+};
+
 /** The archive as `fakeFetch` serves it, by the paths the site fetches. */
 export function archiveRoutes(): Record<string, Route> {
   const lists = archiveLists();
@@ -36,5 +57,6 @@ export function archiveRoutes(): Record<string, Route> {
     '/collections.json': json(archiveCollections()),
     '/lists/birds.json': json(lists.birds),
     '/lists/sharks.json': json(lists.sharks),
+    '/stats.json': json(archiveStats()),
   };
 }

@@ -17,6 +17,17 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: journeys (test overhaul, phase 3). A new tier, `_journey_test.ts`, runs the
+  whole app in happy-dom on the fixture archive: `renderApp` mounts `App.vue` with its stores,
+  router and every component, and the visitor clicks and presses keys (`events.ts`). Ten journeys in
+  `src/journeys/`: a first visit, another collection, the views, search, the viewer, links and the
+  back button, About, the theme, failures, and a phone. The untested-files gate now counts `.vue`
+  files, and every component is at 100%; the states no visit reaches have component tests on the
+  real stores (`appStores()`). Three bugs the journeys found are fixed: a viewer opened by a link
+  took neither focus nor the arrow keys and let the page scroll behind it (`useDialogKeys` now acts
+  on a dialog that mounts open); the back button left the viewer open (`useHashRoute` closes it when
+  the address loses its item); and a drawing dated after the current month was counted as "0
+  drawings" in the month view
 - 2026-10-27 | test: one way to a browser (test overhaul, phase 2). The tier sets the environment:
   Vitest's `node` and `dom` projects give every `_dom_test` file happy-dom and the rest Node, and
   `src/testing/domSetup.ts` resets the address, storage, `<html>` and page before each dom test. The

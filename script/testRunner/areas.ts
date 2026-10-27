@@ -49,6 +49,12 @@ export const AREAS: Area[] = [
     ],
   },
   {
+    id: 'journeys',
+    label: 'Site: journeys',
+    protects: 'a whole visit: first load, collections, views, search, the viewer, links, failures',
+    paths: ['src/journeys/', 'src/App.vue'],
+  },
+  {
     id: 'pipeline',
     label: 'Asset pipeline and data files',
     protects: 'image builds, the integrity check, the files in public/',
@@ -92,16 +98,17 @@ export function areaOf(path: string): Area | undefined {
 }
 
 /**
- * Source files that could be tested: every `.ts` under the roots except tests,
- * test helpers, type declarations, type-only modules and the entry point. `.vue` files are
- * not on this list yet: they count in coverage once a test imports one, but no test has to.
+ * Source files that could be tested: every `.ts` and `.vue` under the roots except tests,
+ * test helpers, type declarations, type-only modules and the entry point. A component no
+ * test loads is reported like a module no test imports.
  */
 export async function discoverSources(roots = ['src', 'script']): Promise<string[]> {
   const skip = (path: string) =>
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
     path.startsWith('src/testing/') || path.startsWith('src/types/') ||
     path === 'src/main.ts'; // only mounts App.vue into the page
-  return (await findFiles(roots, '*.ts')).filter((path) => !skip(path));
+  const files = [...await findFiles(roots, '*.ts'), ...await findFiles(roots, '*.vue')];
+  return files.filter((path) => !skip(path)).sort();
 }
 
 export interface AreaSummary {

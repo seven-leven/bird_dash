@@ -1,6 +1,7 @@
 // The one way a test mounts (docs/TESTING.md, rule 6), by what it mounts:
 //
 //   mountComponent(() => h(ItemTile, { item }))   a component, in the (happy-dom) document
+//   mountInDocument(() => h(App))                 the same, with `unmount` (renderApp.ts)
 //   mountComposable(() => useBreakpoints())       a composable whose onMounted / onUnmounted must fire
 //   runInScope(() => createSearchStore())         a composable or store that must not mount
 //   mountWithoutDom(Parent)                       components, with no document at all
@@ -13,6 +14,7 @@ import { type AppActions, provideActions } from '../stores/actions.ts';
 import { provideSearch, type SearchStore } from '../stores/search.ts';
 import { provideUi, type UiStore } from '../stores/ui.ts';
 import { provideStats, type StatsStore } from '../stores/stats.ts';
+import { type OverlayStore, provideOverlay } from '../stores/overlay.ts';
 import { captureConsole } from './fakes/captureConsole.ts';
 
 const mounted: (() => void)[] = [];
@@ -41,6 +43,7 @@ export interface FakeStores {
   search?: Partial<SearchStore>;
   ui?: Partial<UiStore>;
   stats?: Partial<StatsStore>;
+  overlay?: Partial<OverlayStore>;
 }
 
 /**
@@ -53,8 +56,16 @@ export interface FakeStores {
  */
 export function mountComponent(
   render: () => ReturnType<typeof h>,
-  { stores = {} }: { stores?: FakeStores } = {},
+  options: { stores?: FakeStores } = {},
 ): HTMLElement {
+  return mountInDocument(render, options).host;
+}
+
+/** `mountComponent`, also returning `unmount`, for a test that must unmount before it ends. */
+export function mountInDocument(
+  render: () => ReturnType<typeof h>,
+  { stores = {} }: { stores?: FakeStores } = {},
+): { host: HTMLElement; unmount: () => void } {
   const Host: Component = defineComponent({
     setup() {
       // The fakes are partial on purpose (see FakeStores); the providers want whole stores.
@@ -63,6 +74,7 @@ export function mountComponent(
       if (stores.search) provideSearch(stores.search as SearchStore);
       if (stores.ui) provideUi(stores.ui as UiStore);
       if (stores.stats) provideStats(stores.stats as StatsStore);
+      if (stores.overlay) provideOverlay(stores.overlay as OverlayStore);
       return render;
     },
   });
@@ -70,11 +82,11 @@ export function mountComponent(
   document.body.append(host);
   const app = createApp(Host);
   app.mount(host);
-  unmountOnce(() => {
+  const unmount = unmountOnce(() => {
     app.unmount();
     host.remove();
   });
-  return host;
+  return { host, unmount };
 }
 
 // A renderer that draws nothing. It mounts real components — so onMounted / onUnmounted and

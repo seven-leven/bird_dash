@@ -160,17 +160,16 @@ const nothingDrawn = computed(() =>
 const plannedLabel = computed(() => `${data.items.length} planned`);
 const reload = () => location.reload();
 
-// Drawn count per section — the sidebar computation already produced these
-// numbers (group mode: drawn per group; date mode: items per month, all drawn).
+// Drawn count per group: the sidebar computation already produced these numbers, one
+// row for every group shown.
 const drawnCounts = computed(() => {
   const counts: Record<string, number> = {};
   for (const s of activeData.value.sidebarItems) counts[s.id] = s.count;
   return counts;
 });
 
-// Group view: how many of the group are drawn. Date view: every item is drawn.
-const sectionCount = (name: string, total: number): string => {
-  const drawn = drawnCounts.value[name] ?? 0;
-  return viewMode.value === 'group' ? drawnOf(drawn, total) : drawings(drawn);
-};
+// Group view: how many of the group are drawn. Date view: every item in a month is
+// drawn, so its size is the count (a month after the current one has no sidebar row).
+const sectionCount = (name: string, total: number): string =>
+  viewMode.value === 'group' ? drawnOf(drawnCounts.value[name], total) : drawings(total);
 </script>

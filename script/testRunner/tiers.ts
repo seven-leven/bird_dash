@@ -5,6 +5,7 @@
  *
  *   unit      x_test.ts            pure logic, no environment            (fastest)
  *   dom       x_dom_test.ts        needs a browser-like global (fake DOM)
+ *   journey   x_journey_test.ts    a whole visit through the real app, in the fake DOM
  *   prop      x_prop_test.ts       property-based: hundreds of generated inputs
  *   contract  x_contract_test.ts   checks real repo files (public/*.json, …)
  *
@@ -16,6 +17,7 @@ import { glob } from 'node:fs/promises';
 export const TIERS = {
   unit: 'pure logic, no environment',
   dom: 'composables that need a browser-like global (fake DOM)',
+  journey: 'a whole visit through the real app, in the fake DOM',
   prop: 'property-based tests over generated inputs',
   contract: 'checks the real files in the repo (public/*.json, …)',
 } as const;
@@ -29,6 +31,7 @@ export const isTier = (value: string): value is Tier => Object.hasOwn(TIERS, val
 export function tierOf(path: string): Tier {
   const name = path.replaceAll('\\', '/');
   if (name.endsWith('_dom_test.ts')) return 'dom';
+  if (name.endsWith('_journey_test.ts')) return 'journey';
   if (name.endsWith('_prop_test.ts')) return 'prop';
   if (name.endsWith('_contract_test.ts')) return 'contract';
   if (name.endsWith('_test.ts')) return 'unit';

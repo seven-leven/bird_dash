@@ -55,6 +55,8 @@ export function useDialogKeys(deps: {
     else deps.keys[e.key]?.(e);
   };
 
+  // `immediate`: a dialog may mount already open (the viewer is loaded on demand, so a deep
+  // link opens it before its code arrives), and must still take focus and the keys.
   watch(deps.isOpen, (open) => {
     if (open) {
       previouslyFocused = document.activeElement instanceof HTMLElement
@@ -69,7 +71,7 @@ export function useDialogKeys(deps: {
       document.body.style.overflow = '';
       globalThis.removeEventListener('keydown', handleKeydown);
     }
-  });
+  }, { immediate: true });
 
   // On a component's unmount, and on a scope stopped without one.
   onScopeDispose(() => {
