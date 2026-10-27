@@ -2,10 +2,10 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { eachDrawnItem, markDrawn, readDrawnIds, readList } from './lists.ts';
 import { fakeIo } from './fakeIo.ts';
-import type { RawCollectionData } from '../../src/types/data.ts';
+import type { ListFile } from '../../src/data/files.ts';
 import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
-const list: RawCollectionData = {
+const list: ListFile = {
   Ducks: [
     { id: '001', name: 'Mallard', drawn: '2025-01-01' },
     { id: '002', name: 'Garganey' }, // undrawn
@@ -17,7 +17,7 @@ const list: RawCollectionData = {
 
 const birds = makeScriptCollection('birds');
 const withList = () => fakeIo({ files: { [birds.paths.json]: JSON.stringify(list) } });
-const saved = (io: ReturnType<typeof fakeIo>): RawCollectionData =>
+const saved = (io: ReturnType<typeof fakeIo>): ListFile =>
   JSON.parse(io.files.get(birds.paths.json)!);
 
 test('the drawn items are every dated item, across all groups, in list order', () => {

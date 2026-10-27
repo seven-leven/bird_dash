@@ -1,6 +1,6 @@
 import { nextTick, onMounted, onUnmounted, type Ref, watch } from 'vue';
 import { findPage, type PageId } from '../../pages.ts';
-import type { Collection, CollectionCache, Item, Page } from '../../types/index.ts';
+import type { Collection, Item, ItemsByCollection, Page } from '../../types/index.ts';
 
 /** Parse the hash grammar `#<collectionId>[/<itemId>]` (leading `#`/`/` optional). */
 export function parseHash(hash: string): { collectionId: string; itemId: string } {
@@ -27,7 +27,7 @@ export function buildHash(collectionId: string, itemId: string): string {
 export function useHashRoute(deps: {
   activeCollection: Ref<Collection | undefined>;
   expandedImage: { isOpen: boolean; item: Item | undefined };
-  cache: CollectionCache;
+  cache: ItemsByCollection;
   switchCollection: (id: string) => Promise<void>;
   openOverlay: (item: Item) => void;
   closeOverlay: () => void;

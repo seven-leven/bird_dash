@@ -1,8 +1,8 @@
 import { nextTick, readonly, ref } from 'vue';
-import { useBreakpoints } from '../composables/core/useBreakpoints.ts';
-import { useTheme } from '../composables/core/useTheme.ts';
+import { useBreakpoint } from '../browser/useBreakpoint.ts';
+import { useTheme } from '../browser/useTheme.ts';
 import { useScrollLogic } from '../composables/ui/useScrollLogic.ts';
-import { defineInjection } from '../composables/core/injection.ts';
+import { defineInjection } from '../browser/defineInjection.ts';
 import type { Page, ViewMode } from '../types/index.ts';
 
 /**
@@ -22,7 +22,7 @@ export function createUiStore() {
   // what is planned, until another collection is chosen.
   const showPlanned = ref(false);
   const { theme, toggleTheme } = useTheme();
-  const { isMobile } = useBreakpoints(1024);
+  const { isNarrow } = useBreakpoint();
 
   const toggleSidebar = (): void => {
     sidebarOpen.value = !sidebarOpen.value;
@@ -48,7 +48,7 @@ export function createUiStore() {
   const { activeSection, updateActiveSection, goToSection } = useScrollLogic(
     scrollContainer,
     headerRefs,
-    { isMobile, closeSidebar },
+    { isNarrow, closeSidebar },
   );
 
   const bindScrollContainer = (el: unknown): void => {
@@ -90,7 +90,7 @@ export function createUiStore() {
     drawnOnly: readonly(drawnOnly),
     showPlanned: readonly(showPlanned),
     theme,
-    isMobile: readonly(isMobile),
+    isNarrow: readonly(isNarrow),
     activeSection: readonly(activeSection),
     bindScrollContainer,
     registerHeader,

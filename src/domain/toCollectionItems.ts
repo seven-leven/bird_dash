@@ -1,4 +1,4 @@
-import type { RawCollectionConfig, RawCollectionData } from '../types/data.ts';
+import type { CollectionEntry, ListFile } from '../data/files.ts';
 import type { ItemName } from './itemNames.ts';
 import { buildNames, nameWords } from './itemNames.ts';
 import { linkUrl } from './linkUrl.ts';
@@ -63,7 +63,7 @@ const KNOWN_KEYS = new Set([
 ]);
 
 /** A `collections.json` entry plus the URLs the app derives from its id. */
-export function toCollection(raw: RawCollectionConfig, base: string): Collection {
+export function toCollection(raw: CollectionEntry, base: string): Collection {
   return {
     ...raw,
     dataUrl: `${base}lists/${raw.id}.json`,
@@ -84,7 +84,7 @@ export function toCollection(raw: RawCollectionConfig, base: string): Collection
  */
 export function toCollectionItems(
   col: Pick<Collection, 'id' | 'imageBase'>,
-  raw: RawCollectionData,
+  raw: ListFile,
   base: string,
 ): Item[] {
   const items: Item[] = [];

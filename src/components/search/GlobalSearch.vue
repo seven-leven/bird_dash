@@ -113,7 +113,7 @@ import { matches } from '../../domain/countWords.ts';
 // Composables
 import { useSearchNavigation } from '../../composables/search/useSearchNavigation.ts';
 import { useSearchHighlight } from '../../composables/search/useSearchHighlight.ts';
-import { useClickOutside } from '../../composables/search/useClickOutside.ts';
+import { useClickOutside } from '../../browser/useClickOutside.ts';
 import { COLLAPSED_SIZE, collapseGroups } from '../../domain/collapseGroups.ts';
 
 // Stores

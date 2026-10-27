@@ -56,7 +56,7 @@ function setup(headers: Record<string, number>, mobile = false) {
   let closed = 0;
   const { value: spy, stop } = runInScope(() =>
     useScrollLogic(ref(container), ref(els), {
-      isMobile: ref(mobile),
+      isNarrow: ref(mobile),
       closeSidebar: () => closed++,
     })
   );
@@ -175,7 +175,7 @@ test('jumping to a section that is not on the page does nothing', () => {
 test('before the scroll container exists, updating is a safe no-op', () => {
   const observer = fakeObserver();
   const { value: spy, stop } = runInScope(() =>
-    useScrollLogic(ref(null), ref({}), { isMobile: ref(false), closeSidebar: () => {} })
+    useScrollLogic(ref(null), ref({}), { isNarrow: ref(false), closeSidebar: () => {} })
   );
   spy.updateActiveSection();
   assertEquals(observer.log.created, 0);
@@ -200,7 +200,7 @@ test('headers that have gone (null refs) and a container that has gone are skipp
   const scroller = ref<HTMLElement | null>(container);
   const headers = ref<Record<string, HTMLElement | null>>({ Gone: null, Herons: at(40) });
   const { value: spy, stop } = runInScope(() =>
-    useScrollLogic(scroller, headers as never, { isMobile: ref(false), closeSidebar: () => {} })
+    useScrollLogic(scroller, headers as never, { isNarrow: ref(false), closeSidebar: () => {} })
   );
   spy.updateActiveSection();
   assertEquals(observer.log.observed.length, 1); // the null header is not observed

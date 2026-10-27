@@ -2,10 +2,10 @@ import { computed, type ComputedRef, type Ref } from 'vue';
 import { normalizeQuery } from '../../domain/normalizeQuery.ts';
 import type {
   Collection,
-  CollectionCache,
   GlobalSearchCollectionGroup,
   GlobalSearchResult,
   Item,
+  ItemsByCollection,
   MatchedField,
 } from '../../types/index.ts';
 
@@ -29,7 +29,7 @@ function matchedFields(item: Item, ql: string): MatchedField[] {
 // ---------------------------------------------------------------------------
 export function useGlobalSearch(
   collections: Ref<Collection[]>,
-  collectionCache: CollectionCache,
+  collectionCache: ItemsByCollection,
   query: Ref<string>,
 ) {
   /**

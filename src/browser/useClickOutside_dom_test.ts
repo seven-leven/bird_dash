@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useClickOutside } from './useClickOutside.ts';
-import { mountComposable } from '../../testing/mount.ts';
+import { mountComposable } from '../testing/mount.ts';
 
 /** A box with a child, a separate element outside it, and a way to press the mouse on any of them. */
 function page() {

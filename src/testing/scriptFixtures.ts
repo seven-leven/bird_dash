@@ -3,7 +3,7 @@
 import type { Collection, CollectionPaths } from '../../script/lib/collections.ts';
 import { PATHS } from '../../script/lib/paths.ts';
 import type { Transcoder } from '../../script/ingest/transcodeImages.ts';
-import type { RawCollectionData } from '../types/data.ts';
+import type { ListFile } from '../data/files.ts';
 import { archiveLists } from './scenarios/archive.ts';
 
 /**
@@ -31,7 +31,7 @@ export function makeScriptCollection(
 }
 
 /** The fixture archive's two ducks: 001 Mallard, drawn, and 002 Garganey, not drawn yet. */
-export const twoDucks = (): RawCollectionData => ({ Ducks: archiveLists().birds.Ducks });
+export const twoDucks = (): ListFile => ({ Ducks: archiveLists().birds.Ducks });
 
 /**
  * A transcoder that makes no image: it records what it was asked for (`made`, as

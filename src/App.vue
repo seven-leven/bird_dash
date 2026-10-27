@@ -11,7 +11,7 @@ import { createCollectionsStore, provideCollections } from './stores/collections
 import { createOverlayStore, provideOverlay } from './stores/overlay.ts';
 import { createAppActions, provideActions } from './stores/actions.ts';
 import { createStatsStore, provideStats } from './stores/stats.ts';
-import { applyAccent } from './lib/accent.ts';
+import { applyAccent } from './browser/applyAccent.ts';
 
 // =============================================================================
 // STORES — created in dependency order, shared through provide/inject.

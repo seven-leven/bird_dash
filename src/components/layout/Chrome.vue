@@ -11,7 +11,7 @@
 
       <!-- Mobile overlay -->
       <div
-        v-if="isMobile && page === 'gallery'"
+        v-if="isNarrow && page === 'gallery'"
         class="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity"
         :class="sidebarOpen ? 'opacity-100 visible' : 'opacity-0 invisible'"
         @click="closeSidebar()"
@@ -95,7 +95,7 @@ const { data, stats, activeCollection } = useCollectionsStore();
 const { query, clear } = useSearch();
 // The scroll container is handed to the ui store (for the scroll-spy) as a function ref.
 const {
-  isMobile,
+  isNarrow,
   sidebarOpen,
   page,
   viewMode,

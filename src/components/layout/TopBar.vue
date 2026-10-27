@@ -10,7 +10,7 @@
 
     <!-- Mobile sidebar toggle -->
     <button
-      v-if="isMobile && page === 'gallery'"
+      v-if="isNarrow && page === 'gallery'"
       :class="searchOpen && 'max-[419px]:hidden'"
       @click="toggleSidebar()"
       class="btn-ghost focus-ring lg:hidden p-2.5 rounded-control shrink-0"
@@ -146,7 +146,7 @@ import { viewName } from '../../domain/viewName.ts';
 import { PAGES } from '../../pages.ts';
 
 const { list: collections, activeCollection } = useCollectionsStore();
-const { isMobile, sidebarOpen, page, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
+const { isNarrow, sidebarOpen, page, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
 const { switchCollection } = useActions();
 const { dropdownOpen, query } = useSearch();
 

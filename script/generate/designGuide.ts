@@ -10,7 +10,7 @@ import { PRINCIPLES } from './principles.ts';
 import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { RawCollectionConfig } from '../../src/types/data.ts';
+import type { CollectionEntry } from '../../src/data/files.ts';
 import {
   balanceTwoLines,
   caps,
@@ -209,9 +209,9 @@ type Overlay = OverlayOptions;
  * Dhivehi samples (which the SVG renderer cannot shape).
  */
 export async function designGuide(
-  collections?: RawCollectionConfig[], // defaults to public/collections.json
+  collections?: CollectionEntry[], // defaults to public/collections.json
 ): Promise<{ svg: string; placeholders: Overlay[]; dhivehi: Overlay[] }> {
-  const cols = collections ?? await readJson<RawCollectionConfig[]>('./public/collections.json');
+  const cols = collections ?? await readJson<CollectionEntry[]>('./public/collections.json');
   const parts: string[] = [];
   const dhivehi: Overlay[] = [];
 

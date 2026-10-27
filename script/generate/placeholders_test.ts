@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import sharp from 'sharp';
 import { drawPlaceholder, THEMES, writePlaceholders } from './placeholders.ts';
-import type { RawCollectionConfig } from '../../src/types/data.ts';
+import type { CollectionEntry } from '../../src/data/files.ts';
 import { tempDir } from '../../src/testing/fakes/tempDir.ts';
 
 // Files are read into memory and the cache is off, so Windows can delete the temporary folder.
@@ -35,7 +35,7 @@ async function withTempDir(fn: (dir: string) => Promise<void>): Promise<void> {
   await fn(dir.path);
 }
 
-const collection = (id: string, icon?: string) => ({ id, icon }) as RawCollectionConfig;
+const collection = (id: string, icon?: string) => ({ id, icon }) as CollectionEntry;
 
 test('every collection with an icon gets a light and a dark 512px WebP; one without is skipped', () =>
   withTempDir(async (dir) => {

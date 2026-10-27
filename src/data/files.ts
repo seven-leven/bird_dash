@@ -5,7 +5,7 @@
 // =============================================================================
 
 /** One entry in `public/lists/<id>.json`. */
-export interface RawItem {
+export interface ListEntry {
   /** Digits only; used in URLs (`#col/<id>`), image file names and sorting. */
   id: string;
   name: string;
@@ -21,10 +21,10 @@ export interface RawItem {
 }
 
 /** `public/lists/<id>.json`: items keyed by group (family, order, …). */
-export type RawCollectionData = Record<string, RawItem[]>;
+export type ListFile = Record<string, ListEntry[]>;
 
 /** One entry in `public/collections.json`. */
-export interface RawCollectionConfig {
+export interface CollectionEntry {
   id: string;
   label: string;
   emoji: string;

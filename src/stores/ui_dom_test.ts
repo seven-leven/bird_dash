@@ -67,13 +67,13 @@ test('the theme toggle flips the page class and remembers the choice', async () 
   unmount();
 });
 
-test('isMobile follows the window width', () => {
+test('isNarrow follows the window width', () => {
   const narrow = setup(600);
-  assertEquals(narrow.ui.isMobile.value, true);
+  assertEquals(narrow.ui.isNarrow.value, true);
   narrow.unmount();
 
   const wide = setup(1400);
-  assertEquals(wide.ui.isMobile.value, false);
+  assertEquals(wide.ui.isNarrow.value, false);
   wide.unmount();
 });
 

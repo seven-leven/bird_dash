@@ -7,7 +7,7 @@
 import sharp from 'sharp';
 import { ICONS, isIconName } from '../../src/lib/icons.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { RawCollectionConfig } from '../../src/types/data.ts';
+import type { CollectionEntry } from '../../src/data/files.ts';
 import { SLATE } from './palette.ts';
 
 /** One image per theme. Light keeps the palette of the silhouettes these replaced. */
@@ -41,7 +41,7 @@ export function drawPlaceholder(iconBody: string, theme: Theme = 'light'): strin
  * an icon is skipped, and `skipped` hears its id.
  */
 export async function writePlaceholders(
-  collections: RawCollectionConfig[],
+  collections: CollectionEntry[],
   dir: string = PATHS.placeholders,
   skipped: (collectionId: string) => void = () => {},
 ): Promise<string[]> {

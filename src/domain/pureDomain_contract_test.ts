@@ -4,26 +4,34 @@ import { assert, assertEquals } from '@std/assert';
 import { findFiles } from '../../script/testRunner/tiers.ts';
 
 // docs/ARCHITECTURE.md, rule 3: `domain/` is plain TypeScript, the archive's rules and nothing
-// else. It imports only from itself (and, until the site overhaul's phase 8 removes `types/`,
-// types from there); it touches no browser, network or clock, so every rule in it can be tested
-// with a value in and a value out.
+// else. It imports only from itself, and types alone from two places: the shapes of the files it
+// turns into items (`data/files.ts`), and `types/` until the site overhaul's phase 8 removes it.
+// It touches no browser, network or clock, so every rule in it can be tested with a value in and
+// a value out.
+
+/** What `domain/` may import types (and only types) from, outside itself. */
+const TYPES_FROM = ['../data/files.ts', '../types/'];
 
 const sources = async () =>
   (await findFiles(['src/domain'], '*.ts')).filter((path) => !path.endsWith('_test.ts'));
 
-/** Every module specifier a file imports, type-only imports included. */
+/** Every import a file makes: where from, and whether it brings in types alone. */
 const importsOf = (code: string) =>
-  [...code.matchAll(/(?:import|export)[^'"]*from\s*'([^']+)'/g)].map((m) => m[1]);
+  [...code.matchAll(/(import type|import|export)[^'"]*from\s*'([^']+)'/g)].map((m) => ({
+    from: m[2],
+    typesOnly: m[1] === 'import type',
+  }));
 
-test('domain/ imports only from itself, and types from types/ until phase 8', async () => {
+test('domain/ imports only from itself, and the types it is given', async () => {
   const files = await sources();
   assert(files.length >= 10, `found only ${files.length} domain modules`);
   for (const file of files) {
     const code = await readFile(file, 'utf8');
-    const outside = importsOf(code).filter((from) =>
-      !from.startsWith('./') && !(from.startsWith('../types/') && /import type/.test(code))
+    const outside = importsOf(code).filter(({ from, typesOnly }) =>
+      !from.startsWith('./') &&
+      !(typesOnly && TYPES_FROM.some((allowed) => from.startsWith(allowed)))
     );
-    assertEquals(outside, [], `${file} reaches outside domain/`);
+    assertEquals(outside.map(({ from }) => from), [], `${file} reaches outside domain/`);
   }
 });
 

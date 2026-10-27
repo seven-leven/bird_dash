@@ -3,11 +3,11 @@ import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useGlobalSearch } from './useGlobalSearch.ts';
 import { makeCollection, makeItem } from '../../testing/fixtures.ts';
-import type { CollectionCache } from '../../types/index.ts';
+import type { ItemsByCollection } from '../../types/index.ts';
 
 const birds = makeCollection('birds');
 const shells = makeCollection('shells');
-const cache: CollectionCache = {
+const cache: ItemsByCollection = {
   birds: [
     makeItem({ itemId: '001', commonName: 'Mallard', scientificName: 'Anas', group: 'Ducks' }),
     makeItem({ itemId: '002', commonName: 'Garganey', scientificName: 'Spatula', group: 'Ducks' }),
@@ -57,7 +57,7 @@ test('a collection whose list has not loaded yet is searched as empty', () => {
 
 test('the drawn count covers every collection; a match on the group alone is recorded as such', () => {
   const plovers = makeCollection('plovers');
-  const lists: CollectionCache = {
+  const lists: ItemsByCollection = {
     plovers: [
       makeItem({
         itemId: '035',

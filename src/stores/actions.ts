@@ -1,5 +1,5 @@
 import { nextTick } from 'vue';
-import { defineInjection } from '../composables/core/injection.ts';
+import { defineInjection } from '../browser/defineInjection.ts';
 import { flashItem } from '../lib/flashItem.ts';
 import type { CollectionsStore } from './collections.ts';
 import type { SearchStore } from './search.ts';

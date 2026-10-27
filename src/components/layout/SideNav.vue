@@ -8,7 +8,7 @@
            bg-white border-slate-200
            dark:bg-slate-950 dark:border-slate-800"
     :class="sidebarOpen ? 'translate-x-0 shadow-float' : '-translate-x-full'"
-    :inert="isMobile && !sidebarOpen"
+    :inert="isNarrow && !sidebarOpen"
     @keydown.escape="closeSidebar()"
   >
     <!-- Header -->
@@ -130,7 +130,7 @@ const { activeCollection, data, activeData, stats, globalStats } = useCollection
 // Off-screen on small screens until opened: `inert` keeps it out of the tab order.
 const {
   sidebarOpen,
-  isMobile,
+  isNarrow,
   viewMode,
   activeSection,
   drawnOnly,

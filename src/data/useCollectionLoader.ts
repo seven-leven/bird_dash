@@ -1,25 +1,38 @@
 import { computed, type ComputedRef, ref, shallowReactive } from 'vue';
-import { toCollection, toCollectionItems } from '../../domain/toCollectionItems.ts';
-import { fetchJson, getBase } from '../../lib/fetchJson.ts';
-import type {
-  Collection,
-  CollectionCache,
-  DataState,
-  GlobalStats,
-  Item,
-  RawCollectionConfig,
-  RawCollectionData,
-} from '../../types/index.ts';
+import { toCollection, toCollectionItems } from '../domain/toCollectionItems.ts';
+import { fetchJson, getBase } from './fetchJson.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
+import type { CollectionEntry, ListFile } from './files.ts';
 
-export function useCollections() {
+/** The collection on screen: its items, and whether they are loading or failed to. */
+export interface LoadState {
+  items: Item[];
+  loading: boolean;
+  error?: string;
+}
+
+/** How much of the whole archive is drawn, over every collection loaded so far. */
+export interface ArchiveCounts {
+  drawn: number;
+  total: number;
+}
+
+/** Every collection's items loaded so far, by collection id. */
+export type ItemsByCollection = Record<string, Item[]>;
+
+/**
+ * The archive from the network: `collections.json`, then each collection's list. The first
+ * collection loads at once, the rest in the background; each list is fetched once and kept.
+ */
+export function useCollectionLoader() {
   const collections = ref<Collection[]>([]);
   const isInitialized = ref(false);
   const activeCollectionId = ref('');
   // shallowReactive: track the per-collection array references, but don't deeply
   // proxy the (frozen, immutable) items inside them.
-  const collectionCache = shallowReactive<CollectionCache>({});
+  const itemsByCollection = shallowReactive<ItemsByCollection>({});
 
-  const data = shallowReactive<DataState>({
+  const loadState = shallowReactive<LoadState>({
     items: [],
     loading: true,
     error: undefined,
@@ -33,10 +46,10 @@ export function useCollections() {
       collections.value[0];
   });
 
-  const globalStats: ComputedRef<GlobalStats> = computed(() => {
+  const archiveCounts: ComputedRef<ArchiveCounts> = computed(() => {
     let drawn = 0, total = 0;
     collections.value.forEach((col: Collection) => {
-      const cached = collectionCache[col.id] ?? [];
+      const cached = itemsByCollection[col.id] ?? [];
       total += cached.length;
       for (const i of cached) if (i.isDrawn) drawn++;
     });
@@ -44,7 +57,7 @@ export function useCollections() {
   });
 
   const fetchCollectionData = async (col: Collection): Promise<Item[]> => {
-    const raw = await fetchJson<RawCollectionData>(col.dataUrl, col.label);
+    const raw = await fetchJson<ListFile>(col.dataUrl, col.label);
     return toCollectionItems(col, raw, getBase());
   };
 
@@ -53,14 +66,14 @@ export function useCollections() {
   const inflight = new Map<string, Promise<Item[]>>();
 
   const loadCollection = (col: Collection): Promise<Item[]> => {
-    const cached = collectionCache[col.id];
+    const cached = itemsByCollection[col.id];
     if (cached) return Promise.resolve(cached);
 
     let request = inflight.get(col.id);
     if (!request) {
       request = fetchCollectionData(col)
         .then((items) => {
-          collectionCache[col.id] = items;
+          itemsByCollection[col.id] = items;
           return items;
         })
         .finally(() => inflight.delete(col.id));
@@ -74,29 +87,29 @@ export function useCollections() {
   // overwrite what's on screen.
   const loadData = async (col: Collection): Promise<void> => {
     const isActive = () => activeCollection.value?.id === col.id;
-    data.loading = true;
-    data.error = undefined;
+    loadState.loading = true;
+    loadState.error = undefined;
     try {
       const items = await loadCollection(col);
-      if (isActive()) data.items = items;
+      if (isActive()) loadState.items = items;
     } catch (e: unknown) {
-      if (isActive()) data.error = e instanceof Error ? e.message : String(e);
+      if (isActive()) loadState.error = e instanceof Error ? e.message : String(e);
     } finally {
-      if (isActive()) data.loading = false;
+      if (isActive()) loadState.loading = false;
     }
   };
 
-  const switchCollection = async (id: string): Promise<void> => {
+  const selectCollection = async (id: string): Promise<void> => {
     if (id === activeCollectionId.value) return;
     const col = collections.value.find((c) => c.id === id);
     if (!col) return; // unknown id: ignore
     activeCollectionId.value = id;
 
-    const cached = collectionCache[id];
+    const cached = itemsByCollection[id];
     if (cached) {
-      data.items = cached;
-      data.error = undefined;
-      data.loading = false;
+      loadState.items = cached;
+      loadState.error = undefined;
+      loadState.loading = false;
     } else {
       await loadData(col);
     }
@@ -117,7 +130,7 @@ export function useCollections() {
   const init = async (): Promise<void> => {
     initError.value = undefined;
     try {
-      const rawData = await fetchJson<RawCollectionConfig[]>(
+      const rawData = await fetchJson<CollectionEntry[]>(
         `${getBase()}collections.json`,
         'collections.json',
       );
@@ -140,12 +153,12 @@ export function useCollections() {
   return {
     isInitialized,
     initError,
-    collectionCache,
-    data,
+    itemsByCollection,
+    loadState,
     activeCollection,
-    globalStats,
-    switchCollection,
+    archiveCounts,
+    selectCollection,
     init,
-    COLLECTIONS: collections,
+    collections,
   };
 }

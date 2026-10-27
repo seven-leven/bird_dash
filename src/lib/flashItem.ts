@@ -1,4 +1,4 @@
-import { scrollBehavior } from './scrollBehavior.ts';
+import { scrollBehavior } from '../browser/scrollBehavior.ts';
 
 /** Scroll a tile into view and flash a highlight ring around it. */
 export function flashItem(itemId: string): void {

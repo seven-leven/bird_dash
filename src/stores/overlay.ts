@@ -1,5 +1,5 @@
 import { reactive, readonly, type Ref } from 'vue';
-import { defineInjection } from '../composables/core/injection.ts';
+import { defineInjection } from '../browser/defineInjection.ts';
 import type { Item } from '../types/index.ts';
 
 /**

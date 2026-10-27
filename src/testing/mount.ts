@@ -2,7 +2,7 @@
 //
 //   mountComponent(() => h(ItemTile, { item }))   a component, in the (happy-dom) document
 //   mountInDocument(() => h(App))                 the same, with `unmount` (renderApp.ts)
-//   mountComposable(() => useBreakpoints())       a composable whose onMounted / onUnmounted must fire
+//   mountComposable(() => useBreakpoint())       a composable whose onMounted / onUnmounted must fire
 //   runInScope(() => createSearchStore())         a composable or store that must not mount
 //   mountWithoutDom(Parent)                       components, with no document at all
 //

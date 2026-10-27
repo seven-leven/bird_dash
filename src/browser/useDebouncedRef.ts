@@ -6,7 +6,7 @@ import { onScopeDispose, type Ref, ref, watch } from 'vue';
  * (filtering, grouping, cross-collection search) run once per burst instead of
  * once per keystroke.
  */
-export function useDebouncedRef<T>(source: Ref<T>, delay = 120): Ref<T> {
+export function useDebouncedRef<T>(source: Ref<T>, delay: number): Ref<T> {
   const debounced = ref(source.value) as Ref<T>;
   let timer: ReturnType<typeof setTimeout> | undefined;
 

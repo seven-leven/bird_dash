@@ -1,8 +1,8 @@
 import { readonly, type Ref, toRef } from 'vue';
 import { useCollectionData } from '../composables/collection/useCollectionData.ts';
-import { useCollections } from '../composables/collection/useCollections.ts';
+import { useCollectionLoader } from '../data/useCollectionLoader.ts';
 import { useGlobalSearch } from '../composables/collection/useGlobalSearch.ts';
-import { defineInjection } from '../composables/core/injection.ts';
+import { defineInjection } from '../browser/defineInjection.ts';
 import type { ViewMode } from '../types/index.ts';
 
 /**
@@ -16,8 +16,8 @@ export function createCollectionsStore(deps: {
   /** Family view: drawn items only. */
   drawnOnly?: Ref<boolean>;
 }) {
-  const base = useCollections();
-  const items = toRef(base.data, 'items');
+  const base = useCollectionLoader();
+  const items = toRef(base.loadState, 'items');
 
   const { activeData, stats, searchedDrawnItems } = useCollectionData(
     items,
@@ -26,19 +26,19 @@ export function createCollectionsStore(deps: {
     deps.drawnOnly,
   );
   const { globalResults, globalResultCount, globalDrawnCount } = useGlobalSearch(
-    base.COLLECTIONS,
-    base.collectionCache,
+    base.collections,
+    base.itemsByCollection,
     deps.query,
   );
 
   return {
     isInitialized: base.isInitialized,
     initError: base.initError,
-    list: base.COLLECTIONS,
+    list: base.collections,
     activeCollection: base.activeCollection,
-    data: readonly(base.data),
-    cache: base.collectionCache,
-    globalStats: base.globalStats,
+    data: readonly(base.loadState),
+    cache: base.itemsByCollection,
+    globalStats: base.archiveCounts,
     // Derived views
     activeData,
     stats,
@@ -48,7 +48,7 @@ export function createCollectionsStore(deps: {
     globalDrawnCount,
     // Actions
     init: base.init,
-    switch: base.switchCollection,
+    switch: base.selectCollection,
   };
 }
 

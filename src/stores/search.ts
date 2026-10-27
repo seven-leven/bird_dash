@@ -1,18 +1,21 @@
 import { readonly, ref } from 'vue';
-import { useDebouncedRef } from '../composables/core/useDebounce.ts';
-import { defineInjection } from '../composables/core/injection.ts';
+import { useDebouncedRef } from '../browser/useDebouncedRef.ts';
+import { defineInjection } from '../browser/defineInjection.ts';
 
 /**
  * Search input state — the single query that drives both the grid filter and
  * the global-search dropdown. Owns nothing about results (those are derived in
  * the collections store from this query), so it has no store dependencies.
  */
+/** How long typing must pause before the grid and the results follow it, in ms. */
+export const SEARCH_DELAY = 120;
+
 export function createSearchStore() {
   const query = ref('');
   const dropdownOpen = ref(false);
   // Debounced view of the query, consumed by the collections store's filter →
   // group → sort pipeline and the cross-collection results.
-  const debouncedQuery = useDebouncedRef(query, 120);
+  const debouncedQuery = useDebouncedRef(query, SEARCH_DELAY);
 
   const setQuery = (q: string): void => {
     query.value = q;

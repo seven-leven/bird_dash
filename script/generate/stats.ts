@@ -10,7 +10,7 @@
 import type { Collection } from '../lib/collections.ts';
 import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { CollectionCounts, NewestDrawing, RawItem, Stats } from '../../src/types/data.ts';
+import type { CollectionCounts, ListEntry, NewestDrawing, Stats } from '../../src/data/files.ts';
 
 export type { CollectionCounts, NewestDrawing, Stats };
 
@@ -21,7 +21,7 @@ export const NEWEST_COUNT = 8;
 export interface CollectionList {
   id: string;
   label: string;
-  groups: Record<string, RawItem[]>;
+  groups: Record<string, ListEntry[]>;
 }
 
 /** Work the numbers out from the lists. Pure: the build and the check share it. */
@@ -79,7 +79,7 @@ async function readLists(collections: Collection[], io: Io): Promise<CollectionL
   return Promise.all(collections.map(async (collection) => ({
     id: collection.id,
     label: collection.label,
-    groups: await readJson<Record<string, RawItem[]>>(io, collection.paths.json),
+    groups: await readJson<Record<string, ListEntry[]>>(io, collection.paths.json),
   })));
 }
 

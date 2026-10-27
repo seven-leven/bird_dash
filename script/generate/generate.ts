@@ -13,7 +13,7 @@ import { COLLECTIONS } from '../lib/collections.ts';
 import { type Io, readJson } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import { command, EXIT, MARK, parseArgs, UsageError } from '../lib/cli.ts';
-import type { RawCollectionConfig } from '../../src/types/data.ts';
+import type { CollectionEntry } from '../../src/data/files.ts';
 import { writeStats } from './stats.ts';
 import { writePlaceholders } from './placeholders.ts';
 import { contrastReport, writeDesignGuide } from './designGuide.ts';
@@ -44,7 +44,7 @@ export const GENERATORS: Generator[] = [
     makes: 'public/placeholders/, each collection’s light and dark placeholder',
     write: async (io, into) =>
       writePlaceholders(
-        await readJson<RawCollectionConfig[]>(io, PATHS.collections),
+        await readJson<CollectionEntry[]>(io, PATHS.collections),
         into ?? PATHS.placeholders,
         (id) => io.out(`  ${MARK.skipped} placeholders: ${id} has no icon in collections.json`),
       ),

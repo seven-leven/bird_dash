@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { applyAccent, DEFAULT_ACCENT } from './accent.ts';
+import { applyAccent, DEFAULT_ACCENT } from './applyAccent.ts';
 
 test('applyAccent sets the collection accent on <html>', () => {
   applyAccent('blue');

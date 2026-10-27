@@ -1,8 +1,8 @@
 import { test } from 'vitest';
 import { assertEquals, assertThrows } from '@std/assert';
 import { defineComponent, h } from 'vue';
-import { defineInjection } from './injection.ts';
-import { mountWithoutDom } from '../../testing/mount.ts';
+import { defineInjection } from './defineInjection.ts';
+import { mountWithoutDom } from '../testing/mount.ts';
 
 // provide/inject only work inside a component, so these mount real components, with the
 // kit's renderer that draws nothing (no DOM needed).
