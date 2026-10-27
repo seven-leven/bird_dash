@@ -260,8 +260,8 @@ imports it and checks its main behaviour clears the error.
 Helpers are in `src/testing/`: `fixtures.ts` (`makeItem`, `makeCollection`, `at`), `mount.ts`
 (`mountComponent`, `mountComposable`, `runInScope`, `mountWithoutDom`), `settle.ts`, `fakes/`
 (`fakeFetch`, `captureConsole`, `tempDir`, `tempCollection`), `scenarios/` (the fixture archive),
-`scriptFixtures.ts`, `withDom.ts` (`withDom`) and `propertyRuns.ts` (`assertProperty`).
-[TESTING.md](TESTING.md) shows how each is used.
+`scriptFixtures.ts`, `domSetup.ts` (runs itself before every dom test) and `propertyRuns.ts`
+(`assertProperty`). [TESTING.md](TESTING.md) shows how each is used.
 
 ## 10. Add a new folder of code
 

@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 // Loading a page's component imports Vue's DOM renderer, which needs `document`.
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';

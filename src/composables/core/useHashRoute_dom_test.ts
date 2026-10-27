@@ -3,7 +3,6 @@ import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive, ref } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
-import { withDom } from '../../testing/withDom.ts';
 import type { CollectionConfig, CollectionItem, Page } from '../../types/index.ts';
 import { mountComposable, runInScope } from '../../testing/mount.ts';
 
@@ -65,193 +64,182 @@ function harness(items: Record<string, CollectionItem[]>) {
 const drawn = (itemId: string) => makeItem({ itemId, drawnTime: at(2025, 3, 10) });
 const undrawn = (itemId: string) => makeItem({ itemId, isDrawn: false });
 
-test('a bare load leaves the URL alone, then later switches are reflected', () =>
-  withDom(async () => {
-    const h = harness({ birds: [], sharks: [] });
-    await h.route.start(); // no hash → nothing to apply
-    await h.loadFirst('birds');
-    assertEquals(location.hash, ''); // adopting the load-time collection must not write
+test('a bare load leaves the URL alone, then later switches are reflected', async () => {
+  const h = harness({ birds: [], sharks: [] });
+  await h.route.start(); // no hash → nothing to apply
+  await h.loadFirst('birds');
+  assertEquals(location.hash, ''); // adopting the load-time collection must not write
 
-    await h.switchCollection('sharks');
-    await nextTick();
-    assertEquals(location.hash, '#sharks');
-    h.stop();
-  }));
+  await h.switchCollection('sharks');
+  await nextTick();
+  assertEquals(location.hash, '#sharks');
+  h.stop();
+});
 
-test('opening and closing an item is reflected in the URL', () =>
-  withDom(async () => {
-    const item = drawn('001');
-    const h = harness({ birds: [item] });
-    await h.loadFirst('birds');
+test('opening and closing an item is reflected in the URL', async () => {
+  const item = drawn('001');
+  const h = harness({ birds: [item] });
+  await h.loadFirst('birds');
 
-    h.expandedImage.item = item;
-    h.expandedImage.isOpen = true;
-    await nextTick();
-    assertEquals(location.hash, '#birds/001');
+  h.expandedImage.item = item;
+  h.expandedImage.isOpen = true;
+  await nextTick();
+  assertEquals(location.hash, '#birds/001');
 
-    h.expandedImage.isOpen = false;
-    await nextTick();
-    assertEquals(location.hash, '#birds');
-    h.stop();
-  }));
+  h.expandedImage.isOpen = false;
+  await nextTick();
+  assertEquals(location.hash, '#birds');
+  h.stop();
+});
 
-test('a deep link switches collection, opens the item, and is not clobbered on the way', () =>
-  withDom(async () => {
-    const h = harness({ birds: [], sharks: [drawn('019')] });
-    await h.loadFirst('birds');
+test('a deep link switches collection, opens the item, and is not clobbered on the way', async () => {
+  const h = harness({ birds: [], sharks: [drawn('019')] });
+  await h.loadFirst('birds');
 
-    // Every hash the URL passes through (each one is a browser history entry).
-    const seen: string[] = [];
-    globalThis.addEventListener('hashchange', () => seen.push(location.hash));
+  // Every hash the URL passes through (each one is a browser history entry).
+  const seen: string[] = [];
+  globalThis.addEventListener('hashchange', () => seen.push(location.hash));
 
-    location.hash = '#sharks/019';
-    await h.route.apply();
-    await nextTick();
-    await new Promise((r) => setTimeout(r, 30)); // let any hashchange events land
+  location.hash = '#sharks/019';
+  await h.route.apply();
+  await nextTick();
+  await new Promise((r) => setTimeout(r, 30)); // let any hashchange events land
 
-    assertEquals(h.switched, ['sharks']);
-    assertEquals(h.opened, ['019']);
-    assertEquals(location.hash, '#sharks/019');
-    // The intermediate switch to "sharks" must not be written to the URL: that
-    // would add a stray history entry and momentarily drop the item.
-    assertEquals(seen, ['#sharks/019']);
-    h.stop();
-  }));
+  assertEquals(h.switched, ['sharks']);
+  assertEquals(h.opened, ['019']);
+  assertEquals(location.hash, '#sharks/019');
+  // The intermediate switch to "sharks" must not be written to the URL: that
+  // would add a stray history entry and momentarily drop the item.
+  assertEquals(seen, ['#sharks/019']);
+  h.stop();
+});
 
-test('a deep link to an undrawn item highlights the tile instead of opening it', () =>
-  withDom(async () => {
-    const tile = document.createElement('div');
-    tile.id = 'item-005';
-    tile.scrollIntoView = () => {}; // layout does not exist in the fake DOM
-    document.body.append(tile);
+test('a deep link to an undrawn item highlights the tile instead of opening it', async () => {
+  const tile = document.createElement('div');
+  tile.id = 'item-005';
+  tile.scrollIntoView = () => {}; // layout does not exist in the fake DOM
+  document.body.append(tile);
 
-    const h = harness({ birds: [undrawn('005')] });
-    await h.loadFirst('birds');
+  const h = harness({ birds: [undrawn('005')] });
+  await h.loadFirst('birds');
 
-    location.hash = '#birds/005';
-    await h.route.apply();
+  location.hash = '#birds/005';
+  await h.route.apply();
 
-    assertEquals(h.opened, []);
-    assert(tile.classList.contains('ring-2'), 'tile should be flashed');
-    h.stop();
-  }));
+  assertEquals(h.opened, []);
+  assert(tile.classList.contains('ring-2'), 'tile should be flashed');
+  h.stop();
+});
 
-test("the router's own URL writes are not applied back as navigation", () =>
-  withDom(async () => {
-    const h = harness({ birds: [], sharks: [] });
-    await h.loadFirst('birds');
-    await h.switchCollection('sharks'); // user action (recorded once)
-    await nextTick(); // router reflects "#sharks"
-    assertEquals(location.hash, '#sharks');
+test("the router's own URL writes are not applied back as navigation", async () => {
+  const h = harness({ birds: [], sharks: [] });
+  await h.loadFirst('birds');
+  await h.switchCollection('sharks'); // user action (recorded once)
+  await nextTick(); // router reflects "#sharks"
+  assertEquals(location.hash, '#sharks');
 
-    await h.route.apply(); // e.g. the hashchange event our own write triggers
-    assertEquals(h.switched, ['sharks']); // not switched a second time
-    h.stop();
-  }));
+  await h.route.apply(); // e.g. the hashchange event our own write triggers
+  assertEquals(h.switched, ['sharks']); // not switched a second time
+  h.stop();
+});
 
-test('the user editing the hash to another collection navigates there', () =>
-  withDom(async () => {
-    const h = harness({ birds: [], sharks: [] });
-    await h.loadFirst('sharks');
+test('the user editing the hash to another collection navigates there', async () => {
+  const h = harness({ birds: [], sharks: [] });
+  await h.loadFirst('sharks');
 
-    location.hash = '#birds';
-    await h.route.apply();
+  location.hash = '#birds';
+  await h.route.apply();
 
-    assertEquals(h.switched, ['birds']);
-    assertEquals(h.activeCollection.value?.id, 'birds');
-    h.stop();
-  }));
+  assertEquals(h.switched, ['birds']);
+  assertEquals(h.activeCollection.value?.id, 'birds');
+  h.stop();
+});
 
-test('an empty or collection-less hash is ignored', () =>
-  withDom(async () => {
-    const h = harness({ birds: [] });
-    await h.loadFirst('birds');
+test('an empty or collection-less hash is ignored', async () => {
+  const h = harness({ birds: [] });
+  await h.loadFirst('birds');
 
-    location.hash = '#';
-    await h.route.apply();
-    location.hash = '#/';
-    await h.route.apply();
+  location.hash = '#';
+  await h.route.apply();
+  location.hash = '#/';
+  await h.route.apply();
 
-    assertEquals(h.switched, []);
-    assertEquals(h.opened, []);
-    h.stop();
-  }));
+  assertEquals(h.switched, []);
+  assertEquals(h.opened, []);
+  h.stop();
+});
 
-test('an open viewer with no item selected reflects just the collection', () =>
-  withDom(async () => {
-    const h = harness({ birds: [], sharks: [] });
-    await h.loadFirst('birds');
-    await h.switchCollection('sharks');
-    h.expandedImage.isOpen = true; // open, but the item has not been set yet
-    await nextTick();
-    assertEquals(location.hash, '#sharks');
-    h.stop();
-  }));
+test('an open viewer with no item selected reflects just the collection', async () => {
+  const h = harness({ birds: [], sharks: [] });
+  await h.loadFirst('birds');
+  await h.switchCollection('sharks');
+  h.expandedImage.isOpen = true; // open, but the item has not been set yet
+  await nextTick();
+  assertEquals(location.hash, '#sharks');
+  h.stop();
+});
 
-test('a state whose hash is already in the address bar adds no history entry', () =>
-  withDom(async () => {
-    const h = harness({ birds: [], sharks: [] });
-    await h.loadFirst('birds');
-    location.hash = '#sharks'; // typed by hand, not yet applied
-    const entries = history.length;
-    await h.switchCollection('sharks');
-    await nextTick();
-    assertEquals(location.hash, '#sharks');
-    assertEquals(history.length, entries);
-    h.stop();
-  }));
+test('a state whose hash is already in the address bar adds no history entry', async () => {
+  const h = harness({ birds: [], sharks: [] });
+  await h.loadFirst('birds');
+  location.hash = '#sharks'; // typed by hand, not yet applied
+  const entries = history.length;
+  await h.switchCollection('sharks');
+  await nextTick();
+  assertEquals(location.hash, '#sharks');
+  assertEquals(history.length, entries);
+  h.stop();
+});
 
-test('mounted, the router follows hashchange events, and stops when unmounted', () =>
-  withDom(async () => {
-    const collections = [makeCollection('birds'), makeCollection('sharks')];
-    const activeCollection = ref<CollectionConfig | undefined>(collections[0]);
-    const switched: string[] = [];
-    const { unmount } = mountComposable(() =>
-      useHashRoute({
-        activeCollection,
-        expandedImage: reactive({ isOpen: false, item: undefined }),
-        cache: { birds: [], sharks: [] },
-        page: ref<Page>('gallery'),
-        showPage: () => {},
-        switchCollection: async (id) => {
-          switched.push(id);
-          activeCollection.value = collections.find((c) => c.id === id);
-        },
-        openOverlay: () => {},
-      })
-    );
+test('mounted, the router follows hashchange events, and stops when unmounted', async () => {
+  const collections = [makeCollection('birds'), makeCollection('sharks')];
+  const activeCollection = ref<CollectionConfig | undefined>(collections[0]);
+  const switched: string[] = [];
+  const { unmount } = mountComposable(() =>
+    useHashRoute({
+      activeCollection,
+      expandedImage: reactive({ isOpen: false, item: undefined }),
+      cache: { birds: [], sharks: [] },
+      page: ref<Page>('gallery'),
+      showPage: () => {},
+      switchCollection: async (id) => {
+        switched.push(id);
+        activeCollection.value = collections.find((c) => c.id === id);
+      },
+      openOverlay: () => {},
+    })
+  );
 
-    location.hash = '#sharks';
-    globalThis.dispatchEvent(new HashChangeEvent('hashchange'));
-    await nextTick();
-    assertEquals(switched, ['sharks']);
+  location.hash = '#sharks';
+  globalThis.dispatchEvent(new HashChangeEvent('hashchange'));
+  await nextTick();
+  assertEquals(switched, ['sharks']);
 
-    unmount();
-    location.hash = '#birds';
-    globalThis.dispatchEvent(new HashChangeEvent('hashchange'));
-    await nextTick();
-    assertEquals(switched, ['sharks']); // no longer listening
-  }));
+  unmount();
+  location.hash = '#birds';
+  globalThis.dispatchEvent(new HashChangeEvent('hashchange'));
+  await nextTick();
+  assertEquals(switched, ['sharks']); // no longer listening
+});
 
-test('#about shows the About page without switching collection, and is written back', () =>
-  withDom(async () => {
-    const h = harness({ birds: [], sharks: [] });
-    await h.loadFirst('birds');
+test('#about shows the About page without switching collection, and is written back', async () => {
+  const h = harness({ birds: [], sharks: [] });
+  await h.loadFirst('birds');
 
-    location.hash = '#about';
-    await h.route.apply();
-    assertEquals(h.page.value, 'about');
-    assertEquals(h.switched, []); // "about" is not a collection
+  location.hash = '#about';
+  await h.route.apply();
+  assertEquals(h.page.value, 'about');
+  assertEquals(h.switched, []); // "about" is not a collection
 
-    // Leaving it by a collection link shows the gallery again.
-    location.hash = '#sharks';
-    await h.route.apply();
-    assertEquals(h.page.value, 'gallery');
-    assertEquals(h.switched, ['sharks']);
+  // Leaving it by a collection link shows the gallery again.
+  location.hash = '#sharks';
+  await h.route.apply();
+  assertEquals(h.page.value, 'gallery');
+  assertEquals(h.switched, ['sharks']);
 
-    // And showing the About page from the app writes #about.
-    h.page.value = 'about';
-    await nextTick();
-    assertEquals(location.hash, '#about');
-    h.stop();
-  }));
+  // And showing the About page from the app writes #about.
+  h.page.value = 'about';
+  await nextTick();
+  assertEquals(location.hash, '#about');
+  h.stop();
+});

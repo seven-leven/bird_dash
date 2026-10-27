@@ -1,5 +1,5 @@
 // useZoomPan.ts — zoom and pan for one image, by buttons, wheel and pointer gestures.
-import { onUnmounted, ref } from 'vue';
+import { onScopeDispose, ref } from 'vue';
 
 /** Clamp a zoom scale to [0.5, 5]; anything ≤1 snaps back to a neutral 1×. */
 export function clampScale(value: number): number {
@@ -160,7 +160,7 @@ export function useZoomPan({ onSwipe }: { onSwipe: (dir: 'next' | 'prev') => voi
     cancelPendingMove();
   };
 
-  onUnmounted(cancelPendingMove);
+  onScopeDispose(cancelPendingMove);
 
   return {
     scale,

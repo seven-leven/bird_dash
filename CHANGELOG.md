@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: one way to a browser (test overhaul, phase 2). The tier sets the environment:
+  Vitest's `node` and `dom` projects give every `_dom_test` file happy-dom and the rest Node, and
+  `src/testing/domSetup.ts` resets the address, storage, `<html>` and page before each dom test. The
+  83 `withDom(…)` wrappers, the `@vitest-environment` comments, `withDom.ts` and
+  `@happy-dom/global-registrator` go. Sharing one browser per file surfaced listeners left behind:
+  `useDialogKeys` and `useZoomPan` now clean up in `onScopeDispose`, so a scope stopped without a
+  component unmount releases them too, and `runInScope` stops its scope after each test
 - 2026-10-27 | test: the test runner on `Io` (test overhaul, phase 1d; phase 1 is done). `npm
   test`'s `main` is made with `command` like every other command and reaches the outside world
   through `Io`; its tests run it on `fakeIo` with a fake Vitest, in memory. Vitest writes its JUnit

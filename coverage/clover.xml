@@ -1,0 +1,2488 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1793108051273" clover="3.2.0">
+  <project timestamp="1793108051274" name="All files">
+    <metrics statements="2128" coveredstatements="2128" conditionals="1286" coveredconditionals="1286" methods="738" coveredmethods="737" elements="4152" coveredelements="4151" complexity="0" loc="2128" ncloc="2128" packages="21" files="97" classes="97"/>
+    <package name="script.build">
+      <metrics statements="85" coveredstatements="85" conditionals="33" coveredconditionals="33" methods="35" coveredmethods="35"/>
+      <file name="build.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\build\build.ts">
+        <metrics statements="20" coveredstatements="20" conditionals="6" coveredconditionals="6" methods="8" coveredmethods="8"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="40" count="9" type="stmt"/>
+        <line num="41" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="2" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="46" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="3" type="stmt"/>
+        <line num="52" count="4" type="stmt"/>
+        <line num="53" count="4" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="55" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="59" count="3" type="stmt"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="69" count="4" type="stmt"/>
+        <line num="70" count="4" type="stmt"/>
+      </file>
+      <file name="contentSecurityPolicy.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\build\contentSecurityPolicy.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="6"/>
+        <line num="10" count="4" type="stmt"/>
+        <line num="14" count="1" type="stmt"/>
+        <line num="15" count="7" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+      </file>
+      <file name="linkPreviews.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\build\linkPreviews.ts">
+        <metrics statements="27" coveredstatements="27" conditionals="9" coveredconditionals="9" methods="9" coveredmethods="9"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="17" count="110" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="22" count="24" type="stmt"/>
+        <line num="31" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="24" type="stmt"/>
+        <line num="44" count="22" type="stmt"/>
+        <line num="45" count="22" type="stmt"/>
+        <line num="46" count="22" type="stmt"/>
+        <line num="47" count="22" type="stmt"/>
+        <line num="48" count="22" type="stmt"/>
+        <line num="49" count="22" type="stmt"/>
+        <line num="73" count="22" type="stmt"/>
+        <line num="81" count="5" type="stmt"/>
+        <line num="82" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="87" count="2" type="stmt"/>
+        <line num="88" count="2" type="stmt"/>
+        <line num="89" count="4" type="stmt"/>
+        <line num="90" count="20" type="stmt"/>
+        <line num="93" count="2" type="stmt"/>
+        <line num="98" count="1" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="103" count="18" type="stmt"/>
+      </file>
+      <file name="sizeBudget.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\build\sizeBudget.ts">
+        <metrics statements="32" coveredstatements="32" conditionals="18" coveredconditionals="18" methods="12" coveredmethods="12"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="41" count="21" type="stmt"/>
+        <line num="48" count="5" type="stmt"/>
+        <line num="49" count="5" type="stmt"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="51" count="18" type="stmt"/>
+        <line num="52" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="5" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="56" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="9" type="stmt"/>
+        <line num="58" count="9" type="stmt"/>
+        <line num="61" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="3" type="stmt"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="70" count="5" type="stmt"/>
+        <line num="75" count="3" type="stmt"/>
+        <line num="76" count="3" type="stmt"/>
+        <line num="77" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="78" count="6" type="stmt"/>
+        <line num="79" count="6" type="stmt"/>
+        <line num="80" count="6" type="stmt"/>
+        <line num="81" count="6" type="stmt"/>
+        <line num="83" count="3" type="stmt"/>
+        <line num="88" count="2" type="stmt"/>
+        <line num="89" count="2" type="stmt"/>
+        <line num="93" count="2" type="stmt"/>
+        <line num="96" count="2" type="stmt"/>
+        <line num="97" count="2" type="stmt"/>
+        <line num="98" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="99" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="script.changelog">
+      <metrics statements="34" coveredstatements="34" conditionals="11" coveredconditionals="11" methods="8" coveredmethods="8"/>
+      <file name="changelog.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\changelog\changelog.ts">
+        <metrics statements="34" coveredstatements="34" conditionals="11" coveredconditionals="11" methods="8" coveredmethods="8"/>
+        <line num="25" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="27" count="6" type="stmt"/>
+        <line num="28" count="6" type="stmt"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="38" count="6" type="stmt"/>
+        <line num="42" count="6" type="stmt"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="59" count="5" type="stmt"/>
+        <line num="60" count="5" type="stmt"/>
+        <line num="61" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="63" count="2" type="stmt"/>
+        <line num="64" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="67" count="3" type="stmt"/>
+        <line num="68" count="3" type="stmt"/>
+        <line num="75" count="5" type="stmt"/>
+        <line num="76" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="77" count="2" type="stmt"/>
+        <line num="78" count="2" type="stmt"/>
+        <line num="81" count="2" type="stmt"/>
+        <line num="82" count="2" type="stmt"/>
+        <line num="83" count="4" type="stmt"/>
+        <line num="85" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="90" count="1" type="stmt"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="95" count="2" type="stmt"/>
+        <line num="99" count="2" type="stmt"/>
+        <line num="100" count="3" type="stmt"/>
+        <line num="101" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="script.check">
+      <metrics statements="51" coveredstatements="51" conditionals="15" coveredconditionals="15" methods="19" coveredmethods="19"/>
+      <file name="check.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\check\check.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="4" coveredconditionals="4" methods="3" coveredmethods="3"/>
+        <line num="28" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="29" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="37" count="10" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+        <line num="44" count="1" type="stmt"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="48" count="1" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+      </file>
+      <file name="checkAssets.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\check\checkAssets.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="19" count="2" type="stmt"/>
+      </file>
+      <file name="checkGenerated.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\check\checkGenerated.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="3" coveredconditionals="3" methods="3" coveredmethods="3"/>
+        <line num="21" count="17" type="stmt"/>
+        <line num="22" count="17" type="stmt"/>
+        <line num="24" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="34" count="4" type="stmt"/>
+        <line num="38" count="12" type="stmt"/>
+        <line num="44" count="4" type="stmt"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="46" count="17" type="stmt"/>
+        <line num="48" count="3" type="stmt"/>
+      </file>
+      <file name="formatCheckReport.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\check\formatCheckReport.ts">
+        <metrics statements="21" coveredstatements="21" conditionals="8" coveredconditionals="8" methods="11" coveredmethods="11"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="13" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="5" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="40" count="5" type="stmt"/>
+        <line num="41" count="5" type="stmt"/>
+        <line num="42" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="5" type="stmt"/>
+        <line num="51" count="8" type="stmt"/>
+        <line num="53" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="3" type="stmt"/>
+        <line num="60" count="5" type="stmt"/>
+        <line num="61" count="5" type="stmt"/>
+        <line num="66" count="3" type="stmt"/>
+        <line num="67" count="12" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="script.docs">
+      <metrics statements="23" coveredstatements="23" conditionals="24" coveredconditionals="24" methods="13" coveredmethods="13"/>
+      <file name="accents.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\docs\accents.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="9" count="13" type="stmt"/>
+        <line num="14" count="154" type="stmt"/>
+      </file>
+      <file name="links.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\docs\links.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="24" coveredconditionals="24" methods="5" coveredmethods="5"/>
+        <line num="9" count="15" type="stmt"/>
+        <line num="19" count="17" type="cond" truecount="4" falsecount="0"/>
+        <line num="20" count="10" type="stmt"/>
+        <line num="21" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="17" type="stmt"/>
+        <line num="24" count="17" type="cond" truecount="4" falsecount="0"/>
+        <line num="25" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="17" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="66" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="2" type="stmt"/>
+        <line num="68" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="69" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="70" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="71" count="5" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="liveBlocks.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\docs\liveBlocks.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="20" count="15" type="stmt"/>
+      </file>
+    </package>
+    <package name="script.generate">
+      <metrics statements="402" coveredstatements="402" conditionals="154" coveredconditionals="154" methods="125" coveredmethods="125"/>
+      <file name="designGuide.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\designGuide.ts">
+        <metrics statements="135" coveredstatements="135" conditionals="44" coveredconditionals="44" methods="39" coveredmethods="39"/>
+        <line num="54" count="12" type="stmt"/>
+        <line num="55" count="23" type="stmt"/>
+        <line num="56" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="22" type="stmt"/>
+        <line num="59" count="12" type="stmt"/>
+        <line num="60" count="21" type="stmt"/>
+        <line num="63" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="20" type="stmt"/>
+        <line num="66" count="12" type="stmt"/>
+        <line num="71" count="9" type="stmt"/>
+        <line num="83" count="48" type="stmt"/>
+        <line num="85" count="48" type="stmt"/>
+        <line num="89" count="16" type="stmt"/>
+        <line num="90" count="16" type="stmt"/>
+        <line num="91" count="16" type="stmt"/>
+        <line num="92" count="176" type="stmt"/>
+        <line num="93" count="176" type="cond" truecount="2" falsecount="0"/>
+        <line num="94" count="176" type="stmt"/>
+        <line num="95" count="176" type="stmt"/>
+        <line num="101" count="4" type="stmt"/>
+        <line num="102" count="64" type="cond" truecount="2" falsecount="0"/>
+        <line num="127" count="4" type="stmt"/>
+        <line num="128" count="32" type="stmt"/>
+        <line num="129" count="32" type="stmt"/>
+        <line num="138" count="16" type="stmt"/>
+        <line num="139" count="16" type="cond" truecount="1" falsecount="0"/>
+        <line num="140" count="96" type="stmt"/>
+        <line num="141" count="16" type="stmt"/>
+        <line num="142" count="32" type="stmt"/>
+        <line num="144" count="16" type="stmt"/>
+        <line num="145" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="149" count="16" type="stmt"/>
+        <line num="151" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="152" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="156" count="16" type="stmt"/>
+        <line num="161" count="16" type="stmt"/>
+        <line num="166" count="16" type="stmt"/>
+        <line num="171" count="48" type="stmt"/>
+        <line num="174" count="16" type="stmt"/>
+        <line num="175" count="16" type="stmt"/>
+        <line num="176" count="16" type="stmt"/>
+        <line num="177" count="16" type="stmt"/>
+        <line num="178" count="128" type="stmt"/>
+        <line num="179" count="128" type="stmt"/>
+        <line num="183" count="16" type="stmt"/>
+        <line num="188" count="16" type="stmt"/>
+        <line num="189" count="16" type="stmt"/>
+        <line num="190" count="64" type="stmt"/>
+        <line num="191" count="64" type="stmt"/>
+        <line num="192" count="64" type="cond" truecount="2" falsecount="0"/>
+        <line num="195" count="16" type="stmt"/>
+        <line num="196" count="16" type="stmt"/>
+        <line num="212" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="213" count="7" type="stmt"/>
+        <line num="214" count="7" type="stmt"/>
+        <line num="217" count="7" type="stmt"/>
+        <line num="224" count="7" type="stmt"/>
+        <line num="225" count="7" type="stmt"/>
+        <line num="226" count="7" type="stmt"/>
+        <line num="227" count="7" type="stmt"/>
+        <line num="228" count="40" type="cond" truecount="2" falsecount="0"/>
+        <line num="229" count="40" type="stmt"/>
+        <line num="250" count="7" type="stmt"/>
+        <line num="253" count="7" type="stmt"/>
+        <line num="259" count="7" type="stmt"/>
+        <line num="260" count="7" type="stmt"/>
+        <line num="261" count="7" type="stmt"/>
+        <line num="262" count="7" type="stmt"/>
+        <line num="265" count="7" type="stmt"/>
+        <line num="266" count="8" type="stmt"/>
+        <line num="267" count="264" type="cond" truecount="2" falsecount="0"/>
+        <line num="268" count="8" type="stmt"/>
+        <line num="269" count="8" type="stmt"/>
+        <line num="273" count="8" type="stmt"/>
+        <line num="274" count="8" type="stmt"/>
+        <line num="281" count="88" type="stmt"/>
+        <line num="282" count="88" type="stmt"/>
+        <line num="283" count="88" type="stmt"/>
+        <line num="289" count="8" type="stmt"/>
+        <line num="292" count="8" type="stmt"/>
+        <line num="298" count="8" type="stmt"/>
+        <line num="301" count="8" type="stmt"/>
+        <line num="302" count="8" type="stmt"/>
+        <line num="307" count="8" type="stmt"/>
+        <line num="308" count="8" type="stmt"/>
+        <line num="312" count="24" type="stmt"/>
+        <line num="316" count="8" type="stmt"/>
+        <line num="324" count="8" type="stmt"/>
+        <line num="325" count="8" type="stmt"/>
+        <line num="326" count="48" type="cond" truecount="2" falsecount="0"/>
+        <line num="327" count="40" type="stmt"/>
+        <line num="328" count="48" type="stmt"/>
+        <line num="332" count="48" type="stmt"/>
+        <line num="334" count="8" type="stmt"/>
+        <line num="337" count="8" type="stmt"/>
+        <line num="343" count="8" type="stmt"/>
+        <line num="344" count="8" type="stmt"/>
+        <line num="345" count="8" type="stmt"/>
+        <line num="346" count="24" type="stmt"/>
+        <line num="348" count="8" type="stmt"/>
+        <line num="349" count="8" type="stmt"/>
+        <line num="360" count="8" type="stmt"/>
+        <line num="361" count="48" type="stmt"/>
+        <line num="362" count="48" type="stmt"/>
+        <line num="366" count="8" type="stmt"/>
+        <line num="367" count="8" type="stmt"/>
+        <line num="373" count="8" type="stmt"/>
+        <line num="376" count="8" type="stmt"/>
+        <line num="382" count="8" type="stmt"/>
+        <line num="387" count="8" type="stmt"/>
+        <line num="390" count="8" type="stmt"/>
+        <line num="396" count="8" type="stmt"/>
+        <line num="397" count="8" type="stmt"/>
+        <line num="407" count="8" type="stmt"/>
+        <line num="408" count="8" type="stmt"/>
+        <line num="411" count="8" type="stmt"/>
+        <line num="417" count="8" type="stmt"/>
+        <line num="418" count="8" type="stmt"/>
+        <line num="419" count="8" type="stmt"/>
+        <line num="420" count="8" type="stmt"/>
+        <line num="421" count="8" type="stmt"/>
+        <line num="423" count="48" type="stmt"/>
+        <line num="431" count="8" type="stmt"/>
+        <line num="435" count="48" type="stmt"/>
+        <line num="438" count="8" type="stmt"/>
+        <line num="441" count="8" type="stmt"/>
+        <line num="445" count="8" type="stmt"/>
+        <line num="447" count="8" type="stmt"/>
+        <line num="449" count="8" type="stmt"/>
+        <line num="454" count="3" type="stmt"/>
+        <line num="466" count="30" type="stmt"/>
+        <line num="471" count="2" type="stmt"/>
+        <line num="472" count="2" type="stmt"/>
+        <line num="473" count="2" type="stmt"/>
+        <line num="475" count="2" type="stmt"/>
+      </file>
+      <file name="drawingsStrip.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\drawingsStrip.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="8" coveredconditionals="8" methods="4" coveredmethods="4"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="23" count="7" type="stmt"/>
+        <line num="24" count="7" type="stmt"/>
+        <line num="25" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="30" count="4" type="stmt"/>
+        <line num="31" count="17" type="stmt"/>
+        <line num="35" count="4" type="stmt"/>
+        <line num="39" count="4" type="stmt"/>
+        <line num="40" count="17" type="stmt"/>
+        <line num="47" count="4" type="stmt"/>
+        <line num="57" count="7" type="stmt"/>
+        <line num="58" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="4" type="stmt"/>
+        <line num="60" count="4" type="stmt"/>
+      </file>
+      <file name="generate.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\generate.ts">
+        <metrics statements="31" coveredstatements="31" conditionals="18" coveredconditionals="18" methods="15" coveredmethods="15"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="37" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="4" type="stmt"/>
+        <line num="39" count="4" type="stmt"/>
+        <line num="46" count="4" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="58" count="20" type="stmt"/>
+        <line num="59" count="2" type="stmt"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="70" count="2" type="stmt"/>
+        <line num="75" count="2" type="stmt"/>
+        <line num="81" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="82" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="40" type="stmt"/>
+        <line num="90" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="91" count="2" type="stmt"/>
+        <line num="93" count="14" type="stmt"/>
+        <line num="97" count="42" type="cond" truecount="2" falsecount="0"/>
+        <line num="100" count="2" type="stmt"/>
+        <line num="101" count="14" type="stmt"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="105" count="9" type="stmt"/>
+        <line num="106" count="9" type="stmt"/>
+        <line num="107" count="9" type="stmt"/>
+        <line num="108" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="7" type="stmt"/>
+        <line num="114" count="9" type="stmt"/>
+        <line num="115" count="20" type="stmt"/>
+        <line num="116" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="118" count="7" type="stmt"/>
+      </file>
+      <file name="guideDrawing.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\guideDrawing.ts">
+        <metrics statements="61" coveredstatements="61" conditionals="28" coveredconditionals="28" methods="17" coveredmethods="17"/>
+        <line num="10" count="5" type="stmt"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="20" count="5" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="24" count="5" type="stmt"/>
+        <line num="25" count="5" type="stmt"/>
+        <line num="29" count="2289" type="stmt"/>
+        <line num="30" count="5" type="stmt"/>
+        <line num="39" count="2001" type="stmt"/>
+        <line num="42" count="5" type="cond" truecount="1" falsecount="0"/>
+        <line num="43" count="176" type="stmt"/>
+        <line num="44" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="40" type="stmt"/>
+        <line num="46" count="5" type="stmt"/>
+        <line num="47" count="56" type="stmt"/>
+        <line num="55" count="44" type="stmt"/>
+        <line num="56" count="44" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="43" type="stmt"/>
+        <line num="58" count="43" type="stmt"/>
+        <line num="59" count="43" type="stmt"/>
+        <line num="60" count="138" type="stmt"/>
+        <line num="61" count="276" type="stmt"/>
+        <line num="62" count="138" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="138" type="stmt"/>
+        <line num="69" count="40" type="stmt"/>
+        <line num="70" count="40" type="stmt"/>
+        <line num="71" count="360" type="stmt"/>
+        <line num="72" count="360" type="cond" truecount="4" falsecount="0"/>
+        <line num="73" count="248" type="stmt"/>
+        <line num="74" count="112" type="stmt"/>
+        <line num="76" count="40" type="stmt"/>
+        <line num="79" count="5" type="stmt"/>
+        <line num="80" count="80" type="stmt"/>
+        <line num="81" count="192" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="5" type="stmt"/>
+        <line num="91" count="659" type="stmt"/>
+        <line num="92" count="5" type="cond" truecount="1" falsecount="0"/>
+        <line num="93" count="273" type="stmt"/>
+        <line num="94" count="64" type="stmt"/>
+        <line num="95" count="5" type="stmt"/>
+        <line num="97" count="467" type="cond" truecount="2" falsecount="0"/>
+        <line num="100" count="467" type="stmt"/>
+        <line num="110" count="16" type="stmt"/>
+        <line num="119" count="16" type="cond" truecount="1" falsecount="0"/>
+        <line num="120" count="16" type="stmt"/>
+        <line num="145" count="11" type="stmt"/>
+        <line num="146" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="147" count="11" type="stmt"/>
+        <line num="148" count="11" type="stmt"/>
+        <line num="149" count="110" type="stmt"/>
+        <line num="150" count="110" type="cond" truecount="2" falsecount="0"/>
+        <line num="152" count="49" type="stmt"/>
+        <line num="153" count="49" type="stmt"/>
+        <line num="155" count="110" type="stmt"/>
+        <line num="164" count="110" type="stmt"/>
+        <line num="165" count="363" type="stmt"/>
+        <line num="166" count="363" type="stmt"/>
+        <line num="178" count="110" type="stmt"/>
+        <line num="179" count="11" type="stmt"/>
+      </file>
+      <file name="iconGrid.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\iconGrid.ts">
+        <metrics statements="19" coveredstatements="19" conditionals="9" coveredconditionals="9" methods="2" coveredmethods="2"/>
+        <line num="26" count="18" type="stmt"/>
+        <line num="27" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="30" count="17" type="stmt"/>
+        <line num="31" count="17" type="stmt"/>
+        <line num="32" count="17" type="stmt"/>
+        <line num="33" count="17" type="stmt"/>
+        <line num="34" count="17" type="stmt"/>
+        <line num="35" count="142" type="cond" truecount="4" falsecount="0"/>
+        <line num="36" count="95" type="stmt"/>
+        <line num="37" count="95" type="stmt"/>
+        <line num="38" count="95" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="61" type="stmt"/>
+        <line num="40" count="61" type="stmt"/>
+        <line num="43" count="142" type="stmt"/>
+        <line num="44" count="142" type="stmt"/>
+        <line num="48" count="469" type="stmt"/>
+        <line num="50" count="142" type="stmt"/>
+        <line num="52" count="17" type="stmt"/>
+      </file>
+      <file name="iconSheet.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\iconSheet.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="1" coveredconditionals="1" methods="2" coveredmethods="2"/>
+        <line num="9" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+      </file>
+      <file name="logo.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\logo.ts">
+        <metrics statements="63" coveredstatements="63" conditionals="11" coveredconditionals="11" methods="12" coveredmethods="12"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="17" count="46" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="46" type="stmt"/>
+        <line num="21" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="22" count="78" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="24" count="42" type="stmt"/>
+        <line num="30" count="6" type="stmt"/>
+        <line num="31" count="6" type="stmt"/>
+        <line num="32" count="6" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="50" count="3" type="stmt"/>
+        <line num="51" count="3" type="stmt"/>
+        <line num="52" count="3" type="stmt"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="54" count="21" type="stmt"/>
+        <line num="58" count="3" type="stmt"/>
+        <line num="59" count="3" type="stmt"/>
+        <line num="69" count="3" type="stmt"/>
+        <line num="70" count="3" type="stmt"/>
+        <line num="71" count="3" type="stmt"/>
+        <line num="72" count="3" type="stmt"/>
+        <line num="74" count="3" type="stmt"/>
+        <line num="75" count="3" type="stmt"/>
+        <line num="76" count="3" type="stmt"/>
+        <line num="77" count="3" type="stmt"/>
+        <line num="80" count="3" type="stmt"/>
+        <line num="81" count="3" type="stmt"/>
+        <line num="82" count="3" type="stmt"/>
+        <line num="83" count="3" type="stmt"/>
+        <line num="85" count="3" type="stmt"/>
+        <line num="86" count="3" type="stmt"/>
+        <line num="87" count="3" type="stmt"/>
+        <line num="90" count="3" type="stmt"/>
+        <line num="91" count="3" type="stmt"/>
+        <line num="92" count="3" type="stmt"/>
+        <line num="93" count="12" type="stmt"/>
+        <line num="94" count="12" type="stmt"/>
+        <line num="96" count="3" type="stmt"/>
+        <line num="97" count="3" type="stmt"/>
+        <line num="98" count="6" type="stmt"/>
+        <line num="99" count="6" type="stmt"/>
+        <line num="101" count="3" type="stmt"/>
+        <line num="103" count="3" type="stmt"/>
+        <line num="104" count="3" type="stmt"/>
+        <line num="111" count="3" type="stmt"/>
+        <line num="112" count="3" type="stmt"/>
+        <line num="118" count="12" type="stmt"/>
+        <line num="120" count="3" type="stmt"/>
+        <line num="126" count="10" type="stmt"/>
+        <line num="134" count="10" type="stmt"/>
+        <line num="138" count="2" type="stmt"/>
+        <line num="139" count="2" type="stmt"/>
+        <line num="140" count="2" type="stmt"/>
+        <line num="141" count="6" type="stmt"/>
+        <line num="142" count="6" type="stmt"/>
+        <line num="144" count="2" type="stmt"/>
+        <line num="147" count="2" type="stmt"/>
+        <line num="148" count="2" type="stmt"/>
+        <line num="156" count="2" type="stmt"/>
+        <line num="157" count="2" type="stmt"/>
+        <line num="160" count="2" type="stmt"/>
+      </file>
+      <file name="palette.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\palette.ts">
+        <metrics statements="31" coveredstatements="31" conditionals="11" coveredconditionals="11" methods="13" coveredmethods="13"/>
+        <line num="17" count="744" type="stmt"/>
+        <line num="18" count="744" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="743" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="744" type="stmt"/>
+        <line num="21" count="744" type="stmt"/>
+        <line num="22" count="744" type="stmt"/>
+        <line num="23" count="744" type="stmt"/>
+        <line num="24" count="744" type="stmt"/>
+        <line num="25" count="744" type="stmt"/>
+        <line num="30" count="744" type="stmt"/>
+        <line num="31" count="2229" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="2229" type="stmt"/>
+        <line num="37" count="10" type="stmt"/>
+        <line num="38" count="10" type="stmt"/>
+        <line num="39" count="220" type="stmt"/>
+        <line num="41" count="10" type="stmt"/>
+        <line num="42" count="10" type="stmt"/>
+        <line num="45" count="10" type="stmt"/>
+        <line num="47" count="310" type="cond" truecount="3" falsecount="0"/>
+        <line num="50" count="260" type="stmt"/>
+        <line num="55" count="10" type="stmt"/>
+        <line num="56" count="110" type="stmt"/>
+        <line num="61" count="480" type="stmt"/>
+        <line num="62" count="1440" type="stmt"/>
+        <line num="63" count="1440" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="480" type="stmt"/>
+        <line num="70" count="240" type="stmt"/>
+        <line num="71" count="240" type="stmt"/>
+        <line num="75" count="10" type="stmt"/>
+        <line num="76" count="75" type="stmt"/>
+        <line num="77" count="75" type="stmt"/>
+      </file>
+      <file name="placeholders.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\placeholders.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="5" coveredconditionals="5" methods="3" coveredmethods="3"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="29" count="17" type="stmt"/>
+        <line num="30" count="17" type="stmt"/>
+        <line num="31" count="17" type="stmt"/>
+        <line num="32" count="17" type="stmt"/>
+        <line num="48" count="6" type="stmt"/>
+        <line num="49" count="6" type="stmt"/>
+        <line num="50" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="4" type="stmt"/>
+        <line num="52" count="4" type="stmt"/>
+        <line num="54" count="7" type="stmt"/>
+        <line num="55" count="14" type="stmt"/>
+        <line num="56" count="14" type="stmt"/>
+        <line num="59" count="14" type="stmt"/>
+        <line num="62" count="6" type="stmt"/>
+      </file>
+      <file name="principles.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\principles.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="15" count="4" type="stmt"/>
+      </file>
+      <file name="stats.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\generate\stats.ts">
+        <metrics statements="21" coveredstatements="21" conditionals="19" coveredconditionals="19" methods="18" coveredmethods="18"/>
+        <line num="18" count="5" type="stmt"/>
+        <line num="29" count="24" type="stmt"/>
+        <line num="30" count="38" type="stmt"/>
+        <line num="31" count="606" type="stmt"/>
+        <line num="32" count="38" type="stmt"/>
+        <line num="38" count="606" type="stmt"/>
+        <line num="45" count="24" type="stmt"/>
+        <line num="47" count="606" type="stmt"/>
+        <line num="50" count="130" type="cond" truecount="3" falsecount="0"/>
+        <line num="53" count="78" type="stmt"/>
+        <line num="62" count="24" type="stmt"/>
+        <line num="63" count="147" type="stmt"/>
+        <line num="66" count="24" type="stmt"/>
+        <line num="67" count="38" type="stmt"/>
+        <line num="68" count="38" type="stmt"/>
+        <line num="76" count="17" type="stmt"/>
+        <line num="79" count="23" type="stmt"/>
+        <line num="92" count="6" type="stmt"/>
+        <line num="93" count="6" type="stmt"/>
+        <line num="94" count="6" type="stmt"/>
+        <line num="99" count="9" type="stmt"/>
+      </file>
+    </package>
+    <package name="script.ingest">
+      <metrics statements="109" coveredstatements="109" conditionals="28" coveredconditionals="28" methods="33" coveredmethods="33"/>
+      <file name="applyChanges.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\ingest\applyChanges.ts">
+        <metrics statements="23" coveredstatements="23" conditionals="8" coveredconditionals="8" methods="3" coveredmethods="3"/>
+        <line num="27" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="16" type="stmt"/>
+        <line num="29" count="8" type="stmt"/>
+        <line num="30" count="8" type="stmt"/>
+        <line num="32" count="8" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="34" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="4" type="stmt"/>
+        <line num="36" count="4" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="42" count="8" type="stmt"/>
+        <line num="43" count="7" type="stmt"/>
+        <line num="44" count="7" type="stmt"/>
+        <line num="45" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="51" count="8" type="stmt"/>
+        <line num="52" count="4" type="stmt"/>
+        <line num="53" count="4" type="stmt"/>
+        <line num="54" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="2" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="60" count="8" type="stmt"/>
+      </file>
+      <file name="formatIngestReport.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\ingest\formatIngestReport.ts">
+        <metrics statements="26" coveredstatements="26" conditionals="8" coveredconditionals="8" methods="13" coveredmethods="13"/>
+        <line num="10" count="12" type="stmt"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="14" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="32" type="stmt"/>
+        <line num="23" count="4" type="stmt"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="35" count="3" type="stmt"/>
+        <line num="36" count="9" type="stmt"/>
+        <line num="37" count="3" type="stmt"/>
+        <line num="42" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="4" type="stmt"/>
+        <line num="62" count="4" type="stmt"/>
+        <line num="63" count="5" type="stmt"/>
+        <line num="64" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="5" type="stmt"/>
+        <line num="70" count="5" type="stmt"/>
+        <line num="71" count="4" type="stmt"/>
+        <line num="74" count="4" type="stmt"/>
+        <line num="75" count="4" type="stmt"/>
+        <line num="76" count="4" type="stmt"/>
+      </file>
+      <file name="ingest.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\ingest\ingest.ts">
+        <metrics statements="28" coveredstatements="28" conditionals="11" coveredconditionals="11" methods="3" coveredmethods="3"/>
+        <line num="38" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="3" type="stmt"/>
+        <line num="40" count="3" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="48" count="3" type="stmt"/>
+        <line num="49" count="3" type="stmt"/>
+        <line num="50" count="3" type="stmt"/>
+        <line num="51" count="3" type="stmt"/>
+        <line num="52" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="63" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="66" count="2" type="stmt"/>
+        <line num="68" count="2" type="stmt"/>
+        <line num="69" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="73" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="4" type="stmt"/>
+        <line num="87" count="4" type="stmt"/>
+      </file>
+      <file name="planChanges.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\ingest\planChanges.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="5"/>
+        <line num="19" count="51672" type="stmt"/>
+        <line num="22" count="1623" type="stmt"/>
+        <line num="24" count="1623" type="stmt"/>
+        <line num="25" count="1623" type="stmt"/>
+        <line num="27" count="1623" type="stmt"/>
+        <line num="30" count="3054" type="stmt"/>
+        <line num="42" count="106" type="stmt"/>
+      </file>
+      <file name="scanSources.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\ingest\scanSources.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="1" coveredconditionals="1" methods="6" coveredmethods="6"/>
+        <line num="18" count="39" type="stmt"/>
+        <line num="22" count="11" type="stmt"/>
+        <line num="24" count="16" type="stmt"/>
+        <line num="25" count="12" type="stmt"/>
+        <line num="26" count="7" type="stmt"/>
+        <line num="28" count="11" type="stmt"/>
+      </file>
+      <file name="transcodeImages.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\ingest\transcodeImages.ts">
+        <metrics statements="19" coveredstatements="19" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="11" count="4" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="16" count="4" type="stmt"/>
+        <line num="31" count="11" type="stmt"/>
+        <line num="38" count="9" type="stmt"/>
+        <line num="39" count="9" type="stmt"/>
+        <line num="40" count="9" type="stmt"/>
+        <line num="46" count="7" type="stmt"/>
+        <line num="47" count="7" type="stmt"/>
+        <line num="48" count="7" type="stmt"/>
+        <line num="50" count="2" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="56" count="4" type="stmt"/>
+        <line num="57" count="4" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="60" count="2" type="stmt"/>
+        <line num="64" count="4" type="stmt"/>
+      </file>
+    </package>
+    <package name="script.lib">
+      <metrics statements="115" coveredstatements="115" conditionals="59" coveredconditionals="59" methods="62" coveredmethods="62"/>
+      <file name="cli.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\cli.ts">
+        <metrics statements="31" coveredstatements="31" conditionals="19" coveredconditionals="19" methods="7" coveredmethods="7"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="12" count="16" type="stmt"/>
+        <line num="22" count="36" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="82" type="stmt"/>
+        <line num="48" count="432" type="stmt"/>
+        <line num="54" count="82" type="stmt"/>
+        <line num="55" count="82" type="stmt"/>
+        <line num="56" count="110" type="stmt"/>
+        <line num="62" count="10" type="stmt"/>
+        <line num="64" count="72" type="stmt"/>
+        <line num="65" count="72" type="stmt"/>
+        <line num="66" count="56" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="35" type="stmt"/>
+        <line num="69" count="72" type="stmt"/>
+        <line num="74" count="10" type="stmt"/>
+        <line num="75" count="10" type="stmt"/>
+        <line num="76" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="77" count="6" type="stmt"/>
+        <line num="79" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="97" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="98" count="61" type="cond" truecount="2" falsecount="0"/>
+        <line num="99" count="2" type="stmt"/>
+        <line num="100" count="2" type="stmt"/>
+        <line num="102" count="59" type="stmt"/>
+        <line num="103" count="59" type="cond" truecount="2" falsecount="0"/>
+        <line num="105" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="106" count="10" type="stmt"/>
+        <line num="107" count="10" type="stmt"/>
+        <line num="108" count="10" type="stmt"/>
+        <line num="110" count="4" type="stmt"/>
+        <line num="111" count="4" type="stmt"/>
+      </file>
+      <file name="collections.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\collections.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="29" count="48" type="stmt"/>
+      </file>
+      <file name="error.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\error.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="3" count="21" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="fakeIo.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\fakeIo.ts">
+        <metrics statements="31" coveredstatements="31" conditionals="20" coveredconditionals="20" methods="17" coveredmethods="17"/>
+        <line num="36" count="92" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="92" type="stmt"/>
+        <line num="38" count="92" type="stmt"/>
+        <line num="39" count="92" type="stmt"/>
+        <line num="40" count="92" type="stmt"/>
+        <line num="41" count="92" type="stmt"/>
+        <line num="42" count="45" type="stmt"/>
+        <line num="43" count="92" type="stmt"/>
+        <line num="44" count="92" type="stmt"/>
+        <line num="50" count="92" type="stmt"/>
+        <line num="57" count="162" type="stmt"/>
+        <line num="58" count="162" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="70" type="stmt"/>
+        <line num="62" count="70" type="stmt"/>
+        <line num="65" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="3" type="stmt"/>
+        <line num="68" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="69" count="21" type="stmt"/>
+        <line num="70" count="21" type="stmt"/>
+        <line num="71" count="135" type="cond" truecount="2" falsecount="0"/>
+        <line num="72" count="26" type="stmt"/>
+        <line num="74" count="21" type="stmt"/>
+        <line num="76" count="25" type="stmt"/>
+        <line num="78" count="34" type="stmt"/>
+        <line num="79" count="34" type="cond" truecount="2" falsecount="0"/>
+        <line num="84" count="6" type="stmt"/>
+        <line num="85" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="87" count="69" type="stmt"/>
+        <line num="88" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="227" type="stmt"/>
+        <line num="90" count="45" type="stmt"/>
+      </file>
+      <file name="fs.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\fs.ts">
+        <metrics statements="10" coveredstatements="10" conditionals="6" coveredconditionals="6" methods="7" coveredmethods="7"/>
+        <line num="4" count="31" type="stmt"/>
+        <line num="5" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="23" type="stmt"/>
+        <line num="13" count="23" type="stmt"/>
+        <line num="14" count="45" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="25" count="27" type="stmt"/>
+        <line num="32" count="13" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+      </file>
+      <file name="git.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\git.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="4" count="27" type="stmt"/>
+        <line num="11" count="15" type="stmt"/>
+        <line num="12" count="15" type="stmt"/>
+        <line num="13" count="14" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+      </file>
+      <file name="io.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\io.ts">
+        <metrics statements="15" coveredstatements="15" conditionals="3" coveredconditionals="3" methods="15" coveredmethods="15"/>
+        <line num="35" count="27" type="stmt"/>
+        <line num="36" count="70" type="stmt"/>
+        <line num="37" count="5" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="20" type="cond" truecount="1" falsecount="0"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="62" count="27" type="stmt"/>
+        <line num="63" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="177" type="stmt"/>
+        <line num="72" count="7" type="stmt"/>
+      </file>
+      <file name="lists.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\lists.ts">
+        <metrics statements="12" coveredstatements="12" conditionals="7" coveredconditionals="7" methods="8" coveredmethods="8"/>
+        <line num="9" count="124" type="stmt"/>
+        <line num="14" count="3431" type="stmt"/>
+        <line num="19" count="144" type="stmt"/>
+        <line num="32" count="8" type="stmt"/>
+        <line num="33" count="8" type="stmt"/>
+        <line num="34" count="16" type="stmt"/>
+        <line num="35" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="5" type="stmt"/>
+        <line num="38" count="5" type="stmt"/>
+        <line num="40" count="6" type="stmt"/>
+        <line num="42" count="2" type="stmt"/>
+      </file>
+      <file name="paths.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\paths.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="2" coveredconditionals="2" methods="5" coveredmethods="5"/>
+        <line num="7" count="29" type="stmt"/>
+        <line num="30" count="104" type="stmt"/>
+        <line num="32" count="74" type="stmt"/>
+        <line num="34" count="70" type="stmt"/>
+        <line num="35" count="70" type="stmt"/>
+        <line num="37" count="138" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="project.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\lib\project.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="script.testRunner">
+      <metrics statements="332" coveredstatements="332" conditionals="303" coveredconditionals="303" methods="119" coveredmethods="118"/>
+      <file name="areas.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\testRunner\areas.ts">
+        <metrics statements="41" coveredstatements="41" conditionals="45" coveredconditionals="45" methods="23" coveredmethods="23"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="82" count="808" type="stmt"/>
+        <line num="84" count="808" type="stmt"/>
+        <line num="85" count="4848" type="stmt"/>
+        <line num="86" count="18584" type="cond" truecount="6" falsecount="0"/>
+        <line num="87" count="812" type="stmt"/>
+        <line num="91" count="808" type="stmt"/>
+        <line num="100" count="2" type="stmt"/>
+        <line num="101" count="424" type="cond" truecount="5" falsecount="0"/>
+        <line num="104" count="424" type="stmt"/>
+        <line num="127" count="29" type="cond" truecount="2" falsecount="0"/>
+        <line num="128" count="29" type="stmt"/>
+        <line num="129" count="174" type="stmt"/>
+        <line num="130" count="174" type="cond" truecount="2" falsecount="0"/>
+        <line num="131" count="174" type="cond" truecount="2" falsecount="0"/>
+        <line num="133" count="19" type="stmt"/>
+        <line num="137" count="174" type="cond" truecount="2" falsecount="0"/>
+        <line num="138" count="144" type="cond" truecount="4" falsecount="0"/>
+        <line num="140" count="174" type="stmt"/>
+        <line num="142" count="26" type="stmt"/>
+        <line num="144" count="26" type="stmt"/>
+        <line num="152" count="84" type="stmt"/>
+        <line num="160" count="44" type="stmt"/>
+        <line num="161" count="104" type="stmt"/>
+        <line num="162" count="19" type="stmt"/>
+        <line num="166" count="19" type="stmt"/>
+        <line num="167" count="104" type="cond" truecount="4" falsecount="0"/>
+        <line num="168" count="104" type="stmt"/>
+        <line num="176" count="19" type="stmt"/>
+        <line num="181" count="55" type="stmt"/>
+        <line num="182" count="22" type="stmt"/>
+        <line num="183" count="22" type="stmt"/>
+        <line num="189" count="22" type="stmt"/>
+        <line num="190" count="110" type="cond" truecount="4" falsecount="0"/>
+        <line num="191" count="110" type="stmt"/>
+        <line num="196" count="110" type="stmt"/>
+        <line num="197" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="198" count="3" type="stmt"/>
+        <line num="204" count="3" type="stmt"/>
+        <line num="209" count="22" type="stmt"/>
+        <line num="210" count="22" type="stmt"/>
+      </file>
+      <file name="coverage.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\testRunner\coverage.ts">
+        <metrics statements="99" coveredstatements="99" conditionals="86" coveredconditionals="86" methods="37" coveredmethods="37"/>
+        <line num="27" count="84" type="stmt"/>
+        <line num="29" count="43" type="stmt"/>
+        <line num="30" count="53" type="stmt"/>
+        <line num="31" count="53" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="4" type="stmt"/>
+        <line num="35" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="22" type="stmt"/>
+        <line num="43" count="22" type="stmt"/>
+        <line num="44" count="228" type="stmt"/>
+        <line num="45" count="228" type="stmt"/>
+        <line num="46" count="228" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="228" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="228" type="cond" truecount="10" falsecount="0"/>
+        <line num="51" count="28" type="stmt"/>
+        <line num="59" count="28" type="stmt"/>
+        <line num="62" count="13" type="stmt"/>
+        <line num="63" count="13" type="cond" truecount="4" falsecount="0"/>
+        <line num="64" count="13" type="stmt"/>
+        <line num="68" count="8" type="stmt"/>
+        <line num="69" count="8" type="cond" truecount="5" falsecount="0"/>
+        <line num="70" count="6" type="stmt"/>
+        <line num="72" count="8" type="stmt"/>
+        <line num="75" count="28" type="cond" truecount="2" falsecount="0"/>
+        <line num="76" count="28" type="stmt"/>
+        <line num="78" count="28" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="28" type="stmt"/>
+        <line num="81" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="82" count="20" type="stmt"/>
+        <line num="84" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="20" type="stmt"/>
+        <line num="87" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="13" type="stmt"/>
+        <line num="90" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="91" count="13" type="stmt"/>
+        <line num="93" count="29" type="cond" truecount="2" falsecount="0"/>
+        <line num="94" count="28" type="stmt"/>
+        <line num="95" count="28" type="stmt"/>
+        <line num="96" count="28" type="stmt"/>
+        <line num="98" count="29" type="stmt"/>
+        <line num="99" count="29" type="stmt"/>
+        <line num="102" count="22" type="stmt"/>
+        <line num="106" count="161" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="31" type="stmt"/>
+        <line num="110" count="108" type="stmt"/>
+        <line num="114" count="31" type="stmt"/>
+        <line num="115" count="72" type="stmt"/>
+        <line num="116" count="72" type="stmt"/>
+        <line num="117" count="72" type="stmt"/>
+        <line num="122" count="4" type="stmt"/>
+        <line num="123" count="179" type="cond" truecount="2" falsecount="0"/>
+        <line num="125" count="39" type="stmt"/>
+        <line num="129" count="31" type="stmt"/>
+        <line num="130" count="31" type="stmt"/>
+        <line num="131" count="18" type="stmt"/>
+        <line num="132" count="18" type="stmt"/>
+        <line num="133" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="135" count="31" type="stmt"/>
+        <line num="143" count="45" type="stmt"/>
+        <line num="144" count="25" type="stmt"/>
+        <line num="145" count="29" type="cond" truecount="2" falsecount="0"/>
+        <line num="147" count="1" type="stmt"/>
+        <line num="157" count="20" type="stmt"/>
+        <line num="158" count="20" type="stmt"/>
+        <line num="159" count="20" type="stmt"/>
+        <line num="160" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="161" count="15" type="stmt"/>
+        <line num="165" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="166" count="9" type="stmt"/>
+        <line num="172" count="20" type="stmt"/>
+        <line num="181" count="6" type="stmt"/>
+        <line num="183" count="6" type="stmt"/>
+        <line num="184" count="6" type="stmt"/>
+        <line num="185" count="7" type="stmt"/>
+        <line num="186" count="6" type="stmt"/>
+        <line num="189" count="6" type="stmt"/>
+        <line num="190" count="7" type="stmt"/>
+        <line num="192" count="6" type="stmt"/>
+        <line num="193" count="6" type="stmt"/>
+        <line num="196" count="6" type="stmt"/>
+        <line num="205" count="13" type="stmt"/>
+        <line num="206" count="13" type="stmt"/>
+        <line num="207" count="13" type="stmt"/>
+        <line num="208" count="13" type="stmt"/>
+        <line num="209" count="15" type="stmt"/>
+        <line num="214" count="13" type="stmt"/>
+        <line num="215" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="218" count="13" type="stmt"/>
+        <line num="247" count="4" type="stmt"/>
+        <line num="248" count="4" type="stmt"/>
+        <line num="249" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="250" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="251" count="4" type="stmt"/>
+        <line num="252" count="4" type="stmt"/>
+        <line num="256" count="4" type="stmt"/>
+        <line num="267" count="90" type="cond" truecount="2" falsecount="0"/>
+        <line num="268" count="90" type="cond" truecount="5" falsecount="0"/>
+        <line num="269" count="87" type="stmt"/>
+        <line num="273" count="11" type="cond" truecount="1" falsecount="0"/>
+        <line num="282" count="11" type="stmt"/>
+      </file>
+      <file name="githubCommands.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\testRunner\githubCommands.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="5" coveredconditionals="5" methods="3" coveredmethods="3"/>
+        <line num="5" count="5" type="stmt"/>
+        <line num="6" count="24" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="16" count="8" type="cond" truecount="5" falsecount="0"/>
+        <line num="17" count="8" type="stmt"/>
+      </file>
+      <file name="junit.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\testRunner\junit.ts">
+        <metrics statements="12" coveredstatements="12" conditionals="14" coveredconditionals="14" methods="3" coveredmethods="3"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="21" count="129" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="25" count="41" type="stmt"/>
+        <line num="26" count="129" type="stmt"/>
+        <line num="27" count="41" type="stmt"/>
+        <line num="31" count="29" type="stmt"/>
+        <line num="32" count="29" type="stmt"/>
+        <line num="33" count="33" type="stmt"/>
+        <line num="34" count="33" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="33" type="stmt"/>
+        <line num="43" count="29" type="stmt"/>
+      </file>
+      <file name="testRunner.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\testRunner\testRunner.ts">
+        <metrics statements="101" coveredstatements="101" conditionals="104" coveredconditionals="104" methods="21" coveredmethods="20"/>
+        <line num="62" count="6" type="stmt"/>
+        <line num="64" count="26" type="cond" truecount="3" falsecount="0"/>
+        <line num="74" count="46" type="stmt"/>
+        <line num="75" count="66" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="46" type="stmt"/>
+        <line num="80" count="46" type="stmt"/>
+        <line num="81" count="46" type="stmt"/>
+        <line num="83" count="46" type="cond" truecount="3" falsecount="0"/>
+        <line num="84" count="46" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="2" type="stmt"/>
+        <line num="91" count="43" type="stmt"/>
+        <line num="92" count="43" type="stmt"/>
+        <line num="93" count="43" type="cond" truecount="4" falsecount="0"/>
+        <line num="94" count="42" type="stmt"/>
+        <line num="95" count="42" type="cond" truecount="4" falsecount="0"/>
+        <line num="96" count="41" type="cond" truecount="4" falsecount="0"/>
+        <line num="98" count="40" type="cond" truecount="6" falsecount="0"/>
+        <line num="99" count="2" type="stmt"/>
+        <line num="102" count="38" type="stmt"/>
+        <line num="103" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="120" count="1" type="stmt"/>
+        <line num="121" count="22" type="stmt"/>
+        <line num="151" count="1" type="stmt"/>
+        <line num="160" count="24" type="stmt"/>
+        <line num="161" count="24" type="stmt"/>
+        <line num="162" count="24" type="stmt"/>
+        <line num="163" count="24" type="stmt"/>
+        <line num="164" count="24" type="stmt"/>
+        <line num="165" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="166" count="24" type="stmt"/>
+        <line num="167" count="11" type="stmt"/>
+        <line num="168" count="11" type="cond" truecount="4" falsecount="0"/>
+        <line num="170" count="86" type="cond" truecount="2" falsecount="0"/>
+        <line num="171" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="172" count="2" type="stmt"/>
+        <line num="179" count="21" type="stmt"/>
+        <line num="180" count="21" type="stmt"/>
+        <line num="181" count="21" type="stmt"/>
+        <line num="182" count="21" type="stmt"/>
+        <line num="184" count="21" type="stmt"/>
+        <line num="193" count="21" type="stmt"/>
+        <line num="194" count="21" type="stmt"/>
+        <line num="195" count="21" type="stmt"/>
+        <line num="196" count="21" type="stmt"/>
+        <line num="197" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="199" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="203" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="204" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="205" count="5" type="stmt"/>
+        <line num="206" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="207" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="210" count="21" type="stmt"/>
+        <line num="211" count="21" type="stmt"/>
+        <line num="214" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="215" count="21" type="stmt"/>
+        <line num="224" count="24" type="stmt"/>
+        <line num="225" count="24" type="stmt"/>
+        <line num="226" count="24" type="cond" truecount="4" falsecount="0"/>
+        <line num="227" count="11" type="stmt"/>
+        <line num="232" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="233" count="24" type="stmt"/>
+        <line num="238" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="239" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="240" count="21" type="stmt"/>
+        <line num="242" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="243" count="11" type="stmt"/>
+        <line num="246" count="11" type="stmt"/>
+        <line num="247" count="11" type="stmt"/>
+        <line num="252" count="11" type="stmt"/>
+        <line num="256" count="11" type="stmt"/>
+        <line num="257" count="11" type="stmt"/>
+        <line num="258" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="259" count="4" type="stmt"/>
+        <line num="260" count="4" type="stmt"/>
+        <line num="261" count="4" type="stmt"/>
+        <line num="262" count="4" type="stmt"/>
+        <line num="264" count="18" type="stmt"/>
+        <line num="265" count="18" type="stmt"/>
+        <line num="269" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="270" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="271" count="2" type="stmt"/>
+        <line num="273" count="11" type="stmt"/>
+        <line num="276" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="280" count="11" type="stmt"/>
+        <line num="281" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="282" count="2" type="stmt"/>
+        <line num="284" count="2" type="stmt"/>
+        <line num="287" count="2" type="stmt"/>
+        <line num="288" count="2" type="stmt"/>
+        <line num="292" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="293" count="24" type="stmt"/>
+        <line num="294" count="24" type="stmt"/>
+        <line num="296" count="24" type="stmt"/>
+        <line num="297" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="298" count="21" type="cond" truecount="4" falsecount="0"/>
+        <line num="299" count="4" type="stmt"/>
+        <line num="300" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="303" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="306" count="1" type="stmt"/>
+        <line num="311" count="1" type="stmt"/>
+      </file>
+      <file name="testSummary.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\testRunner\testSummary.ts">
+        <metrics statements="57" coveredstatements="57" conditionals="40" coveredconditionals="40" methods="22" coveredmethods="22"/>
+        <line num="23" count="29" type="stmt"/>
+        <line num="24" count="29" type="stmt"/>
+        <line num="25" count="192" type="stmt"/>
+        <line num="26" count="116" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="36" type="stmt"/>
+        <line num="29" count="48" type="stmt"/>
+        <line num="31" count="48" type="stmt"/>
+        <line num="32" count="48" type="stmt"/>
+        <line num="35" count="144" type="stmt"/>
+        <line num="36" count="29" type="stmt"/>
+        <line num="39" count="36" type="stmt"/>
+        <line num="40" count="36" type="stmt"/>
+        <line num="41" count="36" type="stmt"/>
+        <line num="42" count="36" type="stmt"/>
+        <line num="44" count="48" type="stmt"/>
+        <line num="45" count="41" type="stmt"/>
+        <line num="50" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="77" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="21" type="stmt"/>
+        <line num="61" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="6" type="stmt"/>
+        <line num="63" count="6" type="stmt"/>
+        <line num="64" count="6" type="stmt"/>
+        <line num="73" count="27" type="stmt"/>
+        <line num="80" count="27" type="stmt"/>
+        <line num="81" count="21" type="stmt"/>
+        <line num="82" count="21" type="stmt"/>
+        <line num="83" count="27" type="stmt"/>
+        <line num="89" count="21" type="stmt"/>
+        <line num="97" count="21" type="cond" truecount="4" falsecount="0"/>
+        <line num="98" count="3" type="stmt"/>
+        <line num="99" count="9" type="stmt"/>
+        <line num="100" count="3" type="stmt"/>
+        <line num="104" count="21" type="cond" truecount="4" falsecount="0"/>
+        <line num="105" count="1" type="stmt"/>
+        <line num="106" count="1" type="stmt"/>
+        <line num="107" count="1" type="stmt"/>
+        <line num="108" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="5" type="stmt"/>
+        <line num="110" count="5" type="stmt"/>
+        <line num="111" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="112" count="5" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="115" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="118" count="21" type="stmt"/>
+        <line num="123" count="24" type="stmt"/>
+        <line num="124" count="24" type="stmt"/>
+        <line num="132" count="24" type="stmt"/>
+        <line num="133" count="22" type="stmt"/>
+        <line num="139" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="140" count="5" type="stmt"/>
+        <line num="141" count="5" type="stmt"/>
+        <line num="142" count="5" type="stmt"/>
+        <line num="148" count="24" type="stmt"/>
+        <line num="149" count="24" type="stmt"/>
+        <line num="154" count="4" type="stmt"/>
+        <line num="155" count="4" type="stmt"/>
+      </file>
+      <file name="tiers.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\testRunner\tiers.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="9" coveredconditionals="9" methods="10" coveredmethods="10"/>
+        <line num="16" count="6" type="stmt"/>
+        <line num="24" count="6" type="stmt"/>
+        <line num="26" count="43" type="stmt"/>
+        <line num="30" count="464" type="stmt"/>
+        <line num="31" count="464" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="367" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="331" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="294" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="39" count="931" type="stmt"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="48" count="10" type="stmt"/>
+        <line num="49" count="1490" type="stmt"/>
+        <line num="51" count="745" type="stmt"/>
+        <line num="55" count="100" type="stmt"/>
+        <line num="59" count="157" type="stmt"/>
+        <line num="60" count="25" type="stmt"/>
+      </file>
+    </package>
+    <package name="script.version">
+      <metrics statements="40" coveredstatements="40" conditionals="30" coveredconditionals="30" methods="15" coveredmethods="15"/>
+      <file name="lineNames.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\version\lineNames.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="17" coveredconditionals="17" methods="7" coveredmethods="7"/>
+        <line num="33" count="21" type="stmt"/>
+        <line num="34" count="21" type="stmt"/>
+        <line num="35" count="139" type="stmt"/>
+        <line num="37" count="21" type="stmt"/>
+        <line num="38" count="320" type="cond" truecount="3" falsecount="0"/>
+        <line num="42" count="21" type="stmt"/>
+        <line num="43" count="21" type="stmt"/>
+        <line num="44" count="21" type="stmt"/>
+        <line num="45" count="139" type="cond" truecount="4" falsecount="0"/>
+        <line num="46" count="139" type="cond" truecount="4" falsecount="0"/>
+        <line num="47" count="90" type="stmt"/>
+        <line num="48" count="90" type="stmt"/>
+        <line num="50" count="21" type="stmt"/>
+        <line num="58" count="46" type="stmt"/>
+        <line num="60" count="21" type="stmt"/>
+        <line num="62" count="17" type="stmt"/>
+        <line num="67" count="28" type="cond" truecount="4" falsecount="0"/>
+      </file>
+      <file name="version.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\script\version\version.ts">
+        <metrics statements="23" coveredstatements="23" conditionals="13" coveredconditionals="13" methods="8" coveredmethods="8"/>
+        <line num="42" count="16" type="stmt"/>
+        <line num="47" count="18" type="stmt"/>
+        <line num="48" count="18" type="stmt"/>
+        <line num="49" count="47" type="stmt"/>
+        <line num="51" count="18" type="stmt"/>
+        <line num="64" count="15" type="stmt"/>
+        <line num="65" count="15" type="stmt"/>
+        <line num="66" count="15" type="stmt"/>
+        <line num="68" count="15" type="stmt"/>
+        <line num="69" count="15" type="stmt"/>
+        <line num="73" count="11" type="stmt"/>
+        <line num="75" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="86" count="15" type="stmt"/>
+        <line num="89" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="96" count="11" type="stmt"/>
+        <line num="99" count="4" type="stmt"/>
+        <line num="103" count="4" type="stmt"/>
+        <line num="104" count="5" type="stmt"/>
+        <line num="105" count="5" type="stmt"/>
+        <line num="106" count="3" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="src">
+      <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+      <file name="pages.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\pages.ts">
+        <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="16" count="8" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="28" count="15" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.about">
+      <metrics statements="83" coveredstatements="83" conditionals="103" coveredconditionals="103" methods="38" coveredmethods="38"/>
+      <file name="AboutPage.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\about\AboutPage.vue">
+        <metrics statements="83" coveredstatements="83" conditionals="103" coveredconditionals="103" methods="38" coveredmethods="38"/>
+        <line num="9" count="23" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
+        <line num="54" count="2" type="stmt"/>
+        <line num="55" count="33" type="stmt"/>
+        <line num="61" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="64" count="3" type="stmt"/>
+        <line num="71" count="2" type="stmt"/>
+        <line num="74" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="82" count="2" type="stmt"/>
+        <line num="83" count="30" type="stmt"/>
+        <line num="90" count="2" type="stmt"/>
+        <line num="94" count="2" type="stmt"/>
+        <line num="98" count="2" type="stmt"/>
+        <line num="106" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="120" count="2" type="stmt"/>
+        <line num="121" count="18" type="stmt"/>
+        <line num="133" count="2" type="stmt"/>
+        <line num="134" count="2" type="stmt"/>
+        <line num="144" count="2" type="stmt"/>
+        <line num="154" count="2" type="stmt"/>
+        <line num="163" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="175" count="2" type="stmt"/>
+        <line num="176" count="92" type="stmt"/>
+        <line num="177" count="2" type="stmt"/>
+        <line num="178" count="2" type="stmt"/>
+        <line num="181" count="2" type="stmt"/>
+        <line num="224" count="2" type="stmt"/>
+        <line num="226" count="2" type="stmt"/>
+        <line num="228" count="2" type="stmt"/>
+        <line num="230" count="2" type="stmt"/>
+        <line num="232" count="2" type="stmt"/>
+        <line num="234" count="8" type="stmt"/>
+        <line num="236" count="8" type="stmt"/>
+        <line num="250" count="2" type="stmt"/>
+        <line num="253" count="2" type="stmt"/>
+        <line num="256" count="8" type="stmt"/>
+        <line num="259" count="8" type="stmt"/>
+        <line num="260" count="8" type="stmt"/>
+        <line num="262" count="23" type="stmt"/>
+        <line num="263" count="8" type="cond" truecount="3" falsecount="0"/>
+        <line num="266" count="8" type="stmt"/>
+        <line num="267" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="270" count="8" type="stmt"/>
+        <line num="271" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="273" count="17" type="stmt"/>
+        <line num="277" count="46" type="stmt"/>
+        <line num="278" count="40" type="stmt"/>
+        <line num="279" count="8" type="stmt"/>
+        <line num="281" count="24" type="stmt"/>
+        <line num="282" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="284" count="12" type="stmt"/>
+        <line num="285" count="8" type="stmt"/>
+        <line num="286" count="6" type="stmt"/>
+        <line num="287" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="292" count="49" type="stmt"/>
+        <line num="294" count="8" type="stmt"/>
+        <line num="295" count="8" type="stmt"/>
+        <line num="298" count="8" type="stmt"/>
+        <line num="299" count="8" type="stmt"/>
+        <line num="300" count="68" type="stmt"/>
+        <line num="301" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="302" count="24" type="cond" truecount="2" falsecount="0"/>
+        <line num="303" count="25" type="stmt"/>
+        <line num="304" count="25" type="stmt"/>
+        <line num="316" count="8" type="stmt"/>
+        <line num="317" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="321" count="8" type="stmt"/>
+        <line num="322" count="27" type="cond" truecount="2" falsecount="0"/>
+        <line num="323" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="324" count="16" type="stmt"/>
+        <line num="325" count="1" type="stmt"/>
+        <line num="327" count="10" type="stmt"/>
+        <line num="332" count="8" type="stmt"/>
+        <line num="333" count="25" type="stmt"/>
+        <line num="334" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="335" count="8" type="stmt"/>
+        <line num="337" count="7" type="stmt"/>
+        <line num="338" count="25" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.gallery">
+      <metrics statements="58" coveredstatements="58" conditionals="72" coveredconditionals="72" methods="33" coveredmethods="33"/>
+      <file name="ItemSheet.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\gallery\ItemSheet.vue">
+        <metrics statements="42" coveredstatements="42" conditionals="48" coveredconditionals="48" methods="24" coveredmethods="24"/>
+        <line num="2" count="24" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="12" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="72" type="stmt"/>
+        <line num="42" count="24" type="stmt"/>
+        <line num="45" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="20" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="82" count="32" type="stmt"/>
+        <line num="83" count="70" type="stmt"/>
+        <line num="98" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="112" count="1" type="stmt"/>
+        <line num="113" count="22" type="stmt"/>
+        <line num="152" count="19" type="stmt"/>
+        <line num="157" count="19" type="stmt"/>
+        <line num="163" count="19" type="stmt"/>
+        <line num="164" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="170" count="19" type="stmt"/>
+        <line num="175" count="19" type="stmt"/>
+        <line num="176" count="20" type="stmt"/>
+        <line num="177" count="21" type="stmt"/>
+        <line num="179" count="2" type="stmt"/>
+        <line num="180" count="2" type="stmt"/>
+        <line num="183" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="187" count="19" type="stmt"/>
+        <line num="188" count="21" type="stmt"/>
+        <line num="190" count="28" type="stmt"/>
+        <line num="192" count="27" type="stmt"/>
+        <line num="197" count="1" type="stmt"/>
+        <line num="198" count="19" type="stmt"/>
+        <line num="199" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="201" count="19" type="stmt"/>
+        <line num="202" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="204" count="21" type="stmt"/>
+        <line num="205" count="2" type="stmt"/>
+        <line num="206" count="2" type="stmt"/>
+        <line num="210" count="19" type="stmt"/>
+        <line num="213" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="217" count="20" type="stmt"/>
+        <line num="220" count="20" type="stmt"/>
+      </file>
+      <file name="ItemTile.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\gallery\ItemTile.vue">
+        <metrics statements="16" coveredstatements="16" conditionals="24" coveredconditionals="24" methods="9" coveredmethods="9"/>
+        <line num="71" count="10" type="stmt"/>
+        <line num="82" count="10" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="88" count="10" type="stmt"/>
+        <line num="89" count="26" type="stmt"/>
+        <line num="90" count="10" type="stmt"/>
+        <line num="91" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="99" count="10" type="stmt"/>
+        <line num="100" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="102" count="10" type="stmt"/>
+        <line num="103" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="104" count="1" type="stmt"/>
+        <line num="105" count="1" type="stmt"/>
+        <line num="110" count="10" type="stmt"/>
+        <line num="111" count="11" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.icons">
+      <metrics statements="6" coveredstatements="6" conditionals="8" coveredconditionals="8" methods="2" coveredmethods="2"/>
+      <file name="CollectionIcon.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\icons\CollectionIcon.vue">
+        <metrics statements="3" coveredstatements="3" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="5" count="51" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="50" type="stmt"/>
+        <line num="15" count="51" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="Icon.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\icons\Icon.vue">
+        <metrics statements="3" coveredstatements="3" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="6" count="151" type="stmt"/>
+        <line num="22" count="140" type="stmt"/>
+        <line num="23" count="141" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.layout">
+      <metrics statements="36" coveredstatements="36" conditionals="46" coveredconditionals="46" methods="14" coveredmethods="14"/>
+      <file name="AppFooter.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\layout\AppFooter.vue">
+        <metrics statements="11" coveredstatements="11" conditionals="13" coveredconditionals="13" methods="1" coveredmethods="1"/>
+        <line num="6" count="11" type="stmt"/>
+        <line num="7" count="3" type="stmt"/>
+        <line num="10" count="3" type="stmt"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="28" count="11" type="stmt"/>
+        <line num="66" count="3" type="stmt"/>
+        <line num="68" count="11" type="stmt"/>
+        <line num="71" count="11" type="stmt"/>
+        <line num="72" count="11" type="stmt"/>
+        <line num="73" count="11" type="stmt"/>
+        <line num="74" count="11" type="stmt"/>
+      </file>
+      <file name="CollectionMenu.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\layout\CollectionMenu.vue">
+        <metrics statements="25" coveredstatements="25" conditionals="33" coveredconditionals="33" methods="13" coveredmethods="13"/>
+        <line num="7" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="18" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="42" count="6" type="stmt"/>
+        <line num="51" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="69" count="6" type="stmt"/>
+        <line num="70" count="6" type="stmt"/>
+        <line num="71" count="6" type="stmt"/>
+        <line num="72" count="6" type="stmt"/>
+        <line num="74" count="6" type="stmt"/>
+        <line num="75" count="6" type="stmt"/>
+        <line num="76" count="6" type="stmt"/>
+        <line num="80" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="81" count="4" type="stmt"/>
+        <line num="82" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="87" count="1" type="stmt"/>
+        <line num="91" count="6" type="stmt"/>
+        <line num="92" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="94" count="6" type="stmt"/>
+        <line num="95" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="96" count="4" type="stmt"/>
+        <line num="98" count="6" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.components.ui">
+      <metrics statements="16" coveredstatements="16" conditionals="3" coveredconditionals="3" methods="5" coveredmethods="5"/>
+      <file name="DrawnFilter.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\ui\DrawnFilter.vue">
+        <metrics statements="7" coveredstatements="7" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="3"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+      </file>
+      <file name="EmptyState.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\ui\EmptyState.vue">
+        <metrics statements="2" coveredstatements="2" conditionals="1" coveredconditionals="1" methods="0" coveredmethods="0"/>
+        <line num="2" count="5" type="stmt"/>
+        <line num="6" count="3" type="stmt"/>
+      </file>
+      <file name="IdBadge.vue" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\components\ui\IdBadge.vue">
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="2" count="34" type="stmt"/>
+        <line num="6" count="33" type="stmt"/>
+        <line num="13" count="32" type="stmt"/>
+        <line num="25" count="32" type="stmt"/>
+        <line num="26" count="32" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="11" type="stmt"/>
+        <line num="30" count="21" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.composables.collection">
+      <metrics statements="178" coveredstatements="178" conditionals="96" coveredconditionals="96" methods="51" coveredmethods="51"/>
+      <file name="useCollectionData.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\collection\useCollectionData.ts">
+        <metrics statements="75" coveredstatements="75" conditionals="41" coveredconditionals="41" methods="25" coveredmethods="25"/>
+        <line num="14" count="25" type="stmt"/>
+        <line num="15" count="17026" type="stmt"/>
+        <line num="17" count="1214" type="stmt"/>
+        <line num="20" count="25" type="stmt"/>
+        <line num="31" count="750" type="stmt"/>
+        <line num="32" count="750" type="stmt"/>
+        <line num="33" count="750" type="stmt"/>
+        <line num="34" count="1479" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="921" type="stmt"/>
+        <line num="36" count="921" type="stmt"/>
+        <line num="44" count="558" type="stmt"/>
+        <line num="46" count="1479" type="stmt"/>
+        <line num="48" count="750" type="stmt"/>
+        <line num="49" count="15935" type="cond" truecount="2" falsecount="0"/>
+        <line num="50" count="15935" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="15206" type="stmt"/>
+        <line num="52" count="15206" type="stmt"/>
+        <line num="54" count="729" type="stmt"/>
+        <line num="55" count="729" type="stmt"/>
+        <line num="57" count="750" type="stmt"/>
+        <line num="58" count="750" type="stmt"/>
+        <line num="71" count="1821" type="stmt"/>
+        <line num="73" count="1821" type="stmt"/>
+        <line num="74" count="769" type="stmt"/>
+        <line num="75" count="769" type="cond" truecount="2" falsecount="0"/>
+        <line num="78" count="1627" type="stmt"/>
+        <line num="81" count="6624" type="stmt"/>
+        <line num="85" count="1821" type="stmt"/>
+        <line num="86" count="1358" type="stmt"/>
+        <line num="87" count="2395" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="1358" type="cond" truecount="2" falsecount="0"/>
+        <line num="94" count="1821" type="stmt"/>
+        <line num="95" count="768" type="stmt"/>
+        <line num="97" count="768" type="stmt"/>
+        <line num="98" count="2488" type="cond" truecount="2" falsecount="0"/>
+        <line num="99" count="2488" type="stmt"/>
+        <line num="104" count="768" type="stmt"/>
+        <line num="105" count="768" type="stmt"/>
+        <line num="106" count="2488" type="stmt"/>
+        <line num="111" count="768" type="cond" truecount="4" falsecount="0"/>
+        <line num="112" count="2" type="stmt"/>
+        <line num="113" count="5" type="stmt"/>
+        <line num="114" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="118" count="768" type="stmt"/>
+        <line num="119" count="1177" type="stmt"/>
+        <line num="120" count="1880" type="cond" truecount="4" falsecount="0"/>
+        <line num="121" count="913" type="stmt"/>
+        <line num="125" count="768" type="stmt"/>
+        <line num="127" count="1177" type="stmt"/>
+        <line num="140" count="1821" type="stmt"/>
+        <line num="141" count="748" type="stmt"/>
+        <line num="144" count="748" type="stmt"/>
+        <line num="145" count="748" type="stmt"/>
+        <line num="146" count="1840" type="cond" truecount="4" falsecount="0"/>
+        <line num="148" count="748" type="cond" truecount="2" falsecount="0"/>
+        <line num="150" count="607" type="stmt"/>
+        <line num="151" count="607" type="stmt"/>
+        <line num="153" count="607" type="stmt"/>
+        <line num="154" count="15926" type="stmt"/>
+        <line num="155" count="15926" type="stmt"/>
+        <line num="157" count="607" type="stmt"/>
+        <line num="162" count="1821" type="stmt"/>
+        <line num="164" count="748" type="stmt"/>
+        <line num="165" count="748" type="stmt"/>
+        <line num="166" count="756" type="stmt"/>
+        <line num="167" count="756" type="cond" truecount="2" falsecount="0"/>
+        <line num="168" count="755" type="stmt"/>
+        <line num="169" count="755" type="cond" truecount="2" falsecount="0"/>
+        <line num="170" count="755" type="stmt"/>
+        <line num="172" count="748" type="stmt"/>
+        <line num="174" count="748" type="stmt"/>
+        <line num="183" count="1821" type="stmt"/>
+        <line num="184" count="1516" type="cond" truecount="2" falsecount="0"/>
+        <line num="187" count="1821" type="stmt"/>
+        <line num="196" count="1821" type="stmt"/>
+      </file>
+      <file name="useCollections.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\collection\useCollections.ts">
+        <metrics statements="68" coveredstatements="68" conditionals="32" coveredconditionals="32" methods="16" coveredmethods="16"/>
+        <line num="15" count="23" type="stmt"/>
+        <line num="16" count="23" type="stmt"/>
+        <line num="17" count="23" type="stmt"/>
+        <line num="20" count="23" type="stmt"/>
+        <line num="22" count="23" type="stmt"/>
+        <line num="28" count="23" type="stmt"/>
+        <line num="29" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="23" type="stmt"/>
+        <line num="37" count="3" type="stmt"/>
+        <line num="38" count="3" type="stmt"/>
+        <line num="39" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="40" count="6" type="stmt"/>
+        <line num="41" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="46" count="23" type="stmt"/>
+        <line num="47" count="32" type="stmt"/>
+        <line num="48" count="28" type="stmt"/>
+        <line num="53" count="23" type="stmt"/>
+        <line num="55" count="23" type="stmt"/>
+        <line num="56" count="37" type="stmt"/>
+        <line num="57" count="37" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="36" type="stmt"/>
+        <line num="60" count="36" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="32" type="stmt"/>
+        <line num="63" count="28" type="stmt"/>
+        <line num="64" count="28" type="stmt"/>
+        <line num="66" count="31" type="stmt"/>
+        <line num="67" count="32" type="stmt"/>
+        <line num="69" count="36" type="stmt"/>
+        <line num="75" count="23" type="stmt"/>
+        <line num="76" count="46" type="stmt"/>
+        <line num="77" count="23" type="stmt"/>
+        <line num="78" count="23" type="stmt"/>
+        <line num="79" count="23" type="stmt"/>
+        <line num="80" count="23" type="stmt"/>
+        <line num="81" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="85" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="23" type="stmt"/>
+        <line num="90" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="91" count="16" type="stmt"/>
+        <line num="92" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="8" type="stmt"/>
+        <line num="95" count="8" type="stmt"/>
+        <line num="96" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="97" count="4" type="stmt"/>
+        <line num="98" count="4" type="stmt"/>
+        <line num="99" count="4" type="stmt"/>
+        <line num="101" count="4" type="stmt"/>
+        <line num="105" count="23" type="stmt"/>
+        <line num="106" count="19" type="stmt"/>
+        <line num="107" count="33" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="14" type="stmt"/>
+        <line num="115" count="23" type="stmt"/>
+        <line num="117" count="23" type="stmt"/>
+        <line num="118" count="23" type="stmt"/>
+        <line num="119" count="23" type="stmt"/>
+        <line num="120" count="23" type="stmt"/>
+        <line num="124" count="20" type="cond" truecount="4" falsecount="0"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="128" count="33" type="stmt"/>
+        <line num="130" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="131" count="4" type="stmt"/>
+        <line num="134" count="19" type="stmt"/>
+        <line num="135" count="19" type="stmt"/>
+        <line num="136" count="19" type="stmt"/>
+        <line num="137" count="19" type="stmt"/>
+        <line num="140" count="23" type="stmt"/>
+      </file>
+      <file name="useGlobalSearch.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\collection\useGlobalSearch.ts">
+        <metrics statements="23" coveredstatements="23" conditionals="16" coveredconditionals="16" methods="8" coveredmethods="8"/>
+        <line num="17" count="10" type="stmt"/>
+        <line num="18" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="10" type="stmt"/>
+        <line num="39" count="12" type="stmt"/>
+        <line num="40" count="8" type="stmt"/>
+        <line num="41" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="6" type="stmt"/>
+        <line num="44" count="6" type="stmt"/>
+        <line num="45" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="9" type="stmt"/>
+        <line num="47" count="9" type="stmt"/>
+        <line num="50" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="10" type="stmt"/>
+        <line num="53" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="6" type="stmt"/>
+        <line num="59" count="12" type="stmt"/>
+        <line num="60" count="5" type="stmt"/>
+        <line num="64" count="12" type="stmt"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="68" count="12" type="stmt"/>
+      </file>
+      <file name="useStats.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\collection\useStats.ts">
+        <metrics statements="12" coveredstatements="12" conditionals="7" coveredconditionals="7" methods="2" coveredmethods="2"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="17" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="23" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="29" count="2" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.composables.core">
+      <metrics statements="86" coveredstatements="86" conditionals="46" coveredconditionals="46" methods="29" coveredmethods="29"/>
+      <file name="injection.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\core\injection.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="3"/>
+        <line num="11" count="116" type="stmt"/>
+        <line num="12" count="116" type="stmt"/>
+        <line num="13" count="116" type="stmt"/>
+        <line num="14" count="49" type="stmt"/>
+        <line num="15" count="49" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="48" type="stmt"/>
+        <line num="18" count="116" type="stmt"/>
+      </file>
+      <file name="useBreakpoints.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\core\useBreakpoints.ts">
+        <metrics statements="9" coveredstatements="9" conditionals="1" coveredconditionals="1" methods="4" coveredmethods="4"/>
+        <line num="4" count="16" type="stmt"/>
+        <line num="6" count="16" type="stmt"/>
+        <line num="7" count="19" type="stmt"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+        <line num="12" count="16" type="stmt"/>
+        <line num="15" count="16" type="stmt"/>
+        <line num="16" count="16" type="stmt"/>
+        <line num="19" count="16" type="stmt"/>
+      </file>
+      <file name="useDebounce.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\core\useDebounce.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="1" coveredconditionals="1" methods="4" coveredmethods="4"/>
+        <line num="10" count="5" type="stmt"/>
+        <line num="13" count="5" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="20" count="5" type="stmt"/>
+        <line num="22" count="5" type="stmt"/>
+      </file>
+      <file name="useHashRoute.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\core\useHashRoute.ts">
+        <metrics statements="42" coveredstatements="42" conditionals="32" coveredconditionals="32" methods="11" coveredmethods="11"/>
+        <line num="8" count="813" type="cond" truecount="2" falsecount="0"/>
+        <line num="9" count="813" type="stmt"/>
+        <line num="14" count="237" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="11" type="stmt"/>
+        <line num="42" count="11" type="stmt"/>
+        <line num="43" count="11" type="stmt"/>
+        <line num="46" count="11" type="stmt"/>
+        <line num="47" count="9" type="stmt"/>
+        <line num="48" count="9" type="stmt"/>
+        <line num="49" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="11" type="stmt"/>
+        <line num="55" count="35" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="33" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="35" type="cond" truecount="4" falsecount="0"/>
+        <line num="58" count="35" type="stmt"/>
+        <line num="61" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="11" type="stmt"/>
+        <line num="63" count="11" type="stmt"/>
+        <line num="65" count="12" type="cond" truecount="4" falsecount="0"/>
+        <line num="70" count="11" type="stmt"/>
+        <line num="71" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="72" count="7" type="stmt"/>
+        <line num="74" count="7" type="stmt"/>
+        <line num="75" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="76" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="80" count="5" type="stmt"/>
+        <line num="82" count="5" type="stmt"/>
+        <line num="83" count="5" type="stmt"/>
+        <line num="84" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="4" type="stmt"/>
+        <line num="87" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="2" type="stmt"/>
+        <line num="90" count="2" type="stmt"/>
+        <line num="91" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="94" count="5" type="stmt"/>
+        <line num="99" count="11" type="stmt"/>
+        <line num="101" count="11" type="stmt"/>
+        <line num="102" count="11" type="stmt"/>
+        <line num="104" count="11" type="stmt"/>
+      </file>
+      <file name="useTheme.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\core\useTheme.ts">
+        <metrics statements="21" coveredstatements="21" conditionals="10" coveredconditionals="10" methods="7" coveredmethods="7"/>
+        <line num="5" count="24" type="stmt"/>
+        <line num="8" count="24" type="stmt"/>
+        <line num="12" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="20" type="stmt"/>
+        <line num="17" count="24" type="stmt"/>
+        <line num="18" count="17" type="stmt"/>
+        <line num="19" count="17" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="25" count="24" type="stmt"/>
+        <line num="26" count="5" type="stmt"/>
+        <line num="27" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="17" type="stmt"/>
+        <line num="39" count="17" type="stmt"/>
+        <line num="40" count="5" type="stmt"/>
+        <line num="41" count="5" type="stmt"/>
+        <line num="44" count="22" type="stmt"/>
+        <line num="45" count="22" type="stmt"/>
+        <line num="46" count="22" type="stmt"/>
+        <line num="50" count="17" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.composables.search">
+      <metrics statements="35" coveredstatements="35" conditionals="18" coveredconditionals="18" methods="15" coveredmethods="15"/>
+      <file name="useClickOutside.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\search\useClickOutside.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="4" coveredconditionals="4" methods="4" coveredmethods="4"/>
+        <line num="8" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="13" count="3" type="stmt"/>
+        <line num="14" count="3" type="stmt"/>
+      </file>
+      <file name="useSearchHighlight.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\search\useSearchHighlight.ts">
+        <metrics statements="13" coveredstatements="13" conditionals="6" coveredconditionals="6" methods="4" coveredmethods="4"/>
+        <line num="2" count="2" type="stmt"/>
+        <line num="3" count="2" type="stmt"/>
+        <line num="6" count="1499" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="20" count="1449" type="stmt"/>
+        <line num="21" count="1449" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="1322" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="1319" type="stmt"/>
+        <line num="25" count="1319" type="stmt"/>
+        <line num="32" count="1322" type="stmt"/>
+        <line num="34" count="1372" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="2" type="stmt"/>
+      </file>
+      <file name="useSearchNavigation.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\search\useSearchNavigation.ts">
+        <metrics statements="18" coveredstatements="18" conditionals="8" coveredconditionals="8" methods="7" coveredmethods="7"/>
+        <line num="8" count="5" type="stmt"/>
+        <line num="10" count="6" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="22" count="9" type="stmt"/>
+        <line num="23" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="7" type="stmt"/>
+        <line num="25" count="7" type="stmt"/>
+        <line num="28" count="9" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="37" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="43" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.composables.ui">
+      <metrics statements="245" coveredstatements="245" conditionals="131" coveredconditionals="131" methods="60" coveredmethods="60"/>
+      <file name="useDialogKeys.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\ui\useDialogKeys.ts">
+        <metrics statements="42" coveredstatements="42" conditionals="23" coveredconditionals="23" methods="7" coveredmethods="7"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="17" count="34" type="stmt"/>
+        <line num="18" count="34" type="stmt"/>
+        <line num="20" count="34" type="stmt"/>
+        <line num="21" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="34" type="stmt"/>
+        <line num="24" count="7" type="stmt"/>
+        <line num="25" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="30" count="5" type="stmt"/>
+        <line num="31" count="5" type="stmt"/>
+        <line num="32" count="5" type="stmt"/>
+        <line num="34" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="37" count="4" type="cond" truecount="5" falsecount="0"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="46" count="34" type="stmt"/>
+        <line num="51" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="2" type="stmt"/>
+        <line num="54" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="14" type="stmt"/>
+        <line num="58" count="34" type="stmt"/>
+        <line num="59" count="33" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="29" type="cond" truecount="2" falsecount="0"/>
+        <line num="63" count="29" type="stmt"/>
+        <line num="64" count="29" type="stmt"/>
+        <line num="65" count="29" type="stmt"/>
+        <line num="67" count="4" type="stmt"/>
+        <line num="68" count="4" type="stmt"/>
+        <line num="69" count="4" type="stmt"/>
+        <line num="70" count="4" type="stmt"/>
+        <line num="75" count="34" type="stmt"/>
+        <line num="76" count="34" type="stmt"/>
+        <line num="77" count="34" type="stmt"/>
+        <line num="80" count="34" type="stmt"/>
+      </file>
+      <file name="useDrawingNav.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\ui\useDrawingNav.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="10" coveredconditionals="10" methods="9" coveredmethods="9"/>
+        <line num="16" count="37" type="stmt"/>
+        <line num="18" count="37" type="stmt"/>
+        <line num="19" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="22" type="stmt"/>
+        <line num="23" count="37" type="stmt"/>
+        <line num="24" count="37" type="stmt"/>
+        <line num="25" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="37" type="stmt"/>
+        <line num="29" count="8" type="stmt"/>
+        <line num="35" count="37" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="37" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="37" type="stmt"/>
+        <line num="40" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="37" type="stmt"/>
+      </file>
+      <file name="useLightbox.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\ui\useLightbox.ts">
+        <metrics statements="42" coveredstatements="42" conditionals="14" coveredconditionals="14" methods="20" coveredmethods="20"/>
+        <line num="32" count="34" type="stmt"/>
+        <line num="33" count="36" type="stmt"/>
+        <line num="34" count="20" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="37" count="34" type="stmt"/>
+        <line num="39" count="34" type="stmt"/>
+        <line num="40" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="43" count="34" type="stmt"/>
+        <line num="45" count="34" type="stmt"/>
+        <line num="46" count="90" type="stmt"/>
+        <line num="53" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="61" count="34" type="stmt"/>
+        <line num="62" count="34" type="stmt"/>
+        <line num="65" count="34" type="stmt"/>
+        <line num="66" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="71" count="34" type="stmt"/>
+        <line num="72" count="31" type="stmt"/>
+        <line num="73" count="31" type="stmt"/>
+        <line num="75" count="34" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="79" count="34" type="stmt"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="86" count="34" type="stmt"/>
+        <line num="87" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="3" type="stmt"/>
+        <line num="92" count="67" type="stmt"/>
+        <line num="93" count="33" type="cond" truecount="2" falsecount="0"/>
+        <line num="94" count="29" type="stmt"/>
+        <line num="96" count="4" type="stmt"/>
+        <line num="97" count="4" type="stmt"/>
+        <line num="98" count="4" type="stmt"/>
+        <line num="102" count="37" type="stmt"/>
+        <line num="103" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="105" count="2" type="stmt"/>
+        <line num="109" count="34" type="stmt"/>
+      </file>
+      <file name="useScrollLogic.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\ui\useScrollLogic.ts">
+        <metrics statements="51" coveredstatements="51" conditionals="30" coveredconditionals="30" methods="7" coveredmethods="7"/>
+        <line num="12" count="23" type="stmt"/>
+        <line num="16" count="23" type="stmt"/>
+        <line num="17" count="21" type="stmt"/>
+        <line num="18" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="20" type="stmt"/>
+        <line num="22" count="20" type="stmt"/>
+        <line num="23" count="20" type="stmt"/>
+        <line num="24" count="20" type="stmt"/>
+        <line num="25" count="34" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="33" type="stmt"/>
+        <line num="27" count="33" type="cond" truecount="4" falsecount="0"/>
+        <line num="28" count="20" type="stmt"/>
+        <line num="29" count="20" type="stmt"/>
+        <line num="33" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="23" type="stmt"/>
+        <line num="50" count="23" type="stmt"/>
+        <line num="51" count="23" type="stmt"/>
+        <line num="53" count="23" type="stmt"/>
+        <line num="54" count="3" type="stmt"/>
+        <line num="55" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="60" count="23" type="stmt"/>
+        <line num="61" count="39" type="stmt"/>
+        <line num="62" count="39" type="stmt"/>
+        <line num="63" count="39" type="stmt"/>
+        <line num="64" count="39" type="stmt"/>
+        <line num="69" count="23" type="stmt"/>
+        <line num="70" count="17" type="stmt"/>
+        <line num="71" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="73" count="16" type="stmt"/>
+        <line num="74" count="16" type="stmt"/>
+        <line num="78" count="16" type="stmt"/>
+        <line num="79" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="80" count="17" type="stmt"/>
+        <line num="86" count="17" type="stmt"/>
+        <line num="87" count="25" type="cond" truecount="2" falsecount="0"/>
+        <line num="90" count="16" type="stmt"/>
+        <line num="91" count="16" type="stmt"/>
+        <line num="94" count="23" type="stmt"/>
+        <line num="95" count="6" type="stmt"/>
+        <line num="96" count="6" type="stmt"/>
+        <line num="98" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="102" count="5" type="stmt"/>
+        <line num="103" count="5" type="stmt"/>
+        <line num="105" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="23" type="stmt"/>
+        <line num="111" count="23" type="stmt"/>
+      </file>
+      <file name="useZoomPan.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\composables\ui\useZoomPan.ts">
+        <metrics statements="96" coveredstatements="96" conditionals="54" coveredconditionals="54" methods="17" coveredmethods="17"/>
+        <line num="6" count="6224" type="cond" truecount="2" falsecount="0"/>
+        <line num="7" count="6218" type="stmt"/>
+        <line num="8" count="6218" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="206" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="205" type="stmt"/>
+        <line num="22" count="2522" type="cond" truecount="4" falsecount="0"/>
+        <line num="23" count="178" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="34" type="stmt"/>
+        <line num="34" count="34" type="stmt"/>
+        <line num="35" count="34" type="stmt"/>
+        <line num="37" count="34" type="stmt"/>
+        <line num="38" count="68" type="stmt"/>
+        <line num="39" count="68" type="stmt"/>
+        <line num="40" count="68" type="stmt"/>
+        <line num="44" count="34" type="stmt"/>
+        <line num="45" count="214" type="stmt"/>
+        <line num="46" count="214" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="153" type="stmt"/>
+        <line num="50" count="34" type="stmt"/>
+        <line num="51" count="34" type="stmt"/>
+        <line num="52" count="202" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="34" type="stmt"/>
+        <line num="58" count="34" type="stmt"/>
+        <line num="59" count="4" type="stmt"/>
+        <line num="60" count="4" type="stmt"/>
+        <line num="61" count="4" type="stmt"/>
+        <line num="64" count="34" type="stmt"/>
+        <line num="65" count="34" type="stmt"/>
+        <line num="66" count="34" type="stmt"/>
+        <line num="67" count="34" type="stmt"/>
+        <line num="68" count="34" type="stmt"/>
+        <line num="69" count="34" type="stmt"/>
+        <line num="70" count="34" type="stmt"/>
+        <line num="72" count="34" type="stmt"/>
+        <line num="73" count="4" type="stmt"/>
+        <line num="74" count="4" type="stmt"/>
+        <line num="78" count="34" type="stmt"/>
+        <line num="79" count="34" type="stmt"/>
+        <line num="80" count="34" type="stmt"/>
+        <line num="81" count="34" type="stmt"/>
+        <line num="82" count="48" type="cond" truecount="2" falsecount="0"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="84" count="1" type="stmt"/>
+        <line num="88" count="34" type="stmt"/>
+        <line num="89" count="15" type="stmt"/>
+        <line num="90" count="15" type="stmt"/>
+        <line num="94" count="15" type="stmt"/>
+        <line num="95" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="96" count="12" type="stmt"/>
+        <line num="97" count="12" type="stmt"/>
+        <line num="99" count="3" type="stmt"/>
+        <line num="102" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="103" count="2" type="stmt"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="105" count="2" type="stmt"/>
+        <line num="106" count="2" type="stmt"/>
+        <line num="108" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="109" count="3" type="stmt"/>
+        <line num="110" count="3" type="stmt"/>
+        <line num="111" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="112" count="7" type="stmt"/>
+        <line num="116" count="34" type="stmt"/>
+        <line num="117" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="118" count="7" type="stmt"/>
+        <line num="119" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="121" count="7" type="cond" truecount="4" falsecount="0"/>
+        <line num="122" count="2" type="stmt"/>
+        <line num="123" count="2" type="stmt"/>
+        <line num="125" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="126" count="4" type="stmt"/>
+        <line num="127" count="4" type="stmt"/>
+        <line num="128" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="129" count="3" type="stmt"/>
+        <line num="130" count="2" type="stmt"/>
+        <line num="131" count="2" type="stmt"/>
+        <line num="132" count="2" type="stmt"/>
+        <line num="136" count="34" type="stmt"/>
+        <line num="137" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="138" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="139" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="141" count="12" type="cond" truecount="5" falsecount="0"/>
+        <line num="142" count="4" type="stmt"/>
+        <line num="143" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="145" count="12" type="stmt"/>
+        <line num="147" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="148" count="10" type="stmt"/>
+        <line num="149" count="10" type="stmt"/>
+        <line num="154" count="34" type="stmt"/>
+        <line num="155" count="4" type="stmt"/>
+        <line num="156" count="4" type="stmt"/>
+        <line num="157" count="4" type="stmt"/>
+        <line num="158" count="4" type="stmt"/>
+        <line num="159" count="4" type="stmt"/>
+        <line num="160" count="4" type="stmt"/>
+        <line num="163" count="34" type="stmt"/>
+        <line num="165" count="34" type="stmt"/>
+      </file>
+    </package>
+    <package name="src.lib">
+      <metrics statements="107" coveredstatements="107" conditionals="90" coveredconditionals="90" methods="37" coveredmethods="37"/>
+      <file name="accent.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\accent.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="10" count="5" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="collapseGroups.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\collapseGroups.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="2" coveredmethods="2"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="21" count="11" type="stmt"/>
+        <line num="22" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="6" type="stmt"/>
+      </file>
+      <file name="collectionItems.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\collectionItems.ts">
+        <metrics statements="24" coveredstatements="24" conditionals="29" coveredconditionals="29" methods="6" coveredmethods="6"/>
+        <line num="10" count="25" type="stmt"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="29" count="34" type="stmt"/>
+        <line num="34" count="2" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="52" count="36" type="stmt"/>
+        <line num="53" count="36" type="stmt"/>
+        <line num="54" count="36" type="stmt"/>
+        <line num="56" count="36" type="stmt"/>
+        <line num="57" count="36" type="stmt"/>
+        <line num="58" count="43" type="stmt"/>
+        <line num="59" count="53" type="stmt"/>
+        <line num="60" count="53" type="stmt"/>
+        <line num="61" count="53" type="stmt"/>
+        <line num="62" count="182" type="cond" truecount="4" falsecount="0"/>
+        <line num="65" count="53" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="53" type="cond" truecount="2" falsecount="0"/>
+        <line num="67" count="53" type="cond" truecount="2" falsecount="0"/>
+        <line num="68" count="53" type="stmt"/>
+        <line num="76" count="53" type="stmt"/>
+        <line num="80" count="53" type="stmt"/>
+        <line num="99" count="36" type="stmt"/>
+        <line num="108" count="17" type="cond" truecount="4" falsecount="0"/>
+        <line num="109" count="10" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="dhivehiNames.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\dhivehiNames.ts">
+        <metrics statements="7" coveredstatements="7" conditionals="7" coveredconditionals="7" methods="5" coveredmethods="5"/>
+        <line num="7" count="19036" type="stmt"/>
+        <line num="17" count="9492" type="stmt"/>
+        <line num="18" count="9492" type="stmt"/>
+        <line num="19" count="9492" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="9478" type="stmt"/>
+        <line num="22" count="14" type="stmt"/>
+        <line num="23" count="18" type="cond" truecount="4" falsecount="0"/>
+      </file>
+      <file name="fetchJson.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\fetchJson.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="14" count="62" type="stmt"/>
+        <line num="15" count="58" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="53" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+      </file>
+      <file name="flashItem.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\flashItem.ts">
+        <metrics statements="5" coveredstatements="5" conditionals="2" coveredconditionals="2" methods="2" coveredmethods="2"/>
+        <line num="5" count="5" type="stmt"/>
+        <line num="6" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="9" count="4" type="stmt"/>
+      </file>
+      <file name="formatCount.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\formatCount.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="4" coveredconditionals="4" methods="6" coveredmethods="6"/>
+        <line num="5" count="40" type="cond" truecount="2" falsecount="0"/>
+        <line num="8" count="13" type="stmt"/>
+        <line num="11" count="24" type="stmt"/>
+        <line num="14" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="6" type="stmt"/>
+        <line num="20" count="20" type="stmt"/>
+      </file>
+      <file name="icons.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\icons.ts">
+        <metrics statements="4" coveredstatements="4" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="13" count="18" type="stmt"/>
+        <line num="166" count="18" type="stmt"/>
+        <line num="167" count="69" type="cond" truecount="2" falsecount="0"/>
+        <line num="174" count="18" type="stmt"/>
+      </file>
+      <file name="itemNames.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\itemNames.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="22" coveredconditionals="22" methods="5" coveredmethods="5"/>
+        <line num="39" count="9341" type="stmt"/>
+        <line num="40" count="9341" type="cond" truecount="4" falsecount="0"/>
+        <line num="41" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="18" type="stmt"/>
+        <line num="46" count="9341" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="9341" type="cond" truecount="4" falsecount="0"/>
+        <line num="48" count="9341" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="9341" type="cond" truecount="2" falsecount="0"/>
+        <line num="50" count="9341" type="stmt"/>
+        <line num="54" count="32" type="stmt"/>
+        <line num="55" count="18667" type="cond" truecount="2" falsecount="0"/>
+        <line num="69" count="11" type="stmt"/>
+        <line num="70" count="11" type="stmt"/>
+        <line num="71" count="30" type="stmt"/>
+        <line num="72" count="30" type="cond" truecount="2" falsecount="0"/>
+        <line num="73" count="29" type="stmt"/>
+        <line num="75" count="11" type="stmt"/>
+      </file>
+      <file name="logo.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\logo.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="17" count="5" type="stmt"/>
+        <line num="23" count="5" type="stmt"/>
+        <line num="24" count="10" type="stmt"/>
+        <line num="27" count="5" type="stmt"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="39" count="5" type="stmt"/>
+      </file>
+      <file name="normalizeQuery.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\normalizeQuery.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="5" count="1829" type="stmt"/>
+      </file>
+      <file name="noteLinks.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\noteLinks.ts">
+        <metrics statements="8" coveredstatements="8" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="11" count="31" type="stmt"/>
+        <line num="12" count="31" type="stmt"/>
+        <line num="13" count="31" type="stmt"/>
+        <line num="14" count="21" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="21" type="stmt"/>
+        <line num="16" count="21" type="stmt"/>
+        <line num="18" count="31" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="31" type="stmt"/>
+      </file>
+      <file name="scrollBehavior.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\scrollBehavior.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="2" coveredconditionals="2" methods="1" coveredmethods="1"/>
+        <line num="6" count="28" type="stmt"/>
+        <line num="7" count="12" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="shareLink.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\shareLink.ts">
+        <metrics statements="11" coveredstatements="11" conditionals="6" coveredconditionals="6" methods="2" coveredmethods="2"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="8" count="4" type="stmt"/>
+        <line num="15" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="3" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="21" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="24" count="5" type="stmt"/>
+        <line num="25" count="5" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+      </file>
+      <file name="viewName.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\lib\viewName.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="4" coveredconditionals="4" methods="1" coveredmethods="1"/>
+        <line num="8" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="9" count="22" type="cond" truecount="2" falsecount="0"/>
+      </file>
+    </package>
+    <package name="src.stores">
+      <metrics statements="84" coveredstatements="84" conditionals="16" coveredconditionals="16" methods="22" coveredmethods="22"/>
+      <file name="actions.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\stores\actions.ts">
+        <metrics statements="18" coveredstatements="18" conditionals="4" coveredconditionals="4" methods="3" coveredmethods="3"/>
+        <line num="24" count="7" type="stmt"/>
+        <line num="26" count="7" type="stmt"/>
+        <line num="27" count="7" type="stmt"/>
+        <line num="28" count="7" type="stmt"/>
+        <line num="29" count="7" type="stmt"/>
+        <line num="30" count="7" type="stmt"/>
+        <line num="33" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="5" type="stmt"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="38" count="7" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="1" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="48" count="7" type="stmt"/>
+        <line num="51" count="23" type="stmt"/>
+      </file>
+      <file name="collections.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\stores\collections.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="19" count="6" type="stmt"/>
+        <line num="20" count="6" type="stmt"/>
+        <line num="22" count="6" type="stmt"/>
+        <line num="28" count="6" type="stmt"/>
+        <line num="34" count="6" type="stmt"/>
+        <line num="56" count="23" type="stmt"/>
+      </file>
+      <file name="overlay.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\stores\overlay.ts">
+        <metrics statements="11" coveredstatements="11" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="16" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+      </file>
+      <file name="search.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\stores\search.ts">
+        <metrics statements="13" coveredstatements="13" conditionals="2" coveredconditionals="2" methods="4" coveredmethods="4"/>
+        <line num="11" count="3" type="stmt"/>
+        <line num="12" count="3" type="stmt"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="17" count="3" type="stmt"/>
+        <line num="18" count="3" type="stmt"/>
+        <line num="19" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="21" count="3" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="24" count="3" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="40" count="21" type="stmt"/>
+      </file>
+      <file name="stats.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\stores\stats.ts">
+        <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="5" count="22" type="stmt"/>
+        <line num="8" count="22" type="stmt"/>
+      </file>
+      <file name="ui.ts" path="C:\Users\gaahi\Documents\folder\New_folder\bird_dash\src\stores\ui.ts">
+        <metrics statements="34" coveredstatements="34" conditionals="8" coveredconditionals="8" methods="10" coveredmethods="10"/>
+        <line num="16" count="11" type="stmt"/>
+        <line num="17" count="11" type="stmt"/>
+        <line num="18" count="11" type="stmt"/>
+        <line num="20" count="11" type="stmt"/>
+        <line num="21" count="11" type="stmt"/>
+        <line num="22" count="11" type="stmt"/>
+        <line num="24" count="11" type="stmt"/>
+        <line num="25" count="6" type="stmt"/>
+        <line num="27" count="11" type="stmt"/>
+        <line num="28" count="2" type="stmt"/>
+        <line num="31" count="11" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="33" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="11" type="stmt"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="37" count="2" type="stmt"/>
+        <line num="43" count="11" type="stmt"/>
+        <line num="44" count="11" type="stmt"/>
+        <line num="45" count="11" type="stmt"/>
+        <line num="51" count="11" type="stmt"/>
+        <line num="52" count="7" type="stmt"/>
+        <line num="54" count="11" type="stmt"/>
+        <line num="55" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="59" count="11" type="stmt"/>
+        <line num="60" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="66" count="11" type="stmt"/>
+        <line num="67" count="1" type="stmt"/>
+        <line num="69" count="11" type="stmt"/>
+        <line num="70" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="73" count="11" type="stmt"/>
+        <line num="97" count="22" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>

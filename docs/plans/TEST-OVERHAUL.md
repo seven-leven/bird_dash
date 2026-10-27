@@ -1,11 +1,11 @@
 # Test overhaul
 
-> **Status:** planned 2026-10-26; phases 0 (the rules) and 1 (the kit, in four parts) done
-> 2026-10-27. The tests were written bottom up, one file at a time, as each piece of code was; this
-> plans them top down, from what the site promises to the smallest rule, and rebuilds the kit they
-> share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 come **before** the
-> [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving every file safe. (The
-> scripts overhaul went first, as the scripts already had direct tests; see
+> **Status:** planned 2026-10-26; phases 0 (the rules), 1 (the kit, in four parts) and 2 (one way to
+> a browser) done 2026-10-27. The tests were written bottom up, one file at a time, as each piece of
+> code was; this plans them top down, from what the site promises to the smallest rule, and rebuilds
+> the kit they share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 come
+> **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving every
+> file safe. (The scripts overhaul went first, as the scripts already had direct tests; see
 > [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
@@ -200,8 +200,13 @@ Production code changes only where a test cannot reach it otherwise, and says so
         itself); `Io` gains `appendText` (the job summary) and `fakeIo` `printed`. The file is named
         after its folder, `testRunner.ts`, so the naming test has no exception left. The copies
         fold: `githubCommands.ts` (`annotation`), `repoPath`, and one `formatPercent`.
-- [ ] **2. One way to a browser.** The runner gives `_dom_test` files happy-dom; the 83 `withDom`
-      calls go, and so does `withDom.ts`. _Done when_ no test sets its own environment.
+- [x] **2. One way to a browser** (2026-10-27). Vitest's projects give `_dom_test` files happy-dom
+      and the rest Node; `src/testing/domSetup.ts` puts the address, storage, `<html>` and page back
+      before each dom test. The 83 `withDom` calls, the 11 `@vitest-environment` lines, `withDom.ts`
+      and `@happy-dom/global-registrator` go; `flashItem_test.ts` is a `_dom_test` now. One browser
+      per file showed three leaks between tests, fixed at the source: `useDialogKeys` and
+      `useZoomPan` clean up in `onScopeDispose` (which a stopped scope runs, not only an unmount),
+      and `runInScope` stops its scope after the test.
 - [ ] **3. Journeys.** The `journey` tier in `tiers.ts` and an area for it; `renderApp` on the
       fixture archive; J1–J9; the untested-files gate covers `.vue`. _Done when_ every component is
       exercised by a test and every journey passes. **The site overhaul starts after this** (the

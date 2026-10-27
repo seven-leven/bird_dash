@@ -1,5 +1,5 @@
 // useDialogKeys.ts — a modal dialog's keyboard: focus in, Tab kept inside, shortcut keys.
-import { nextTick, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onScopeDispose, ref, watch } from 'vue';
 
 const FOCUSABLE =
   'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -71,7 +71,8 @@ export function useDialogKeys(deps: {
     }
   });
 
-  onUnmounted(() => {
+  // On a component's unmount, and on a scope stopped without one.
+  onScopeDispose(() => {
     globalThis.removeEventListener('keydown', handleKeydown);
     document.body.style.overflow = '';
   });
