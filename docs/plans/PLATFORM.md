@@ -1,10 +1,11 @@
 # Use the platform
 
-> **Status:** planned 2026-10-27; phases 1, 2, 3a and 3b done 2026-10-27. What Node 24, TypeScript
-> 6, Vite 8, Vue 3.5, Tailwind 4 and the browser already give this project that it does not use yet,
-> and the architectural and general improvements found in the same look. Most of it rides along with
-> the [test](TEST-OVERHAUL.md) and [site code](SRC-OVERHAUL.md) overhauls; the rest is small and
-> stands alone. Delete this page when every row is done or dropped.
+> **Status:** planned 2026-10-27; phases 1 to 3 done 2026-10-27; phase 4 waits for the site
+> overhaul. What Node 24, TypeScript 6, Vite 8, Vue 3.5, Tailwind 4 and the browser already give
+> this project that it does not use yet, and the architectural and general improvements found in the
+> same look. Most of it rides along with the [test](TEST-OVERHAUL.md) and
+> [site code](SRC-OVERHAUL.md) overhauls; the rest is small and stands alone. Delete this page when
+> every row is done or dropped.
 
 ## Why
 
@@ -69,7 +70,7 @@ own, at the point given.
 | **Accessibility checked in the browser tier.** `axe-core`, pinned, run by the Playwright checks on every page and the open viewer. It would have caught the focus-ring contrast before a human did.                                                                                                                                                                                                                                                                                      | Test overhaul phase 7                 |
 | **A size budget.** ✓ The site's build measures what a visitor downloads (the JavaScript and CSS gzipped, the largest full drawing and thumbnail) and fails over the limits in `script/build/sizeBudget.ts`, a Vite plugin, so every `vite build` checks it, CI included. Today: 57 of 70 kB of JavaScript, 11 of 15 kB of CSS, 313 of 400 kB and 43 of 60 kB for the largest images. Printing the change against `main` in CI is left for when the numbers move often. No dependency.    | Phase 3a                              |
 | **AVIF beside WebP.** `sharp` already makes WebP; AVIF is usually about a third smaller for drawings like these. `npm run ingest` makes both and the tile and viewer use `<picture>`. Measure first on the real drawings; drop it if the gain is small.                                                                                                                                                                                                                                  | With "Responsive, smaller thumbnails" |
-| **A link preview per drawing.** Every shared link shows the same duck, because the route is in the hash and a link preview never sees it. The build can write a small page per drawing (`item/<id>.html`) with its own title, image and description, which sends a visitor on to `#<collection>/<item>`. A generator, like the others.                                                                                                                                                   | Phase 3c                              |
+| **A link preview per drawing.** ✓ Every shared link showed the same duck, because the route is in the hash and a link preview never sees it. The build writes a page per drawing, `<collection>/<id>/` (`script/build/linkPreviews.ts`, a Vite plugin), with its own title, description and image, which sends a visitor on to `#<collection>/<id>`; the viewer's new **Share** button (the phone's share sheet, else "Copy link") hands out that address.                               | Phase 3c                              |
 | **A Content-Security-Policy.** ✓ GitHub Pages cannot send headers, so the build writes a `<meta http-equiv>` policy first in `<head>` (`script/build/contentSecurityPolicy.ts`, a Vite plugin): scripts, styles, images, fonts and data from the site only, and the inline theme script by its hash, which the build works out from the page it writes, so it cannot go stale and needs no contract test. (That the script still matches `useTheme`'s colours is checked since phase 1.) | Phase 3b                              |
 | **Offline, later.** A small hand-written service worker could keep the lists and the thumbnails already seen, so the gallery opens offline and repeat visits are instant. Only once the images are content-addressed or versioned, so a redrawn drawing is never stale.                                                                                                                                                                                                                  | Not before the images are versioned   |
 
@@ -85,11 +86,12 @@ overhaul's phase are done there, not here; this page only ticks them.
 - [x] **2. Node in the scripts.** (2026-10-27) `util.parseArgs` under `cli.ts` and the runner,
       `styleText` for the marks, `fs.glob` for the runner's file search, `node --run` in CI, and the
       Vite chunking check. _Done when_ the scripts have one argument parser, Node's.
-- [ ] **3. Checks and the build**, in three pull requests, as each changes a different thing:
+- [x] **3. Checks and the build** (2026-10-27), in three pull requests, as each changes a different
+      thing:
   - [x] **3a. The size budget** (2026-10-27).
   - [x] **3b. The Content-Security-Policy** (2026-10-27).
-  - [ ] **3c. A link preview per drawing**, with a way to share one from the viewer (without it
-        nobody would hand out the preview's address).
+  - [x] **3c. A link preview per drawing** (2026-10-27), with a Share button in the viewer (without
+        it nobody would hand out the preview's address).
 
   _Done when_ each runs in CI.
 - [ ] **4. Stricter types.** After the site overhaul: `noUncheckedIndexedAccess` and

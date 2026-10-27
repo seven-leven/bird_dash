@@ -45,6 +45,12 @@ the inline theme script in `index.html` is allowed by its hash, which the build 
 page it writes, so editing the script needs nothing else. Anything that loads from another address,
 or a new inline script, is blocked, so a change like that has to change the policy too.
 
+And it writes a **link preview** per drawing (`script/build/linkPreviews.ts`):
+`dist/<collection>/<id>/` is a small page with the drawing's own title, description and image, which
+sends a visitor on to `#<collection>/<id>` in the gallery. A link preview never sees what follows
+`#`, so this is the address the viewer's Share button hands out. A collection cannot be named like a
+folder the site already has (`assets`, `docs`, `full`, …).
+
 ### 3. Decide, then do, then say
 
 Each command is three parts, in three kinds of function:

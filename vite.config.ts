@@ -5,6 +5,7 @@ import { computeVersion, formatVersion } from './script/version/version.ts';
 import { realIo } from './script/lib/io.ts';
 import { sizeBudget } from './script/build/sizeBudget.ts';
 import { contentSecurityPolicy } from './script/build/contentSecurityPolicy.ts';
+import { linkPreviews } from './script/build/linkPreviews.ts';
 
 // The version comes from the same function as `npm run version`; there is no
 // second copy of the formula here. Lenient so a dev server still starts without git
@@ -14,8 +15,9 @@ const version = await computeVersion(realIo, { lenient: true });
 // https://vite.dev/config/
 export default defineConfig({
   // sizeBudget fails a build that grows past script/build/sizeBudget.ts's limits;
-  // contentSecurityPolicy writes the page's policy, with the inline theme script's hash.
-  plugins: [vue(), tailwindcss(), contentSecurityPolicy(), sizeBudget()],
+  // contentSecurityPolicy writes the page's policy, with the inline theme script's hash;
+  // linkPreviews writes a page per drawing that link previews can read.
+  plugins: [vue(), tailwindcss(), contentSecurityPolicy(), linkPreviews(), sizeBudget()],
   publicDir: 'public',
   base: './',
   define: {
