@@ -307,8 +307,8 @@ a failed job: **Re-run failed jobs** on the run's page.
 
 ## 13. Runner reference
 
-`npm test` runs [`script/testRunner/runTests.ts`](../script/testRunner/runTests.ts). Tier names and
-flags go after a `--`: `npm test -- unit --verbose`.
+`npm test` runs [`script/testRunner/testRunner.ts`](../script/testRunner/testRunner.ts). Tier names
+and flags go after a `--`: `npm test -- unit --verbose`.
 
 | Argument or flag   | Effect                                                            |
 | ------------------ | ----------------------------------------------------------------- |

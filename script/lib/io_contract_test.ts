@@ -15,6 +15,9 @@ test('the real Io reads, writes and lists files on disk', async () => {
   assertEquals(await readJson(realIo, dir.join('deep', 'a.json')), { drawn: 3 });
   assertEquals(await realIo.readText(dir.join('deep', 'a.json')), '{\n  "drawn": 3\n}\n');
   assertEquals(await realIo.listFiles(dir.join('deep')), ['a.json']);
+  await realIo.appendText(dir.join('deep', 'log.md'), 'a\n');
+  await realIo.appendText(dir.join('deep', 'log.md'), 'b\n');
+  assertEquals(await realIo.readText(dir.join('deep', 'log.md')), 'a\nb\n');
 });
 
 test('the real Io reaches the environment, the clock and the console', () => {

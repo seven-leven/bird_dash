@@ -1,3 +1,4 @@
+import { repoPath } from './tiers.ts';
 /**
  * Reads the JUnit XML that Vitest's `junit` reporter writes. The output is small
  * and regular (one <testcase> per test, with a <failure> child when it failed), so a
@@ -33,7 +34,7 @@ export function parseJunit(xml: string): TestCase[] {
     const failure = /<(?:failure|error)\b([^>]*)/.exec(m[2] ?? '');
     cases.push({
       name: attrs.name ?? '(unnamed)',
-      file: (attrs.classname ?? '').replace(/^\.\//, '').replaceAll('\\', '/'),
+      file: repoPath(attrs.classname ?? ''),
       line: Number(attrs.line ?? 0),
       time: Number(attrs.time ?? 0),
       failure: failure ? (attributes(failure[1]).message ?? 'failed') : undefined,

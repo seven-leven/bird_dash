@@ -24,6 +24,8 @@ export interface FakeIo extends Io {
   /** Lines the command printed, and lines it reported as problems. */
   outLines: string[];
   errLines: string[];
+  /** Every line, printed or a problem, in the order it came. */
+  printed: string[];
 }
 
 /**
@@ -35,6 +37,7 @@ export function fakeIo(options: FakeIoOptions = {}): FakeIo {
   const ran: string[] = [];
   const outLines: string[] = [];
   const errLines: string[] = [];
+  const printed: string[] = [];
   const missing = (path: string) =>
     Object.assign(new Error(`ENOENT: no such file, open '${path}'`), { code: 'ENOENT' });
   const folder = (dir: string) => dir.replace(/\/?$/, '/');
@@ -49,12 +52,17 @@ export function fakeIo(options: FakeIoOptions = {}): FakeIo {
     ran,
     outLines,
     errLines,
+    printed,
     readText: (path) => {
       const text = files.get(path);
       return text === undefined ? Promise.reject(missing(path)) : Promise.resolve(text);
     },
     writeText: (path, text) => {
       files.set(path, text);
+      return Promise.resolve();
+    },
+    appendText: (path, text) => {
+      files.set(path, (files.get(path) ?? '') + text);
       return Promise.resolve();
     },
     listFiles: (dir, filter = () => true) => {
@@ -78,7 +86,7 @@ export function fakeIo(options: FakeIoOptions = {}): FakeIo {
     },
     env: (name) => options.env?.[name],
     now: () => options.now ?? new Date(Date.UTC(2026, 0, 1)),
-    out: (line) => void outLines.push(line),
-    err: (line) => void errLines.push(line),
+    out: (line) => void (outLines.push(line), printed.push(line)),
+    err: (line) => void (errLines.push(line), printed.push(line)),
   };
 }

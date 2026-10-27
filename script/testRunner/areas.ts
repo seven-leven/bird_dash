@@ -8,7 +8,8 @@
  */
 import type { TestCase } from './junit.ts';
 import type { Counter, FileCoverage } from './coverage.ts';
-import { findFiles } from './tiers.ts';
+import { findFiles, repoPath } from './tiers.ts';
+import { formatPercent } from './coverage.ts';
 
 export interface Area {
   id: string;
@@ -76,11 +77,9 @@ export const AREAS: Area[] = [
   },
 ];
 
-const posix = (path: string) => path.replaceAll('\\', '/').replace(/^\.\//, '');
-
 /** The area a repo-relative path belongs to, or undefined if none claims it. */
 export function areaOf(path: string): Area | undefined {
-  const p = posix(path);
+  const p = repoPath(path);
   let best: { area: Area; length: number } | undefined;
   for (const area of AREAS) {
     for (const prefix of area.paths) {
@@ -125,7 +124,7 @@ export function summarizeAreas(
   cases: TestCase[],
   opts: { coverage?: FileCoverage[]; sources?: string[] } = {},
 ): AreaSummary[] {
-  const loaded = new Set((opts.coverage ?? []).map((f) => posix(f.file)));
+  const loaded = new Set((opts.coverage ?? []).map((f) => repoPath(f.file)));
   return AREAS.map((area) => {
     const own = cases.filter((c) => areaOf(c.file)?.id === area.id);
     const covered = (opts.coverage ?? []).filter((f) => areaOf(f.file)?.id === area.id);
@@ -136,7 +135,7 @@ export function summarizeAreas(
       )
       : undefined;
     const unloaded = opts.coverage
-      ? (opts.sources ?? []).filter((s) => areaOf(s)?.id === area.id && !loaded.has(posix(s)))
+      ? (opts.sources ?? []).filter((s) => areaOf(s)?.id === area.id && !loaded.has(repoPath(s)))
       : [];
     return {
       area,
@@ -153,9 +152,8 @@ export function summarizeAreas(
 export const untestedFiles = (rows: AreaSummary[]): string[] => rows.flatMap((r) => r.unloaded);
 
 // `undefined` is only a type-level case: the tables call pct only when coverage was measured.
-/* c8 ignore next 2 */
-const pct = (c: Counter | undefined): string =>
-  c === undefined ? '' : c.found === 0 ? '—' : `${((c.hit / c.found) * 100).toFixed(1)}%`;
+/* c8 ignore next */
+const pct = (c: Counter | undefined): string => (c === undefined ? '' : formatPercent(c));
 
 /** Terminal table: one row per area. The coverage columns appear only when measured. */
 export function formatAreasText(rows: AreaSummary[]): string {

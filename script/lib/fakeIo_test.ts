@@ -32,6 +32,25 @@ test('git answers what it was given, and fails like a missing repository otherwi
   await assertRejects(() => io.git('log'), Error, 'git log failed: not a git repository');
 });
 
+test('a file can be added to, and is made when it is not there yet', async () => {
+  const io = fakeIo({ files: { './log.md': 'a\n' } });
+  await io.appendText('./log.md', 'b\n');
+  await io.appendText('./new.md', 'c\n');
+  assertEquals([io.files.get('./log.md'), io.files.get('./new.md')], ['a\nb\n', 'c\n']);
+});
+
+test('what is printed and what is a problem are kept apart, and together in order', () => {
+  const io = fakeIo();
+  io.out('one');
+  io.err('two');
+  io.out('three');
+  assertEquals([io.outLines, io.errLines, io.printed], [['one', 'three'], ['two'], [
+    'one',
+    'two',
+    'three',
+  ]]);
+});
+
 test("the commit count and id are git's answers to the version's two questions", async () => {
   const io = fakeIo({ commits: 310, commit: 'd3c113e', git: { 'rev-parse HEAD': 'full' } });
   assertEquals(await io.git('rev-list', '--count', 'HEAD'), '310');

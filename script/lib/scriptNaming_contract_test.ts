@@ -5,9 +5,6 @@ import { assertEquals } from '@std/assert';
 // The rules in docs/SCRIPTS.md that a machine can check, over every file in script/.
 // The rest (a verb from the list, whole words, one job per command) is for review.
 
-/** The test runner keeps its own `main(argv, deps)` until the test overhaul moves it onto Io. */
-const RUNNER = 'testRunner/runTests.ts';
-
 const files = (await readdir('./script', { recursive: true }))
   .map((path) => path.replaceAll('\\', '/'))
   .filter((path) => path.endsWith('.ts'))
@@ -51,7 +48,6 @@ test('every command is made with `command`, in a file named after its folder', a
     const text = await readFile(`./script/${path}`, 'utf8');
     if (!/^export (?:const|(?:async )?function) main\b/m.test(text)) continue;
     commands.push(path);
-    if (path === RUNNER) continue;
     if (!/^export const main = command[<(]/m.test(text)) {
       wrong.push(`${path}: not made with command`);
     }
@@ -65,7 +61,7 @@ test('every command is made with `command`, in a file named after its folder', a
     'check/check.ts',
     'generate/generate.ts',
     'ingest/ingest.ts',
-    RUNNER,
+    'testRunner/testRunner.ts',
     'version/version.ts',
   ]);
 });

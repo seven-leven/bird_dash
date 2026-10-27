@@ -8,8 +8,8 @@ says.
 
 Every script follows these rules today, and a contract test
 ([`script/lib/scriptNaming_contract_test.ts`](../script/lib/scriptNaming_contract_test.ts)) checks
-the ones a machine can. One exception is written down: the test runner keeps its own `RunnerDeps`
-until the [test overhaul](plans/TEST-OVERHAUL.md) moves it onto `Io`.
+the ones a machine can. There are no exceptions: the test runner, the last one, moved onto `Io` in
+the [test overhaul](plans/TEST-OVERHAUL.md)'s phase 1d.
 
 ## Principles
 

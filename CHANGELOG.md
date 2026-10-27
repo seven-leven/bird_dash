@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: the test runner on `Io` (test overhaul, phase 1d; phase 1 is done). `npm
+  test`'s `main` is made with `command` like every other command and reaches the outside world
+  through `Io`; its tests run it on `fakeIo` with a fake Vitest, in memory. Vitest writes its JUnit
+  and coverage into `test-results/` itself, so the runner's temporary folder and its copy of the
+  HTML report go. It is `script/testRunner/testRunner.ts` now, named after its folder, and the
+  naming test has no exception left. One `annotation()` for GitHub's workflow commands, one
+  `repoPath`, and one way to show a percentage (`—` when there is nothing to cover, in every table)
 - 2026-10-27 | test: one way to mount (test overhaul, phase 1c). `src/testing/mount.ts` holds
   `mountComponent`, `mountComposable`, `runInScope` and `mountWithoutDom`, and unmounts whatever a
   test mounted after it; `mountComponent.ts`, `mountComposable.ts` and the Vue renderer that

@@ -229,8 +229,8 @@ A command's `main(args, io)` takes an `Io` ([`script/lib/io.ts`](../script/lib/i
 passes `fakeIo({ files, git, env, now })` ([`script/lib/fakeIo.ts`](../script/lib/fakeIo.ts)) and
 reads what the command wrote (`io.files`) and printed (`io.outLines`, `io.errLines`). Nothing
 touches the disk, git or the console. A contract test runs against the real repository instead
-(`realIo`). Every command is on `Io`, apart from the test runner, which keeps its own `RunnerDeps`
-for now ([plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md)).
+(`realIo`). Every command is on `Io`, the test runner included: its tests hand `main` a fake Vitest
+and fake file discovery as options, as `ingest`'s hand it a fake transcoder.
 
 ### Property tests
 
@@ -276,7 +276,7 @@ shared setup would be copied, and the report would list hundreds of entries.
 | Kind                            | Subject                                    | Example                                                           |
 | ------------------------------- | ------------------------------------------ | ----------------------------------------------------------------- |
 | A source file                   | Its file name, case kept ✓                 | `planChanges_test.ts`, `ItemTile_dom_test.ts`                     |
-| A split of a long file          | File name, then the behaviour in camelCase | `runTests_arguments_test.ts`, `useViewer_keys_dom_test.ts`        |
+| A split of a long file          | File name, then the behaviour in camelCase | `testRunner_arguments_test.ts`, `useViewer_keys_dom_test.ts`      |
 | A journey                       | The visit, in camelCase                    | `firstVisit_journey_test.ts`, `search_journey_test.ts`            |
 | A contract not tied to one file | What it guards, in camelCase               | `thaanaLineHeight_contract_test.ts`, `iconSizes_contract_test.ts` |
 | A browser check                 | What it checks                             | `phoneWidth_browser_test.ts`                                      |

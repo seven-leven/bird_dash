@@ -1,11 +1,11 @@
 # Test overhaul
 
-> **Status:** planned 2026-10-26; phase 0 (the rules), 1a (the fakes), 1b (shared data) and 1c (one
-> way to mount) done 2026-10-27. The tests were written bottom up, one file at a time, as each piece
-> of code was; this plans them top down, from what the site promises to the smallest rule, and
-> rebuilds the kit they share. One pull request per phase, 100% coverage throughout. Phases 1 to 3
-> come **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving
-> every file safe. (The scripts overhaul went first, as the scripts already had direct tests; see
+> **Status:** planned 2026-10-26; phases 0 (the rules) and 1 (the kit, in four parts) done
+> 2026-10-27. The tests were written bottom up, one file at a time, as each piece of code was; this
+> plans them top down, from what the site promises to the smallest rule, and rebuilds the kit they
+> share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 come **before** the
+> [site code](SRC-OVERHAUL.md) overhaul: journey tests are what make moving every file safe. (The
+> scripts overhaul went first, as the scripts already had direct tests; see
 > [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
@@ -163,7 +163,7 @@ browser/       the browser tier: Playwright config and its few checks (phase 7)
 Every fake is disposable (`using fetch = fakeFetch(…)`, `await using dir = await tempDir()`;
 [PLATFORM.md](PLATFORM.md)), so no test restores anything in a `finally`. `withDom.ts`,
 `mountComposable.ts` and `mountComponent.ts` fold into the above. The scripts' `fakeIo` is already
-in `script/lib/`; the runner's own `RunnerDeps` moves onto `Io` in phase 1.
+in `script/lib/`; the runner moved onto `Io` in phase 1d.
 
 ## Phases
 
@@ -173,10 +173,10 @@ Production code changes only where a test cannot reach it otherwise, and says so
 
 - [x] **0. Agree the rules.** (2026-10-27) Settle the decisions; the rules, the conventions and the
       promise list into TESTING.md; the words into GLOSSARY.md. _Done when_ merged.
-- [ ] **1. The kit.** `testing/fakes/`, `settle`, one `mount.ts`; the four `fetch` fakes, seven
-      console swaps and thirteen temporary folders moved onto it; the contract test against
-      hand-swapped globals; the fixture archive and the phase-1 duplicates above (the script tests
-      on the same `makeCollection` and scenarios as the site's). _Done when_ no test fakes the
+- [x] **1. The kit.** (2026-10-27) `testing/fakes/`, `settle`, one `mount.ts`; the four `fetch`
+      fakes, seven console swaps and thirteen temporary folders moved onto it; the contract test
+      against hand-swapped globals; the fixture archive and the phase-1 duplicates above (the script
+      tests on the same `makeCollection` and scenarios as the site's). _Done when_ no test fakes the
       outside world by itself and no collection or bird is written out twice. In four pull requests:
   - [x] **1a. The fakes** (2026-10-27): `fakeFetch`, `captureConsole`, `tempDir` (each undone by
         `using`) and `settle`; every hand-made fake moved onto them;
@@ -194,8 +194,12 @@ Production code changes only where a test cannot reach it otherwise, and says so
         that draws nothing, which `injection_test.ts` had copied; `mountComponent.ts` and
         `mountComposable.ts` go. `runInScope` stays a way of its own: mounting would fire the
         `onMounted` hooks its seven files never ran.
-  - [ ] **1d. The runner on `Io`:** `RunnerDeps` goes; the runner's own copies (GitHub escapes, path
-        trimming, two `pct`s) fold.
+  - [x] **1d. The runner on `Io`** (2026-10-27): `main` is made with `command`, prints through
+        `io.out` and `io.err`, and takes Vitest and file discovery as options; `RunnerDeps`, its
+        temporary folder and its copy of the HTML report go (Vitest writes into `test-results/`
+        itself); `Io` gains `appendText` (the job summary) and `fakeIo` `printed`. The file is named
+        after its folder, `testRunner.ts`, so the naming test has no exception left. The copies
+        fold: `githubCommands.ts` (`annotation`), `repoPath`, and one `formatPercent`.
 - [ ] **2. One way to a browser.** The runner gives `_dom_test` files happy-dom; the 83 `withDom`
       calls go, and so does `withDom.ts`. _Done when_ no test sets its own environment.
 - [ ] **3. Journeys.** The `journey` tier in `tiers.ts` and an area for it; `renderApp` on the
@@ -216,7 +220,7 @@ Production code changes only where a test cannot reach it otherwise, and says so
       as it counts `.ts`.
 
 - [ ] **5. Split and rename.** `useLightbox_dom_test.ts` into one file per composable;
-      `runTests_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
+      `testRunner_test.ts` by concern; the 116 `functionName:` titles rewritten as sentences; the 18
       local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer` onto the kit's
       events; the arbitraries named `any…`; the contracts not tied to a file renamed for what they
       guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`). _Done when_ no test

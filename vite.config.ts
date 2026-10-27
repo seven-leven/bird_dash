@@ -42,7 +42,7 @@ export default defineConfig({
       },
     },
   },
-  // Tests: `npm test` (script/testRunner/runTests.ts) runs these and picks the files per tier.
+  // Tests: `npm test` (script/testRunner/testRunner.ts) runs these and picks the files per tier.
   test: {
     include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
     // Each file in its own process (Vitest isolates files by default), so a fake DOM
