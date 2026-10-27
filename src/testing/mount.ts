@@ -46,7 +46,7 @@ export interface FakeStores {
 /**
  * Mount a component into the (happy-dom) document, as the app would, and return its
  * host element. `render` lets a test pass props that change: it is called on every
- * re-render, so props built from refs stay live. Needs `// @vitest-environment happy-dom`.
+ * re-render, so props built from refs stay live. Needs a document: a `_dom_test` file has one.
  *
  *   const host = mountComponent(() => h(ItemTile, { item }));
  *   const host = mountComponent(() => h(CollectionMenu), { stores: { collections, actions } });
@@ -134,5 +134,5 @@ export function runInScope<T>(fn: () => T): { value: T; stop: () => void } {
   using _warnings = captureConsole((line) => line.includes('no active component instance'));
   const scope = effectScope();
   const value = scope.run(fn) as T;
-  return { value, stop: () => scope.stop() };
+  return { value, stop: unmountOnce(() => scope.stop()) };
 }

@@ -39,7 +39,6 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
-    "@happy-dom/global-registrator": "21.0.4",
     "@std/assert": "npm:@jsr/std__assert@1.0.19",
     "@tailwindcss/vite": "4.3.3",
     "@types/node": "24.19.2",

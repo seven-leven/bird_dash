@@ -88,7 +88,7 @@ tiers.
 | Tier       | File name            | Use it for                                               | Helper                                       |
 | ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------- |
 | `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `testing/fixtures.ts`                        |
-| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `testing/withDom.ts` (`withDom`)             |
+| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `testing/domSetup.ts`, before every test     |
 | `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `testing/propertyRuns.ts` (`assertProperty`) |
 | `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                         |
 
@@ -98,8 +98,9 @@ The helpers are in [`src/testing/`](../src/testing/).
 
 - Can it be a plain function with inputs and outputs? **Unit.** If the code is tangled with the
   browser, first move the logic into `src/lib/` and test that.
-- Does it touch the DOM, the address bar, focus or `localStorage`? **Dom.** Wrap each test in
-  `withDom(...)`, which sets up a fake browser and tears it down.
+- Does it touch the DOM, the address bar, focus or `localStorage`? **Dom.** The name is enough: a
+  `_dom_test` file runs in happy-dom, and `testing/domSetup.ts` puts the address, storage and page
+  back as they started before each of its tests.
 - Is it a rule like "nothing is lost", "the order never goes backwards" or "encode then decode gives
   back the input"? **Prop.** Describe the inputs and let fast-check generate hundreds.
 - Does it check `public/*.json`, the folder layout or git history? **Contract.** These fail when the
@@ -209,8 +210,8 @@ A `.vue` component is tested by mounting it into a fake DOM and checking what a 
 its text, roles and labels, what a click or a key does, what it emits. See
 [`ItemTile_dom_test.ts`](../src/components/gallery/ItemTile_dom_test.ts):
 
-- Start the file with `// @vitest-environment happy-dom`. Vue's DOM renderer looks up `document`
-  when it is first imported, which happens before `withDom` could set one up.
+- Name the file `_dom_test.ts`. That gives it a document from the start, which Vue's DOM renderer
+  looks up when it is first imported.
 - Mount with `mountComponent(() => h(Component, props))` from
   [`src/testing/mount.ts`](../src/testing/mount.ts). It returns the host element, and everything it
   mounts is unmounted after each test. A component that injects stores gets typed stand-ins:

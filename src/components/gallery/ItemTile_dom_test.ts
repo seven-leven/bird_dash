@@ -1,6 +1,3 @@
-// @vitest-environment happy-dom
-// Vue's DOM renderer looks up `document` when it is first imported, so component
-// tests run in Vitest's happy-dom environment rather than inside withDom().
 import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { h } from 'vue';

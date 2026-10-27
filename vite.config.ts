@@ -44,7 +44,28 @@ export default defineConfig({
   },
   // Tests: `npm test` (script/testRunner/testRunner.ts) runs these and picks the files per tier.
   test: {
-    include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
+    // The tier sets the environment (docs/TESTING.md, rule 5): a `_dom_test` file runs in
+    // happy-dom, reset before each of its tests by src/testing/domSetup.ts; the rest in Node.
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'node',
+          include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
+          exclude: ['**/*_dom_test.ts', '**/node_modules/**'],
+          environment: 'node',
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: 'dom',
+          include: ['src/**/*_dom_test.ts'],
+          environment: 'happy-dom',
+          setupFiles: ['src/testing/domSetup.ts'],
+        },
+      },
+    ],
     // Each file in its own process (Vitest isolates files by default), so a fake DOM
     // or a stubbed global never leaks into another file.
     pool: 'forks',

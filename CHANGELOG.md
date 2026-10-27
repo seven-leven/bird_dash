@@ -17,6 +17,13 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: one way to a browser (test overhaul, phase 2). The tier sets the environment:
+  Vitest's `node` and `dom` projects give every `_dom_test` file happy-dom and the rest Node, and
+  `src/testing/domSetup.ts` resets the address, storage, `<html>` and page before each dom test. The
+  83 `withDom(…)` wrappers, the `@vitest-environment` comments, `withDom.ts` and
+  `@happy-dom/global-registrator` go. Sharing one browser per file surfaced listeners left behind:
+  `useDialogKeys` and `useZoomPan` now clean up in `onScopeDispose`, so a scope stopped without a
+  component unmount releases them too, and `runInScope` stops its scope after each test
 - 2026-10-27 | fix: the focus ring on a light page. `.focus-ring` drew `accent-500`, under WCAG's
   3:1 for a focus indicator on white for teal (2.4:1, the Birds' accent), emerald, sky and orange.
   On a light page the ring, the current marker under a tab, the search box's focus, the viewer's

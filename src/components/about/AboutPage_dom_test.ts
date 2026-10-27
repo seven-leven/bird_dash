@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { computed, h, nextTick, ref, shallowRef } from 'vue';

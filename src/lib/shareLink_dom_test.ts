@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import { afterEach, test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { previewUrl, shareLink } from './shareLink.ts';
