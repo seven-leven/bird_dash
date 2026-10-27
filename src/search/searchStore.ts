@@ -1,21 +1,31 @@
-import { readonly, ref } from 'vue';
+import { readonly, type Ref, ref } from 'vue';
 import { useDebouncedRef } from '../browser/useDebouncedRef.ts';
 import { defineInjection } from '../browser/defineInjection.ts';
+import { useGlobalSearch } from '../composables/collection/useGlobalSearch.ts';
+import type { Collection } from '../domain/toCollectionItems.ts';
+import type { ItemsByCollection } from '../data/useCollectionLoader.ts';
 
-/**
- * Search input state — the single query that drives both the grid filter and
- * the global-search dropdown. Owns nothing about results (those are derived in
- * the collections store from this query), so it has no store dependencies.
- */
 /** How long typing must pause before the grid and the results follow it, in ms. */
 export const SEARCH_DELAY = 120;
 
-export function createSearchStore() {
+/**
+ * The search: the one query that filters the grid and finds results in every collection,
+ * whether the results are open, and the results themselves, grouped by collection.
+ */
+export function createSearchStore(deps: {
+  collections: Ref<Collection[]>;
+  itemsByCollection: ItemsByCollection;
+}) {
   const query = ref('');
   const dropdownOpen = ref(false);
   // Debounced view of the query, consumed by the collections store's filter →
   // group → sort pipeline and the cross-collection results.
   const debouncedQuery = useDebouncedRef(query, SEARCH_DELAY);
+  const { globalResults, globalResultCount, globalDrawnCount } = useGlobalSearch(
+    deps.collections,
+    deps.itemsByCollection,
+    debouncedQuery,
+  );
 
   const setQuery = (q: string): void => {
     query.value = q;
@@ -33,6 +43,9 @@ export function createSearchStore() {
     query: readonly(query),
     dropdownOpen: readonly(dropdownOpen),
     debouncedQuery,
+    results: globalResults,
+    resultCount: globalResultCount,
+    drawnResultCount: globalDrawnCount,
     setQuery,
     setDropdown,
     clear,
@@ -40,4 +53,4 @@ export function createSearchStore() {
 }
 
 export type SearchStore = ReturnType<typeof createSearchStore>;
-export const [provideSearch, useSearch] = defineInjection<SearchStore>('search');
+export const [provideSearchStore, useSearchStore] = defineInjection<SearchStore>('search');

@@ -26,11 +26,12 @@ export function buildHash(collectionId: string, itemId: string): string {
  */
 export function useHashRoute(deps: {
   activeCollection: Ref<Collection | undefined>;
-  expandedImage: { isOpen: boolean; item: Item | undefined };
-  cache: ItemsByCollection;
-  switchCollection: (id: string) => Promise<void>;
-  openOverlay: (item: Item) => void;
-  closeOverlay: () => void;
+  isViewerOpen: Readonly<Ref<boolean>>;
+  viewerItem: Readonly<Ref<Item | undefined>>;
+  itemsByCollection: ItemsByCollection;
+  selectCollection: (id: string) => Promise<void>;
+  openViewer: (item: Item) => void;
+  closeViewer: () => void;
   ringTile: (item: Item) => Promise<void>;
   page: Readonly<Ref<Page>>;
   showPage: (page: Page) => void;
@@ -55,7 +56,7 @@ export function useHashRoute(deps: {
     () => {
       if (deps.page.value !== 'gallery') return deps.page.value;
       const col = deps.activeCollection.value?.id ?? '';
-      const item = deps.expandedImage.isOpen ? deps.expandedImage.item?.itemId ?? '' : '';
+      const item = deps.isViewerOpen.value ? deps.viewerItem.value?.itemId ?? '' : '';
       return buildHash(col, item);
     },
     (target) => {
@@ -83,17 +84,17 @@ export function useHashRoute(deps: {
     applying = true;
     try {
       if (collectionId !== deps.activeCollection.value?.id) {
-        await deps.switchCollection(collectionId);
+        await deps.selectCollection(collectionId);
       }
       if (!itemId) {
         // An address without an item (the back button, after opening one) closes the viewer.
-        if (deps.expandedImage.isOpen) deps.closeOverlay();
+        if (deps.isViewerOpen.value) deps.closeViewer();
         return;
       }
 
       await nextTick();
-      const item = deps.cache[collectionId]?.find((i) => i.itemId === itemId);
-      if (item?.isDrawn) deps.openOverlay(item); // drawn → open the image
+      const item = deps.itemsByCollection[collectionId]?.find((i) => i.itemId === itemId);
+      if (item?.isDrawn) deps.openViewer(item); // drawn → open the image
       else if (item) await deps.ringTile(item); // not drawn yet → show and ring its tile
     } finally {
       applying = false;

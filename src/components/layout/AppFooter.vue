@@ -59,12 +59,12 @@
 
 <script setup lang="ts">
 import Icon from '../icons/Icon.vue';
-import { useUi } from '../../stores/ui.ts';
+import { useLayoutStore } from '../../shell/layoutStore.ts';
 import { drawings } from '../../domain/countWords.ts';
 import { REPO_URL } from '../../domain/links.ts';
 import { PAGES } from '../../pages.ts';
 
-const { page } = useUi();
+const { page } = useLayoutStore();
 
 // Injected at build time by vite.config.ts (worked out in script/version/version.ts).
 const appVersion = __APP_VERSION__;

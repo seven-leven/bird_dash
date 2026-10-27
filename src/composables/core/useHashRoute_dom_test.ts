@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { nextTick, reactive, ref } from 'vue';
+import { nextTick, reactive, ref, toRef } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
 import { at, makeCollection, makeItem } from '../../testing/fixtures.ts';
 import type { Collection, Item, Page } from '../../types/index.ts';
@@ -38,11 +38,12 @@ function harness(items: Record<string, Item[]>) {
   const { value: route, stop } = runInScope(() =>
     useHashRoute({
       activeCollection,
-      expandedImage,
-      cache: items,
-      switchCollection,
-      openOverlay,
-      closeOverlay,
+      isViewerOpen: toRef(expandedImage, 'isOpen'),
+      viewerItem: toRef(expandedImage, 'item'),
+      itemsByCollection: items,
+      selectCollection: switchCollection,
+      openViewer: openOverlay,
+      closeViewer: closeOverlay,
       ringTile,
       page,
       showPage,
@@ -213,16 +214,17 @@ test('mounted, the router follows hashchange events, and stops when unmounted', 
   const { unmount } = mountComposable(() =>
     useHashRoute({
       activeCollection,
-      expandedImage: reactive({ isOpen: false, item: undefined }),
-      cache: { birds: [], sharks: [] },
+      isViewerOpen: ref(false),
+      viewerItem: ref(undefined),
+      itemsByCollection: { birds: [], sharks: [] },
       page: ref<Page>('gallery'),
       showPage: () => {},
-      switchCollection: async (id) => {
+      selectCollection: async (id) => {
         switched.push(id);
         activeCollection.value = collections.find((c) => c.id === id);
       },
-      openOverlay: () => {},
-      closeOverlay: () => {},
+      openViewer: () => {},
+      closeViewer: () => {},
       ringTile: async () => {},
     })
   );

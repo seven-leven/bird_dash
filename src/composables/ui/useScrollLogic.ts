@@ -3,11 +3,11 @@ import type { UseScrollLogicReturn } from '../../types/index.ts';
 import { scrollBehavior } from '../../browser/scrollBehavior.ts';
 
 export function useScrollLogic(
-  scrollContainer: Ref<HTMLElement | null>,
+  scrollContainer: Readonly<Ref<HTMLElement | null>>,
   headerRefs: Ref<Record<string, HTMLElement | null>>,
   // On mobile, jumping to a section closes the sidebar. Passed as explicit deps
   // so this stays decoupled from the ui store's shape.
-  opts: { isNarrow: Ref<boolean>; closeSidebar: () => void },
+  opts: { isNarrow: Readonly<Ref<boolean>>; closeSidebar: () => void },
 ): UseScrollLogicReturn {
   const activeSection = ref<string>('');
 

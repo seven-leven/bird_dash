@@ -114,9 +114,9 @@ function mount(
 ) {
   const host = mountComponent(() => h(AboutPage), {
     stores: {
-      collections: { list: ref(list), activeCollection: computed(() => active) },
+      collections: { collections: ref(list), activeCollection: computed(() => active) },
       stats,
-      ui: { page: ref<Page>('about') }, // for the footer
+      layout: { page: ref<Page>('about') }, // for the footer
     },
   });
   const text = () => host.textContent!.replace(/\s+/g, ' ');

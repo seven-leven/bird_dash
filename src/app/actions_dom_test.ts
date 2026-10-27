@@ -16,16 +16,18 @@ function setup(active: string) {
       clear: () => calls.push('clear'),
       setDropdown: (open: boolean) => calls.push(`dropdown:${open}`),
     },
-    ui: {
-      resetHeaders: () => {},
+    layout: {
       scrollToTop: () => calls.push('scrollToTop'),
-      showPage: (page) => calls.push(`page:${page}`),
+      showPage: (page: string) => calls.push(`page:${page}`),
+    },
+    view: {
+      resetHeaders: () => {},
       showUndrawn: () => calls.push('showUndrawn'),
       hidePlanned: () => calls.push('hidePlanned'),
     },
     collections: {
       activeCollection: current as never,
-      switch: (id: string) => {
+      selectCollection: (id: string) => {
         calls.push(`switch:${id}`);
         current.value = { id };
         return Promise.resolve();

@@ -7,7 +7,7 @@ import type { Page } from '../../types/index.ts';
 import { mountComponent } from '../../testing/mount.ts';
 
 function mount(page: Page) {
-  const host = mountComponent(() => h(AppFooter), { stores: { ui: { page: ref(page) } } });
+  const host = mountComponent(() => h(AppFooter), { stores: { layout: { page: ref(page) } } });
   return { host, text: host.textContent!.replace(/\s+/g, ' ') };
 }
 

@@ -5,4 +5,4 @@ import { defineInjection } from '../browser/defineInjection.ts';
 export const createStatsStore = useStatsLoader;
 
 export type StatsStore = ReturnType<typeof createStatsStore>;
-export const [provideStats, useStatsStore] = defineInjection<StatsStore>('stats');
+export const [provideStatsStore, useStatsStore] = defineInjection<StatsStore>('stats');

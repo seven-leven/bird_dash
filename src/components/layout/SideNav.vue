@@ -30,17 +30,17 @@
             {{ activeCollection?.label }}
           </h1>
           <!-- No count until it is known: "0 of 0 drawn" would read as a real answer. -->
-          <p v-if="data.loading" class="h-3 w-24 mt-2 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
+          <p v-if="loadState.loading" class="h-3 w-24 mt-2 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
           <DrawnFilter
-            v-else-if="viewMode === 'group' && stats.drawn > 0 && stats.drawn < data.items.length"
+            v-else-if="showsDrawnFilter"
             class="-ml-2.5 mt-0.5"
-            :drawn="stats.drawn"
-            :total="data.items.length"
+            :drawn="counts.drawn"
+            :total="loadState.items.length"
             :drawn-only="drawnOnly"
-            @choose="(only) => only !== drawnOnly && toggleDrawnOnly()"
+            @choose="setDrawnOnly"
           />
-          <p v-else-if="stats.drawn > 0" class="mt-0.5 text-xs text-muted tabular-nums">
-            {{ viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn) }}
+          <p v-else-if="counts.drawn > 0" class="mt-0.5 text-xs text-muted tabular-nums">
+            {{ viewMode === 'group' ? drawnOf(counts.drawn, loadState.items.length) : drawings(counts.drawn) }}
           </p>
         </div>
       </div>
@@ -52,7 +52,7 @@
         {{ viewName(viewMode, activeCollection?.groupLabel ?? 'Group') }}
       </h2>
       <!-- Loading: rows shaped like the real ones, as the grid does -->
-      <ul v-if="data.loading" class="space-y-0.5" aria-busy="true">
+      <ul v-if="loadState.loading" class="space-y-0.5" aria-busy="true">
         <li v-for="n in 8" :key="n" class="flex items-center justify-between px-3 py-2.5">
           <span class="h-3 w-32 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
           <span class="h-3 w-8 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
@@ -82,14 +82,14 @@
       </ul>
       <!-- The same words as the main area (docs/DESIGN.md §11), without its buttons -->
       <EmptyState
-        v-else-if="!data.error"
+        v-else-if="!loadState.error"
         :title="query ? `No matches for '${query}'` : 'Nothing drawn yet'"
       />
     </div>
 
     <!-- Global progress -->
     <div
-      v-if="!data.loading"
+      v-if="!loadState.loading"
       class="shrink-0 px-5 py-4 border-t border-slate-100 dark:border-slate-800/60"
     >
       <div class="flex items-baseline justify-between mb-1.5">
@@ -97,13 +97,13 @@
           <Icon name="layers" aria-hidden="true" />All collections
         </span>
         <span class="text-xs tabular-nums text-muted">
-          {{ drawnOf(globalStats.drawn, globalStats.total) }}
+          {{ drawnOf(archiveCounts.drawn, archiveCounts.total) }}
         </span>
       </div>
       <div class="h-1 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-800">
         <div
           class="h-full rounded-full bg-accent-600 dark:bg-accent-500 transition-all duration-slow ease-out"
-          :style="{ width: globalStats.total > 0 ? `${(globalStats.drawn / globalStats.total) * 100}%` : '0%' }"
+          :style="{ width: archiveCounts.total > 0 ? `${(archiveCounts.drawn / archiveCounts.total) * 100}%` : '0%' }"
         />
       </div>
     </div>
@@ -115,9 +115,10 @@ import EmptyState from '../ui/EmptyState.vue';
 import DrawnFilter from '../ui/DrawnFilter.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import Icon from '../icons/Icon.vue';
-import { useCollectionsStore } from '../../stores/collections.ts';
-import { useUi } from '../../stores/ui.ts';
-import { useSearch } from '../../stores/search.ts';
+import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
+import { useLayoutStore } from '../../shell/layoutStore.ts';
+import { useViewStore } from '../../gallery/viewStore.ts';
+import { useSearchStore } from '../../search/searchStore.ts';
 import { drawings, drawnOf, ratio } from '../../domain/countWords.ts';
 import { viewName } from '../../domain/viewName.ts';
 
@@ -126,18 +127,19 @@ import { viewName } from '../../domain/viewName.ts';
 const COUNT_DRAWN = 'font-medium text-slate-700 dark:text-slate-300';
 const COUNT_EMPTY = 'text-muted';
 
-const { activeCollection, data, activeData, stats, globalStats } = useCollectionsStore();
-// Off-screen on small screens until opened: `inert` keeps it out of the tab order.
+const { activeCollection, loadState, archiveCounts } = useCollectionsStore();
 const {
-  sidebarOpen,
-  isNarrow,
+  activeData,
+  counts,
   viewMode,
   activeSection,
   drawnOnly,
+  showsDrawnFilter,
   goToSection,
-  closeSidebar,
-  toggleDrawnOnly,
-} = useUi();
-const { query } = useSearch();
+  setDrawnOnly,
+} = useViewStore();
+// Off-screen on narrow screens until opened: `inert` keeps it out of the tab order.
+const { sidebarOpen, isNarrow, closeSidebar } = useLayoutStore();
+const { query } = useSearchStore();
 
 </script>

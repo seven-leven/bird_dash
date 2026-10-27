@@ -117,9 +117,8 @@ import { useClickOutside } from '../../browser/useClickOutside.ts';
 import { COLLAPSED_SIZE, collapseGroups } from '../../domain/collapseGroups.ts';
 
 // Stores
-import { useSearch } from '../../stores/search.ts';
-import { useCollectionsStore } from '../../stores/collections.ts';
-import { useActions } from '../../stores/actions.ts';
+import { useSearchStore } from '../../search/searchStore.ts';
+import { useActions } from '../../app/actions.ts';
 
 // Shared UI
 import Icon from '../icons/Icon.vue';
@@ -131,8 +130,15 @@ import SearchKeyboardHints from './SearchKeyboardHints.vue';
 // ---------------------------------------------------------------------------
 // STORES
 // ---------------------------------------------------------------------------
-const { query, dropdownOpen, setQuery, setDropdown } = useSearch();
-const { globalResults, globalResultCount, globalDrawnCount } = useCollectionsStore();
+const {
+  query,
+  dropdownOpen,
+  setQuery,
+  setDropdown,
+  results: globalResults,
+  resultCount: globalResultCount,
+  drawnResultCount: globalDrawnCount,
+} = useSearchStore();
 const { selectGlobalResult } = useActions();
 
 // ---------------------------------------------------------------------------

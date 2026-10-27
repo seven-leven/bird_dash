@@ -45,7 +45,7 @@
         <button
           v-for="col in collections"
           :key="col.id"
-          @click="switchCollection(col.id)"
+          @click="selectCollection(col.id)"
           class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-3 py-1.5"
           :aria-current="page === 'gallery' && col.id === activeCollection?.id ? 'page' : undefined"
         >
@@ -138,17 +138,21 @@ import CollectionMenu from './CollectionMenu.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import LogoMark from '../icons/LogoMark.vue';
-import { useCollectionsStore } from '../../stores/collections.ts';
-import { useUi } from '../../stores/ui.ts';
-import { useActions } from '../../stores/actions.ts';
-import { useSearch } from '../../stores/search.ts';
+import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
+import { useLayoutStore } from '../../shell/layoutStore.ts';
+import { useThemeStore } from '../../shell/themeStore.ts';
+import { useViewStore } from '../../gallery/viewStore.ts';
+import { useActions } from '../../app/actions.ts';
+import { useSearchStore } from '../../search/searchStore.ts';
 import { viewName } from '../../domain/viewName.ts';
 import { PAGES } from '../../pages.ts';
 
-const { list: collections, activeCollection } = useCollectionsStore();
-const { isNarrow, sidebarOpen, page, viewMode, theme, toggleSidebar, setViewMode, toggleTheme } = useUi();
-const { switchCollection } = useActions();
-const { dropdownOpen, query } = useSearch();
+const { collections, activeCollection } = useCollectionsStore();
+const { isNarrow, sidebarOpen, page, toggleSidebar } = useLayoutStore();
+const { viewMode, setViewMode } = useViewStore();
+const { theme, toggleTheme } = useThemeStore();
+const { selectCollection } = useActions();
+const { dropdownOpen, query } = useSearchStore();
 
 // Tabs from md up while there are this many collections or fewer; beyond that, or on
 // a narrower screen, the collections are one menu (docs/DESIGN.md §10).

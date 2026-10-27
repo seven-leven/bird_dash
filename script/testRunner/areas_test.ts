@@ -27,7 +27,7 @@ const cov = (file: string, hit: number, found: number): FileCoverage => ({
 
 test('areaOf places a file by its path, whatever the slashes', () => {
   assertEquals(areaOf('src/domain/countWords.ts')?.id, 'data');
-  assertEquals(areaOf('src\\stores\\ui.ts')?.id, 'state');
+  assertEquals(areaOf('src\\shell\\layoutStore.ts')?.id, 'state');
   assertEquals(areaOf('./src/composables/ui/useLightbox.ts')?.id, 'interface');
   assertEquals(areaOf('script/build/plan_changes.ts')?.id, 'pipeline');
   assertEquals(areaOf('script/changelog/changelog.ts')?.id, 'release');
@@ -59,9 +59,9 @@ test('summarizeAreas adds coverage per area and lists files no test loaded', () 
     coverage: [
       cov('src/lib/a.ts', 8, 10),
       cov('src/lib/b.ts', 10, 10),
-      cov('src/stores/ui.ts', 1, 4),
+      cov('src/shell/layoutStore.ts', 1, 4),
     ],
-    sources: ['src/lib/a.ts', 'src/lib/b.ts', 'src/lib/never.ts', 'src/stores/ui.ts'],
+    sources: ['src/lib/a.ts', 'src/lib/b.ts', 'src/lib/never.ts', 'src/shell/layoutStore.ts'],
   });
   const data = rows.find((r) => r.area.id === 'data')!;
   assertEquals(data.lines, { hit: 18, found: 20 });

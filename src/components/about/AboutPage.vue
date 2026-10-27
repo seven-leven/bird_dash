@@ -213,8 +213,8 @@ import EmptyState from '../ui/EmptyState.vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import AppFooter from '../layout/AppFooter.vue';
-import { useCollectionsStore } from '../../stores/collections.ts';
-import { useStatsStore } from '../../stores/stats.ts';
+import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
+import { useStatsStore } from '../../about/statsStore.ts';
 import { drawnOf, plural } from '../../domain/countWords.ts';
 import { viewName } from '../../domain/viewName.ts';
 import { dhivehiNames } from '../../domain/dhivehiNames.ts';
@@ -253,7 +253,7 @@ const paper = 'overflow-hidden rounded-card bg-white ring-1 ring-slate-200 dark:
 const externalLink = 'focus-ring rounded-control inline-flex items-center gap-1 font-medium text-slate-600 underline underline-offset-2 ' +
   'hover:text-slate-900 dark:text-slate-300 dark:hover:text-white';
 
-const { list, activeCollection } = useCollectionsStore();
+const { collections: list, activeCollection } = useCollectionsStore();
 
 // The numbers come from the stats store, loaded the first time the page opens.
 const { stats, error, load } = useStatsStore();

@@ -31,6 +31,7 @@ export const AREAS: Area[] = [
     paths: [
       'src/domain/',
       'src/data/',
+      'src/search/',
       'src/lib/',
       'src/composables/collection/',
       'src/composables/search/',
@@ -40,13 +41,16 @@ export const AREAS: Area[] = [
     id: 'state',
     label: 'Site: state and routing',
     protects: 'the stores, shareable links, the pages, theme, accent',
-    paths: ['src/stores/', 'src/browser/', 'src/composables/core/', 'src/pages'], // pages.ts and its test,
+    paths: ['src/browser/', 'src/app/', 'src/shell/', 'src/composables/core/', 'src/pages'], // pages.ts and its test
   },
   {
     id: 'interface',
     label: 'Site: viewer and interface',
     protects: 'the lightbox, scroll-spy, icons and logo',
     paths: [
+      'src/viewer/',
+      'src/gallery/',
+      'src/about/',
       'src/composables/ui/',
       'src/components/',
       'src/styles/',

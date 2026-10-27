@@ -85,11 +85,11 @@ import IdBadge from '../ui/IdBadge.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
 import { tileImage } from '../../domain/toCollectionItems.ts';
 import { nameLines } from '../../domain/itemNames.ts';
-import { useUi } from '../../stores/ui.ts';
+import { useThemeStore } from '../../shell/themeStore.ts';
 import type { Item, GlobalSearchResult } from '../../types/index.ts';
 import type { VisibleGroup } from '../../domain/collapseGroups.ts';
 
-const { theme } = useUi();
+const { theme } = useThemeStore();
 
 // A result's names, the ones a query matches (English, Latin) before the Thaana.
 const resultLines = (item: Item) => {

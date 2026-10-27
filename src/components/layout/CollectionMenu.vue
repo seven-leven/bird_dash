@@ -29,7 +29,7 @@
       class="absolute left-0 top-full mt-1.5 z-50 min-w-48 p-1 rounded-card border shadow-float
              bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800"
     >
-      <li v-for="col in list" :key="col.id">
+      <li v-for="col in collections" :key="col.id">
         <button
           class="nav-item focus-ring w-full flex items-center gap-2 px-3 py-2 text-left min-h-9"
           :aria-current="page === 'gallery' && col.id === activeCollection?.id ? 'page' : undefined"
@@ -58,18 +58,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onUnmounted, ref, watch } from 'vue';
 import Icon from '../icons/Icon.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
-import { useCollectionsStore } from '../../stores/collections.ts';
-import { useActions } from '../../stores/actions.ts';
-import { useUi } from '../../stores/ui.ts';
-import { findPage, PAGES } from '../../pages.ts';
+import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
+import { useActions } from '../../app/actions.ts';
+import { useLayoutStore } from '../../shell/layoutStore.ts';
+import { PAGES } from '../../pages.ts';
 
-const { list, activeCollection } = useCollectionsStore();
-const { switchCollection } = useActions();
-const { page } = useUi();
-const currentPage = computed(() => findPage(page.value));
+const { collections, activeCollection } = useCollectionsStore();
+const { selectCollection } = useActions();
+const { page, currentPage } = useLayoutStore();
 
 const open = ref(false);
 const rootRef = ref<HTMLElement | null>(null);
@@ -83,7 +82,7 @@ function close(refocus = false): void {
 }
 
 function choose(id: string): void {
-  switchCollection(id);
+  selectCollection(id);
   close(true);
 }
 

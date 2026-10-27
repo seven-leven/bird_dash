@@ -12,7 +12,7 @@ test('with no collection yet, there is no icon or name, and the overall bar is e
   const stores = appStores();
   const data = reactive({ loading: false, error: undefined, items: [] });
   const host = mountComponent(() => h(SideNav), {
-    stores: { ...stores, collections: { ...stores.collections, data } },
+    stores: { ...stores, collections: { ...stores.collections, loadState: data } },
   });
   assertEquals(host.querySelector('h1')!.textContent?.trim(), '');
   assertEquals(host.querySelectorAll('h1 ~ svg, .size-10').length, 0);

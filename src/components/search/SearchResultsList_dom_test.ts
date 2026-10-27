@@ -30,7 +30,7 @@ test('after the first line, only a Latin name is set in italics', () => {
         getFlatIndex: (_: string, i: number) => i,
         highlight: (text: string) => text,
       }),
-    { stores: { ui: { theme: reactive({ isDark: false }) } } },
+    { stores: { theme: { theme: reactive({ isDark: false }) } } },
   );
   const lines = [...host.querySelectorAll('[role="option"] p')];
   assertEquals(lines.map((p) => p.textContent), ['Anas platyrhynchos', 'Mallard']);

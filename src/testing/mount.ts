@@ -9,12 +9,14 @@
 // Everything mounted is unmounted after its test, so no test has to clean up.
 import { afterEach } from 'vitest';
 import { type Component, createApp, createRenderer, defineComponent, effectScope, h } from 'vue';
-import { type CollectionsStore, provideCollections } from '../stores/collections.ts';
-import { type AppActions, provideActions } from '../stores/actions.ts';
-import { provideSearch, type SearchStore } from '../stores/search.ts';
-import { provideUi, type UiStore } from '../stores/ui.ts';
-import { provideStats, type StatsStore } from '../stores/stats.ts';
-import { type OverlayStore, provideOverlay } from '../stores/overlay.ts';
+import { type AppActions, provideActions } from '../app/actions.ts';
+import { provideThemeStore, type ThemeStore } from '../shell/themeStore.ts';
+import { type LayoutStore, provideLayoutStore } from '../shell/layoutStore.ts';
+import { type CollectionsStore, provideCollectionsStore } from '../gallery/collectionsStore.ts';
+import { provideViewStore, type ViewStore } from '../gallery/viewStore.ts';
+import { provideSearchStore, type SearchStore } from '../search/searchStore.ts';
+import { provideViewerStore, type ViewerStore } from '../viewer/viewerStore.ts';
+import { provideStatsStore, type StatsStore } from '../about/statsStore.ts';
 import { captureConsole } from './fakes/captureConsole.ts';
 
 const mounted: (() => void)[] = [];
@@ -38,12 +40,14 @@ function unmountOnce(unmount: () => void): () => void {
  * of each, so a test passes just those; the types still check every member it does pass.
  */
 export interface FakeStores {
+  theme?: Partial<ThemeStore>;
+  layout?: Partial<LayoutStore>;
   collections?: Partial<CollectionsStore>;
-  actions?: Partial<AppActions>;
+  view?: Partial<ViewStore>;
   search?: Partial<SearchStore>;
-  ui?: Partial<UiStore>;
+  viewer?: Partial<ViewerStore>;
   stats?: Partial<StatsStore>;
-  overlay?: Partial<OverlayStore>;
+  actions?: Partial<AppActions>;
 }
 
 /**
@@ -69,12 +73,14 @@ export function mountInDocument(
   const Host: Component = defineComponent({
     setup() {
       // The fakes are partial on purpose (see FakeStores); the providers want whole stores.
-      if (stores.collections) provideCollections(stores.collections as CollectionsStore);
+      if (stores.theme) provideThemeStore(stores.theme as ThemeStore);
+      if (stores.layout) provideLayoutStore(stores.layout as LayoutStore);
+      if (stores.collections) provideCollectionsStore(stores.collections as CollectionsStore);
+      if (stores.view) provideViewStore(stores.view as ViewStore);
+      if (stores.search) provideSearchStore(stores.search as SearchStore);
+      if (stores.viewer) provideViewerStore(stores.viewer as ViewerStore);
+      if (stores.stats) provideStatsStore(stores.stats as StatsStore);
       if (stores.actions) provideActions(stores.actions as AppActions);
-      if (stores.search) provideSearch(stores.search as SearchStore);
-      if (stores.ui) provideUi(stores.ui as UiStore);
-      if (stores.stats) provideStats(stores.stats as StatsStore);
-      if (stores.overlay) provideOverlay(stores.overlay as OverlayStore);
       return render;
     },
   });

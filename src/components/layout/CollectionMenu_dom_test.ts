@@ -1,3 +1,4 @@
+import { findPage } from '../../pages.ts';
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { computed, h, nextTick, ref } from 'vue';
@@ -18,16 +19,16 @@ function mount(page: Page = 'gallery') {
   const host = mountComponent(() => h(CollectionMenu), {
     stores: {
       collections: {
-        list,
+        collections: list,
         activeCollection: computed(() => list.value.find((c) => c.id === activeId.value)),
       },
       actions: {
-        switchCollection: async (id: string) => {
+        selectCollection: async (id: string) => {
           switched.push(id);
           activeId.value = id;
         },
       },
-      ui: { page: ref(page) },
+      layout: { page: ref(page), currentPage: computed(() => findPage(page)) },
     },
   });
   const button = host.querySelector<HTMLButtonElement>('[aria-controls="collection-menu"]')!;

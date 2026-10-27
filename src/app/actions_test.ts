@@ -13,16 +13,18 @@ function setup(known: string[]) {
 
   const actions = createAppActions({
     search: { clear: () => calls.push('clear'), setDropdown: () => {} },
-    ui: {
-      resetHeaders: () => calls.push('resetHeaders'),
+    layout: {
       scrollToTop: () => calls.push('scrollToTop'),
-      showPage: (page) => pages.push(page),
+      showPage: (page: string) => pages.push(page),
+    },
+    view: {
+      resetHeaders: () => calls.push('resetHeaders'),
       showUndrawn: () => calls.push('showUndrawn'),
       hidePlanned: () => calls.push('hidePlanned'),
     },
     collections: {
       activeCollection: active as never,
-      switch: (id: string) => {
+      selectCollection: (id: string) => {
         if (!known.includes(id)) return Promise.resolve();
         active.value = { id };
         return pending.has(id) ? new Promise<void>((r) => pending.set(id, r)) : Promise.resolve();
@@ -34,17 +36,17 @@ function setup(known: string[]) {
   return { actions, calls, pages, slow, finish };
 }
 
-test('switchCollection: clears the search, then scrolls to the top once the data is in', async () => {
+test('selectCollection: clears the search, then scrolls to the top once the data is in', async () => {
   const { actions, calls } = setup(['a', 'b']);
-  await actions.switchCollection('b');
+  await actions.selectCollection('b');
   // The planned list folds away: the next collection opens as itself.
   assertEquals(calls, ['clear', 'hidePlanned', 'resetHeaders', 'scrollToTop']);
 });
 
-test('switchCollection: a collection that has to be fetched is scrolled to the top too', async () => {
+test('selectCollection: a collection that has to be fetched is scrolled to the top too', async () => {
   const { actions, calls, slow, finish } = setup(['a', 'b']);
   slow('b');
-  const done = actions.switchCollection('b');
+  const done = actions.selectCollection('b');
   await Promise.resolve();
   assertEquals(calls.includes('scrollToTop'), false, 'scrolled before the data arrived');
 
@@ -53,11 +55,11 @@ test('switchCollection: a collection that has to be fetched is scrolled to the t
   assertEquals(calls.filter((c) => c === 'scrollToTop').length, 1);
 });
 
-test('switchCollection: a load the user has already left does not scroll the new view', async () => {
+test('selectCollection: a load the user has already left does not scroll the new view', async () => {
   const { actions, calls, slow, finish } = setup(['a', 'b', 'c']);
   slow('b');
-  const toB = actions.switchCollection('b');
-  await actions.switchCollection('c'); // moved on while b was loading
+  const toB = actions.selectCollection('b');
+  await actions.selectCollection('c'); // moved on while b was loading
   assertEquals(calls.filter((c) => c === 'scrollToTop').length, 1);
 
   finish('b');
@@ -65,14 +67,14 @@ test('switchCollection: a load the user has already left does not scroll the new
   assertEquals(calls.filter((c) => c === 'scrollToTop').length, 1, 'b scrolled c to the top');
 });
 
-test('switchCollection: an unknown id does not scroll', async () => {
+test('selectCollection: an unknown id does not scroll', async () => {
   const { actions, calls } = setup(['a']);
-  await actions.switchCollection('nope');
+  await actions.selectCollection('nope');
   assertEquals(calls.includes('scrollToTop'), false);
 });
 
 test('choosing a collection shows the gallery, from the About page too', async () => {
   const { actions, pages } = setup(['birds', 'sharks']);
-  await actions.switchCollection('sharks');
+  await actions.selectCollection('sharks');
   assertEquals(pages, ['gallery']);
 });

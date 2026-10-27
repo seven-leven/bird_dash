@@ -5,41 +5,52 @@ import Chrome from './components/layout/Chrome.vue';
 import EmptyState from './components/ui/EmptyState.vue';
 import Icon from './components/icons/Icon.vue';
 import { useHashRoute } from './composables/core/useHashRoute.ts';
-import { createSearchStore, provideSearch } from './stores/search.ts';
-import { createUiStore, provideUi } from './stores/ui.ts';
-import { createCollectionsStore, provideCollections } from './stores/collections.ts';
-import { createOverlayStore, provideOverlay } from './stores/overlay.ts';
-import { createAppActions, provideActions } from './stores/actions.ts';
-import { createStatsStore, provideStats } from './stores/stats.ts';
+import { createThemeStore, provideThemeStore } from './shell/themeStore.ts';
+import { createLayoutStore, provideLayoutStore } from './shell/layoutStore.ts';
+import { createCollectionsStore, provideCollectionsStore } from './gallery/collectionsStore.ts';
+import { createViewStore, provideViewStore } from './gallery/viewStore.ts';
+import { createSearchStore, provideSearchStore } from './search/searchStore.ts';
+import { createViewerStore, provideViewerStore } from './viewer/viewerStore.ts';
+import { createStatsStore, provideStatsStore } from './about/statsStore.ts';
+import { createAppActions, provideActions } from './app/actions.ts';
 import { applyAccent } from './browser/applyAccent.ts';
 
 // =============================================================================
-// STORES — created in dependency order, shared through provide/inject.
-//   search → (query) → collections → (drawnItems) → overlay ;  ui is independent
+// STORES — one per feature, made in dependency order and shared through
+// provide/inject:  collections → search → view (with layout) → viewer.
 // =============================================================================
-const search = createSearchStore();
-const ui = createUiStore();
-const collections = createCollectionsStore({
-  query: search.debouncedQuery,
-  viewMode: ui.viewMode,
-  drawnOnly: ui.drawnOnly,
+const theme = createThemeStore();
+const layout = createLayoutStore();
+const collections = createCollectionsStore();
+const search = createSearchStore({
+  collections: collections.collections,
+  itemsByCollection: collections.itemsByCollection,
 });
-const overlay = createOverlayStore({ drawnItems: collections.drawnItems });
+const view = createViewStore({
+  items: collections.items,
+  query: search.debouncedQuery,
+  scrollEl: layout.scrollEl,
+  isNarrow: layout.isNarrow,
+  closeSidebar: layout.closeSidebar,
+});
+const viewer = createViewerStore({ drawnItems: view.drawnItems });
 // The archive's numbers: loaded by the first page that shows them, then kept.
 const stats = createStatsStore();
 
-provideSearch(search);
-provideUi(ui);
-provideCollections(collections);
-provideOverlay(overlay);
-provideStats(stats);
+provideThemeStore(theme);
+provideLayoutStore(layout);
+provideCollectionsStore(collections);
+provideViewStore(view);
+provideSearchStore(search);
+provideViewerStore(viewer);
+provideStatsStore(stats);
 
 // =============================================================================
 // CROSS-STORE ORCHESTRATIONS — the only actions that touch more than one store
-// (stores/actions.ts). URL sync is handled by the route adapter below, so nothing
+// (app/actions.ts). URL sync is handled by the route adapter below, so nothing
 // there pokes location.hash.
 // =============================================================================
-const actions = createAppActions({ search, ui, collections });
+const actions = createAppActions({ search, layout, view, collections });
 provideActions(actions);
 
 // =============================================================================
@@ -48,23 +59,24 @@ provideActions(actions);
 // =============================================================================
 const route = useHashRoute({
   activeCollection: collections.activeCollection,
-  expandedImage: overlay.expandedImage,
-  cache: collections.cache,
-  switchCollection: actions.switchCollection,
-  openOverlay: overlay.open,
-  closeOverlay: overlay.close,
+  isViewerOpen: viewer.isOpen,
+  viewerItem: viewer.item,
+  itemsByCollection: collections.itemsByCollection,
+  selectCollection: actions.selectCollection,
+  openViewer: viewer.open,
+  closeViewer: viewer.close,
   ringTile: actions.ringTile,
-  page: ui.page,
-  showPage: ui.showPage,
+  page: layout.page,
+  showPage: layout.showPage,
 });
 
 // When a collection's data (re)loads: rebuild the scroll-spy and apply any
 // pending deep link.
 watch(
-  () => collections.data.items,
+  () => collections.loadState.items,
   () =>
     nextTick(() => {
-      ui.updateActiveSection();
+      view.updateActiveSection();
       route.apply();
     }),
 );

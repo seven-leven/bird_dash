@@ -3,7 +3,7 @@
   <div class="space-y-12">
     <!-- Loading: tiles shaped like the real ones (image and caption), so nothing jumps -->
     <div
-      v-if="data.loading"
+      v-if="loadState.loading"
       class="tile-grid"
       aria-busy="true"
     >
@@ -19,10 +19,10 @@
 
     <!-- Failed to load: name what failed, and offer to try again -->
     <EmptyState
-      v-else-if="data.error"
+      v-else-if="loadState.error"
       class="mt-10"
       :title="`Couldn't load ${activeCollection?.label ?? 'this collection'}`"
-      :hint="data.error"
+      :hint="loadState.error"
     >
       <template #icon>
         <Icon name="close" class="size-6" />
@@ -71,17 +71,17 @@
       <!-- The collection's count, which is also the filter while there are gaps. From lg it
            sits under the collection's name in the sidebar; below it the sidebar is a
            drawer, so it is here. -->
-      <div v-if="stats.drawn > 0" class="lg:hidden flex items-center min-h-9 -mt-1 mb-6">
+      <div v-if="counts.drawn > 0" class="lg:hidden flex items-center min-h-9 -mt-1 mb-6">
         <DrawnFilter
-          v-if="viewMode === 'group' && stats.drawn < data.items.length"
+          v-if="showsDrawnFilter"
           class="-ml-2.5"
-          :drawn="stats.drawn"
-          :total="data.items.length"
+          :drawn="counts.drawn"
+          :total="loadState.items.length"
           :drawn-only="drawnOnly"
-          @choose="(only) => only !== drawnOnly && toggleDrawnOnly()"
+          @choose="setDrawnOnly"
         />
         <p v-else class="text-sm text-muted tabular-nums">
-          {{ viewMode === 'group' ? drawnOf(stats.drawn, data.items.length) : drawings(stats.drawn) }}
+          {{ viewMode === 'group' ? drawnOf(counts.drawn, loadState.items.length) : drawings(counts.drawn) }}
         </p>
       </div>
 
@@ -133,18 +133,29 @@ import DrawnFilter from '../ui/DrawnFilter.vue';
 import Icon from '../icons/Icon.vue';
 import AppFooter from '../layout/AppFooter.vue';
 import CollectionIcon from '../icons/CollectionIcon.vue';
-import { useCollectionsStore } from '../../stores/collections.ts';
-import { useSearch } from '../../stores/search.ts';
-import { useUi } from '../../stores/ui.ts';
-import { useOverlayStore } from '../../stores/overlay.ts';
+import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
+import { useViewStore } from '../../gallery/viewStore.ts';
+import { useSearchStore } from '../../search/searchStore.ts';
+import { useThemeStore } from '../../shell/themeStore.ts';
+import { useViewerStore } from '../../viewer/viewerStore.ts';
 import { drawings, drawnOf } from '../../domain/countWords.ts';
 
-const { data, activeData, stats, activeCollection } = useCollectionsStore();
-const { query, clear } = useSearch();
-// The template registers each section with the ui store for the scroll-spy.
-const { viewMode, theme, drawnOnly, showPlanned, registerHeader, toggleDrawnOnly, showUndrawn } =
-  useUi();
-const { open: openItem } = useOverlayStore();
+const { loadState, activeCollection } = useCollectionsStore();
+// The template registers each section with the view store for the scroll-spy.
+const {
+  activeData,
+  counts,
+  viewMode,
+  drawnOnly,
+  showPlanned,
+  showsDrawnFilter,
+  registerHeader,
+  setDrawnOnly,
+  showUndrawn,
+} = useViewStore();
+const { query, clear } = useSearchStore();
+const { theme } = useThemeStore();
+const { open: openItem } = useViewerStore();
 
 // ---------------------------------------------------------------------------
 // COMPUTED
@@ -154,9 +165,9 @@ const isEmpty = computed(() => Object.keys(activeData.value.grouped).length === 
 // A collection with nothing drawn shows "Nothing drawn yet"; in the family view the
 // visitor can still ask to see the planned list (the ui store's, until the collection changes).
 const nothingDrawn = computed(() =>
-  stats.value.drawn === 0 && (viewMode.value === 'date' || !showPlanned.value)
+  counts.value.drawn === 0 && (viewMode.value === 'date' || !showPlanned.value)
 );
-const plannedLabel = computed(() => `${data.items.length} planned`);
+const plannedLabel = computed(() => `${loadState.items.length} planned`);
 const reload = () => location.reload();
 
 // Drawn count per group: the sidebar computation already produced these numbers, one

@@ -12,7 +12,7 @@ test('a failure with no collection yet names "this collection"', () => {
   const stores = appStores();
   const data = reactive({ loading: false, error: 'offline', items: [] });
   const host = mountComponent(() => h(GalleryContent), {
-    stores: { ...stores, collections: { ...stores.collections, data } },
+    stores: { ...stores, collections: { ...stores.collections, loadState: data } },
   });
   assertStringIncludes(host.textContent!, "Couldn't load this collection");
   assertEquals(host.querySelectorAll('section').length, 0);
