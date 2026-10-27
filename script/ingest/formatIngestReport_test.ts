@@ -7,9 +7,9 @@ import {
   formatWarnings,
 } from './formatIngestReport.ts';
 import { planChanges } from './planChanges.ts';
-import type { Collection } from '../lib/collections.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
-const birds = { id: 'birds', label: 'Birds', emoji: '🐦' } as Collection;
+const birds = makeScriptCollection('birds');
 const set = (...ids: string[]) => new Set(ids);
 const text = (lines: { text: string }[]) => lines.map((line) => line.text).join('\n');
 

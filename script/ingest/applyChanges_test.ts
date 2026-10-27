@@ -2,37 +2,20 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { applyChanges } from './applyChanges.ts';
 import { planChanges } from './planChanges.ts';
-import type { Transcoder } from './transcodeImages.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
-import type { Collection } from '../lib/collections.ts';
+import {
+  fakeTranscoder,
+  makeScriptCollection,
+  twoDucks,
+} from '../../src/testing/scriptFixtures.ts';
 
-const birds = { id: 'birds', paths: { json: './lists/birds.json' } } as Collection;
+const birds = makeScriptCollection('birds');
 const set = (...ids: string[]) => new Set(ids);
 
-/** A repository with one list, and a transcoder that fails for the ids it is told to. */
+/** The two ducks' list, and a transcoder that fails for the ids it is told to. */
 function makeRepository(failing: string[] = []) {
-  const io = fakeIo({
-    files: {
-      './lists/birds.json': JSON.stringify({
-        Ducks: [{ id: '001', name: 'Mallard', drawn: '2025-01-01' }, {
-          id: '002',
-          name: 'Garganey',
-        }],
-      }),
-    },
-  });
-  const made: string[] = [];
-  const answer = (kind: string, id: string) => {
-    made.push(`${kind} ${id}`);
-    return Promise.resolve(
-      failing.includes(id) ? { ok: false as const, error: 'boom' } : { ok: true as const },
-    );
-  };
-  const transcoder: Transcoder = {
-    full: (_, id) => answer('full', id),
-    thumb: (_, id) => answer('thumb', id),
-  };
-  return { io, made, transcoder };
+  const io = fakeIo({ files: { [birds.paths.json]: JSON.stringify(twoDucks()) } });
+  return { io, ...fakeTranscoder(failing) };
 }
 
 test('new source art is dated, its images made, and a missing thumbnail repaired', async () => {
@@ -47,7 +30,7 @@ test('new source art is dated, its images made, and a missing thumbnail repaired
 
   assertEquals(applied, { registered: ['002'], failures: [] });
   assertEquals(made, ['full 002', 'thumb 001']);
-  assertEquals(JSON.parse(io.files.get('./lists/birds.json')!).Ducks[1].drawn, '2025-06-01');
+  assertEquals(JSON.parse(io.files.get(birds.paths.json)!).Ducks[1].drawn, '2025-06-01');
   assert(
     io.outLines.some((line) => /registered\s+Garganey \(002\)/.test(line)),
     io.outLines.join('\n'),
@@ -56,7 +39,7 @@ test('new source art is dated, its images made, and a missing thumbnail repaired
 
 test('source art with no item in the list is skipped with a warning, and nothing is written', async () => {
   const { io, transcoder } = makeRepository();
-  const before = io.files.get('./lists/birds.json');
+  const before = io.files.get(birds.paths.json);
   const plan = planChanges({
     drawnIds: set(),
     sourceIds: set('999'),
@@ -66,7 +49,7 @@ test('source art with no item in the list is skipped with a warning, and nothing
   const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
 
   assertEquals(applied.registered, []);
-  assertEquals(io.files.get('./lists/birds.json'), before);
+  assertEquals(io.files.get(birds.paths.json), before);
   assert(io.outLines.some((line) => line.includes('no item 999 in the list')));
 });
 

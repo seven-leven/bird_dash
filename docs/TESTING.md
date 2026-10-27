@@ -192,6 +192,11 @@ Conventions:
 
   A fake kept only for its cleanup is named with a leading `_` (`using _fetch = …`). The scripts'
   outside world is `fakeIo` instead (below).
+- **Shared data before your own.** `src/testing/scenarios/archive.ts` is a small whole archive
+  (Birds and Sharks, with `archiveRoutes()` for `fakeFetch`); `scriptFixtures.ts` has the scripts'
+  `makeScriptCollection`, `twoDucks` and `fakeTranscoder`; `fakes/tempCollection.ts` puts a
+  collection with real images in a temporary folder. Write data of your own only for the edge case
+  the test is about.
 - **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI
   runs the suite in four.
 - **A test must be able to fail.** After writing one, break the code it covers on purpose and

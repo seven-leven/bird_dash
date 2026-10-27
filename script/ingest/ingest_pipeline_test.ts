@@ -1,7 +1,6 @@
 import { test } from 'vitest';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { readFile, rm, writeFile } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
-import sharp from 'sharp';
 import { scanSources } from './scanSources.ts';
 import { countBlockingIssues, planChanges } from './planChanges.ts';
 import { applyChanges } from './applyChanges.ts';
@@ -9,11 +8,10 @@ import { transcodeFull } from './transcodeImages.ts';
 import { realIo } from '../lib/io.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import type { Collection } from '../lib/collections.ts';
-import { tempDir } from '../../src/testing/fakes/tempDir.ts';
+import { tempCollection } from '../../src/testing/fakes/tempCollection.ts';
 
 // Ingesting end to end, on real (tiny) images in a temporary folder, with the real Io
 // and sharp: scan → plan → apply → scan again. Nothing here touches public/ or raw_png/.
-sharp.cache(false); // on Windows, sharp's cache would keep the folder locked
 
 type Item = { id: string; name: string; drawn?: string };
 
@@ -23,25 +21,7 @@ async function withCollection(
   sources: string[],
   fn: (collection: Collection) => Promise<void>,
 ): Promise<void> {
-  await using folder = await tempDir('ingest');
-  const dir = folder.path;
-  const collection = {
-    id: 'x',
-    label: 'Test',
-    emoji: '🧪',
-    paths: {
-      json: `${dir}/list.json`,
-      sourceArt: `${dir}/raw/`,
-      full: `${dir}/full/`,
-      thumb: `${dir}/thumb/`,
-    },
-  } as Collection;
-  await writeFile(collection.paths.json, JSON.stringify({ Group: items }));
-  await mkdir(collection.paths.sourceArt);
-  for (const id of sources) {
-    await sharp({ create: { width: 40, height: 40, channels: 3, background: '#3366cc' } })
-      .png().toFile(`${collection.paths.sourceArt}${id}.png`);
-  }
+  await using collection = await tempCollection({ items, sources });
   await fn(collection);
 }
 

@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | test: shared test data (test overhaul, phase 1b). A fixture archive
+  (`src/testing/scenarios/archive.ts`, Birds and Sharks, served to `fakeFetch` by `archiveRoutes()`)
+  that the collections store's test now runs on; `makeScriptCollection` in place of ten collections
+  built by hand in the scripts' tests; `fakeTranscoder` and the archive's two ducks for both ingest
+  tests; git's answers as `fakeIo({ commits, commit })`; `tempCollection` and `imageSize` in place
+  of two copies each of `withCollection` and `sizeOf`
 - 2026-10-27 | test: one kit of fakes (test overhaul, phase 1a). `src/testing/fakes/` has
   `fakeFetch` (answers by URL path, records the calls), `captureConsole` (keeps the lines a test
   expects, passes the rest through) and `tempDir`, each undone when its `using` block ends, and

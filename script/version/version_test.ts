@@ -4,7 +4,7 @@ import { computeVersion, countDrawn, formatVersion, formatVersionLine, main } fr
 import type { Version } from './version.ts';
 import { fakeIo, type FakeIoOptions } from '../lib/fakeIo.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { Collection } from '../lib/collections.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
 const version = (over: Partial<Version> = {}): Version => ({
   major: 0,
@@ -48,10 +48,11 @@ test('an unknown commit is shown as such rather than left blank', () => {
 
 // ── Worked out from a repository: a fake one, with two collections ──
 
-const birds = { id: 'birds', paths: { json: PATHS.list('birds') } } as Collection;
-const ghosts = { id: 'ghosts', paths: { json: PATHS.list('ghosts') } } as Collection; // no list yet
+const birds = makeScriptCollection('birds');
+const ghosts = makeScriptCollection('ghosts'); // no list yet
 const collections = [birds, ghosts];
-const GIT = { 'rev-list --count HEAD': '310', 'rev-parse --short=7 HEAD': 'd3c113e' };
+/** A repository git knows nothing about: no commits to count, no commit id. */
+const withoutGit = { commits: undefined, commit: undefined };
 
 const repository = (over: FakeIoOptions = {}) =>
   fakeIo({
@@ -71,7 +72,8 @@ const repository = (over: FakeIoOptions = {}) =>
         ],
       }),
     },
-    git: GIT,
+    commits: 310,
+    commit: 'd3c113e',
     ...over,
   });
 
@@ -94,14 +96,14 @@ test('a collection whose list is not written yet has no drawings', async () => {
 
 test('without git, a strict version fails instead of inventing one', async () => {
   await assertRejects(
-    () => computeVersion(repository({ git: {} }), { collections }),
+    () => computeVersion(repository(withoutGit), { collections }),
     Error,
     'not a git repository',
   );
 });
 
 test('without git, a lenient version is patch 0 and commit unknown, with one warning', async () => {
-  const io = repository({ git: {} });
+  const io = repository(withoutGit);
   const worked = await computeVersion(io, { lenient: true, collections });
   assertEquals([worked.patch, worked.commit, worked.drawn], [0, 'unknown', 2]);
   assertEquals(io.errLines.length, 1);
@@ -110,7 +112,7 @@ test('without git, a lenient version is patch 0 and commit unknown, with one war
 });
 
 test('in CI even a lenient version fails without git, so a deploy never ships a made-up one', async () => {
-  const io = repository({ git: {}, env: { CI: 'true' } });
+  const io = repository({ ...withoutGit, env: { CI: 'true' } });
   await assertRejects(() => computeVersion(io, { lenient: true, collections }), Error);
 });
 
@@ -125,7 +127,7 @@ test('the command prints the version, and with --long the whole line', async () 
 });
 
 test('the command reports a problem and exits 1 when git is unavailable', async () => {
-  const io = repository({ git: {} });
+  const io = repository(withoutGit);
   assertEquals(await main([], io), 1);
   assertEquals(io.outLines, []);
   assertEquals(io.errLines.length, 1);

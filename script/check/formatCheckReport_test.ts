@@ -2,9 +2,9 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { formatAssetReport, formatGeneratedReport } from './formatCheckReport.ts';
 import { planChanges } from '../ingest/planChanges.ts';
-import type { Collection } from '../lib/collections.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
-const birds = { id: 'x', label: 'Test', emoji: '🧪' } as Collection;
+const birds = makeScriptCollection('x', { label: 'Test', emoji: '🧪' });
 const text = (lines: { text: string }[]) => lines.map((line) => line.text).join('\n');
 
 test('the asset report lists each problem by kind, as a problem, and notes missing source art', () => {

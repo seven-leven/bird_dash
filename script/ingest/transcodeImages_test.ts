@@ -1,45 +1,29 @@
 import { test } from 'vitest';
-import { mkdir, readFile, rm } from 'node:fs/promises';
+import { readFile, rm } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import sharp from 'sharp';
 import { transcodeFull, transcodeThumb } from './transcodeImages.ts';
 import type { Collection } from '../lib/collections.ts';
-import { tempDir } from '../../src/testing/fakes/tempDir.ts';
+import { imageSize, tempCollection } from '../../src/testing/fakes/tempCollection.ts';
 
-// Real (tiny) images in a temporary folder. sharp caches open files by default; on
-// Windows that keeps them locked, so the folder could not be removed afterwards.
-sharp.cache(false);
+// Real (tiny) images in a temporary folder.
 
 /** A collection on disk whose source art is one wide red picture per id in `sources`. */
 async function withCollection(sources: string[], fn: (collection: Collection) => Promise<void>) {
-  await using folder = await tempDir('transcode');
-  const dir = folder.path;
-  const collection = {
-    id: 'x',
-    paths: { sourceArt: `${dir}/raw/`, full: `${dir}/full/`, thumb: `${dir}/thumb/` },
-  } as Collection;
-  await mkdir(collection.paths.sourceArt);
-  for (const id of sources) {
-    await sharp({ create: { width: 60, height: 30, channels: 3, background: '#cc3333' } })
-      .png().toFile(`${collection.paths.sourceArt}${id}.png`);
-  }
+  const picture = { width: 60, height: 30, color: '#cc3333' }; // wide, so the square shows
+  await using collection = await tempCollection({ sources, picture });
   await fn(collection);
 }
-
-const sizeOf = async (path: string) => {
-  const { width, height, format } = await sharp(await readFile(path)).metadata();
-  return { width, height, format };
-};
 
 test('the full image is a 2048px WebP square and the thumbnail a 400px one', () =>
   withCollection(['001'], async (collection) => {
     assertEquals(await transcodeFull(collection, '001'), { ok: true });
-    assertEquals(await sizeOf(`${collection.paths.full}001.webp`), {
+    assertEquals(await imageSize(`${collection.paths.full}001.webp`), {
       width: 2048,
       height: 2048,
       format: 'webp',
     });
-    assertEquals(await sizeOf(`${collection.paths.thumb}001.webp`), {
+    assertEquals(await imageSize(`${collection.paths.thumb}001.webp`), {
       width: 400,
       height: 400,
       format: 'webp',
@@ -72,6 +56,6 @@ test('a thumbnail is remade from the full image, and fails without one', () =>
     await transcodeFull(collection, '001');
     await rm(`${collection.paths.thumb}001.webp`);
     assertEquals(await transcodeThumb(collection, '001'), { ok: true });
-    assertEquals((await sizeOf(`${collection.paths.thumb}001.webp`)).width, 400);
+    assertEquals((await imageSize(`${collection.paths.thumb}001.webp`)).width, 400);
     assertEquals((await transcodeThumb(collection, '404')).ok, false);
   }));

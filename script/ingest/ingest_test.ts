@@ -1,47 +1,32 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { main } from './ingest.ts';
-import type { Transcoder } from './transcodeImages.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { Collection } from '../lib/collections.ts';
+import {
+  fakeTranscoder,
+  makeScriptCollection,
+  twoDucks,
+} from '../../src/testing/scriptFixtures.ts';
 
-const birds = {
-  id: 'birds',
-  label: 'Birds',
-  emoji: '🐦',
-  paths: {
-    json: PATHS.list('birds'),
-    sourceArt: PATHS.sourceArt('birds'),
-    full: PATHS.full('birds'),
-    thumb: PATHS.thumb('birds'),
-  },
-} as Collection;
+const birds = makeScriptCollection('birds');
 
 /** A repository where 002 has new source art; `failing` ids cannot be made. */
 function makeRepository(failing: string[] = []) {
   const io = fakeIo({
     files: {
       [PATHS.baseVersion]: '{ "major": 0, "minor": 9 }',
-      [PATHS.list('birds')]: JSON.stringify({
-        Ducks: [{ id: '001', name: 'Mallard', drawn: '2025-01-01' }, {
-          id: '002',
-          name: 'Garganey',
-        }],
-      }),
+      [PATHS.list('birds')]: JSON.stringify(twoDucks()),
       [`${PATHS.sourceArt('birds')}001.png`]: '',
       [`${PATHS.sourceArt('birds')}002.png`]: '',
       [`${PATHS.full('birds')}001.webp`]: '',
       [`${PATHS.thumb('birds')}001.webp`]: '',
     },
-    git: { 'rev-list --count HEAD': '400', 'rev-parse --short=7 HEAD': 'abc1234' },
+    commits: 400,
+    commit: 'abc1234',
     now: new Date(Date.UTC(2026, 9, 26)),
   });
-  const transcoder: Transcoder = {
-    full: (_, id) =>
-      Promise.resolve(failing.includes(id) ? { ok: false, error: 'boom' } : { ok: true }),
-    thumb: () => Promise.resolve({ ok: true }),
-  };
+  const { transcoder } = fakeTranscoder(failing);
   return { io, options: { collections: [birds], transcoder } };
 }
 const listOf = (io: ReturnType<typeof fakeIo>) => JSON.parse(io.files.get(PATHS.list('birds'))!);

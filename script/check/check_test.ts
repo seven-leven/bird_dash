@@ -4,16 +4,15 @@ import { main } from './check.ts';
 import { checkGenerated } from './checkGenerated.ts';
 import { fakeIo, type FakeIoOptions } from '../lib/fakeIo.ts';
 import { PATHS } from '../lib/paths.ts';
-import type { Collection } from '../lib/collections.ts';
 import { formatStatsFor } from '../generate/stats.ts';
 import { faviconSvg, logoFiles } from '../generate/logo.ts';
+import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 
-const birds = {
-  id: 'x',
+const birds = makeScriptCollection('x', {
   label: 'Test',
   emoji: '',
   paths: { json: './x.json', sourceArt: './raw/', full: './full/', thumb: './thumb/' },
-} as Collection;
+});
 const options = { collections: [birds], statsPath: './stats.json' };
 
 /** A repository where everything is as it should be, changed by `files`. */
@@ -29,7 +28,8 @@ async function makeRepository(files: FakeIoOptions['files'] = {}) {
         Object.entries(logoFiles()).map(([name, svg]) => [`${PATHS.docsAssets}/logo/${name}`, svg]),
       ),
     },
-    git: { 'rev-list --count HEAD': '1', 'rev-parse --short=7 HEAD': 'abc1234' },
+    commits: 1,
+    commit: 'abc1234',
   });
   await io.writeText('./stats.json', await formatStatsFor([birds], io));
   for (const [path, text] of Object.entries(files ?? {})) await io.writeText(path, text);
