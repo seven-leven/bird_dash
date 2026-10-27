@@ -41,24 +41,21 @@
       >
         Docs
       </a>
-      <a
+      <ExternalLink
         :href="REPO_URL"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="focus-ring inline-flex items-center gap-1 rounded-control underline underline-offset-2
-               hover:text-slate-800 dark:hover:text-slate-200"
+        icon="github"
+        class="underline underline-offset-2 hover:text-slate-800 dark:hover:text-slate-200"
       >
-        <Icon name="github" class="size-3" aria-hidden="true" />
         GitHub
-        <span class="sr-only">(opens in a new tab)</span>
-      </a>
+      </ExternalLink>
     </p>
     <p class="mt-2">Built in the open with Vue, Vite and Tailwind. Thaana set in Faruma.</p>
   </footer>
 </template>
 
 <script setup lang="ts">
-import Icon from '../icons/Icon.vue';
+import ExternalLink from '../../ui/ExternalLink.vue';
+import Icon from '../../ui/Icon.vue';
 import { useLayoutStore } from '../../shell/layoutStore.ts';
 import { drawings } from '../../domain/countWords.ts';
 import { REPO_URL } from '../../domain/links.ts';

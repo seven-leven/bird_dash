@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { h } from 'vue';
 import CollectionIcon from './CollectionIcon.vue';
-import { mountComponent } from '../../testing/mount.ts';
+import { mountComponent } from '../testing/mount.ts';
 
 test('CollectionIcon draws the named line icon, or the emoji when the name is not an icon', () => {
   const host = mountComponent(() =>

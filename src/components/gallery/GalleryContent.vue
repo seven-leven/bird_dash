@@ -27,10 +27,7 @@
       <template #icon>
         <Icon name="close" class="size-6" />
       </template>
-      <button class="btn-primary focus-ring mt-3" @click="reload()">
-        <Icon name="reset" class="size-4" aria-hidden="true" />
-        Try again
-      </button>
+      <RetryButton @retry="reloadPage()" />
     </EmptyState>
 
     <!-- A search that matches nothing -->
@@ -128,17 +125,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import ItemTile from './ItemTile.vue';
-import EmptyState from '../ui/EmptyState.vue';
-import DrawnFilter from '../ui/DrawnFilter.vue';
-import Icon from '../icons/Icon.vue';
+import EmptyState from '../../ui/EmptyState.vue';
+import RetryButton from '../../ui/RetryButton.vue';
+import DrawnFilter from '../../ui/DrawnFilter.vue';
+import Icon from '../../ui/Icon.vue';
 import AppFooter from '../layout/AppFooter.vue';
-import CollectionIcon from '../icons/CollectionIcon.vue';
+import CollectionIcon from '../../ui/CollectionIcon.vue';
 import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
 import { useViewStore } from '../../gallery/viewStore.ts';
 import { useSearchStore } from '../../search/searchStore.ts';
 import { useThemeStore } from '../../shell/themeStore.ts';
 import { useViewerStore } from '../../viewer/viewerStore.ts';
 import { drawings, drawnOf } from '../../domain/countWords.ts';
+import { reloadPage } from '../../browser/reloadPage.ts';
 
 const { loadState, activeCollection } = useCollectionsStore();
 // The template registers each section with the view store for the scroll-spy.
@@ -168,7 +167,6 @@ const nothingDrawn = computed(() =>
   counts.value.drawn === 0 && (viewMode.value === 'date' || !showPlanned.value)
 );
 const plannedLabel = computed(() => `${loadState.items.length} planned`);
-const reload = () => location.reload();
 
 // Drawn count per group: the sidebar computation already produced these numbers, one
 // row for every group shown.

@@ -79,7 +79,7 @@ import { defineAsyncComponent, nextTick, watch } from 'vue';
 import TopBar from './TopBar.vue';
 import SideNav from './SideNav.vue';
 import GalleryContent from '../gallery/GalleryContent.vue';
-import Icon from '../icons/Icon.vue';
+import Icon from '../../ui/Icon.vue';
 import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
 import { useViewStore } from '../../gallery/viewStore.ts';
 import { useSearchStore } from '../../search/searchStore.ts';

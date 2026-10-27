@@ -136,7 +136,7 @@
 
 <script setup lang="ts">
 import ItemSheet from './ItemSheet.vue';
-import Icon from '../icons/Icon.vue';
+import Icon from '../../ui/Icon.vue';
 import type { Item, Collection } from '../../types/index.ts';
 import { useLightbox } from '../../composables/ui/useLightbox.ts';
 import { useSearchStore } from '../../search/searchStore.ts';

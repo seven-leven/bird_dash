@@ -59,8 +59,8 @@
 
 <script setup lang="ts">
 import { nextTick, onUnmounted, ref, watch } from 'vue';
-import Icon from '../icons/Icon.vue';
-import CollectionIcon from '../icons/CollectionIcon.vue';
+import Icon from '../../ui/Icon.vue';
+import CollectionIcon from '../../ui/CollectionIcon.vue';
 import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
 import { useActions } from '../../app/actions.ts';
 import { useLayoutStore } from '../../shell/layoutStore.ts';

@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { h } from 'vue';
 import IdBadge from './IdBadge.vue';
-import { mountComponent } from '../../testing/mount.ts';
+import { mountComponent } from '../testing/mount.ts';
 
 test('IdBadge prints the id, or its slot, on a surface or over a drawing', () => {
   const host = mountComponent(() =>

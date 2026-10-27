@@ -3,7 +3,7 @@ import { assertEquals, assertMatch, assertStringIncludes, assertThrows } from '@
 import { contrastReport, designGuide, formTokensFrom, readFormTokens } from './designGuide.ts';
 import { iconSheetSvg } from './iconSheet.ts';
 import { accentMenu } from './palette.ts';
-import { ICON_GROUPS, ICONS } from '../../src/lib/icons.ts';
+import { ICON_GROUPS, ICONS } from '../../src/ui/icons.ts';
 import { readJson } from '../lib/fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 

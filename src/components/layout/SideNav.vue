@@ -111,10 +111,10 @@
 </template>
 
 <script setup lang="ts">
-import EmptyState from '../ui/EmptyState.vue';
-import DrawnFilter from '../ui/DrawnFilter.vue';
-import CollectionIcon from '../icons/CollectionIcon.vue';
-import Icon from '../icons/Icon.vue';
+import EmptyState from '../../ui/EmptyState.vue';
+import DrawnFilter from '../../ui/DrawnFilter.vue';
+import CollectionIcon from '../../ui/CollectionIcon.vue';
+import Icon from '../../ui/Icon.vue';
 import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
 import { useLayoutStore } from '../../shell/layoutStore.ts';
 import { useViewStore } from '../../gallery/viewStore.ts';

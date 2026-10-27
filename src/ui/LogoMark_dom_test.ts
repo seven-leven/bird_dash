@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { h } from 'vue';
 import LogoMark from './LogoMark.vue';
-import { mountComponent } from '../../testing/mount.ts';
+import { mountComponent } from '../testing/mount.ts';
 
 test('the mark is drawn in the current colour, and hidden from screen readers', () => {
   const svg = mountComponent(() => h(LogoMark)).querySelector('svg')!;

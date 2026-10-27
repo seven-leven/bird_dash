@@ -3,7 +3,7 @@
  * explains each one, and every numbered section there names the principles it
  * serves; a contract test checks that the page and this list agree.
  */
-import type { IconName } from '../../src/lib/icons.ts';
+import type { IconName } from '../../src/ui/icons.ts';
 
 export interface Principle {
   title: string;

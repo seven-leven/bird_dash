@@ -81,8 +81,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import IdBadge from '../ui/IdBadge.vue';
-import CollectionIcon from '../icons/CollectionIcon.vue';
+import IdBadge from '../../ui/IdBadge.vue';
+import CollectionIcon from '../../ui/CollectionIcon.vue';
 import { tileImage } from '../../domain/toCollectionItems.ts';
 import { nameLines } from '../../domain/itemNames.ts';
 import { useThemeStore } from '../../shell/themeStore.ts';

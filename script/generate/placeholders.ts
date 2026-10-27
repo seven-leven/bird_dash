@@ -5,7 +5,7 @@
  * Written by `npm run generate` (or `npm run generate -- placeholders`).
  */
 import sharp from 'sharp';
-import { ICONS, isIconName } from '../../src/lib/icons.ts';
+import { ICONS, isIconName } from '../../src/ui/icons.ts';
 import { PATHS } from '../lib/paths.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 import { SLATE } from './palette.ts';

@@ -110,19 +110,15 @@
         Learn more
       </p>
       <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-        <a
+        <ExternalLink
           v-for="link in links"
           :key="link.label"
           :href="link.url(item)"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="focus-ring rounded-control inline-flex items-center gap-1 text-sm font-medium viewer-body
+          class="text-sm font-medium viewer-body
                  hover:underline underline-offset-2 transition-colors duration-fast"
         >
           {{ link.label }}
-          <Icon name="externalLink" class="size-3 opacity-60" />
-          <span class="sr-only">(opens in a new tab)</span>
-        </a>
+        </ExternalLink>
         <!-- Hands out the drawing's link preview, which has its own title and image; at the
              row's far end, in the accent, as it stays within the site. -->
         <button
@@ -141,9 +137,10 @@
   </div>
 </template>
 <script setup lang="ts">
+import ExternalLink from '../../ui/ExternalLink.vue';
 import { computed, ref, watch } from 'vue';
-import IdBadge from '../ui/IdBadge.vue';
-import Icon from '../icons/Icon.vue';
+import IdBadge from '../../ui/IdBadge.vue';
+import Icon from '../../ui/Icon.vue';
 import { noteSegments } from '../../domain/noteLinks.ts';
 import { previewUrl, type ShareOutcome, shareLink } from '../../lib/shareLink.ts';
 import { monthName } from '../../domain/dates.ts';

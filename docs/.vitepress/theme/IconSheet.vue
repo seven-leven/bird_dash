@@ -15,6 +15,6 @@
 </template>
 
 <script setup lang="ts">
-import Icon from '../../../src/components/icons/Icon.vue';
-import { ICON_GROUPS } from '../../../src/lib/icons.ts';
+import Icon from '../../../src/ui/Icon.vue';
+import { ICON_GROUPS } from '../../../src/ui/icons.ts';
 </script>

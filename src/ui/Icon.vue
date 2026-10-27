@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { type IconDef, ICONS, type IconName } from '../../lib/icons.ts';
+import { type IconDef, ICONS, type IconName } from './icons.ts';
 
 const props = defineProps<{ name: IconName }>();
 const def = computed<IconDef>(() => ICONS[props.name]);

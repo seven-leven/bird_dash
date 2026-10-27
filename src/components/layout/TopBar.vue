@@ -135,9 +135,9 @@
 import { computed, nextTick, ref } from 'vue';
 import GlobalSearch from '../search/GlobalSearch.vue';
 import CollectionMenu from './CollectionMenu.vue';
-import Icon from '../icons/Icon.vue';
-import CollectionIcon from '../icons/CollectionIcon.vue';
-import LogoMark from '../icons/LogoMark.vue';
+import Icon from '../../ui/Icon.vue';
+import CollectionIcon from '../../ui/CollectionIcon.vue';
+import LogoMark from '../../ui/LogoMark.vue';
 import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
 import { useLayoutStore } from '../../shell/layoutStore.ts';
 import { useThemeStore } from '../../shell/themeStore.ts';

@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { h, nextTick, ref } from 'vue';
 import DrawnFilter from './DrawnFilter.vue';
-import { mountComponent } from '../../testing/mount.ts';
+import { mountComponent } from '../testing/mount.ts';
 
 test('DrawnFilter is the count and the filter: All and Drawn, the current one pressed', async () => {
   const chosen: boolean[] = [];

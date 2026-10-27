@@ -23,11 +23,7 @@
         </p>
         <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
           <a :href="`#${browseId}`" class="btn-primary focus-ring">Browse the collections</a>
-          <a :href="WRITE_UP_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
-            How the site was built
-            <Icon name="externalLink" class="size-3 opacity-60" />
-            <span class="sr-only">(opens in a new tab)</span>
-          </a>
+          <ExternalLink :href="WRITE_UP_URL" :class="externalLink">How the site was built</ExternalLink>
         </div>
       </div>
 
@@ -58,10 +54,7 @@
     </div>
 
     <EmptyState v-else-if="error" title="Couldn't load the numbers" :hint="error" role="alert">
-      <button class="btn-primary focus-ring mt-3" @click="load()">
-        <Icon name="reset" class="size-4" aria-hidden="true" />
-        Try again
-      </button>
+      <RetryButton @retry="load()" />
     </EmptyState>
 
     <template v-else-if="stats">
@@ -179,11 +172,9 @@
         </li>
       </ol>
       <p class="mt-6 text-sm">
-        <a :href="WRITE_UP_URL" target="_blank" rel="noopener noreferrer" :class="externalLink">
+        <ExternalLink :href="WRITE_UP_URL" :class="externalLink">
           How the site was built, in the write-up
-            <Icon name="externalLink" class="size-3 opacity-60" />
-          <span class="sr-only">(opens in a new tab)</span>
-        </a>
+        </ExternalLink>
       </p>
     </section>
 
@@ -208,10 +199,11 @@
 </template>
 
 <script setup lang="ts">
+import ExternalLink from '../../ui/ExternalLink.vue';
+import RetryButton from '../../ui/RetryButton.vue';
 import { computed, onMounted, ref } from 'vue';
-import EmptyState from '../ui/EmptyState.vue';
-import Icon from '../icons/Icon.vue';
-import CollectionIcon from '../icons/CollectionIcon.vue';
+import EmptyState from '../../ui/EmptyState.vue';
+import CollectionIcon from '../../ui/CollectionIcon.vue';
 import AppFooter from '../layout/AppFooter.vue';
 import { useCollectionsStore } from '../../gallery/collectionsStore.ts';
 import { useStatsStore } from '../../about/statsStore.ts';
@@ -250,7 +242,7 @@ const HISTORY = [
 const paper = 'overflow-hidden rounded-card bg-white ring-1 ring-slate-200 dark:ring-slate-800';
 
 // A link that leaves the site: neutral, never the accent.
-const externalLink = 'focus-ring rounded-control inline-flex items-center gap-1 font-medium text-slate-600 underline underline-offset-2 ' +
+const externalLink = 'font-medium text-slate-600 underline underline-offset-2 ' +
   'hover:text-slate-900 dark:text-slate-300 dark:hover:text-white';
 
 const { collections: list, activeCollection } = useCollectionsStore();

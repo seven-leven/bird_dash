@@ -2,8 +2,8 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { h } from 'vue';
 import EmptyState from './EmptyState.vue';
-import Icon from '../icons/Icon.vue';
-import { mountComponent } from '../../testing/mount.ts';
+import Icon from './Icon.vue';
+import { mountComponent } from '../testing/mount.ts';
 
 test('EmptyState shows its icon, title, hint and action', () => {
   const host = mountComponent(() =>

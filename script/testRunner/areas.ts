@@ -18,7 +18,7 @@ export interface Area {
   protects: string;
   /**
    * Repo-relative path prefixes. The longest prefix that matches a path wins, so an
-   * area can claim a file out of a folder another area owns (the icons in src/lib/).
+   * area can claim a file out of a folder another area owns (the data files in script/generate/).
    */
   paths: string[];
 }
@@ -50,12 +50,11 @@ export const AREAS: Area[] = [
     paths: [
       'src/viewer/',
       'src/gallery/',
+      'src/ui/',
       'src/about/',
       'src/composables/ui/',
       'src/components/',
       'src/styles/',
-      'src/lib/icons',
-      'src/lib/logo',
     ],
   },
   {

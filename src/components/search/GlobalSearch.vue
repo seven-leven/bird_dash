@@ -121,8 +121,8 @@ import { useSearchStore } from '../../search/searchStore.ts';
 import { useActions } from '../../app/actions.ts';
 
 // Shared UI
-import Icon from '../icons/Icon.vue';
-import EmptyState from '../ui/EmptyState.vue';
+import Icon from '../../ui/Icon.vue';
+import EmptyState from '../../ui/EmptyState.vue';
 import SearchDropdownHeader from './SearchDropdownHeader.vue';
 import SearchResultsList from './SearchResultsList.vue';
 import SearchKeyboardHints from './SearchKeyboardHints.vue';

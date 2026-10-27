@@ -123,8 +123,8 @@ test('with coverage but no source list, nothing is reported unloaded', () => {
   assertStringIncludes(formatAreasText(rows), '—');
 });
 
-test('the longest matching prefix wins: the icon registry is interface, the rest of lib/ is data', () => {
-  assertEquals(areaOf('src/lib/icons.ts')?.id, 'interface');
-  assertEquals(areaOf('src/lib/logo_test.ts')?.id, 'interface');
-  assertEquals(areaOf('src/domain/countWords.ts')?.id, 'data');
+test('the longest matching prefix wins: the generated data files are pipeline, the rest of generate/ tooling', () => {
+  assertEquals(areaOf('script/generate/stats.ts')?.id, 'pipeline');
+  assertEquals(areaOf('script/generate/placeholders_test.ts')?.id, 'pipeline');
+  assertEquals(areaOf('script/generate/logo.ts')?.id, 'tooling');
 });

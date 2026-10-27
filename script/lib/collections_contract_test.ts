@@ -5,7 +5,7 @@ import { COLLECTIONS } from './collections.ts';
 import { readList } from './lists.ts';
 import { readJson } from './fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
-import { isIconName } from '../../src/lib/icons.ts';
+import { isIconName } from '../../src/ui/icons.ts';
 import { PAGES } from '../../src/pages.ts';
 
 // The app is data-driven: a typo in public/*.json silently breaks routing, search

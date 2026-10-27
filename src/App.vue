@@ -2,8 +2,9 @@
 import { nextTick, onMounted, watch } from 'vue';
 
 import Chrome from './components/layout/Chrome.vue';
-import EmptyState from './components/ui/EmptyState.vue';
-import Icon from './components/icons/Icon.vue';
+import EmptyState from './ui/EmptyState.vue';
+import Icon from './ui/Icon.vue';
+import RetryButton from './ui/RetryButton.vue';
 import { useHashRoute } from './composables/core/useHashRoute.ts';
 import { createThemeStore, provideThemeStore } from './shell/themeStore.ts';
 import { createLayoutStore, provideLayoutStore } from './shell/layoutStore.ts';
@@ -14,6 +15,7 @@ import { createViewerStore, provideViewerStore } from './viewer/viewerStore.ts';
 import { createStatsStore, provideStatsStore } from './about/statsStore.ts';
 import { createAppActions, provideActions } from './app/actions.ts';
 import { applyAccent } from './browser/applyAccent.ts';
+import { reloadPage } from './browser/reloadPage.ts';
 
 // =============================================================================
 // STORES — one per feature, made in dependency order and shared through
@@ -85,7 +87,6 @@ watch(
 watch(() => collections.activeCollection.value?.accent, applyAccent, { immediate: true });
 
 const { isInitialized, initError } = collections;
-const reload = () => location.reload();
 
 onMounted(async () => {
   await collections.init();
@@ -105,13 +106,7 @@ onMounted(async () => {
       <template #icon>
         <Icon name="close" class="size-6" />
       </template>
-      <button
-        class="btn-primary focus-ring mt-3"
-        @click="reload()"
-      >
-        <Icon name="reset" class="size-4" aria-hidden="true" />
-        Try again
-      </button>
+      <RetryButton @retry="reloadPage()" />
     </EmptyState>
   </div>
 
