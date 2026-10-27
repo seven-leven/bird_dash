@@ -13,6 +13,11 @@ folder, and the item here points to it.
       passes on dark. Draw the ring (and the current-item marker) in `accent-700` on light surfaces
       (5.2:1 or more for every hue), keep `500` on dark; update DESIGN.md's colour rule, the palette
       contract test and the guide.
+- [ ] **Dark mode and month names** ([PLATFORM.md](PLATFORM.md) phase 1, found 2026-10-27). No
+      `color-scheme` is set, so in dark mode the scrollbars and the search input stay light; and
+      `monthKey` formats with the visitor's language (`toLocaleString('default', …)`), so the month
+      view's names change language with the browser. With the dark variant's current spelling and a
+      `theme-color` for phones.
 - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
       24.22.1. Everything passes, but upgrade to match CI.
 
@@ -30,6 +35,13 @@ folder, and the item here points to it.
       own pull request straight after the phase that prepares it ("Features that ride along").
       Includes fewer stores per component (`Chrome`, `TopBar` and `GalleryContent` inject four each
       today), after phase 3.
+- [ ] **3. Use the platform** ([PLATFORM.md](PLATFORM.md)). What Node 24, TS 6, Vite 8, Vue 3.5,
+      Tailwind 4 and the browser give that the code does not use yet (`<dialog>` for the viewer,
+      popovers, `defineModel`, `useId`, `using` in the test kit, `util.parseArgs`, `light-dark()`
+      colour tokens), and the general improvements found with them: the data checked at the door, an
+      error state for the whole app, axe in the browser tier, a size budget, a link preview per
+      drawing, a Content-Security-Policy. Most rows ride along with the two overhauls; its own
+      phases are the fixes above, Node in the scripts, the checks, and stricter types last.
 
 ## ✨ Features
 
