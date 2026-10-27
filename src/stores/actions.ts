@@ -4,6 +4,7 @@ import { flashItem } from '../lib/flashItem.ts';
 import type { CollectionsStore } from './collections.ts';
 import type { SearchStore } from './search.ts';
 import type { UiStore } from './ui.ts';
+import type { CollectionItem } from '../types/index.ts';
 
 /**
  * The few genuinely cross-store orchestrations. Everything single-domain lives
@@ -12,13 +13,15 @@ import type { UiStore } from './ui.ts';
 export interface AppActions {
   /** Switch collection, clearing the search and resetting the scroll/spy. */
   switchCollection: (id: string) => Promise<void>;
-  /** From a global-search result: switch collection if needed, then flash the tile. */
-  selectGlobalResult: (collectionId: string, itemId: string) => Promise<void>;
+  /** From a global-search result: switch collection if needed, then ring the tile. */
+  selectGlobalResult: (collectionId: string, item: CollectionItem) => Promise<void>;
+  /** Ring an item's tile, first making the grid show it if it is not drawn yet. */
+  ringTile: (item: CollectionItem) => Promise<void>;
 }
 
 export function createAppActions(deps: {
   search: Pick<SearchStore, 'clear' | 'setDropdown'>;
-  ui: Pick<UiStore, 'resetHeaders' | 'scrollToTop' | 'showPage'>;
+  ui: Pick<UiStore, 'resetHeaders' | 'scrollToTop' | 'showPage' | 'showUndrawn' | 'hidePlanned'>;
   collections: Pick<CollectionsStore, 'activeCollection' | 'switch'>;
 }): AppActions {
   const { search, ui, collections } = deps;
@@ -26,6 +29,7 @@ export function createAppActions(deps: {
   const switchCollection = async (id: string): Promise<void> => {
     ui.showPage('gallery'); // a collection is chosen from the About page too
     search.clear();
+    ui.hidePlanned(); // the next collection opens as itself, not as the last one was left
     ui.resetHeaders();
     await collections.switch(id); // resolves once the data is in place (cached or fetched)
     // Skip if the switch did not happen (unknown id) or the user has moved on
@@ -35,17 +39,24 @@ export function createAppActions(deps: {
     ui.scrollToTop();
   };
 
-  const selectGlobalResult = async (collectionId: string, itemId: string): Promise<void> => {
+  // A tile not drawn yet is hidden by the month view, by "drawn only", and in a collection
+  // with nothing drawn; it is shown before it is ringed, or the ring would find nothing.
+  const ringTile = async (item: CollectionItem): Promise<void> => {
+    if (!item.isDrawn) ui.showUndrawn();
+    await nextTick();
+    flashItem(item.itemId);
+  };
+
+  const selectGlobalResult = async (collectionId: string, item: CollectionItem): Promise<void> => {
     search.setDropdown(false);
     ui.showPage('gallery');
     if (collectionId !== collections.activeCollection.value?.id) {
       await switchCollection(collectionId);
     }
-    await nextTick();
-    flashItem(itemId);
+    await ringTile(item);
   };
 
-  return { switchCollection, selectGlobalResult };
+  return { switchCollection, selectGlobalResult, ringTile };
 }
 
 export const [provideActions, useActions] = defineInjection<AppActions>('actions');

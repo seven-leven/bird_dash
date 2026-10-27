@@ -7,10 +7,6 @@ folder, and the item here points to it.
 
 ## 🔧 Fix now
 
-- [ ] **A search result in a collection with nothing drawn leads nowhere** (found 2026-10-27, by the
-      search journey). Choosing "Grey Reef Shark" opens the Sharks, which show "Nothing drawn yet"
-      instead of the list, so the tile it should ring is not there. Choosing a result should show
-      the planned list (as "Show what's planned" does) before ringing the tile.
 - [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
       24.22.1. Everything passes, but upgrade to match CI.
 
@@ -110,6 +106,8 @@ update the guide and its image with the code. All ride along with the site overh
 
 **2026-10-27**
 
+- [x] A search result or a link to an item not drawn yet shows its tile, from a collection with
+      nothing drawn, the month view or "drawn only" (found by the search journey).
 - [x] The focus ring and the current marker reach 3:1 on a light page: `accent-700` there,
       `accent-500` on dark.
 - [x] Dark mode draws the browser's own controls dark (`color-scheme`), the month names are English

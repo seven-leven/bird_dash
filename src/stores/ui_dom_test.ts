@@ -165,3 +165,21 @@ test('showPage switches between gallery and About, and the About page closes the
   assertEquals([ui.page.value, ui.sidebarOpen.value], ['gallery', true]); // left as it was
   unmount();
 });
+
+test('showUndrawn brings back what is not drawn: the family view, every item, the plan', () => {
+  const { ui, unmount } = setup();
+  ui.setViewMode('date');
+  ui.toggleDrawnOnly();
+  ui.showUndrawn();
+  assertEquals([ui.viewMode.value, ui.drawnOnly.value, ui.showPlanned.value], [
+    'group',
+    false,
+    true,
+  ]);
+
+  ui.showUndrawn(); // already showing it all: nothing to undo
+  assertEquals(ui.drawnOnly.value, false);
+  ui.hidePlanned();
+  assertEquals(ui.showPlanned.value, false);
+  unmount();
+});

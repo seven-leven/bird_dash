@@ -178,3 +178,34 @@ test('in the month view, the filter counts drawings', async () => {
   await app.until(() => app.all('main section').length === 1, 'the grid to be filtered');
   assertEquals(app.text(app.control(/^Clear filter/)), '1 match for “grey”');
 });
+
+const ringed = (id: string) => document.getElementById(`item-${id}`)?.classList.contains('ring-2');
+
+test('a result not drawn yet is shown, even in a collection with nothing drawn', async () => {
+  using app = await renderApp();
+  type(searchBox(), 'reef');
+  await app.until(() => listbox(), 'the results');
+  app.control(/Grey Reef Shark/, listbox()!).click();
+  await app.until(() => ringed('001'), 'the shark, ringed');
+  assertEquals(app.text().includes('Nothing drawn yet'), false);
+});
+
+test('a result not drawn yet is shown from the month view, in the family view', async () => {
+  using app = await renderApp();
+  app.control('Months view').click();
+  type(searchBox(), 'garganey');
+  await app.until(() => listbox(), 'the results');
+  app.control(/Garganey/, listbox()!).click();
+  await app.until(() => ringed('002'), 'the Garganey, ringed');
+  assertEquals(app.control('Families view').getAttribute('aria-pressed'), 'true');
+});
+
+test('a result not drawn yet is shown while only drawings are', async () => {
+  using app = await renderApp();
+  app.control('Drawn 2', app.host.querySelector<HTMLElement>('#appSidebar')!).click();
+  await app.until(() => !app.text().includes('Garganey'), 'the undrawn to go');
+  type(searchBox(), 'garganey');
+  await app.until(() => listbox(), 'the results');
+  app.control(/Garganey/, listbox()!).click();
+  await app.until(() => ringed('002'), 'the Garganey, ringed');
+});

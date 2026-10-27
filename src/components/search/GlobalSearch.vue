@@ -250,7 +250,7 @@ function selectFocused() {
 }
 
 function onSelectResult(result: GlobalSearchResult) {
-  selectGlobalResult(result.collection.id, result.item.itemId);
+  selectGlobalResult(result.collection.id, result.item);
   closeDropdown();
 }
 </script>

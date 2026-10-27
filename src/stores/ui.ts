@@ -18,6 +18,9 @@ export function createUiStore() {
   const viewMode = ref<ViewMode>('group');
   // Family view: show only what has been drawn (docs/DESIGN.md §11, a collection that is mostly gaps).
   const drawnOnly = ref(false);
+  // A collection with nothing drawn says so instead of listing its gaps; asked, it lists
+  // what is planned, until another collection is chosen.
+  const showPlanned = ref(false);
   const { theme, toggleTheme } = useTheme();
   const { isMobile } = useBreakpoints(1024);
 
@@ -62,6 +65,16 @@ export function createUiStore() {
     nextTick(updateActiveSection); // the section headers are different in each view
   };
 
+  /** Make the grid show what is not drawn yet: the family view, every item, the planned list. */
+  const showUndrawn = (): void => {
+    showPlanned.value = true;
+    if (drawnOnly.value) toggleDrawnOnly();
+    setViewMode('group');
+  };
+  const hidePlanned = (): void => {
+    showPlanned.value = false;
+  };
+
   // Reset the header set (before a collection switch repopulates it).
   const resetHeaders = (): void => {
     headerRefs.value = {};
@@ -75,6 +88,7 @@ export function createUiStore() {
     page: readonly(page),
     viewMode: readonly(viewMode),
     drawnOnly: readonly(drawnOnly),
+    showPlanned: readonly(showPlanned),
     theme,
     isMobile: readonly(isMobile),
     activeSection: readonly(activeSection),
@@ -84,6 +98,8 @@ export function createUiStore() {
     closeSidebar,
     toggleTheme,
     toggleDrawnOnly,
+    showUndrawn,
+    hidePlanned,
     showPage,
     setViewMode,
     goToSection,

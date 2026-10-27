@@ -2,6 +2,10 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { createAppActions } from './actions.ts';
+import { at, makeItem } from '../testing/fixtures.ts';
+
+const drawn = makeItem({ itemId: '042', drawnTime: at(2025, 3, 10) });
+const undrawn = makeItem({ itemId: '042', isDrawn: false });
 
 /** Actions over stand-in stores, plus a tile in the fake DOM to flash. */
 function setup(active: string) {
@@ -16,6 +20,8 @@ function setup(active: string) {
       resetHeaders: () => {},
       scrollToTop: () => calls.push('scrollToTop'),
       showPage: (page) => calls.push(`page:${page}`),
+      showUndrawn: () => calls.push('showUndrawn'),
+      hidePlanned: () => calls.push('hidePlanned'),
     },
     collections: {
       activeCollection: current as never,
@@ -36,7 +42,7 @@ function setup(active: string) {
 
 test('selecting a result in the open collection closes the dropdown and flashes the tile', async () => {
   const { actions, calls, tile } = setup('birds');
-  await actions.selectGlobalResult('birds', '042');
+  await actions.selectGlobalResult('birds', drawn);
   // No collection switch; from the About page, the result shows the gallery.
   assertEquals(calls, ['dropdown:false', 'page:gallery', 'scrollIntoView']);
   assert(tile.classList.contains('ring-2'), 'the tile was not highlighted');
@@ -44,15 +50,23 @@ test('selecting a result in the open collection closes the dropdown and flashes 
 
 test('selecting a result in another collection switches first, then flashes the tile', async () => {
   const { actions, calls, tile } = setup('birds');
-  await actions.selectGlobalResult('sharks', '042');
+  await actions.selectGlobalResult('sharks', drawn);
   assertEquals(calls, [
     'dropdown:false',
     'page:gallery',
     'page:gallery',
     'clear',
+    'hidePlanned',
     'switch:sharks',
     'scrollToTop',
     'scrollIntoView', // after the scroll reset, so the tile ends up in view
   ]);
+  assert(tile.classList.contains('ring-2'));
+});
+
+test('a tile not drawn yet is shown before it is ringed, or the ring would find nothing', async () => {
+  const { actions, calls, tile } = setup('birds');
+  await actions.ringTile(undrawn);
+  assertEquals(calls, ['showUndrawn', 'scrollIntoView']);
   assert(tile.classList.contains('ring-2'));
 });

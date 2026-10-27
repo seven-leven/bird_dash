@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-27 | fix: a search result or a link to an item not drawn yet shows its tile. Its tile is
+  hidden in a collection with nothing drawn ("Nothing drawn yet"), in the month view and under
+  "drawn only", so choosing the Whale Shark found nothing to ring. A new action, `ringTile`, first
+  shows what is not drawn (the family view, every item, the planned list: the ui store's
+  `showUndrawn`), then rings the tile; the search and the router both use it. The planned list is
+  the ui store's now, folded away again when another collection is chosen
 - 2026-10-27 | test: journeys (test overhaul, phase 3). A new tier, `_journey_test.ts`, runs the
   whole app in happy-dom on the fixture archive: `renderApp` mounts `App.vue` with its stores,
   router and every component, and the visitor clicks and presses keys (`events.ts`). Ten journeys in
