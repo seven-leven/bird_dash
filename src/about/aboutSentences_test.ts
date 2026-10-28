@@ -6,6 +6,9 @@ import {
   namedLine,
   NAMES_FIT,
   referencesLine,
+  seriesLine,
+  seriesOf,
+  speciesOf,
   subjectOf,
 } from './aboutSentences.ts';
 import { makeCollection } from '../testing/fixtures.ts';
@@ -60,4 +63,29 @@ test('up to NAMES_FIT collections are named one by one; past it they are counted
 test('a collection with nothing in its list has an empty bar, not a broken one', () => {
   const [card] = cardsOf([makeCollection('crabs')], [counts('crabs', { total: 0 })]);
   assertEquals(card.percent, 0);
+});
+
+test('species and series are told apart by their kind', () => {
+  const birds = makeCollection('birds');
+  const butterflies = makeCollection('butterflies', { kind: 'series', medium: 'colour pencil' });
+  assertEquals(speciesOf([birds, butterflies]), [birds]);
+  assertEquals(seriesOf([birds, butterflies]), [butterflies]);
+});
+
+test('the series are named with their medium, or past NAMES_FIT counted; none, no line', () => {
+  const series = (n: number) =>
+    Array.from(
+      { length: n },
+      (_, i) => makeCollection(`s${i}`, { label: `S${i}`, kind: 'series', medium: `ink ${i}` }),
+    );
+  assertEquals(seriesLine([]), '');
+  assertEquals(seriesLine(series(1)), 'Beside them, a series of studies: s0, in ink 0.');
+  assertEquals(
+    seriesLine(series(2)),
+    'Beside them, 2 series of studies: s0, in ink 0 and s1, in ink 1.',
+  );
+  assertEquals(
+    seriesLine(series(NAMES_FIT + 1)),
+    'Beside them, 4 series of studies, each in one medium.',
+  );
 });

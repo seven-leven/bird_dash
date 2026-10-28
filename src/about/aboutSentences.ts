@@ -14,12 +14,30 @@ export const NAMES_FIT = 3;
 export const joinAnd = (words: string[]): string =>
   words.length < 2 ? words.join('') : `${words.slice(0, -1).join(', ')} and ${words.at(-1)}`;
 
+/** The collections of species: what "species", the Dhivehi names and the references are about. */
+export const speciesOf = (collections: Collection[]): Collection[] =>
+  collections.filter((c) => c.kind === 'species');
+
+/** The series of studies, counted on their own. */
+export const seriesOf = (collections: Collection[]): Collection[] =>
+  collections.filter((c) => c.kind === 'series');
+
 /** "the birds, sharks and shells in its lists", or with many, "the wildlife in its 7 collections".
  * Where a collection's species come from is its own business (not every list is Maldivian). */
 export const subjectOf = (collections: Collection[]): string =>
   collections.length > NAMES_FIT
     ? `the wildlife in its ${collections.length} collections`
     : `the ${joinAnd(collections.map((c) => c.label.toLowerCase()))} in its lists`;
+
+/** "Beside them, a series of studies: butterflies, in colour pencil." Empty without a series;
+ * past NAMES_FIT, "Beside them, 6 series of studies, each in one medium." */
+export const seriesLine = (series: Collection[]): string => {
+  if (!series.length) return '';
+  const count = series.length === 1 ? 'a series' : `${series.length} series`;
+  if (series.length > NAMES_FIT) return `Beside them, ${count} of studies, each in one medium.`;
+  const each = series.map((s) => `${s.label.toLowerCase()}, in ${s.medium}`);
+  return `Beside them, ${count} of studies: ${joinAnd(each)}.`;
+};
 
 // Dates in the lists are `YYYY-MM-DD`, read as UTC like the month view's (domain/dates.ts).
 /** "March 2025". */

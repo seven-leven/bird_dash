@@ -6,7 +6,7 @@
       {{ drawnOf(stats.drawn, stats.total) }}
     </p>
     <p class="mt-3 max-w-prose text-sm text-slate-600 dark:text-slate-300">
-      Counted honestly: a species is drawn or it isn't. The rest are planned, and wait
+      Counted honestly: a piece is drawn or it isn't. The rest are planned, and wait
       in the gallery as their collection's icon until their turn comes.
       <template v-if="latest">
         The latest drawing is the {{ latest.name }}, in {{ monthOf(latest.drawn) }}.

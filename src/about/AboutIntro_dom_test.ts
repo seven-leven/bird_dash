@@ -59,3 +59,17 @@ test('a drawing whose collection is gone has no image folder to look in', () => 
   const { host } = mount({ ...duck, collection: 'gone' }, []);
   assertEquals(host.querySelector('figure img')!.getAttribute('src'), '001.webp');
 });
+
+test('a series is counted beside the species, not as one; with no species, no species sentence', () => {
+  const butterflies = makeCollection('butterflies', {
+    label: 'Butterflies',
+    kind: 'series',
+    medium: 'colour pencil',
+  });
+  const both = mount(null, [birds, butterflies]).text;
+  assert(both.includes('sets out to draw the birds in its lists, one species at a time.'));
+  assert(both.includes('Beside them, a series of studies: butterflies, in colour pencil.'));
+  const seriesAlone = mount(null, [butterflies]).text;
+  assert(!seriesAlone.includes('species'));
+  assert(seriesAlone.includes('Beside them, a series of studies'));
+});
