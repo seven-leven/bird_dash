@@ -212,14 +212,10 @@ test('a bird with two Dhivehi names gets a line for each, each with its own roma
   assertEquals(english!.textContent?.trim(), 'Watercock');
 });
 
-test('a series piece says what it is drawn in, after when', () => {
-  const butterflies = makeCollection('butterflies', {
-    kind: 'series',
-    medium: 'colour pencil',
-    links: [],
-  });
+test('a piece of a collection with a medium says what it is drawn in, after when', () => {
+  const butterflies = makeCollection('butterflies', { medium: 'colour pencil', links: [] });
   const host = mountComponent(() => h(ViewerDetails, { item: goose, collection: butterflies }));
   assertStringIncludes(host.textContent!, 'Drawn October 2024, in colour pencil');
-  // A species names no medium.
+  // A collection with no medium names none.
   assert(!mount(goose).host.textContent!.includes(', in '));
 });

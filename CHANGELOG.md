@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-28 | feat: one kind of collection. The `kind` field goes: a list of species and a series
+  of studies take the same fields, `medium` optional for any, and the viewer names it wherever it is
+  set. The About page names every collection in one sentence ("one at a time"), and counts the
+  Dhivehi names and the reference sites wherever a collection has them. Decided too: the name
+  "Wildlife Illustrated" stays, and illustrator's notes are written straight into the lists
 - 2026-10-28 | feat: the platform, used. The viewer is a native modal `<dialog>` (the page behind
   inert, the hand-written Tab trap gone); ids come from Vue's `useId`, element refs from
   `useTemplateRef`, the drawn filter from `defineModel`; the neutral colours are six `light-dark()`

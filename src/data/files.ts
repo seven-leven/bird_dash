@@ -30,19 +30,11 @@ export interface ListEntry {
 /** `public/lists/<id>.json`: items keyed by group (family, order, …). */
 export type ListFile = Record<string, ListEntry[]>;
 
-/**
- * What a collection holds: `species` (named in English, Latin and Dhivehi, and checked
- * against reference sites) or a `series` of studies (numbered prompts in one medium).
- */
-export type CollectionKind = 'species' | 'series';
-
 /** One entry in `public/collections.json`. */
 export interface CollectionEntry {
   id: string;
   label: string;
-  /** Absent means `species`. */
-  kind?: CollectionKind;
-  /** A series: what every piece in it is drawn in ("colour pencil"). */
+  /** What every piece in it is drawn in ("colour pencil"), where one medium holds for all. */
   medium?: string | undefined;
   emoji: string;
   /** Name of a line icon in src/ui/icons.ts; the emoji is the fallback. */
@@ -98,16 +90,13 @@ export interface Stats {
 // ---------------------------------------------------------------------------
 
 /**
- * What a field holds: a kind of value, one of some words, or a list of things of a shape.
+ * What a field holds: a kind of value, or a list of things of a shape.
  * A key ending in `?` may be left out.
  */
-type Field = 'string' | 'number' | 'count' | 'string or null' | readonly string[] | [Shape];
+type Field = 'string' | 'number' | 'count' | 'string or null' | [Shape];
 interface Shape {
   [key: string]: Field;
 }
-
-/** A field that holds one of some words (`['species', 'series']`). */
-const isWords = (field: Field): field is readonly string[] => typeof field[0] === 'string';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -120,7 +109,7 @@ function problemsIn(value: unknown, shape: Shape, where: string): string[] {
     const at = `${where}.${name}`;
     const found = value[name];
     if (found === undefined) return key.endsWith('?') ? [] : [`${at} is missing`];
-    if (typeof field !== 'string' && !isWords(field)) {
+    if (typeof field !== 'string') {
       // A list of things of a shape: each checked in its place.
       return Array.isArray(found)
         ? found.flatMap((item, i) => problemsIn(item, field[0], `${at}[${i}]`))
@@ -130,26 +119,20 @@ function problemsIn(value: unknown, shape: Shape, where: string): string[] {
   });
 }
 
-/** Whether `value` is the kind of value, or one of the words, that `field` asks for. */
+/** Whether `value` is the kind of value `field` asks for. */
 function fits(value: unknown, field: Exclude<Field, [Shape]>): boolean {
   if (field === 'string') return typeof value === 'string';
   if (field === 'number') return typeof value === 'number';
   if (field === 'count') return Number.isInteger(value) && (value as number) >= 1;
-  if (field === 'string or null') return value === null || typeof value === 'string';
-  return field.includes(value as string);
+  return value === null || typeof value === 'string';
 }
 
 const describe = (field: Exclude<Field, [Shape]>): string =>
-  field === 'count'
-    ? 'a whole number of 1 or more'
-    : typeof field === 'string'
-    ? `a ${field}`
-    : `one of ${field.join(', ')}`;
+  field === 'count' ? 'a whole number of 1 or more' : `a ${field}`;
 
 const COLLECTION_ENTRY: Shape = {
   id: 'string',
   label: 'string',
-  'kind?': ['species', 'series'],
   'medium?': 'string',
   emoji: 'string',
   'icon?': 'string',

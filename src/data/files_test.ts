@@ -10,15 +10,14 @@ test('the fixture archive has the shape of every file', () => {
   assertEquals(checkStats({ ...archiveStats(), first: null }), []); // nothing drawn yet
 });
 
-test('collections.json: each field missing, of the wrong kind, or not one of its words', () => {
+test('collections.json: each field missing or of the wrong kind', () => {
   assertEquals(checkCollections({}), ['the file is not a list']);
   assertEquals(checkCollections(['birds']), ['[0] is not an object']);
   const [birds] = archiveCollections();
   assertEquals(
-    checkCollections([{ ...birds, label: undefined, emoji: 3, kind: 'bird', links: 'none' }]),
+    checkCollections([{ ...birds, label: undefined, emoji: 3, links: 'none' }]),
     [
       '[0].label is missing',
-      '[0].kind is not one of species, series',
       '[0].emoji is not a string',
       '[0].links is not a list',
     ],

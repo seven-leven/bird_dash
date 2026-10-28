@@ -1,4 +1,4 @@
-import type { CollectionEntry, CollectionKind, ListFile } from '../data/files.ts';
+import type { CollectionEntry, ListFile } from '../data/files.ts';
 import type { ItemName } from './itemNames.ts';
 import { buildNames, nameWords } from './itemNames.ts';
 import { linkUrl } from './linkUrl.ts';
@@ -38,8 +38,7 @@ export interface Item {
 export interface Collection {
   id: string;
   label: string;
-  kind: CollectionKind;
-  /** A series: what it is drawn in. */
+  /** What every piece in it is drawn in, where one medium holds for all. */
   medium?: string | undefined;
   emoji: string;
   icon?: string | undefined;
@@ -72,7 +71,6 @@ const KNOWN_KEYS = new Set([
 export function toCollection(raw: CollectionEntry, base: string): Collection {
   return {
     ...raw,
-    kind: raw.kind ?? 'species',
     dataUrl: `${base}lists/${raw.id}.json`,
     imageBase: `${base}thumb/${raw.id}/`,
     smallImageBase: `${base}small/${raw.id}/`,

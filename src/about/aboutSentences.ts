@@ -14,30 +14,13 @@ export const NAMES_FIT = 3;
 export const joinAnd = (words: string[]): string =>
   words.length < 2 ? words.join('') : `${words.slice(0, -1).join(', ')} and ${words.at(-1)}`;
 
-/** The collections of species: what "species", the Dhivehi names and the references are about. */
-export const speciesOf = (collections: Collection[]): Collection[] =>
-  collections.filter((c) => c.kind === 'species');
-
-/** The series of studies, counted on their own. */
-export const seriesOf = (collections: Collection[]): Collection[] =>
-  collections.filter((c) => c.kind === 'series');
-
-/** "the birds, sharks and shells in its lists", or with many, "the wildlife in its 7 collections".
- * Where a collection's species come from is its own business (not every list is Maldivian). */
+/** "the birds, sharks and butterflies in its lists", or with many, "the wildlife in its 7
+ * collections". Where a collection's subjects come from is its own business (not every list is
+ * Maldivian). */
 export const subjectOf = (collections: Collection[]): string =>
   collections.length > NAMES_FIT
     ? `the wildlife in its ${collections.length} collections`
     : `the ${joinAnd(collections.map((c) => c.label.toLowerCase()))} in its lists`;
-
-/** "Beside them, a series of studies: butterflies, in colour pencil." Empty without a series;
- * past NAMES_FIT, "Beside them, 6 series of studies, each in one medium." */
-export const seriesLine = (series: Collection[]): string => {
-  if (!series.length) return '';
-  const count = series.length === 1 ? 'a series' : `${series.length} series`;
-  if (series.length > NAMES_FIT) return `Beside them, ${count} of studies, each in one medium.`;
-  const each = series.map((s) => `${s.label.toLowerCase()}, in ${s.medium}`);
-  return `Beside them, ${count} of studies: ${joinAnd(each)}.`;
-};
 
 // Dates in the lists are `YYYY-MM-DD`, read as UTC like the month view's (domain/dates.ts).
 /** "March 2025". */
@@ -45,7 +28,7 @@ export const monthOf = (iso: string): string => monthName(parseDay(iso));
 /** "5 March 2025". */
 export const dayOf = (iso: string): string => dayName(parseDay(iso));
 
-/** A species with two Dhivehi names ("a / b") is captioned by the first. */
+/** An item with two Dhivehi names ("a / b") is captioned by the first. */
 export const firstScript = (script: string): string => script.split('/')[0]!.trim();
 
 /** One collection's card in the Progress section. */
@@ -84,13 +67,13 @@ export const cardsOf = (collections: Collection[], counts: CollectionCounts[]): 
   });
 
 /** "191 of the 204 birds and 19 of the 42 sharks"; collections with no names are left out.
- * With more than NAMES_FIT of them, one sum: "210 of the 246 species in 4 collections". */
+ * With more than NAMES_FIT of them, one sum: "210 of the 246 subjects in 4 collections". */
 export const namedLine = (counts: CollectionCounts[], collections: Collection[]): string => {
   const byId = new Map(collections.map((c) => [c.id, c]));
   const named = counts.filter((s) => s.named && byId.has(s.id));
   if (named.length > NAMES_FIT) {
     const sum = (key: 'named' | 'total') => named.reduce((n, s) => n + s[key], 0);
-    return `${sum('named')} of the ${sum('total')} species in ${named.length} collections`;
+    return `${sum('named')} of the ${sum('total')} subjects in ${named.length} collections`;
   }
   return joinAnd(
     named.map((s) => `${s.named} of the ${plural(s.total, byId.get(s.id)!.itemLabel)}`),

@@ -7,11 +7,10 @@
         An archive of drawings, in progress.
       </h1>
       <p class="mt-4 max-w-prose text-base text-body">
-        <template v-if="species.length">
-          Wildlife Illustrated sets out to draw {{ subjectOf(species) }}, one species at a time.
-          Each is shown with its English and scientific names, and its Dhivehi name where it has one.
+        <template v-if="collections.length">
+          Wildlife Illustrated sets out to draw {{ subjectOf(collections) }}, one at a time.
+          Each is shown with its name, and its scientific and Dhivehi names where it has them.
         </template>
-        {{ seriesLine(seriesOf(collections)) }}
         Every piece has its place from the start, drawn or not, so the gaps
         are part of the record.
       </p>
@@ -46,7 +45,7 @@ import { dhivehiNames } from '../domain/dhivehiNames.ts';
 import { WRITE_UP_URL } from '../domain/links.ts';
 import type { Collection } from '../domain/toCollectionItems.ts';
 import type { NewestDrawing } from '../data/files.ts';
-import { dayOf, seriesLine, seriesOf, speciesOf, subjectOf } from './aboutSentences.ts';
+import { dayOf, subjectOf } from './aboutSentences.ts';
 import { drawingHref, drawingImage, PAPER } from './drawingLinks.ts';
 
 const props = defineProps<{
@@ -58,8 +57,6 @@ const props = defineProps<{
   /** The archive's first drawing, once the numbers have loaded. */
   first: NewestDrawing | null;
 }>();
-
-const species = computed(() => speciesOf(props.collections));
 
 const firstName = computed(() =>
   props.first?.dhivehi ? dhivehiNames(props.first.dhivehi, props.first.roman)[0] : undefined

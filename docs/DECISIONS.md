@@ -196,6 +196,33 @@ sees (DESIGN.md) is the word in the code, and a store's name says its one job.
 
 **Revisit** never as a rule; a new word goes into GLOSSARY.md first.
 
+### One kind of collection
+
+**Chosen (2026-10-28):** every collection takes the same fields. A list of species and a series of
+studies are both collections; `medium` and the names past `name` (`sci`, `dhiv`, `dhiv_script`) are
+optional for any of them.
+
+**Why.** For a day collections had a `kind`, `species` or `series`, with its own required fields and
+its own sentence on the About page. Nothing else in the site told the two apart: the gallery, the
+viewer and search already show whatever names an item has. One rule for every collection is simpler
+than two, and a third sort of collection needs no new kind.
+
+**Costs.** The contract tests no longer catch a bird without a scientific name.
+
+**Revisit if** a sort of collection needs the site to behave differently, not only to hold different
+fields.
+
+### The name stays, and notes live in the lists
+
+**Chosen (2026-10-28):** the site keeps the name "Wildlife Illustrated" when the series of studies
+come in, and an illustrator's note is written straight into its list (`illustratorNote` in
+`public/lists/<id>.json`), not drawn from the art notes.
+
+**Why.** Wildlife is the core of the archive and the series are its studies, so the name still says
+what the site is; changing it would touch the logo, README, `index.html` and the About page for no
+gain a visitor sees. A note in the list sits beside the drawing it is about, and needs no script
+reading a second set of files.
+
 ### Names beside a drawing, never on it
 
 **Chosen** (October 2026): a tile's names sit in a caption under the image; only the small id badge
