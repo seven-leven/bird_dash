@@ -16,14 +16,10 @@ folder, and the item here points to it.
       journeys through the whole app, then features, units and contracts, with one kit for fakes,
       mounting and waiting. Phases 1–3 (the kit, one way to a browser, the journeys) come first:
       they are the safety net for everything below; phase 4 (a test beside every component) is done
-      too. Next: phase 5, splitting the long test files and renaming to the conventions. Also moves
-      the test runner onto `Io`, the scripts overhaul's one exception.
-- [ ] **2. The site's code, the same way** ([SRC-OVERHAUL.md](SRC-OVERHAUL.md)). `src/` by feature
-      (`viewer/`, `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/`
-      layers, one word per idea, in nine phases. Most features below ride along with it, each as its
-      own pull request straight after the phase that prepares it ("Features that ride along").
-      Includes fewer stores per component (`AppShell`, `TopBar` and `Gallery` inject four each
-      today), after phase 3.
+      too (2026-10-28). Next: phase 5, splitting the long test files and renaming to the
+      conventions. Also moves the test runner onto `Io`, the scripts overhaul's one exception.
+- [ ] **2. The site's code, the same way** ([SRC-OVERHAUL.md](SRC-OVERHAUL.md)). All nine phases and
+      every feature riding along are done (2026-10-28) but one: **warm paper**, below.
 - [ ] **3. Use the platform** ([PLATFORM.md](PLATFORM.md)). What Node 24, TS 6, Vite 8, Vue 3.5,
       Tailwind 4 and the browser give that the code does not use yet (`<dialog>` for the viewer,
       popovers, `defineModel`, `useId`, `using` in the test kit, `util.parseArgs`, `light-dark()`
@@ -46,46 +42,18 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
       collection: keep it as the umbrella (wildlife is the core, the series are its studies), or
       keep the mark and the look and change the word. The logo, README, `index.html` and the About
       page all carry it.
-- [ ] **A `kind` per collection** in `collections.json` (after the site overhaul's phase 1):
-      `species` (today's: scientific and Dhivehi names, reference links) or `series` (the medium,
-      the prompt, the challenge it belongs to). The viewer, search and the data contract test show
-      and check each kind's fields; the file shapes hold both.
-- [ ] **An icon per series** (after phase 4): a butterfly, a cake, a mountain, a sphere, a face, a
-      running animal, drawn to the icon rules (DESIGN.md §08), for the emblem and the placeholder.
-- [ ] **The About page by kind** (after phase 5): "species", "Named in Dhivehi" and "Checked against
-      references" describe `species` collections only; count and name each kind on its own.
 - [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
       notes.
-
-### The viewer
-
-- [ ] **Several images per item** (after phase 5): a series piece, or a drawing with its sketches;
-      the viewer pages through an item's images with the same zoom and keys.
-
-### Images
-
-- [ ] **Responsive, smaller thumbnails** (Lighthouse image delivery, unscored today): `npm run
-      ingest` makes a second, smaller size and higher compression; the tiles take it through
-      `srcset` (after phase 5).
 
 ## 🎨 Simplify the design system
 
 Proposed 2026-10-24, held while the manifesto settled. Each one removes a rule from DESIGN.md;
 update the guide and its image with the code. All ride along with the site overhaul.
 
-- [ ] **Placeholders as icons** (after phase 4): an undrawn tile, a failed load and a search row
-      draw `CollectionIcon` in the muted colour on the tile grey, instead of a generated image; then
-      `public/placeholders/`, its generator and tests, `tileImage`'s URLs and the guide's overlays
-      go.
-- [ ] **One set of text roles** (after phase 7): `.text-strong`, `.text-body` and `.text-muted`,
-      each with its light and dark value, replace `.viewer-title/-body/-label`, so the viewer and
-      the page share one vocabulary.
-- [ ] **Five type sizes** (after phase 7): drop `text-micro` (11px) and use `text-xs` for
-      `.caps-label`, `.count-pill` and `.kbd-hint`; check that they still fit at 375px.
 - [ ] **Warm paper on the site** (after phase 7, its own commit so it is easy to drop): swap the
       neutral ramp from slate to stone, so the site matches the guide's paper. Stone keeps the
-      contrast rules (`stone-500` on white 4.8:1, `stone-400` on `stone-950` 7.8:1); change
-      `main.css`, `palette.ts`, the placeholder colours and DESIGN.md together.
+      contrast rules (`stone-500` on white 4.8:1, `stone-400` on `stone-950` 7.8:1); change the
+      styles, `palette.ts` (with the undrawn tile's `UNDRAWN`) and DESIGN.md together.
 
 ## 🗂️ Data and tooling
 
@@ -103,6 +71,16 @@ update the guide and its image with the code. All ride along with the site overh
       the site's Vite 8.
 
 ## ✅ Done
+
+**2026-10-28**
+
+- [x] The site overhaul's phases 6 to 8: `app/` places each feature, the styles one kind of rule a
+      file, the layers and the naming checked by contract tests, `types/` gone.
+- [x] A test beside every component (the test overhaul's phase 4), kept so by a contract test.
+- [x] A `kind` per collection, the About page counting species and series apart, and an icon per
+      series.
+- [x] Placeholders as icons; one set of text roles; five type sizes; fewer stores per component.
+- [x] Responsive thumbnails (240px beside the 400px), and several images per item in the viewer.
 
 **2026-10-27**
 

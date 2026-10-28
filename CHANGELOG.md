@@ -17,6 +17,16 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-28 | feat: the site overhaul finished, its features in, and a test beside every component.
+  `App.vue` and the page list are in `app/`, which places each feature (the search box in the top
+  bar, the footer after a page) so the layers point one way; contract tests check the layers and the
+  naming, and `types/` is gone. The styles are one kind of rule a file. Every component has a test
+  beside it. Collections have a `kind` (species or series), the About page counts them apart, and
+  each series has an icon. An undrawn tile draws its collection's icon (the placeholder images and
+  their generator go); text takes three roles and five sizes; each component injects only its own
+  feature's stores. Tiles take a 240px thumbnail where it is enough, and an item may have several
+  images, which the viewer pages through. Fixed: three close marks while searching on a phone, and
+  bird 001's note
 - 2026-10-27 | refactor: the site by feature (site overhaul, phases 2 to 5). `src/` is now
   `domain/`, `data/` (the network), `browser/`, `ui/` (shared components that inject no store) and
   one folder per feature: `gallery/`, `viewer/`, `search/`, `about/`, `shell/`, with `app/` over
