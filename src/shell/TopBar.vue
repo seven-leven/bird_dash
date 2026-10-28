@@ -5,8 +5,8 @@
        TABS_FIT collections), and below 420px the search becomes a button that opens it
        across the row. -->
   <header class="flex items-center gap-1 sm:gap-2 h-12 px-3 sm:px-4 shrink-0 z-50 transition-colors duration-fast
-                 bg-white border-b border-slate-200
-                 dark:bg-slate-950 dark:border-slate-800">
+                 bg-white border-b border-stone-200
+                 dark:bg-stone-950 dark:border-stone-800">
 
     <!-- Mobile sidebar toggle -->
     <button
@@ -31,7 +31,7 @@
     >
       <LogoMark class="size-6 text-strong" />
       <span class="hidden md:flex items-baseline gap-1" aria-hidden="true">
-        <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
+        <span class="text-sm font-semibold tracking-tight text-stone-800 dark:text-stone-100">Wildlife</span>
         <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>
       </span>
     </a>

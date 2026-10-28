@@ -18,9 +18,7 @@ folder, and the item here points to it.
       they are the safety net for everything below; phase 4 (a test beside every component) is done
       too (2026-10-28). Next: phase 5, splitting the long test files and renaming to the
       conventions. Also moves the test runner onto `Io`, the scripts overhaul's one exception.
-- [ ] **2. The site's code, the same way** ([SRC-OVERHAUL.md](SRC-OVERHAUL.md)). All nine phases and
-      every feature riding along are done (2026-10-28) but one: **warm paper**, below.
-- [ ] **3. Use the platform** ([PLATFORM.md](PLATFORM.md)). What Node 24, TS 6, Vite 8, Vue 3.5,
+- [ ] **2. Use the platform** ([PLATFORM.md](PLATFORM.md)). What Node 24, TS 6, Vite 8, Vue 3.5,
       Tailwind 4 and the browser give that the code does not use yet (`<dialog>` for the viewer,
       popovers, `defineModel`, `useId`, `using` in the test kit, `util.parseArgs`, `light-dark()`
       colour tokens), and the general improvements found with them: the data checked at the door, an
@@ -45,16 +43,6 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
 - [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
       notes.
 
-## 🎨 Simplify the design system
-
-Proposed 2026-10-24, held while the manifesto settled. Each one removes a rule from DESIGN.md;
-update the guide and its image with the code. All ride along with the site overhaul.
-
-- [ ] **Warm paper on the site** (after phase 7, its own commit so it is easy to drop): swap the
-      neutral ramp from slate to stone, so the site matches the guide's paper. Stone keeps the
-      contrast rules (`stone-500` on white 4.8:1, `stone-400` on `stone-950` 7.8:1); change the
-      styles, `palette.ts` (with the undrawn tile's `UNDRAWN`) and DESIGN.md together.
-
 ## 🗂️ Data and tooling
 
 - [ ] **Proper group names** throughout each collection: the right taxonomy per item in
@@ -66,7 +54,7 @@ update the guide and its image with the code. All ride along with the site overh
       `text()` that `guideDrawing.ts` exports; the `<svg xmlns=…>` opening written in five
       generators, into one `svgDocument(width, height, body)`; `readJson` and `writeJson` in both
       `lib/fs.ts` and `lib/io.ts`, with `designGuide.ts` reading around `Io`. The rest of the sweep
-      is in SRC-OVERHAUL.md and TEST-OVERHAUL.md ("Duplicates to fold").
+      is in TEST-OVERHAUL.md ("Duplicates to fold").
 - [ ] **VitePress 2.0** when it is released: the docs site runs the 2.0 alpha, the one that shares
       the site's Vite 8.
 
@@ -74,6 +62,8 @@ update the guide and its image with the code. All ride along with the site overh
 
 **2026-10-28**
 
+- [x] Warm paper: the site's neutral is `stone`, matching the guide's paper. With it the site
+      overhaul is done, and its plan is deleted (the CHANGELOG keeps what each phase did).
 - [x] The site overhaul's phases 6 to 8: `app/` places each feature, the styles one kind of rule a
       file, the layers and the naming checked by contract tests, `types/` gone.
 - [x] A test beside every component (the test overhaul's phase 4), kept so by a contract test.

@@ -1,6 +1,6 @@
 <!-- Progress: the totals, then one card per collection; the cards fold after CARDS_FIT. -->
 <template>
-  <section class="border-t border-slate-200 py-12 dark:border-slate-800" aria-labelledby="about-progress">
+  <section class="border-t border-stone-200 py-12 dark:border-stone-800" aria-labelledby="about-progress">
     <h2 id="about-progress" class="caps-label text-muted">Progress</h2>
     <p class="mt-3 text-3xl font-semibold tabular-nums text-strong">
       {{ drawnOf(stats.drawn, stats.total) }}
@@ -18,15 +18,15 @@
         <a
           :href="`#${card.id}`"
           class="focus-ring flex h-full flex-col gap-3 rounded-card border p-4 transition-colors duration-fast
-                 bg-white border-slate-200 hover:border-slate-300
-                 dark:bg-slate-900 dark:border-slate-800 dark:hover:border-slate-700"
+                 bg-white border-stone-200 hover:border-stone-300
+                 dark:bg-stone-900 dark:border-stone-800 dark:hover:border-stone-700"
         >
-          <span class="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
+          <span class="flex items-center gap-2 text-base font-semibold text-stone-900 dark:text-stone-100">
             <CollectionIcon :collection="card" class="size-5" />
             {{ card.label }}
           </span>
           <span class="text-sm tabular-nums text-body">{{ card.count }}</span>
-          <span class="h-1 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800" aria-hidden="true">
+          <span class="h-1 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800" aria-hidden="true">
             <span class="block h-full rounded-full bg-accent-500" :style="{ width: `${card.percent}%` }" />
           </span>
           <span class="mt-auto text-xs text-muted">{{ card.meta }}</span>

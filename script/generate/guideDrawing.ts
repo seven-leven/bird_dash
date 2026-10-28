@@ -5,18 +5,18 @@ import sharp from 'sharp';
 import { ICON_GROUPS, type IconDef, ICONS } from '../../src/ui/icons.ts';
 import { PATHS } from '../lib/paths.ts';
 import { iconGridLayout } from './iconGrid.ts';
-import { SLATE } from './palette.ts';
+import { STONE } from './palette.ts';
 
 export const W = 1400;
 export const X = 80; // the left margin; the content runs from X to W - X
-export const INK = SLATE['900'];
-export const MUTED = SLATE['500'];
+export const INK = STONE['900'];
+export const MUTED = STONE['500'];
 // Small labels (caps, icon names, swatch notes) one step darker than muted text, so
 // they stay legible at the size the guide is read at. No guide text is below 13px
 // except the type scale's own 12 and 11px samples.
-export const LABEL = SLATE['600'];
+export const LABEL = STONE['600'];
 // The guide is a document in its own voice: warm paper, fine rules, a serif for
-// statements. The site's own colours are the slate and accent swatches drawn on it.
+// statements. The site's own colours are the stone and accent swatches drawn on it.
 export const PAPER = '#fbfaf7';
 export const RULE = '#e2ded5';
 export const RULE_SOFT = '#ebe8e1'; // the icon groups' dividers: present, never louder than the icons

@@ -5,7 +5,7 @@
 <template>
   <footer
     class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
-           border-slate-100 text-muted dark:border-slate-800/50"
+           border-stone-100 text-muted dark:border-stone-800/50"
   >
     <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
       <!-- Static per build -->
@@ -44,7 +44,7 @@
       <ExternalLink
         :href="REPO_URL"
         icon="github"
-        class="underline underline-offset-2 hover:text-slate-800 dark:hover:text-slate-200"
+        class="underline underline-offset-2 hover:text-stone-800 dark:hover:text-stone-200"
       >
         GitHub
       </ExternalLink>

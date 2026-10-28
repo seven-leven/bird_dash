@@ -101,7 +101,7 @@ onMounted(async () => {
 
   <div
     v-else-if="initError"
-    class="flex flex-col items-center justify-center min-h-screen bg-slate-50 dark:bg-slate-950"
+    class="flex flex-col items-center justify-center min-h-screen bg-stone-50 dark:bg-stone-950"
     role="alert"
   >
     <EmptyState title="Couldn't load the gallery" :hint="initError">
@@ -114,8 +114,8 @@ onMounted(async () => {
 
   <!-- Loading: the page's own shape in grey (a header, then tiles), and no message
        on screen; screen readers are told what is happening. -->
-  <div v-else class="min-h-screen bg-slate-50 dark:bg-slate-950" aria-busy="true">
-    <div class="h-12 border-b border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950" />
+  <div v-else class="min-h-screen bg-stone-50 dark:bg-stone-950" aria-busy="true">
+    <div class="h-12 border-b border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-950" />
     <GallerySkeleton class="p-4 sm:p-6" />
     <p class="sr-only" role="status">Loading the gallery</p>
   </div>

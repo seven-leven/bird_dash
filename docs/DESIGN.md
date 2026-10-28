@@ -14,8 +14,9 @@ The picture is drawn from the real tokens and icons by `npm run generate`. The s
 the tokens is [`src/styles/`](../src/styles/main.css): `main.css` maps them into Tailwind,
 [`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css) hold the
 parts the docs site shares, and `components.css` the classes each role uses; this guide explains the
-decisions behind them and how to apply them. The picture has a voice of its own (warm paper, a serif
-for statements); neither is a site token. The site's colours are the swatches drawn on it.
+decisions behind them and how to apply them. The site's neutral is `stone`, a warm grey, so its
+paper matches the guide's. The picture keeps a voice of its own (its own paper tone, a serif for
+statements); neither is a site token. The site's colours are the swatches drawn on it.
 
 ---
 
@@ -70,8 +71,8 @@ principle; do not quietly abandon the principle.
 
 _P1 Drawings first · P3 Always say where you are · P5 For everyone, on every screen_
 
-Two ramps do the work: **slate** for neutral surfaces and text, **accent** for emphasis. Use token
-names such as `slate-500` and `accent-700` in components, never raw hex values or a
+Two ramps do the work: **stone** for neutral surfaces and text, **accent** for emphasis. Use token
+names such as `stone-500` and `accent-700` in components, never raw hex values or a
 collection-specific hue such as `teal-500`.
 
 Every collection has one accent, declared as `accent` in `public/collections.json`. It helps
@@ -83,12 +84,12 @@ the CSS.
 
 | Role                             | Light theme                  | Dark theme                   |
 | -------------------------------- | ---------------------------- | ---------------------------- |
-| Page                             | `slate-50`                   | `slate-950`                  |
-| Surface: header, sidebar, menus  | white                        | `slate-950` / `slate-900`    |
-| Strong text (`.text-strong`)     | `slate-900`                  | white                        |
-| Body text (`.text-body`)         | `slate-600`                  | `slate-300`                  |
-| Muted text (`.text-muted`)       | `slate-500`                  | `slate-400`                  |
-| Borders and dividers             | `slate-200` / `slate-100`    | `slate-800`                  |
+| Page                             | `stone-50`                   | `stone-950`                  |
+| Surface: header, sidebar, menus  | white                        | `stone-950` / `stone-900`    |
+| Strong text (`.text-strong`)     | `stone-900`                  | white                        |
+| Body text (`.text-body`)         | `stone-600`                  | `stone-300`                  |
+| Muted text (`.text-muted`)       | `stone-500`                  | `stone-400`                  |
+| Borders and dividers             | `stone-200` / `stone-100`    | `stone-800`                  |
 | Focus ring, current marker       | `accent-700`                 | `accent-500`                 |
 | Progress                         | `accent-500`                 | `accent-500`                 |
 | Primary button (`.btn-primary`)  | `accent-700` with white text | `accent-700` with white text |
@@ -110,25 +111,25 @@ icons**.
 
 | Pair                        | Contrast |
 | --------------------------- | -------- |
-| `slate-900` on white        | 17.8:1   |
-| `slate-600` on white        | 7.6:1    |
-| `slate-500` on white        | 4.8:1    |
-| `slate-100` on `slate-950`  | 18.4:1   |
-| `slate-400` on `slate-950`  | 7.7:1    |
+| `stone-900` on white        | 17.5:1   |
+| `stone-600` on white        | 7.6:1    |
+| `stone-500` on white        | 4.8:1    |
+| `stone-100` on `stone-950`  | 18.1:1   |
+| `stone-400` on `stone-950`  | 7.6:1    |
 | white on `accent-700`       | 5.4:1    |
 | `accent-700` on white       | 5.4:1    |
 | `accent-500` on white       | 2.4:1    |
-| `accent-500` on `slate-950` | 8.3:1    |
+| `accent-500` on `stone-950` | 8.2:1    |
 | white at 70% on black       | 10.0:1   |
-| `slate-300` on `slate-950`  | 13.6:1   |
+| `stone-300` on `stone-950`  | 13.3:1   |
 
 A focus ring or marker needs **3:1** against what it sits on. `accent-500` on white is about 2.4:1,
 too pale for that and for text, so on a light page the ring, the current marker and accent-coloured
-text use `accent-700`; on a dark page the ring and marker use `accent-500`. `slate-400` on white
+text use `accent-700`; on a dark page the ring and marker use `accent-500`. `stone-400` on white
 also fails for text.
 
 Every hue offered to collections must pass three tests: white text on its `700` shade at least 4.5:1
-(which also puts its ring on white past 3:1), its `500` shade against `slate-950` at least 3:1 (the
+(which also puts its ring on white past 3:1), its `500` shade against `stone-950` at least 3:1 (the
 ring on a dark page), and its `500` shade against white at least 2.4:1 (the progress bars). A test
 checks the menu automatically. Amber, yellow, lime, green and cyan are left out because their `500`
 shades are too pale; red is left out because it reads as an error. For collections shown beside one
@@ -146,7 +147,7 @@ from that file.
 Text takes one of three roles, on every page and in the viewer alike: `.text-strong` for titles and
 names, `.text-body` for running text, `.text-muted` for labels and counts. The viewer follows the
 page theme, so a light page opens a light viewer with the same three. Every colour needs a
-dark-theme partner, either through paired classes such as `text-slate-500 dark:text-slate-400` or an
+dark-theme partner, either through paired classes such as `text-stone-500 dark:text-stone-400` or an
 existing class such as `.text-muted`, `.btn-ghost` or `.nav-item`.
 
 ---
@@ -221,9 +222,9 @@ search is counted in "matches" wherever it is shown; never "results". Never show
 known.
 
 In the sidebar a row's count is weighted by what it holds: where something is drawn (`4 of 8`, `1 of
-1`) it is `slate-700` and medium, where nothing is (`0 of 7`) it stays the muted `slate-500`, so the
+1`) it is `stone-700` and medium, where nothing is (`0 of 7`) it stays the muted `stone-500`, so the
 eye goes to the families with drawings in them. Both pass AA; the difference is weight and depth,
-never a fainter grey (`slate-400` on white is 2.6:1).
+never a fainter grey (`stone-400` on white is 2.6:1).
 
 Each count is shown once on a screen, and sits under the name of what it counts. The sidebar opens
 in three levels, largest first: the collection's emblem, its name, then its count, so `All 30 ·
@@ -280,7 +281,7 @@ Related things sit closer together than unrelated things. Let spacing explain th
 ### Edges before effects
 
 Separate surfaces with a 1px border before reaching for a shadow; in the dark theme that border is
-`slate-800`, as everywhere, never a faded white. There are two shadows, named for the two ways
+`stone-800`, as everywhere, never a faded white. There are two shadows, named for the two ways
 something leaves the page: `shadow-float` for what sits over it (menus, sheets, the open phone
 sidebar), and `shadow-lift` for what rises a little (a hovered tile, controls over a drawing). Tiles
 stay square, and images are never cropped: use `object-contain`.
@@ -361,10 +362,10 @@ design` writes the files to `docs/assets/logo/`.
 | Horizontal lockup | Header and wide spaces                          | The mark, then the wordmark       |
 | Stacked lockup    | Square spaces and title cards                   | Built in the page                 |
 
-The mark is `slate-900` on light backgrounds and white on dark ones — never a collection accent,
+The mark is `stone-900` on light backgrounds and white on dark ones — never a collection accent,
 because the accent changes and the identity does not. In the wordmark, "Wildlife" is semibold and
 "Illustrated" light, in the system sans-serif, sentence case, slightly tight; the second word is
-muted (`slate-500` / `slate-400`).
+muted (`stone-500` / `stone-400`).
 
 Keep the mark at least 20px wide. Below that, use the tile: its solid shape survives where the open
 frame would blur. Leave clear space of half the mark's width on every side.
@@ -446,13 +447,13 @@ tile are unmistakably different at a glance.
 |                      | Drawn                                        | Not drawn yet                      |
 | -------------------- | -------------------------------------------- | ---------------------------------- |
 | Image                | The illustration on white paper              | The collection icon, faint on grey |
-| Surface, light theme | white                                        | `slate-100`                        |
-| Surface, dark theme  | white paper on `slate-900`                   | `slate-900`                        |
+| Surface, light theme | white                                        | `stone-100`                        |
+| Surface, dark theme  | white paper on `stone-900`                   | `stone-900`                        |
 | Caption              | Dhivehi, then English, in the text colours   | The same names, muted              |
 | Interaction          | Lifts on hover, focus ring, opens the viewer | None: not interactive              |
 
 Both names stay visible and truncate instead of wrapping. In the light theme an undrawn tile's muted
-names use `slate-600`, because `slate-500` on `slate-100` reaches only 4.3:1.
+names use `stone-600`, because `stone-500` on `stone-100` reaches only 4.4:1.
 
 The small top-left `IdBadge` is the only thing allowed over a drawing. Undrawn tiles recede: no
 shading, shadow or hover. A grid with many gaps should feel quiet, so the finished drawings stand
@@ -575,7 +576,7 @@ A short review of whether a change still belongs to the same design.
 
 ### One way to do each thing
 
-- [ ] Does it use the slate and accent tokens, the five type sizes, 4px spacing and the three corner
+- [ ] Does it use the stone and accent tokens, the five type sizes, 4px spacing and the three corner
       treatments?
 - [ ] Does it use the shared classes and components, with sentence-case wording?
 - [ ] If a token or an icon changed, was `npm run generate` run?
@@ -594,26 +595,26 @@ measures them (`script/generate/palette.ts`, `src/gallery/ItemTile.vue`), so the
 
 ### Ramps
 
-| Step  | `slate-*` | `accent-*` (teal) |
+| Step  | `stone-*` | `accent-*` (teal) |
 | ----- | --------- | ----------------- |
-| `50`  | `#f8fafc` | `#f0fdfa`         |
-| `100` | `#f1f5f9` | `#cbfbf1`         |
-| `200` | `#e2e8f0` | `#96f7e4`         |
-| `300` | `#cad5e2` | `#46ecd5`         |
-| `400` | `#90a1b9` | `#00d5be`         |
-| `500` | `#62748e` | `#00bba7`         |
-| `600` | `#45556c` | `#009689`         |
-| `700` | `#314158` | `#00786f`         |
-| `800` | `#1d293d` | `#005f5a`         |
-| `900` | `#0f172b` | `#0b4f4a`         |
-| `950` | `#020618` | `#022f2e`         |
+| `50`  | `#fafaf9` | `#f0fdfa`         |
+| `100` | `#f5f5f4` | `#cbfbf1`         |
+| `200` | `#e7e5e4` | `#96f7e4`         |
+| `300` | `#d6d3d1` | `#46ecd5`         |
+| `400` | `#a6a09b` | `#00d5be`         |
+| `500` | `#79716b` | `#00bba7`         |
+| `600` | `#57534d` | `#009689`         |
+| `700` | `#44403b` | `#00786f`         |
+| `800` | `#292524` | `#005f5a`         |
+| `900` | `#1c1917` | `#0b4f4a`         |
+| `950` | `#0c0a09` | `#022f2e`         |
 
 ### Undrawn tile
 
 | Theme | Tile                    | Icon                    |
 | ----- | ----------------------- | ----------------------- |
-| Light | `slate-100` (`#f1f5f9`) | `slate-400` (`#90a1b9`) |
-| Dark  | `slate-900` (`#0f172b`) | `slate-600` (`#45556c`) |
+| Light | `stone-100` (`#f5f5f4`) | `stone-400` (`#a6a09b`) |
+| Dark  | `stone-900` (`#1c1917`) | `stone-600` (`#57534d`) |
 
 ---
 

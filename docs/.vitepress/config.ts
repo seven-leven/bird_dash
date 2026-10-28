@@ -72,7 +72,6 @@ export default defineConfig({
           { text: 'Test procedures', link: '/TEST-PROCEDURES' },
           { text: 'Scripts', link: '/SCRIPTS' },
           { text: 'What is next', link: '/plans/TODO' },
-          { text: 'Site code overhaul', link: '/plans/SRC-OVERHAUL' },
           { text: 'Test overhaul', link: '/plans/TEST-OVERHAUL' },
           { text: 'Use the platform', link: '/plans/PLATFORM' },
         ],

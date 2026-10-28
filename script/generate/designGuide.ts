@@ -8,7 +8,7 @@ import { readFile } from 'node:fs/promises';
 import sharp, { type OverlayOptions } from 'sharp';
 import { ICONS, isIconName } from '../../src/ui/icons.ts';
 import { PRINCIPLES } from './principles.ts';
-import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
+import { ACCENT_HEX, accentMenu, contrast, STONE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import { PATHS } from '../lib/paths.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
@@ -102,27 +102,27 @@ function ramp(y: number, name: string, colors: Record<string, string>): string {
 const theme = (dark: boolean) =>
   dark
     ? {
-      card: SLATE['900'],
-      page: SLATE['950'],
-      surface: SLATE['950'],
-      fill: SLATE['800'],
-      ink: SLATE['100'],
-      hover: SLATE['200'],
-      muted: SLATE['400'],
-      border: SLATE['800'],
-      text: ['#ffffff', SLATE['300'], SLATE['400']],
+      card: STONE['900'],
+      page: STONE['950'],
+      surface: STONE['950'],
+      fill: STONE['800'],
+      ink: STONE['100'],
+      hover: STONE['200'],
+      muted: STONE['400'],
+      border: STONE['800'],
+      text: ['#ffffff', STONE['300'], STONE['400']],
       ring: TEAL['500'],
     }
     : {
       card: '#ffffff',
-      page: SLATE['50'],
+      page: STONE['50'],
       surface: '#ffffff',
-      fill: SLATE['100'],
-      ink: SLATE['900'],
-      hover: SLATE['800'],
-      muted: SLATE['500'],
-      border: SLATE['200'],
-      text: [SLATE['900'], SLATE['600'], SLATE['500']],
+      fill: STONE['100'],
+      ink: STONE['900'],
+      hover: STONE['800'],
+      muted: STONE['500'],
+      border: STONE['200'],
+      text: [STONE['900'], STONE['600'], STONE['500']],
       ring: TEAL['700'], // 500 is too pale on white for a ring
     };
 
@@ -145,20 +145,20 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
     rect(sx, sy, 56, 28, fill, 6, `stroke="${t.border}"`);
   // Each sample is drawn in a 56 × 28 box whose top-left corner is (sx, sy).
   const roles: [string, string, (sx: number, sy: number) => string][] = [
-    ['Page', dark ? 'slate-950' : 'slate-50', (sx, sy) => swatch(t.page, sx, sy)],
+    ['Page', dark ? 'stone-950' : 'stone-50', (sx, sy) => swatch(t.page, sx, sy)],
     [
       'Surface: header, sidebar, menus',
-      dark ? 'slate-950 / 900' : 'white',
+      dark ? 'stone-950 / 900' : 'white',
       (sx, sy) => swatch(t.surface, sx, sy),
     ],
     [
       'Text: strong, body, muted',
-      dark ? 'white / slate-300 / 400' : 'slate-900 / 600 / 500',
+      dark ? 'white / stone-300 / 400' : 'stone-900 / 600 / 500',
       (sx, sy) => t.text.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join(''),
     ],
     [
       'Borders and dividers',
-      dark ? 'slate-800' : 'slate-200 / 100',
+      dark ? 'stone-800' : 'stone-200 / 100',
       (sx, sy) => rect(sx, sy, 56, 28, 'none', 6, `stroke="${t.border}" stroke-width="2"`),
     ],
     [
@@ -214,9 +214,9 @@ export function undrawnTile(
   const { background, ink } = UNDRAWN[theme];
   const scale = (size * 0.56) / 24; // the icon is 56% of the tile, as on the site
   const offset = (size - 24 * scale) / 2;
-  return rect(x, y, size, size, SLATE[background]) +
+  return rect(x, y, size, size, STONE[background]) +
     `<g transform="translate(${x + offset} ${y + offset}) scale(${scale})" fill="none" ` +
-    `stroke="${SLATE[ink]}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">` +
+    `stroke="${STONE[ink]}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">` +
     `${iconBody}</g>`;
 }
 
@@ -261,7 +261,7 @@ export async function designGuide(
           y + 304,
           wrapText(p.summary, 24),
           29,
-          `${FONT} font-size="18" fill="${SLATE['700']}"`,
+          `${FONT} font-size="18" fill="${STONE['700']}"`,
         ),
     );
   });
@@ -272,9 +272,9 @@ export async function designGuide(
     y,
     'Colour',
     'Quiet ground, clear signal.',
-    'Slate for surfaces and text; one accent per collection, kept for meaning (teal shown).',
+    'Stone for surfaces and text; one accent per collection, kept for meaning (teal shown).',
   );
-  parts.push(s.svg, ramp(s.top, 'slate', SLATE), ramp(s.top + 90, 'accent', TEAL));
+  parts.push(s.svg, ramp(s.top, 'stone', STONE), ramp(s.top + 90, 'accent', TEAL));
   const cardW = (W - 2 * X - 40) / 2;
   const card = roleCard(X, s.top + 200, cardW, false);
   parts.push(card.svg, roleCard(X + cardW + 40, s.top + 200, cardW, true).svg);
@@ -360,7 +360,7 @@ export async function designGuide(
   parts.push(s.svg);
   const sy = s.top;
   const corner = (x: number, rx: number, h: number, name: string, use: string) =>
-    rect(x, sy + (52 - h) / 2, 150, h, '#ffffff', rx, `stroke="${SLATE['300']}"`) +
+    rect(x, sy + (52 - h) / 2, 150, h, '#ffffff', rx, `stroke="${STONE['300']}"`) +
     text(x, sy + 80, name, 15, INK, 600) + text(x, sy + 101, use, 15, LABEL);
   const form = await readFormTokens();
   parts.push(
@@ -463,25 +463,25 @@ export async function designGuide(
 /** The contrast figures quoted in docs/DESIGN.md, one line each. */
 export function contrastReport(): string[] {
   const pairs: [string, string, string][] = [
-    ['text slate-900 on white', SLATE['900'], '#ffffff'],
-    ['muted slate-500 on white', SLATE['500'], '#ffffff'],
-    ['muted slate-400 on slate-950', SLATE['400'], SLATE['950']],
-    ['text slate-100 on slate-950', SLATE['100'], SLATE['950']],
+    ['text stone-900 on white', STONE['900'], '#ffffff'],
+    ['muted stone-500 on white', STONE['500'], '#ffffff'],
+    ['muted stone-400 on stone-950', STONE['400'], STONE['950']],
+    ['text stone-100 on stone-950', STONE['100'], STONE['950']],
     ['white on accent-700 (button)', '#ffffff', TEAL['700']],
     ['accent-500 progress on white', TEAL['500'], '#ffffff'],
     ['accent-700 ring on white', TEAL['700'], '#ffffff'],
-    ['accent-500 ring on slate-950', TEAL['500'], SLATE['950']],
+    ['accent-500 ring on stone-950', TEAL['500'], STONE['950']],
     ['white 70% on black', whiteOnBlack(0.7), '#000000'],
-    ['body slate-300 on slate-950', SLATE['300'], SLATE['950']],
+    ['body stone-300 on stone-950', STONE['300'], STONE['950']],
     [
-      `undrawn icon slate-${UNDRAWN.light.ink} on slate-${UNDRAWN.light.background}`,
-      SLATE[UNDRAWN.light.ink],
-      SLATE[UNDRAWN.light.background],
+      `undrawn icon stone-${UNDRAWN.light.ink} on stone-${UNDRAWN.light.background}`,
+      STONE[UNDRAWN.light.ink],
+      STONE[UNDRAWN.light.background],
     ],
     [
-      `dark undrawn icon slate-${UNDRAWN.dark.ink} on slate-${UNDRAWN.dark.background}`,
-      SLATE[UNDRAWN.dark.ink],
-      SLATE[UNDRAWN.dark.background],
+      `dark undrawn icon stone-${UNDRAWN.dark.ink} on stone-${UNDRAWN.dark.background}`,
+      STONE[UNDRAWN.dark.ink],
+      STONE[UNDRAWN.dark.background],
     ],
   ];
   return pairs.map(([label, a, b]) => `  ${contrast(a, b).toFixed(1)}:1  ${label}`);

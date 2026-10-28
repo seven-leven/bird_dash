@@ -4,7 +4,7 @@
 @layer components {
   /* The grey of something still loading, in the shape of what will come. */
   .skeleton {
-    @apply animate-pulse bg-slate-200 dark:bg-slate-800;
+    @apply animate-pulse bg-stone-200 dark:bg-stone-800;
   }
 
   /* A link or a text button that stays on the site: in the accent (docs/DESIGN.md §01). */
@@ -14,8 +14,8 @@
 
   /* A link that leaves the site, or out to the docs: neutral, never the accent (docs/DESIGN.md §01). */
   .link-out {
-    @apply font-medium text-slate-600 underline underline-offset-2
-      hover:text-slate-900 dark:text-slate-300 dark:hover:text-white;
+    @apply font-medium text-stone-600 underline underline-offset-2
+      hover:text-stone-900 dark:text-stone-300 dark:hover:text-white;
   }
 
   /* The one primary action on a screen (accent-700 with white, 5.5:1). */
@@ -25,9 +25,9 @@
   }
   /* A quiet icon or text button in the frame (header, sidebar). */
   .btn-ghost {
-    @apply rounded-control text-slate-500 transition-colors duration-fast
-      hover:bg-slate-100 hover:text-slate-800
-      dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
+    @apply rounded-control text-stone-500 transition-colors duration-fast
+      hover:bg-stone-100 hover:text-stone-800
+      dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-200;
   }
 
   /*
@@ -37,13 +37,13 @@
     with what assistive tech is told. Solid teal is kept for primary actions.
   */
   .nav-item {
-    @apply relative rounded-control text-sm font-medium text-slate-500 transition-colors
+    @apply relative rounded-control text-sm font-medium text-stone-500 transition-colors
       duration-fast
-      hover:bg-slate-100 hover:text-slate-800
-      dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
+      hover:bg-stone-100 hover:text-stone-800
+      dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-200;
   }
   .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true']) {
-    @apply bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100;
+    @apply bg-stone-100 text-stone-900 dark:bg-stone-800 dark:text-stone-100;
   }
   .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true'])::after {
     content: '';
@@ -64,14 +64,14 @@
   /* Small count pill (search results, group totals). */
   .count-pill {
     @apply rounded-full px-1.5 py-0.5 text-xs font-semibold tabular-nums
-      bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300;
+      bg-stone-200 text-stone-600 dark:bg-stone-700 dark:text-stone-300;
   }
 
   /* An icon button over the drawing (the viewer's controls). */
   .icon-btn-overlay {
     @apply flex items-center justify-center w-8 h-8 rounded-control
-      text-slate-500 transition-colors duration-fast
-      hover:text-slate-800 hover:bg-slate-900/5
+      text-stone-500 transition-colors duration-fast
+      hover:text-stone-800 hover:bg-stone-900/5
       dark:text-white/50 dark:hover:text-white/70 dark:hover:bg-white/10
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
       dark:focus-visible:ring-accent-400;
@@ -80,8 +80,8 @@
   /* Previous/next arrows beside the drawing in the viewer. */
   .nav-btn-overlay {
     @apply absolute top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10
-      rounded-control bg-white/80 text-slate-700 shadow-lift ring-1 ring-slate-200
-      transition-colors duration-fast hover:bg-white hover:text-slate-900
+      rounded-control bg-white/80 text-stone-700 shadow-lift ring-1 ring-stone-200
+      transition-colors duration-fast hover:bg-white hover:text-stone-900
       dark:bg-black/40 dark:text-white/70 dark:shadow-none dark:ring-0
       dark:hover:bg-black/60 dark:hover:text-white
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
@@ -94,19 +94,19 @@
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
       dark:focus-visible:ring-accent-500
       focus-visible:ring-offset-2 focus-visible:ring-offset-white
-      dark:focus-visible:ring-offset-slate-950;
+      dark:focus-visible:ring-offset-stone-950;
   }
 
   /* The three text roles, everywhere (the viewer too): titles and names, running text, and
-     labels and counts. On white 17.8, 7.6 and 4.8:1; on slate-950 20.2, 13.6 and 7.7:1. */
+     labels and counts. On white 17.5, 7.6 and 4.8:1; on stone-950 19.8, 13.3 and 7.6:1. */
   .text-strong {
-    @apply text-slate-900 dark:text-white;
+    @apply text-stone-900 dark:text-white;
   }
   .text-body {
-    @apply text-slate-600 dark:text-slate-300;
+    @apply text-stone-600 dark:text-stone-300;
   }
   .text-muted {
-    @apply text-slate-500 dark:text-slate-400;
+    @apply text-stone-500 dark:text-stone-400;
   }
 
   /* Micro label: uppercase section/meta headings. Color set at point of use. */
@@ -125,12 +125,12 @@
   /* Keyboard hint chip. */
   .kbd-hint {
     @apply rounded-control border px-1.5 py-0.5 font-mono text-xs
-      bg-slate-50 border-slate-200 text-slate-600
-      dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300;
+      bg-stone-50 border-stone-200 text-stone-600
+      dark:bg-stone-800 dark:border-stone-700 dark:text-stone-300;
   }
 
   /* Vertical divider in the header. */
   .divider-v {
-    @apply w-px h-6 shrink-0 bg-slate-200 dark:bg-slate-700;
+    @apply w-px h-6 shrink-0 bg-stone-200 dark:bg-stone-700;
   }
 }

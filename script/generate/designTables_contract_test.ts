@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { glob, readFile } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
-import { contrast, SLATE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
+import { contrast, STONE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
 
 // The numbers DESIGN.md quotes are typed by hand; these check them against the
 // code that draws and measures them, so the page cannot drift from the tokens.
@@ -20,23 +20,23 @@ async function table(header: string): Promise<string[][]> {
   );
 }
 
-/** A colour as the page names it: `slate-500`, `accent-700`, white, black, "white at 70%". */
+/** A colour as the page names it: `stone-500`, `accent-700`, white, black, "white at 70%". */
 function colour(name: string): string {
   const alpha = /^white at (\d+)%$/.exec(name);
   if (alpha) return whiteOnBlack(Number(alpha[1]) / 100);
   if (name === 'white') return '#ffffff';
   if (name === 'black') return '#000000';
   const [ramp, step] = name.split('-');
-  const hex = (ramp === 'slate' ? SLATE : ramp === 'accent' ? TEAL : {})[step];
+  const hex = (ramp === 'stone' ? STONE : ramp === 'accent' ? TEAL : {})[step];
   assert(hex, `DESIGN.md names a colour the palette does not have: ${name}`);
   return hex;
 }
 
 test('the ramps in DESIGN.md are the palette, step for step', async () => {
   const rows = await table('| Step ');
-  assertEquals(rows.map((r) => r[0]), Object.keys(SLATE));
-  for (const [step, slate, accent] of rows) {
-    assertEquals([slate, accent], [SLATE[step], TEAL[step]], `step ${step}`);
+  assertEquals(rows.map((r) => r[0]), Object.keys(STONE));
+  for (const [step, stone, accent] of rows) {
+    assertEquals([stone, accent], [STONE[step], TEAL[step]], `step ${step}`);
   }
 });
 
@@ -53,15 +53,15 @@ test("the undrawn tile's colours in DESIGN.md are the ones the site and the guid
   const rows = await table('| Theme | Tile ');
   const hexes = (cell: string) => cell.match(/#[0-9a-f]{6}/g);
   assertEquals(rows.map((r) => [hexes(r[1])?.at(-1), hexes(r[2])?.at(-1)]), [
-    [SLATE[UNDRAWN.light.background], SLATE[UNDRAWN.light.ink]],
-    [SLATE[UNDRAWN.dark.background], SLATE[UNDRAWN.dark.ink]],
+    [STONE[UNDRAWN.light.background], STONE[UNDRAWN.light.ink]],
+    [STONE[UNDRAWN.dark.background], STONE[UNDRAWN.dark.ink]],
   ]);
   // The tile itself (src/gallery/ItemTile.vue) draws in the same steps.
   const tile = await readFile('./src/gallery/ItemTile.vue', 'utf8');
   const { light, dark } = UNDRAWN;
-  assert(tile.includes(`text-slate-${light.ink} dark:text-slate-${dark.ink}`), 'the icon');
+  assert(tile.includes(`text-stone-${light.ink} dark:text-stone-${dark.ink}`), 'the icon');
   assert(
-    tile.includes(`bg-slate-${light.background} dark:bg-slate-${dark.background}`),
+    tile.includes(`bg-stone-${light.background} dark:bg-stone-${dark.background}`),
     'the grey',
   );
 });

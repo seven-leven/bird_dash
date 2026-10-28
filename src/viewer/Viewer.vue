@@ -13,7 +13,7 @@
         aria-modal="true"
         :aria-label="currentItem ? `${currentItem.commonName}, #${currentItem.itemId}` : 'Image viewer'"
         tabindex="-1"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-slate-50/95 dark:bg-black/95 outline-none"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-stone-50/95 dark:bg-black/95 outline-none"
         @click="handleBackdropClick"
       >
 
@@ -102,7 +102,7 @@
                   cursor: isDragging ? 'grabbing' : (scale > 1 ? 'grab' : 'default'),
                   transition: isDragging ? 'none' : 'transform 0.15s ease-out',
                 }"
-                class="max-w-full max-h-full object-contain select-none ring-1 ring-slate-200 dark:ring-0"
+                class="max-w-full max-h-full object-contain select-none ring-1 ring-stone-200 dark:ring-0"
                 @load="handleImageLoad"
                 @error="handleImageError"
                 draggable="false"
@@ -111,7 +111,7 @@
 
             <!-- Loading spinner -->
             <div v-if="loading" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-8 h-8 border-2 border-slate-300 border-t-slate-500 dark:border-slate-700 dark:border-t-slate-400 rounded-full animate-spin" />
+              <div class="w-8 h-8 border-2 border-stone-300 border-t-stone-500 dark:border-stone-700 dark:border-t-stone-400 rounded-full animate-spin" />
             </div>
 
             <!-- Error -->

@@ -8,13 +8,13 @@
     class="group isolate focus-ring flex flex-col w-full overflow-hidden rounded-card
            ring-1 ring-black/5 dark:ring-white/5
            transition-all duration-fast ease-out"
-    :class="drawn ? `bg-white dark:bg-slate-900 ${INTERACTIVE}` : 'bg-slate-100 dark:bg-slate-900'"
+    :class="drawn ? `bg-white dark:bg-stone-900 ${INTERACTIVE}` : 'bg-stone-100 dark:bg-stone-900'"
     v-bind="buttonAttrs"
     @click="open"
     @keydown.enter="open"
     @keydown.space="onSpace"
   >
-    <div class="relative aspect-square" :class="drawn ? 'bg-white' : 'bg-slate-100 dark:bg-slate-900'">
+    <div class="relative aspect-square" :class="drawn ? 'bg-white' : 'bg-stone-100 dark:bg-stone-900'">
       <!-- Illustration — above-the-fold tiles load eagerly (LCP), rest are lazy -->
       <img
         v-if="drawn && !failed"
@@ -35,7 +35,7 @@
         v-else
         role="img"
         :aria-label="drawn ? props.item.commonName : `${props.item.commonName} (not drawn yet)`"
-        class="absolute inset-0 flex items-center justify-center text-slate-400 dark:text-slate-600"
+        class="absolute inset-0 flex items-center justify-center text-stone-400 dark:text-stone-600"
       >
         <CollectionIcon :collection="collection" class="size-[56%] stroke-[1.5] text-3xl" />
       </div>
@@ -51,13 +51,13 @@
     <!-- Caption: every name but the Latin, a line per language (Dhivehi first) -->
     <div
       class="min-w-0 px-3 pt-2 pb-2.5 border-t"
-      :class="drawn ? 'border-slate-100 dark:border-slate-800' : 'border-transparent'"
+      :class="drawn ? 'border-stone-100 dark:border-stone-800' : 'border-transparent'"
     >
       <template v-for="line in caption" :key="line.lang">
         <p
           v-if="line.lang === 'dv'"
           class="font-dhivehi text-base font-bold truncate"
-          :class="drawn ? 'text-slate-900 dark:text-slate-100' : 'text-slate-600 dark:text-slate-400'"
+          :class="drawn ? 'text-stone-900 dark:text-stone-100' : 'text-stone-600 dark:text-stone-400'"
           dir="rtl"
         >
           {{ line.text }}
@@ -65,7 +65,7 @@
         <h3
           v-else
           class="text-sm leading-snug truncate"
-          :class="drawn ? 'font-semibold text-slate-700 dark:text-slate-300' : 'text-slate-600 dark:text-slate-400'"
+          :class="drawn ? 'font-semibold text-stone-700 dark:text-stone-300' : 'text-stone-600 dark:text-stone-400'"
         >
           {{ line.text }}
         </h3>

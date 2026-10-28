@@ -8,7 +8,7 @@
     <!-- Group Header (the group's aria-label already names it) -->
     <div
       class="flex items-center justify-between px-4 py-1.5 sticky top-0 z-10
-                bg-slate-50 border-b border-slate-100 dark:bg-slate-800/70 dark:border-slate-800"
+                bg-stone-50 border-b border-stone-100 dark:bg-stone-800/70 dark:border-stone-800"
       aria-hidden="true"
     >
       <div class="flex items-center gap-2">
@@ -31,14 +31,14 @@
       @mouseenter="$emit('mouseenter', flat)"
       @click="$emit('select', result)"
       class="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors duration-fast
-             hover:bg-slate-50 dark:hover:bg-slate-800/60"
-      :class="{ 'bg-slate-50 dark:bg-slate-800/60': focusedIndex === flat }"
+             hover:bg-stone-50 dark:hover:bg-stone-800/60"
+      :class="{ 'bg-stone-50 dark:bg-stone-800/60': focusedIndex === flat }"
     >
-      <img v-if="result.item.isDrawn" :src="result.item.smallImageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
+      <img v-if="result.item.isDrawn" :src="result.item.smallImageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-stone-100 dark:bg-stone-800" loading="lazy" />
       <!-- Not drawn yet: its collection's icon, faint on the tile grey, as in the grid. -->
       <span
         v-else
-        class="w-8 h-8 rounded-control shrink-0 flex items-center justify-center bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-600"
+        class="w-8 h-8 rounded-control shrink-0 flex items-center justify-center bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-600"
       >
         <CollectionIcon :collection="result.collection" class="size-5 stroke-[1.5]" />
       </span>
@@ -52,7 +52,7 @@
           >{{ line.text }}</p>
           <p
             v-else
-            :class="l === 0 ? 'text-sm font-medium truncate text-slate-800 dark:text-slate-100'
+            :class="l === 0 ? 'text-sm font-medium truncate text-stone-800 dark:text-stone-100'
               : `text-xs text-muted truncate mt-0.5${line.lang === 'la' ? ' italic' : ''}`"
             v-html="highlight(line.text)"
           />
@@ -79,7 +79,7 @@
       type="button"
       @click="$emit('expand', group.collection.id)"
       class="focus-ring w-full px-4 py-2 text-left text-xs font-medium text-accent-700 transition-colors duration-fast
-             hover:bg-slate-50 dark:text-accent-300 dark:hover:bg-slate-800/60"
+             hover:bg-stone-50 dark:text-accent-300 dark:hover:bg-stone-800/60"
     >
       Show {{ group.hidden }} more in {{ group.collection.label }}
     </button>

@@ -5,11 +5,11 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import { LOGO_MARK, LOGO_TILE, WORDMARK } from '../../src/ui/logo.ts';
-import { SLATE } from './palette.ts';
+import { STONE } from './palette.ts';
 import { PATHS } from '../lib/paths.ts';
 
-const INK = SLATE['900'];
-const MUTED = SLATE['500'];
+const INK = STONE['900'];
+const MUTED = STONE['500'];
 const FONT = 'font-family="Segoe UI, Helvetica, Arial, sans-serif"';
 
 /** The mark or tile as a complete SVG document in one colour. */
@@ -52,8 +52,8 @@ export function logoSheetSvg(): string {
   const p: string[] = [];
   const panel = (x: number, y: number, w: number, h: number, dark: boolean) =>
     `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${
-      dark ? SLATE['950'] : '#ffffff'
-    }" stroke="${SLATE['200']}"/>`;
+      dark ? STONE['950'] : '#ffffff'
+    }" stroke="${STONE['200']}"/>`;
 
   p.push(text(60, 70, 'Wildlife Illustrated — logo', 36, INK, 700));
   p.push(
@@ -69,17 +69,17 @@ export function logoSheetSvg(): string {
   p.push(text(60, 160, 'MARK', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(panel(60, 172, 300, 220, false) + at(LOGO_MARK, 146, 218, 128, INK));
   p.push(panel(376, 172, 300, 220, true) + at(LOGO_MARK, 462, 218, 128, '#ffffff'));
-  p.push(text(60, 416, 'The default. Slate-900 on light, white on dark. 20px and up.'));
+  p.push(text(60, 416, 'The default. Stone-900 on light, white on dark. 20px and up.'));
 
   p.push(text(724, 160, 'TILE', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(panel(724, 172, 300, 220, false) + at(LOGO_TILE, 810, 218, 128, INK));
-  p.push(panel(1040, 172, 300, 220, true) + at(LOGO_TILE, 1126, 218, 128, SLATE['800']));
+  p.push(panel(1040, 172, 300, 220, true) + at(LOGO_TILE, 1126, 218, 128, STONE['800']));
   p.push(text(724, 416, 'For small or busy places: favicon, app icon, avatar. Below 20px.'));
 
   // ── Row 2: lockups ──
   p.push(text(60, 480, 'HORIZONTAL LOCKUP', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(panel(60, 492, 440, 130, false) + lockup(92, 529, 56, INK, MUTED));
-  p.push(panel(516, 492, 440, 130, true) + lockup(548, 529, 56, '#ffffff', SLATE['400']));
+  p.push(panel(516, 492, 440, 130, true) + lockup(548, 529, 56, '#ffffff', STONE['400']));
   p.push(text(60, 646, 'Header and anywhere wide. “Wildlife” semibold, “Illustrated” light.'));
 
   p.push(text(1004, 480, 'STACKED', 12, MUTED, 600, 'letter-spacing="1"'));
@@ -103,7 +103,7 @@ export function logoSheetSvg(): string {
   p.push(text(470, 710, 'CLEAR SPACE', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(
     `<rect x="470" y="724" width="112" height="112" fill="none" stroke="${
-      SLATE['300']
+      STONE['300']
     }" stroke-dasharray="4 4"/>` + at(LOGO_MARK, 498, 752, 56, INK) +
       text(596, 772, 'Keep half the mark’s width') + text(596, 792, 'clear on every side.'),
   );
@@ -118,7 +118,7 @@ export function logoSheetSvg(): string {
   donts.forEach((d, i) => p.push(text(860, 742 + i * 24, `×  ${d}`, 14, INK)));
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">` +
-    `<rect width="100%" height="100%" fill="${SLATE['50']}"/>${p.join('')}</svg>`;
+    `<rect width="100%" height="100%" fill="${STONE['50']}"/>${p.join('')}</svg>`;
 }
 
 /** The logo's standalone SVG files, by name, exactly as written into `logo/`. */

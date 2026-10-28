@@ -3,6 +3,7 @@
  * shows them, taken from public/stats.json and the thumbnails. `npm run generate` redraws
  * it with the other images, so it follows the archive rather than being a screenshot.
  */
+import { STONE } from './palette.ts';
 import sharp, { type Sharp } from 'sharp';
 import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
@@ -12,8 +13,8 @@ import type { Stats } from '../../src/data/files.ts';
 export const STRIP = { count: 5, tile: 240, gap: 16 } as const;
 
 /**
- * Draw the strip, or return null when nothing is drawn yet. The page is slate-50, each
- * drawing sits on a white card with the site's slate-200 edge and 12px corners.
+ * Draw the strip, or return null when nothing is drawn yet. The page is stone-50, each
+ * drawing sits on a white card with the site's stone-200 edge and 12px corners.
  */
 export async function drawDrawingsStrip(
   io: Io = realIo,
@@ -30,10 +31,10 @@ export async function drawDrawingsStrip(
   const cards = shown.map((_, i) =>
     `<rect x="${gap + i * (tile + gap) + 0.5}" y="${gap + 0.5}" width="${tile - 1}" height="${
       tile - 1
-    }" rx="12" fill="#ffffff" stroke="#e2e8f0"/>`
+    }" rx="12" fill="#ffffff" stroke="${STONE['200']}"/>`
   ).join('');
   const page = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
-    `<rect width="100%" height="100%" fill="#f8fafc"/>${cards}</svg>`;
+    `<rect width="100%" height="100%" fill="${STONE['50']}"/>${cards}</svg>`;
 
   // The drawing inside its card, with a margin so it does not touch the edge.
   const inset = 8;

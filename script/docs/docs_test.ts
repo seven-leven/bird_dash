@@ -80,7 +80,7 @@ test('liveBlocks: each marked section becomes its component; the rest is untouch
   const page = [
     '# Colour',
     '<!-- live: AccentRamps -->',
-    '| Step | slate |',
+    '| Step | stone |',
     '| ---- | ----- |',
     '<!-- /live -->',
     'Between.',

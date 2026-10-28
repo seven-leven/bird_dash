@@ -3,9 +3,9 @@
 > **Status:** planned 2026-10-27; phases 1 to 3 done 2026-10-27; phase 4 waits for the site
 > overhaul. What Node 24, TypeScript 6, Vite 8, Vue 3.5, Tailwind 4 and the browser already give
 > this project that it does not use yet, and the architectural and general improvements found in the
-> same look. Most of it rides along with the [test](TEST-OVERHAUL.md) and
-> [site code](SRC-OVERHAUL.md) overhauls; the rest is small and stands alone. Delete this page when
-> every row is done or dropped.
+> same look. Much of it rode along with the test and site code overhauls (the site's is done,
+> 2026-10-28; see the CHANGELOG); the rest is small and stands alone. Delete this page when every
+> row is done or dropped.
 
 ## Why
 
