@@ -172,6 +172,9 @@ fails on any other.
 | `text-sm`   | 14px | Controls, body text, English names on tiles                 |
 | `text-xs`   | 12px | Counts, secondary lines, `.caps-label`, `.count-pill`, keys |
 
+Headings break into even lines (`text-wrap: balance`) and running text avoids a one-word last line
+(`pretty`), set once in `base.css`.
+
 Weight carries hierarchy: `font-semibold` for titles and headings, `font-medium` for controls, and
 regular weight for everything else. Use `tabular-nums` for changing or aligned numbers such as
 counts, ids and zoom values. Scientific names are italic; ids use monospace through `IdBadge`.
