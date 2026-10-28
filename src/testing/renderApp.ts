@@ -9,7 +9,7 @@
 //
 // Leaving the `using` block unmounts the app and puts `fetch` back.
 import { h } from 'vue';
-import App from '../App.vue';
+import App from '../app/App.vue';
 import { mountInDocument } from './mount.ts';
 import { type FakeFetch, fakeFetch, type Route } from './fakes/fakeFetch.ts';
 import { archiveRoutes } from './scenarios/archive.ts';

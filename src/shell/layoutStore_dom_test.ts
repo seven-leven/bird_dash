@@ -3,10 +3,13 @@ import { assertEquals } from '@std/assert';
 import { createLayoutStore } from './layoutStore.ts';
 import { mountComposable } from '../testing/mount.ts';
 
+/** The pages the app hands the store (app/pages.ts); one is enough. */
+const PAGES = [{ id: 'about', label: 'About', component: {} }];
+
 /** The layout store, mounted so its window listeners are really attached. */
 function setup(width = 1400) {
   Object.defineProperty(globalThis, 'innerWidth', { value: width, configurable: true });
-  const { result: layout } = mountComposable(() => createLayoutStore());
+  const { result: layout } = mountComposable(() => createLayoutStore(PAGES));
   return layout;
 }
 

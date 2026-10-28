@@ -1,7 +1,7 @@
-<!-- components/layout/AppFooter.vue
-     The one footer, under the gallery and under every page (src/pages.ts): what this
-     build is (version, its line's name, the drawings, the commit), the pages, the docs,
-     the source, and how it is made. -->
+<!-- shell/AppFooter.vue
+     The one footer, under the gallery and under every page (the app places it): what this
+     build is (version, its line's name, the drawings, the commit; app/buildInfo.ts), the
+     pages, the docs, the source, and how it is made. -->
 <template>
   <footer
     class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
@@ -26,7 +26,7 @@
         <Icon name="commit" aria-hidden="true" />{{ appCommit }}
       </span>
       <a
-        v-for="p in PAGES"
+        v-for="p in pages"
         :key="p.id"
         :href="`#${p.id}`"
         class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
@@ -59,13 +59,21 @@ import Icon from '../ui/Icon.vue';
 import { useLayoutStore } from './layoutStore.ts';
 import { drawings } from '../domain/countWords.ts';
 import { REPO_URL } from '../domain/links.ts';
-import { PAGES } from '../pages.ts';
 
-const { page } = useLayoutStore();
+/** The build this is (app/buildInfo.ts). */
+interface Build {
+  version: string;
+  /** The line's name: a Dhivehi name from the drawings, in drawing order. */
+  name: { roman: string; script: string; species: string } | null;
+  drawn: number;
+  commit: string;
+}
+const props = defineProps<{ build: Build }>();
 
-// Injected at build time by vite.config.ts (worked out in script/version/version.ts).
-const appVersion = __APP_VERSION__;
-const appName = __APP_NAME__;
-const appCommit = __APP_COMMIT__;
-const drawnLabel = drawings(__APP_DRAWN__);
+const { pages, page } = useLayoutStore();
+
+const appVersion = props.build.version;
+const appName = props.build.name;
+const appCommit = props.build.commit;
+const drawnLabel = drawings(props.build.drawn);
 </script>

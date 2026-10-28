@@ -50,7 +50,7 @@ test('every source file and every test file belongs to an area', async () => {
 
 test('every area has at least one source file, so none is a stale entry', async () => {
   const sources = await discoverSources();
-  assert(sources.includes('src/App.vue'), 'components are source files too');
+  assert(sources.includes('src/app/App.vue'), 'components are source files too');
   for (const area of AREAS) {
     assert(sources.some((s) => areaOf(s)?.id === area.id), `area "${area.id}" matches no file`);
   }

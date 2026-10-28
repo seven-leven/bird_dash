@@ -1,10 +1,12 @@
-<!-- components/layout/AppShell.vue — top-level layout shell.
-     State comes from the domain stores; the only wiring left here is the
-     Viewer overlay (props-based so it stays reusable). -->
+<!-- app/AppShell.vue: the frame. It places each feature: the top bar with the search box in
+     it, the sidebar, the gallery or a page with the footer after it, and the viewer over them
+     (props-based so it stays reusable). Features do not place each other's components. -->
 <template>
   <div class="flex flex-col h-screen w-full overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
 
-    <TopBar />
+    <TopBar>
+      <template #search><SearchBox /></template>
+    </TopBar>
 
     <!-- Body -->
     <div class="flex flex-1 overflow-hidden">
@@ -51,8 +53,8 @@
           :ref="bindScrollEl"
           class="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth custom-scrollbar"
         >
-          <component :is="currentPage.component" v-if="currentPage" />
-          <Gallery v-else />
+          <component :is="currentPage.component" v-if="currentPage"><AppFooter :build="buildInfo" /></component>
+          <Gallery v-else><AppFooter :build="buildInfo" /></Gallery>
         </div>
 
       </main>
@@ -78,6 +80,8 @@
 import { defineAsyncComponent, nextTick, watch } from 'vue';
 import TopBar from '../shell/TopBar.vue';
 import SideNav from '../shell/SideNav.vue';
+import AppFooter from '../shell/AppFooter.vue';
+import SearchBox from '../search/SearchBox.vue';
 import Gallery from '../gallery/Gallery.vue';
 import Icon from '../ui/Icon.vue';
 import { useCollectionsStore } from '../gallery/collectionsStore.ts';
@@ -86,6 +90,7 @@ import { useSearchStore } from '../search/searchStore.ts';
 import { useLayoutStore } from '../shell/layoutStore.ts';
 import { useViewerStore } from '../viewer/viewerStore.ts';
 import { matches, matchesDrawn } from '../domain/countWords.ts';
+import { buildInfo } from './buildInfo.ts';
 
 // Code-split the viewer: its zoom/pan/drag/keyboard machinery (and ViewerDetails)
 // are only needed after the first tile click, so keep them out of first paint.

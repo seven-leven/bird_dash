@@ -1,16 +1,10 @@
-import { type Component, defineAsyncComponent } from 'vue';
-
-/** A page beside the gallery: shown at `#<id>`, named `label` in the top bar and the menu. */
-export interface PageEntry {
-  id: string;
-  label: string;
-  component: Component;
-}
+import { defineAsyncComponent } from 'vue';
+import type { PageEntry } from '../shell/layoutStore.ts';
 
 /**
  * Every page that is not a collection, in the order the top bar lists them after the
- * collections. The route, the tabs, the menu and the main area all read this list, so a
- * new page is one entry here. An id must not be a collection's id (the data contract
+ * collections. The route, the tabs, the menu and the main area all read this list (the shell
+ * through the layout store, which App.vue hands it), so a new page is one entry here. An id must not be a collection's id (the data contract
  * test checks `public/collections.json` against it).
  */
 export const PAGES = [
@@ -18,7 +12,7 @@ export const PAGES = [
   {
     id: 'about',
     label: 'About',
-    component: defineAsyncComponent(() => import('./about/AboutPage.vue')),
+    component: defineAsyncComponent(() => import('../about/AboutPage.vue')),
   },
 ] as const satisfies readonly PageEntry[];
 

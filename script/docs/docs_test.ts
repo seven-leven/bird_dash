@@ -13,8 +13,8 @@ test('githubHref: a page inside docs/ stays a link to the site', () => {
 
 test('githubHref: a file or folder outside the pages opens on GitHub, anchor kept', () => {
   assertEquals(
-    githubHref('../src/pages.ts', 'docs/ARCHITECTURE.md'),
-    `${REPO_URL}/blob/main/src/pages.ts`,
+    githubHref('../src/app/pages.ts', 'docs/ARCHITECTURE.md'),
+    `${REPO_URL}/blob/main/src/app/pages.ts`,
   );
   assertEquals(
     githubHref('../README.md#documentation', 'docs/README.md'),

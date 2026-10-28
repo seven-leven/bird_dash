@@ -52,8 +52,11 @@ public/                 Static assets, served as-is
   thumb/<id>/           Grid thumbnails (generated)
   placeholders/<id>.webp  Shown for undrawn items (<id>-dark.webp in the dark theme)
 src/
-  App.vue               Makes the stores, provides them, starts the router (phase 6 moves it to app/)
-  app/                  AppShell (the frame), the router, actions that touch more than one store
+  main.ts               Mounts app/App.vue
+  env.d.ts              The build-time globals, which only app/buildInfo.ts reads
+  app/                  App.vue (makes and provides the stores, starts the router), AppShell (the
+                        frame, which places each feature), the router, the pages, the build's
+                        details, actions that touch more than one store
   shell/                TopBar, CollectionMenu, SideNav, AppFooter; the theme and layout stores
   gallery/              Gallery, its sections and tiles, the scroll-spy, the view over a
                         collection; the collections and view stores
@@ -101,7 +104,7 @@ Imports only point leftwards in this list; nothing imports from a layer to its r
 | Data and browser | `src/data/`, `src/browser/`                | The network (only `data/` fetches) and the browser's APIs                                   |
 | Shared UI        | `src/ui/`                                  | Components that take props and emit events, and inject no store; the icon and logo drawings |
 | Features         | `src/{gallery,viewer,search,about,shell}/` | Each feature's components, composables and store. A feature does not import another's code  |
-| App              | `src/app/`, `src/App.vue`                  | The frame, the router, the actions across stores; `App.vue` makes and provides the stores   |
+| App              | `src/app/`                                 | `App.vue` makes and provides the stores; the frame, the router, the actions across stores   |
 
 ### Stores
 
@@ -148,10 +151,11 @@ State moves one way:
 grammar is `#<collection>`, `#<collection>/<item>` or `#<page>`. State changes are mirrored to the
 hash, and a hash change (a deep link, the back button) is applied to the stores.
 
-The pages that are not a collection (today, About) are one list, [`src/pages.ts`](../src/pages.ts):
-an id, a label and a component each. The route, the top bar's tabs, the collection menu and the main
-area all read it, so a new page is one entry there. A contract test keeps collection ids and page
-ids apart.
+The pages that are not a collection (today, About) are one list,
+[`src/app/pages.ts`](../src/app/pages.ts): an id, a label and a component each. The route reads it,
+and `App.vue` hands it to the layout store, where the top bar's tabs, the collection menu, the
+footer and the main area read it; so a new page is one entry there. A contract test keeps collection
+ids and page ids apart.
 
 ## The asset pipeline
 

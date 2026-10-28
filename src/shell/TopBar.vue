@@ -1,4 +1,4 @@
-<!-- components/layout/TopBar.vue -->
+<!-- shell/TopBar.vue: the one row along the top. -->
 <template>
   <!-- One row at every width (docs/DESIGN.md §10). What gives way as it narrows: the
        collection tabs become one menu button below md (or whenever there are more than
@@ -54,7 +54,7 @@
         </button>
         <!-- The pages sit after the collections; where they are a menu, they are in the menu. -->
         <a
-          v-for="p in PAGES"
+          v-for="p in pages"
           :key="p.id"
           :href="`#${p.id}`"
           class="nav-item marker-b focus-ring flex items-center justify-center px-3 py-1.5"
@@ -76,15 +76,18 @@
       <Icon name="search" class="size-4" />
     </button>
 
-    <SearchBox
-      ref="searchRef"
-      class="flex-1 min-w-0 md:ml-auto"
+    <!-- The search box, placed here by the app (app/AppShell.vue). -->
+    <div
+      ref="searchEl"
+      class="flex-1 min-w-0 md:ml-auto transition-[max-width] duration-fast"
       :class="[
         dropdownOpen ? 'md:max-w-96' : 'md:max-w-72',
         searchOpen ? '' : 'max-[419px]:hidden',
       ]"
       @focusout="onSearchFocusOut"
-    />
+    >
+      <slot name="search" />
+    </div>
     <button
       v-if="searchOpen"
       class="btn-ghost focus-ring min-[420px]:hidden flex items-center justify-center size-9 shrink-0"
@@ -133,7 +136,6 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue';
-import SearchBox from '../search/SearchBox.vue';
 import CollectionMenu from './CollectionMenu.vue';
 import Icon from '../ui/Icon.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
@@ -145,10 +147,9 @@ import { useViewStore } from '../gallery/viewStore.ts';
 import { useActions } from '../app/actions.ts';
 import { useSearchStore } from '../search/searchStore.ts';
 import { viewName } from '../domain/viewName.ts';
-import { PAGES } from '../pages.ts';
 
 const { collections, activeCollection } = useCollectionsStore();
-const { isNarrow, sidebarOpen, page, toggleSidebar } = useLayoutStore();
+const { pages, isNarrow, sidebarOpen, page, toggleSidebar } = useLayoutStore();
 const { viewMode, setViewMode } = useViewStore();
 const { theme, toggleTheme } = useThemeStore();
 const { selectCollection } = useActions();
@@ -161,16 +162,15 @@ const tabsFit = computed(() => collections.value.length <= TABS_FIT);
 
 // Below 420px: is the search open across the row?
 const searchOpen = ref(false);
-const searchRef = ref<InstanceType<typeof SearchBox> | null>(null);
+const searchEl = ref<HTMLElement | null>(null);
 async function openSearch(): Promise<void> {
   searchOpen.value = true;
   await nextTick();
-  (searchRef.value?.$el as HTMLElement | undefined)?.querySelector('input')?.focus();
+  searchEl.value?.querySelector('input')?.focus();
 }
 // Leaving an empty search closes it again; one with a query stays, as the filter it is.
 function onSearchFocusOut(e: FocusEvent): void {
-  const wrapper = searchRef.value?.$el as HTMLElement | undefined;
-  if (!query.value && !wrapper?.contains(e.relatedTarget as Node)) searchOpen.value = false;
+  if (!query.value && !searchEl.value?.contains(e.relatedTarget as Node)) searchOpen.value = false;
 }
 
 const views = computed(() => [

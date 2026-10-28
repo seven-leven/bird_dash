@@ -40,7 +40,7 @@
         </button>
       </li>
       <li
-        v-for="(p, i) in PAGES"
+        v-for="(p, i) in pages"
         :key="p.id"
         :class="i === 0 && 'mt-1 border-t pt-1 border-slate-100 dark:border-slate-800'"
       >
@@ -64,11 +64,10 @@ import CollectionIcon from '../ui/CollectionIcon.vue';
 import { useCollectionsStore } from '../gallery/collectionsStore.ts';
 import { useActions } from '../app/actions.ts';
 import { useLayoutStore } from './layoutStore.ts';
-import { PAGES } from '../pages.ts';
 
 const { collections, activeCollection } = useCollectionsStore();
 const { selectCollection } = useActions();
-const { page, currentPage } = useLayoutStore();
+const { pages, page, currentPage } = useLayoutStore();
 
 const open = ref(false);
 const rootRef = ref<HTMLElement | null>(null);

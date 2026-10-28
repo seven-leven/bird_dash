@@ -1,5 +1,5 @@
 import { nextTick, onMounted, onUnmounted, type Ref, watch } from 'vue';
-import { findPage, type PageId } from '../pages.ts';
+import { findPage, type PageId } from './pages.ts';
 import type { Collection, Item, ItemsByCollection, Page } from '../types/index.ts';
 
 /** Parse the hash grammar `#<collectionId>[/<itemId>]` (leading `#`/`/` optional). */

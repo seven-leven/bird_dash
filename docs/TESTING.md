@@ -118,9 +118,9 @@ belongs to one area, by its folder ([`script/testRunner/areas.ts`](../script/tes
 | Area                          | Folders                                                               | Protects                                                |
 | ----------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------- |
 | Site: data and search         | `src/domain`, `src/data`, `src/search`                                | The archive's rules, loading collections, search        |
-| Site: state and routing       | `src/browser`, `src/app`, `src/shell`, `src/pages.ts`                 | The shell and its stores, links, the pages, theme       |
+| Site: state and routing       | `src/browser`, `src/app`, `src/shell`                                 | The shell and its stores, links, the pages, theme       |
 | Site: viewer and interface    | `src/viewer`, `src/gallery`, `src/about`, `src/ui`, `src/styles`      | The viewer, the gallery, About, icons and logo          |
-| Site: journeys                | `src/journeys`, `src/App.vue`                                         | A whole visit, from first load to the back button       |
+| Site: journeys                | `src/journeys`, `src/app/App.vue`                                     | A whole visit, from first load to the back button       |
 | Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders | Ingest, the integrity check, the files in `public/`     |
 | Version and changelog         | `script/version`, `script/changelog`                                  | The version in the footer, the changelog task           |
 | Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                 | The runner and its reports, guide images, the docs site |

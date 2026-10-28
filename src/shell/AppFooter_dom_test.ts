@@ -2,20 +2,23 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { h, ref } from 'vue';
 import AppFooter from './AppFooter.vue';
-import { PAGES } from '../pages.ts';
+import { PAGES } from '../app/pages.ts';
+import { buildInfo } from '../app/buildInfo.ts';
 import type { Page } from '../types/index.ts';
 import { mountComponent } from '../testing/mount.ts';
 
 function mount(page: Page) {
-  const host = mountComponent(() => h(AppFooter), { stores: { layout: { page: ref(page) } } });
+  const host = mountComponent(() => h(AppFooter, { build: buildInfo }), {
+    stores: { layout: { pages: PAGES, page: ref(page) } },
+  });
   return { host, text: host.textContent!.replace(/\s+/g, ' ') };
 }
 
 test('it says which build this is: the version, the drawings and the commit', () => {
   const { text } = mount('gallery');
   assert(text.includes(`Wildlife Illustrated © ${new Date().getFullYear()}`));
-  assert(text.includes(`v${__APP_VERSION__}`));
-  assert(text.includes(__APP_COMMIT__));
+  assert(text.includes(`v${buildInfo.version}`));
+  assert(text.includes(buildInfo.commit));
   assert(text.includes('Thaana set in Faruma'));
 });
 

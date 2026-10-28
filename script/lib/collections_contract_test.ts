@@ -6,7 +6,7 @@ import { readList } from './lists.ts';
 import { readJson } from './fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 import { isIconName } from '../../src/ui/icons.ts';
-import { PAGES } from '../../src/pages.ts';
+import { PAGES } from '../../src/app/pages.ts';
 
 // The app is data-driven: a typo in public/*.json silently breaks routing, search
 // or the timeline rather than failing a build. These tests are that missing gate.
@@ -22,7 +22,7 @@ test('collections.json: at least one collection, unique ids', () => {
 test("collections.json: no collection takes a page's id (#about would show the page)", () => {
   const pages = new Set<string>(PAGES.map((p) => p.id));
   const taken = COLLECTIONS.map((c) => c.id).filter((id) => pages.has(id));
-  assertEquals(taken, [], `collection ids that are also pages in src/pages.ts: ${taken}`);
+  assertEquals(taken, [], `collection ids that are also pages in src/app/pages.ts: ${taken}`);
 });
 
 test('collections.json: every accent names a palette defined in accents.css', async () => {

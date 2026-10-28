@@ -1,29 +1,30 @@
 <script setup lang="ts">
 import { nextTick, onMounted, watch } from 'vue';
 
-import AppShell from './app/AppShell.vue';
-import EmptyState from './ui/EmptyState.vue';
-import Icon from './ui/Icon.vue';
-import RetryButton from './ui/RetryButton.vue';
-import GallerySkeleton from './gallery/GallerySkeleton.vue';
-import { useHashRoute } from './app/useHashRoute.ts';
-import { createThemeStore, provideThemeStore } from './shell/themeStore.ts';
-import { createLayoutStore, provideLayoutStore } from './shell/layoutStore.ts';
-import { createCollectionsStore, provideCollectionsStore } from './gallery/collectionsStore.ts';
-import { createViewStore, provideViewStore } from './gallery/viewStore.ts';
-import { createSearchStore, provideSearchStore } from './search/searchStore.ts';
-import { createViewerStore, provideViewerStore } from './viewer/viewerStore.ts';
-import { createStatsStore, provideStatsStore } from './about/statsStore.ts';
-import { createAppActions, provideActions } from './app/actions.ts';
-import { applyAccent } from './browser/applyAccent.ts';
-import { reloadPage } from './browser/reloadPage.ts';
+import AppShell from './AppShell.vue';
+import EmptyState from '../ui/EmptyState.vue';
+import Icon from '../ui/Icon.vue';
+import RetryButton from '../ui/RetryButton.vue';
+import GallerySkeleton from '../gallery/GallerySkeleton.vue';
+import { useHashRoute } from './useHashRoute.ts';
+import { createThemeStore, provideThemeStore } from '../shell/themeStore.ts';
+import { createLayoutStore, provideLayoutStore } from '../shell/layoutStore.ts';
+import { createCollectionsStore, provideCollectionsStore } from '../gallery/collectionsStore.ts';
+import { createViewStore, provideViewStore } from '../gallery/viewStore.ts';
+import { createSearchStore, provideSearchStore } from '../search/searchStore.ts';
+import { createViewerStore, provideViewerStore } from '../viewer/viewerStore.ts';
+import { createStatsStore, provideStatsStore } from '../about/statsStore.ts';
+import { createAppActions, provideActions } from './actions.ts';
+import { PAGES } from './pages.ts';
+import { applyAccent } from '../browser/applyAccent.ts';
+import { reloadPage } from '../browser/reloadPage.ts';
 
 // =============================================================================
 // STORES — one per feature, made in dependency order and shared through
 // provide/inject:  collections → search → view (with layout) → viewer.
 // =============================================================================
 const theme = createThemeStore();
-const layout = createLayoutStore();
+const layout = createLayoutStore(PAGES);
 const collections = createCollectionsStore();
 const search = createSearchStore({
   collections: collections.collections,

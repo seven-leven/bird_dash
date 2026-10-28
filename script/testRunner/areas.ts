@@ -38,7 +38,7 @@ export const AREAS: Area[] = [
     id: 'state',
     label: 'Site: state and routing',
     protects: 'the shell and its stores, shareable links, the pages, theme, accent',
-    paths: ['src/browser/', 'src/app/', 'src/shell/', 'src/pages'], // pages.ts and its test
+    paths: ['src/browser/', 'src/app/', 'src/shell/'],
   },
   {
     id: 'interface',
@@ -56,7 +56,7 @@ export const AREAS: Area[] = [
     id: 'journeys',
     label: 'Site: journeys',
     protects: 'a whole visit: first load, collections, views, search, the viewer, links, failures',
-    paths: ['src/journeys/', 'src/App.vue'],
+    paths: ['src/journeys/', 'src/app/App.vue'],
   },
   {
     id: 'pipeline',

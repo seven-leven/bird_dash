@@ -1,4 +1,4 @@
-import { findPage } from '../pages.ts';
+import { findPage, PAGES } from '../app/pages.ts';
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { computed, h, nextTick, ref } from 'vue';
@@ -28,7 +28,7 @@ function mount(page: Page = 'gallery') {
           activeId.value = id;
         },
       },
-      layout: { page: ref(page), currentPage: computed(() => findPage(page)) },
+      layout: { pages: PAGES, page: ref(page), currentPage: computed(() => findPage(page)) },
     },
   });
   const button = host.querySelector<HTMLButtonElement>('[aria-controls="collection-menu"]')!;

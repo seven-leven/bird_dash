@@ -29,7 +29,7 @@ Use the word in the first column; avoid the ones in the last.
 
 | Word                   | Means                                                                                        | In the code                                   | Not                                       |
 | ---------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------- |
-| **page**               | What the main area shows: the gallery, or one of the pages in `src/pages.ts` (About)         | `Page`, `PAGES`                               | route, screen, view                       |
+| **page**               | What the main area shows: the gallery, or one of the pages in `src/app/pages.ts` (About)     | `Page`, `PAGES`                               | route, screen, view                       |
 | **gallery**            | The page of one collection's tiles, in sections                                              | `Gallery.vue`                                 | grid (that is its layout), content        |
 | **view**               | How the gallery is arranged: by **group** or by **month**                                    | `View` `'group' \| 'month'`                   | mode, date view                           |
 | **section**            | One heading and its tiles in the gallery: a group, or a month                                | `activeSection`, `registerHeader`             | group (in the month view), block          |

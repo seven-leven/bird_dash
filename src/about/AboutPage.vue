@@ -28,7 +28,8 @@
 
     <AboutHistory />
     <AboutDesign />
-    <AppFooter />
+    <!-- What the app places after a page: the footer. -->
+    <slot />
   </article>
 </template>
 
@@ -36,7 +37,6 @@
 import { computed, onMounted } from 'vue';
 import EmptyState from '../ui/EmptyState.vue';
 import RetryButton from '../ui/RetryButton.vue';
-import AppFooter from '../shell/AppFooter.vue';
 import AboutIntro from './AboutIntro.vue';
 import AboutProgress from './AboutProgress.vue';
 import AboutNewest from './AboutNewest.vue';

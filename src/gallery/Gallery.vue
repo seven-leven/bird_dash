@@ -77,7 +77,8 @@
         :first="groupIndex === 0"
       />
 
-      <AppFooter />
+      <!-- What the app places after the drawings: the footer. -->
+      <slot />
     </template>
   </div>
 </template>
@@ -90,7 +91,6 @@ import EmptyState from '../ui/EmptyState.vue';
 import RetryButton from '../ui/RetryButton.vue';
 import DrawnFilter from '../ui/DrawnFilter.vue';
 import Icon from '../ui/Icon.vue';
-import AppFooter from '../shell/AppFooter.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
 import { useCollectionsStore } from './collectionsStore.ts';
 import { useViewStore } from './viewStore.ts';

@@ -5,7 +5,7 @@ import AboutPage from './AboutPage.vue';
 import { makeCollection } from '../testing/fixtures.ts';
 import { settle } from '../testing/settle.ts';
 import { mountComponent } from '../testing/mount.ts';
-import type { Collection, CollectionCounts, NewestDrawing, Page, Stats } from '../types/index.ts';
+import type { Collection, CollectionCounts, NewestDrawing, Stats } from '../types/index.ts';
 
 const FOLIO = 'https://seven-leven.github.io/folio/code-wildlife.html';
 
@@ -110,7 +110,6 @@ function mount(
     stores: {
       collections: { collections: ref(list), activeCollection: computed(() => active) },
       stats,
-      layout: { page: ref<Page>('about') }, // for the footer
     },
   });
   const text = () => host.textContent!.replace(/\s+/g, ' ');
@@ -164,8 +163,7 @@ test('the first drawing heads the page; the newest five link to their pages in t
   assert(figure.textContent!.includes('The first drawing · 10 October 2024'));
   assertEquals(figure.querySelector('img')!.getAttribute('src'), '/thumb/birds/001.webp');
 
-  // Browse goes to the collection last open; the drawings to their own pages; then the
-  // footer's pages.
+  // Browse goes to the collection last open; the drawings to their own pages.
   assertEquals(hrefs().filter((h) => h?.startsWith('#')), [
     '#sharks',
     '#birds/001',
@@ -175,7 +173,6 @@ test('the first drawing heads the page; the newest five link to their pages in t
     '#shells/029',
     '#birds/029',
     '#birds/001',
-    '#about',
   ]);
   // A bird with two Dhivehi names is captioned by the first; one with none keeps the line.
   const recent = [...host.querySelectorAll('[aria-labelledby="about-recent"] [lang="dv"]')];
@@ -184,15 +181,11 @@ test('the first drawing heads the page; the newest five link to their pages in t
   assert(text().includes('Watercock'));
 });
 
-test('the write-up and the source are links that leave the site; the manifesto is in the docs', async () => {
+test('the write-up is a link that leaves the site; the manifesto is in the docs', async () => {
   const { host } = mount();
   await settle();
   const external = [...host.querySelectorAll<HTMLAnchorElement>('a[target="_blank"]')];
-  assertEquals(external.map((a) => a.getAttribute('href')), [
-    FOLIO,
-    FOLIO,
-    'https://github.com/seven-leven/bird_dash',
-  ]);
+  assertEquals(external.map((a) => a.getAttribute('href')), [FOLIO, FOLIO]);
   for (const a of external) {
     assertEquals(a.rel, 'noopener noreferrer');
     assert(a.textContent!.includes('(opens in a new tab)'));

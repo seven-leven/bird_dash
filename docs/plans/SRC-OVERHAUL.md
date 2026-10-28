@@ -193,9 +193,12 @@ every file moves.
       `domain/tileImage.ts`, as the search results use it too; and `components/`, `composables/` and
       `stores/` could only go with `AppShell` (was `Chrome`), `useHashRoute` and `actions` in
       `app/`, so they moved ahead of phase 6. No file is over 200 lines.
-- [ ] **6. App.** `App.vue`, `pages.ts` and `buildInfo.ts` into `app/` (`AppShell.vue`,
-      `useHashRoute.ts` and `actions.ts` went in phases 3 and 5); `vite-env.d.ts` becomes
-      `env.d.ts`. _Done when_ `src/` holds only `main.ts`, `env.d.ts` and the folders above.
+- [x] **6. App** (2026-10-28). `App.vue` and `pages.ts` into `app/`; `app/buildInfo.ts` reads the
+      build-time globals, once; `vite-env.d.ts` is `env.d.ts`. So that the layers point one way, the
+      app places the features rather than the features each other: `AppShell` puts the search box in
+      the top bar (a slot) and the footer after the gallery or a page (their default slot), and
+      hands the footer the build; `App.vue` hands the page list to the layout store, where the shell
+      reads it.
 - [ ] **7. Styles.** `main.css` split into `tokens`, `accents` (if not already), `base`
       (`.font-dhivehi`, reduced motion), `components` (the `@layer components` classes) and
       `utilities`; `main.css` keeps only Tailwind's setup and the imports. _Done when_ each file has
