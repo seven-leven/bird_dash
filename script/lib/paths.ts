@@ -27,7 +27,8 @@ export const PATHS = {
   list: (collectionId: string): string => `./public/lists/${collectionId}.json`,
   /** The illustrator's PNGs for a collection; on your machine only, never in git. */
   sourceArt: (collectionId: string): string => `./raw_png/${collectionId}/`,
-  /** The viewer's WebPs and the tiles' WebPs. */
+  /** The viewer's WebPs, and the tiles' in two sizes (a screen picks one: `srcset`). */
   full: (collectionId: string): string => `./public/full/${collectionId}/`,
   thumb: (collectionId: string): string => `./public/thumb/${collectionId}/`,
+  small: (collectionId: string): string => `./public/small/${collectionId}/`,
 } as const;

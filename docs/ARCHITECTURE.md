@@ -19,7 +19,7 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
 └───────────────┬─────────────────────────────────────────────┘
                 ▼
    public/   collections.json · lists/<id>.json
-             full/ · thumb/
+             full/ · thumb/ · small/
                 │   the contract: fetched at runtime, never imported by src/
                 ▼
 ┌─ 2. The site (src/) ────────────────────────────────────────┐
@@ -50,7 +50,8 @@ public/                 Static assets, served as-is
   lists/<id>.json       Item data per collection, grouped by taxonomy
   stats.json            The archive's numbers, written by the asset build
   full/<id>/            Full-resolution WebP illustrations
-  thumb/<id>/           Grid thumbnails (generated)
+  thumb/<id>/           Grid thumbnails, 400px (generated)
+  small/<id>/           The same at 240px; a tile picks one by screen (srcset)
 src/
   main.ts               Mounts app/App.vue
   env.d.ts              The build-time globals, which only app/buildInfo.ts reads
@@ -162,12 +163,12 @@ ids and page ids apart.
 `npm run ingest` runs four steps per collection (it changes files git tracks, so it runs on your
 machine, never in CI):
 
-| Step       | File                                  | Does                                                           |
-| ---------- | ------------------------------------- | -------------------------------------------------------------- |
-| **Scan**   | `script/ingest/scanSources.ts`        | Reads the list file and the three image folders, once          |
-| **Plan**   | `script/ingest/planChanges.ts`        | Pure set arithmetic: what to register, transcode, or flag      |
-| **Apply**  | `script/ingest/applyChanges.ts`       | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
-| **Report** | `script/ingest/formatIngestReport.ts` | The warnings, each step, the summary                           |
+| Step       | File                                  | Does                                                                         |
+| ---------- | ------------------------------------- | ---------------------------------------------------------------------------- |
+| **Scan**   | `script/ingest/scanSources.ts`        | Reads the list file and the three image folders, once                        |
+| **Plan**   | `script/ingest/planChanges.ts`        | Pure set arithmetic: what to register, transcode, or flag                    |
+| **Apply**  | `script/ingest/applyChanges.ts`       | Dates new items in the JSON, writes the `full/`, `thumb/` and `small/` WebPs |
+| **Report** | `script/ingest/formatIngestReport.ts` | The warnings, each step, the summary                                         |
 
 Keeping the plan pure is what makes it testable without touching the disk. `npm run check`
 (`script/check/`) runs scan and plan only, and fails if anything is missing or orphaned; it also

@@ -19,6 +19,8 @@
       <img
         v-if="drawn && !failed"
         :src="props.item.imageUrl"
+        :srcset="`${props.item.smallImageUrl} 240w, ${props.item.imageUrl} 400w`"
+        :sizes="SIZES"
         :alt="props.item.commonName"
         :loading="eager ? 'eager' : 'lazy'"
         :fetchpriority="eager ? 'high' : 'auto'"
@@ -91,6 +93,10 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{ (e: 'cardClick', item: Item): void }>();
+
+/** How wide a tile is drawn (the grid, `.tile-grid`): two to a row on a phone, about 220px
+ * from sm up. With `srcset` a screen takes the 240px file where it is enough, else the 400px. */
+const SIZES = '(min-width: 640px) 220px, 46vw';
 
 // Only drawn items open the viewer. A placeholder is not a button: it gets no
 // role, tab stop or hover lift, so nothing promises an action that never happens.

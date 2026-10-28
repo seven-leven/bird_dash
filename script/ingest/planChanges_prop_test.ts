@@ -12,6 +12,7 @@ const state = fc.record({ drawn: ids, source: ids, full: ids, thumb: ids }).map(
   sourceIds: new Set(s.source),
   fullIds: new Set(s.full),
   thumbIds: new Set(s.thumb),
+  smallIds: new Set(s.thumb),
 }));
 
 const sorted = (a: Iterable<string>) => [...a].sort();
@@ -47,6 +48,7 @@ test('property: carrying out a plan leaves nothing left to do', () => {
         sourceIds: s.sourceIds,
         fullIds: new Set([...s.fullIds, ...first.toTranscode]),
         thumbIds: new Set([...s.thumbIds, ...first.toTranscode, ...first.toRepairThumb]),
+        smallIds: new Set([...s.smallIds, ...first.toTranscode, ...first.toRepairThumb]),
       };
       const second = planChanges(after);
 
@@ -63,7 +65,13 @@ test('property: a fully consistent state has no blocking issues', () => {
     fc.property(ids, (drawn) => {
       const set = new Set(drawn);
       // every drawn id has raw, full and thumb; nothing else exists
-      const plan = planChanges({ drawnIds: set, sourceIds: set, fullIds: set, thumbIds: set });
+      const plan = planChanges({
+        drawnIds: set,
+        sourceIds: set,
+        fullIds: set,
+        thumbIds: set,
+        smallIds: set,
+      });
       assertEquals(countBlockingIssues(plan), 0);
     }),
   );

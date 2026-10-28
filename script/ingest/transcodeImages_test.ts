@@ -15,7 +15,7 @@ async function withCollection(sources: string[], fn: (collection: Collection) =>
   await fn(collection);
 }
 
-test('the full image is a 2048px WebP square and the thumbnail a 400px one', () =>
+test('the full image is a 2048px WebP square, the thumbnail a 400px one and a 240px one', () =>
   withCollection(['001'], async (collection) => {
     assertEquals(await transcodeFull(collection, '001'), { ok: true });
     assertEquals(await imageSize(`${collection.paths.full}001.webp`), {
@@ -26,6 +26,11 @@ test('the full image is a 2048px WebP square and the thumbnail a 400px one', () 
     assertEquals(await imageSize(`${collection.paths.thumb}001.webp`), {
       width: 400,
       height: 400,
+      format: 'webp',
+    });
+    assertEquals(await imageSize(`${collection.paths.small}001.webp`), {
+      width: 240,
+      height: 240,
       format: 'webp',
     });
   }));
@@ -55,7 +60,9 @@ test('a thumbnail is remade from the full image, and fails without one', () =>
   withCollection(['001'], async (collection) => {
     await transcodeFull(collection, '001');
     await rm(`${collection.paths.thumb}001.webp`);
+    await rm(`${collection.paths.small}001.webp`);
     assertEquals(await transcodeThumb(collection, '001'), { ok: true });
     assertEquals((await imageSize(`${collection.paths.thumb}001.webp`)).width, 400);
+    assertEquals((await imageSize(`${collection.paths.small}001.webp`)).width, 240);
     assertEquals((await transcodeThumb(collection, '404')).ok, false);
   }));

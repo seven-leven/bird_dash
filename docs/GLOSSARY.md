@@ -64,19 +64,19 @@ Use the word in the first column; avoid the ones in the last.
 
 ## Building and releasing
 
-| Word                | Means                                                                                                     | In the code                                   | Not                                   |
-| ------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------- |
-| **source art**      | The illustrator's PNGs, in `raw_png/<collection>/` on your machine, never in git                          | `raw_png/`                                    | originals, raw                        |
-| **full**, **thumb** | The two WebP sizes made from source art: the viewer's and the tile's                                      | `public/full/`, `public/thumb/`               | large, small, thumbnail               |
-| **ingest**          | Take in new drawings: make the WebPs, date the new entries, rewrite `stats.json`. Changes tracked files   | `npm run ingest`, `script/ingest/`            | import, add, build                    |
-| **build**           | Make `dist/` from what is committed: the site, then the docs. Changes nothing git tracks                  | `npm run build`, its stages `site` and `docs` | compile, bundle (that is Vite's part) |
-| **generate**        | Redraw a generated file: the design guide, the icon sheet, the logo files, `stats.json`                   | `npm run generate`, `script/generate/`        | render, export                        |
-| **generated file**  | A committed file a command writes, never edited by hand; `check` fails when one is stale                  |                                               | asset (too vague)                     |
-| **check**           | Compare the repository with what it should be, change nothing, exit 1 on a problem                        | `npm run check`                               | validate, lint (that is ESLint)       |
-| **deploy**          | Publish `dist/` to GitHub Pages; every merge to `main` does, if the checks pass                           | `deploy.yml`                                  | release                               |
-| **version**         | `0.9.<commits>`, worked out at build time, never stored                                                   | `npm run version`                             | release number                        |
-| **line**            | A line of work, the `major.minor` part (`0.9`), named after a drawing's Dhivehi name: v0.9 "Valu Kukulhu" | `base_version.json`, `line_names.ts`          | release, milestone                    |
-| **changelog entry** | One line of `CHANGELOG.md`: a date, then what changed, in words a visitor understands                     | `npm run changelog`                           | commit message                        |
+| Word                           | Means                                                                                                     | In the code                                      | Not                                   |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------- |
+| **source art**                 | The illustrator's PNGs, in `raw_png/<collection>/` on your machine, never in git                          | `raw_png/`                                       | originals, raw                        |
+| **full**, **thumb**, **small** | The WebP sizes made from source art: the viewer's, the tile's, and the tile's on a smaller screen         | `public/full/`, `public/thumb/`, `public/small/` | large, thumbnail                      |
+| **ingest**                     | Take in new drawings: make the WebPs, date the new entries, rewrite `stats.json`. Changes tracked files   | `npm run ingest`, `script/ingest/`               | import, add, build                    |
+| **build**                      | Make `dist/` from what is committed: the site, then the docs. Changes nothing git tracks                  | `npm run build`, its stages `site` and `docs`    | compile, bundle (that is Vite's part) |
+| **generate**                   | Redraw a generated file: the design guide, the icon sheet, the logo files, `stats.json`                   | `npm run generate`, `script/generate/`           | render, export                        |
+| **generated file**             | A committed file a command writes, never edited by hand; `check` fails when one is stale                  |                                                  | asset (too vague)                     |
+| **check**                      | Compare the repository with what it should be, change nothing, exit 1 on a problem                        | `npm run check`                                  | validate, lint (that is ESLint)       |
+| **deploy**                     | Publish `dist/` to GitHub Pages; every merge to `main` does, if the checks pass                           | `deploy.yml`                                     | release                               |
+| **version**                    | `0.9.<commits>`, worked out at build time, never stored                                                   | `npm run version`                                | release number                        |
+| **line**                       | A line of work, the `major.minor` part (`0.9`), named after a drawing's Dhivehi name: v0.9 "Valu Kukulhu" | `base_version.json`, `line_names.ts`             | release, milestone                    |
+| **changelog entry**            | One line of `CHANGELOG.md`: a date, then what changed, in words a visitor understands                     | `npm run changelog`                              | commit message                        |
 
 ## Testing
 

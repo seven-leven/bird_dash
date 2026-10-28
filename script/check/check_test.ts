@@ -11,7 +11,13 @@ import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
 const birds = makeScriptCollection('x', {
   label: 'Test',
   emoji: '',
-  paths: { json: './x.json', sourceArt: './raw/', full: './full/', thumb: './thumb/' },
+  paths: {
+    json: './x.json',
+    sourceArt: './raw/',
+    full: './full/',
+    thumb: './thumb/',
+    small: './small/',
+  },
 });
 const options = { collections: [birds], statsPath: './stats.json' };
 
@@ -23,6 +29,7 @@ async function makeRepository(files: FakeIoOptions['files'] = {}) {
       './x.json': JSON.stringify({ Group: [{ id: '001', name: 'A', drawn: '2025-01-01' }] }),
       './full/001.webp': '',
       './thumb/001.webp': '',
+      './small/001.webp': '',
       [PATHS.favicon]: faviconSvg(),
       ...Object.fromEntries(
         Object.entries(logoFiles()).map(([name, svg]) => [`${PATHS.docsAssets}/logo/${name}`, svg]),

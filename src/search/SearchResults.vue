@@ -34,7 +34,7 @@
              hover:bg-slate-50 dark:hover:bg-slate-800/60"
       :class="{ 'bg-slate-50 dark:bg-slate-800/60': focusedIndex === flat }"
     >
-      <img v-if="result.item.isDrawn" :src="result.item.imageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
+      <img v-if="result.item.isDrawn" :src="result.item.smallImageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
       <!-- Not drawn yet: its collection's icon, faint on the tile grey, as in the grid. -->
       <span
         v-else

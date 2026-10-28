@@ -100,6 +100,12 @@ test("what is not drawn shows its collection's icon, faint on the tile grey in e
   assertEquals(emoji.textContent!.trim(), '🐚');
 });
 
+test('a drawn tile offers both sizes, so a screen takes the smaller where it is enough', () => {
+  const { img } = mount({ item: drawn });
+  assertEquals(img.getAttribute('srcset'), '/small/042.webp 240w, /thumb/birds/042.webp 400w');
+  assertEquals(img.getAttribute('sizes'), '(min-width: 640px) 220px, 46vw');
+});
+
 test('drawn tiles load lazily, the first screen at once', () => {
   assertEquals(mount({ item: drawn }).img.getAttribute('loading'), 'lazy');
   const eager = mount({ item: drawn, eager: true });

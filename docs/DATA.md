@@ -12,7 +12,8 @@ public/
   lists/<id>.json             the items of one collection, grouped
   stats.json                  the archive's numbers, worked out from the lists (generated)
   full/<id>/<item>.webp       full-size drawing (generated)
-  thumb/<id>/<item>.webp      grid thumbnail (generated)
+  thumb/<id>/<item>.webp      grid thumbnail, 400px (generated)
+  small/<id>/<item>.webp      the same at 240px, for a screen that needs no more (generated)
 raw_png/<id>/<item>.png       your source art; not in git
 ```
 
@@ -104,11 +105,11 @@ Notes:
 
 Do not edit these by hand; run the task that makes them.
 
-| Files                                   | Made by          | From                                 |
-| --------------------------------------- | ---------------- | ------------------------------------ |
-| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run ingest` | `raw_png/<id>/*.png`                 |
-| `drawn` dates on newly added items      | `npm run ingest` | a new PNG whose item has no date yet |
-| `stats.json`                            | `npm run ingest` | every `lists/<id>.json`              |
+| Files                                  | Made by          | From                                 |
+| -------------------------------------- | ---------------- | ------------------------------------ |
+| `full/`, `thumb/`, `small/<id>/*.webp` | `npm run ingest` | `raw_png/<id>/*.png`                 |
+| `drawn` dates on newly added items     | `npm run ingest` | a new PNG whose item has no date yet |
+| `stats.json`                           | `npm run ingest` | every `lists/<id>.json`              |
 
 ### `stats.json`
 
@@ -141,7 +142,7 @@ appears in it with no other change.
 
 `npm run check` fails if:
 
-- an item is marked drawn but its full or thumbnail image is missing;
+- an item is marked drawn but its full image, or its thumbnail in either size, is missing;
 - an image exists for an item that is not marked drawn (an orphan);
 - a source PNG exists for an item that has no `drawn` date yet (run `npm run ingest`);
 - `stats.json` does not match the lists, as after a hand edit to a list (run `npm run ingest`);

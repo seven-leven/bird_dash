@@ -25,6 +25,7 @@ test('new source art is dated, its images made, and a missing thumbnail repaired
     sourceIds: set('001', '002'),
     fullIds: set('001'),
     thumbIds: set(),
+    smallIds: set(),
   });
   const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
 
@@ -45,6 +46,7 @@ test('source art with no item in the list is skipped with a warning, and nothing
     sourceIds: set('999'),
     fullIds: set('999'),
     thumbIds: set('999'),
+    smallIds: set('999'),
   });
   const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
 
@@ -60,6 +62,7 @@ test('an image that cannot be made is a failure for that item, reported, and the
     sourceIds: set('001', '002'),
     fullIds: set('001'),
     thumbIds: set(),
+    smallIds: set(),
   });
   const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
 

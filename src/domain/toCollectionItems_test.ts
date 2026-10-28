@@ -3,7 +3,7 @@ import { assert, assertEquals, assertThrows } from '@std/assert';
 import { toCollection, toCollectionItems } from './toCollectionItems.ts';
 import { makeItem } from '../testing/fixtures.ts';
 
-const col = { id: 'birds', imageBase: '/thumb/birds/' };
+const col = { id: 'birds', imageBase: '/thumb/birds/', smallImageBase: '/small/birds/' };
 
 test('toCollectionItems: a drawn item gets its thumbnail, date and flags', () => {
   const [item] = toCollectionItems(col, {
@@ -14,6 +14,7 @@ test('toCollectionItems: a drawn item gets its thumbnail, date and flags', () =>
   assertEquals(item.group, 'Ducks');
   assertEquals(item.isDrawn, true);
   assertEquals(item.imageUrl, '/thumb/birds/007.webp');
+  assertEquals(item.smallImageUrl, '/small/birds/007.webp');
   assertEquals(item.sortKey, 7);
   assertEquals(item.drawnTime, Date.UTC(2025, 2, 1));
 });
@@ -25,7 +26,7 @@ test('toCollectionItems: no date, or an empty one, is not drawn and has no image
   for (const item of items) {
     assertEquals(item.isDrawn, false);
     assertEquals(item.drawnTime, 0);
-    assertEquals(item.imageUrl, '');
+    assertEquals([item.imageUrl, item.smallImageUrl], ['', '']);
   }
 });
 
@@ -98,6 +99,7 @@ test('toCollection: derives the data and image URLs from the id and base', () =>
   }, './');
   assertEquals(config.dataUrl, './lists/sharks.json');
   assertEquals(config.imageBase, './thumb/sharks/');
+  assertEquals(config.smallImageBase, './small/sharks/');
   assertEquals(config.fullImageBase, './full/sharks/');
   const item = makeItem({ scientificName: 'Carcharhinus melanopterus' });
   assertEquals(config.links[0].url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');

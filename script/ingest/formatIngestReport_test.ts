@@ -27,6 +27,7 @@ test('missing source art is a warning only for an item that still needs its imag
     sourceIds: set(),
     fullIds: set('001', '777'), // 002 has no images; 777 has no item
     thumbIds: set('001', '888'),
+    smallIds: set('001', '888'),
   });
   const warnings = text(formatWarnings(birds, plan));
   assert(warnings.includes('its source art is missing; cannot make  002'));
@@ -41,12 +42,19 @@ test('a dry run lists what it would register, make and repair, or that there is 
     sourceIds: set('001', '002', '003'),
     fullIds: set('001'),
     thumbIds: set(),
+    smallIds: set(),
   });
   const lines = text(formatDryRun(birds, busy));
   assert(/would register\s+003/.test(lines) && /would make\s+002/.test(lines), lines);
   assert(/would repair\s+001/.test(lines), lines);
 
-  const idle = planChanges({ drawnIds: set(), sourceIds: set(), fullIds: set(), thumbIds: set() });
+  const idle = planChanges({
+    drawnIds: set(),
+    sourceIds: set(),
+    fullIds: set(),
+    thumbIds: set(),
+    smallIds: set(),
+  });
   assert(/·\s+nothing to do/.test(text(formatDryRun(birds, idle))));
 });
 

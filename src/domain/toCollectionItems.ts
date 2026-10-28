@@ -15,8 +15,9 @@ export interface Item {
    */
   names: readonly ItemName[];
   group: string;
-  /** The drawing's thumbnail; only drawn items have one to show. */
+  /** The drawing's thumbnail (400px), and its smaller size (240px); only drawn items have them. */
   imageUrl: string;
+  smallImageUrl: string;
   isDrawn: boolean;
   /** Numeric form of `itemId`, precomputed for sort comparators. */
   sortKey: number;
@@ -42,6 +43,7 @@ export interface Collection {
   accent?: string;
   dataUrl: string;
   imageBase: string;
+  smallImageBase: string;
   fullImageBase: string;
   groupLabel: string;
   itemLabel: string;
@@ -69,6 +71,7 @@ export function toCollection(raw: CollectionEntry, base: string): Collection {
     kind: raw.kind ?? 'species',
     dataUrl: `${base}lists/${raw.id}.json`,
     imageBase: `${base}thumb/${raw.id}/`,
+    smallImageBase: `${base}small/${raw.id}/`,
     fullImageBase: `${base}full/${raw.id}/`,
     links: raw.links.map((l) => ({
       label: l.label,
@@ -84,7 +87,7 @@ export function toCollection(raw: CollectionEntry, base: string): Collection {
  * also lets the shallowReactive cache skip proxying them.
  */
 export function toCollectionItems(
-  col: Pick<Collection, 'id' | 'imageBase'>,
+  col: Pick<Collection, 'id' | 'imageBase' | 'smallImageBase'>,
   raw: ListFile,
 ): Item[] {
   const items: Item[] = [];
@@ -121,6 +124,7 @@ export function toCollectionItems(
         names,
         group: groupName,
         imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : '',
+        smallImageUrl: hasImg ? `${col.smallImageBase}${itemId}.webp` : '',
         isDrawn: hasImg,
         sortKey: Number.parseInt(itemId, 10) || 0,
         drawnTime: hasImg ? (new Date(String(r.drawn)).getTime() || 0) : 0,
