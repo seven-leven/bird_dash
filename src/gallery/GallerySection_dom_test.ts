@@ -12,7 +12,7 @@ const drawn = (n: number) =>
     (_, i) => makeItem({ commonName: `Bird ${i}`, drawnTime: at(2025, 1, 1) }),
   );
 
-/** The section, with the stores it reads: what it registers, and what it opens. */
+/** The section, with the view store it registers in; what it asks to open is kept. */
 function mount(items: Item[], { first = false } = {}) {
   const registered: [string, unknown][] = [];
   const opened: Item[] = [];
@@ -24,11 +24,11 @@ function mount(items: Item[], { first = false } = {}) {
         count: '4 of 8 drawn',
         first,
         collection: { icon: 'bird', emoji: '🐦' },
+        onOpen: (item: Item) => opened.push(item),
       }),
     {
       stores: {
         view: { registerHeader: (name: string, el: unknown) => registered.push([name, el]) },
-        viewer: { open: (item: Item) => opened.push(item) },
       },
     },
   );
@@ -49,7 +49,7 @@ test('the section registers itself under its name, for the scroll-spy', () => {
   assertEquals(registered.at(-1)![1] === host.querySelector('section'), true);
 });
 
-test('a tile opens the viewer on its drawing', () => {
+test('a tile asks for the viewer on its drawing', () => {
   const items = drawn(2);
   const { host, opened } = mount(items);
   host.querySelectorAll<HTMLElement>('[role="button"]')[1].click();

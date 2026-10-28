@@ -1,7 +1,7 @@
 // The box as a combobox: what it tells a screen reader, and what its keys and buttons ask of the
 // search store and the app. The search journey (src/journeys/search_journey_test.ts) drives the
 // same through the whole app; here the box stands alone, on a real search store over the fixture
-// archive, and the app's action is a stand-in that keeps what it is asked.
+// archive, and what it asks the app to open is kept.
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { h, ref } from 'vue';
@@ -22,16 +22,13 @@ function mount() {
   const search =
     runInScope(() => createSearchStore({ collections: ref(collections), itemsByCollection })).value;
   const picked: [string, string][] = [];
-  const host = mountComponent(() => h(SearchBox), {
-    stores: {
-      search,
-      actions: {
-        selectGlobalResult: async (id: string, item: Item) => {
-          picked.push([id, item.commonName]);
-        },
-      },
-    },
-  });
+  const host = mountComponent(
+    () =>
+      h(SearchBox, {
+        onSelect: (id: string, item: Item) => picked.push([id, item.commonName]),
+      }),
+    { stores: { search } },
+  );
   const input = host.querySelector<HTMLInputElement>('input[role="combobox"]')!;
   return {
     host,

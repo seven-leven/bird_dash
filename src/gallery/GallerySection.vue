@@ -24,7 +24,7 @@
         :item="item"
         :collection="collection"
         :eager="first && index < EAGER_TILES"
-        @card-click="open($event)"
+        @card-click="emit('open', $event)"
       />
     </div>
   </section>
@@ -34,7 +34,6 @@
 import Icon from '../ui/Icon.vue';
 import ItemTile from './ItemTile.vue';
 import { useViewStore } from './viewStore.ts';
-import { useViewerStore } from '../viewer/viewerStore.ts';
 import type { Item } from '../domain/toCollectionItems.ts';
 
 /** Tiles in the first section that load at once: what fills the first screen. */
@@ -52,5 +51,5 @@ defineProps<{
 }>();
 
 const { registerHeader } = useViewStore();
-const { open } = useViewerStore();
+const emit = defineEmits<{ open: [item: Item] }>();
 </script>

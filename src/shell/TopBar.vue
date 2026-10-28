@@ -25,7 +25,7 @@
          room for one more thing, and the current collection's name (below) is what
          says where you are (docs/DESIGN.md §10). It leads back to the gallery. -->
     <a
-      :href="`#${activeCollection?.id ?? ''}`"
+      :href="`#${active?.id ?? ''}`"
       class="hidden sm:flex items-center justify-center gap-2 shrink-0 md:pr-1 select-none focus-ring rounded-control max-md:min-w-9 max-md:min-h-9"
       aria-label="Wildlife Illustrated"
     >
@@ -45,9 +45,9 @@
         <button
           v-for="col in collections"
           :key="col.id"
-          @click="selectCollection(col.id)"
+          @click="emit('select', col.id)"
           class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-3 py-1.5"
-          :aria-current="page === 'gallery' && col.id === activeCollection?.id ? 'page' : undefined"
+          :aria-current="page === 'gallery' && col.id === active?.id ? 'page' : undefined"
         >
           <CollectionIcon :collection="col" class="size-4" />
           {{ col.label }}
@@ -63,7 +63,12 @@
           {{ p.label }}
         </a>
       </div>
-      <CollectionMenu :class="tabsFit && 'md:hidden'" />
+      <CollectionMenu
+        :class="tabsFit && 'md:hidden'"
+        :collections="collections"
+        :active="active"
+        @select="emit('select', $event)"
+      />
     </nav>
 
     <!-- Below 420px the search is a button; opened, it takes the row until closed. -->
@@ -76,14 +81,11 @@
       <Icon name="search" class="size-4" />
     </button>
 
-    <!-- The search box, placed here by the app (app/AppShell.vue). -->
+    <!-- The search box, placed here by the app (app/AppShell.vue); it sets its own width. -->
     <div
       ref="searchEl"
-      class="flex-1 min-w-0 md:ml-auto transition-[max-width] duration-fast"
-      :class="[
-        dropdownOpen ? 'md:max-w-96' : 'md:max-w-72',
-        searchOpen ? '' : 'max-[419px]:hidden',
-      ]"
+      class="flex-1 min-w-0 flex justify-end"
+      :class="searchOpen ? '' : 'max-[419px]:hidden'"
       @focusout="onSearchFocusOut"
     >
       <slot name="search" />
@@ -97,26 +99,9 @@
       <Icon name="close" class="size-4" />
     </button>
 
-    <!-- View switch: both views are always shown; the current one is marked. -->
-    <div
-      v-if="page === 'gallery'"
-      :class="searchOpen && 'max-[419px]:hidden'"
-      class="flex items-center gap-0.5 shrink-0"
-      role="group"
-      aria-label="View"
-    >
-      <button
-        v-for="view in views"
-        :key="view.mode"
-        @click="setViewMode(view.mode)"
-        class="nav-item marker-b focus-ring flex items-center justify-center gap-1.5 px-2 sm:px-2.5 py-1.5 max-md:min-h-9 max-md:min-w-9"
-        :aria-pressed="viewMode === view.mode"
-        :aria-label="`${view.label} view`"
-        :title="`${view.label} view`"
-      >
-        <Icon :name="view.icon" class="size-4" />
-        <span class="hidden lg:inline">{{ view.label }}</span>
-      </button>
+    <!-- The gallery's view switch, placed here by the app; only the gallery has views. -->
+    <div v-if="page === 'gallery'" :class="searchOpen && 'max-[419px]:hidden'" class="shrink-0">
+      <slot name="view" />
     </div>
 
     <div :class="searchOpen && 'max-[419px]:hidden'" class="divider-v hidden sm:block" />
@@ -140,25 +125,24 @@ import CollectionMenu from './CollectionMenu.vue';
 import Icon from '../ui/Icon.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
 import LogoMark from '../ui/LogoMark.vue';
-import { useCollectionsStore } from '../gallery/collectionsStore.ts';
 import { useLayoutStore } from './layoutStore.ts';
 import { useThemeStore } from './themeStore.ts';
-import { useViewStore } from '../gallery/viewStore.ts';
-import { useActions } from '../app/actions.ts';
-import { useSearchStore } from '../search/searchStore.ts';
-import { viewName } from '../domain/viewName.ts';
+import type { Collection } from '../domain/toCollectionItems.ts';
 
-const { collections, activeCollection } = useCollectionsStore();
+const props = defineProps<{
+  collections: Collection[];
+  /** The collection on screen, once one is. */
+  active?: Collection;
+}>();
+const emit = defineEmits<{ select: [collectionId: string] }>();
+
 const { pages, isNarrow, sidebarOpen, page, toggleSidebar } = useLayoutStore();
-const { viewMode, setViewMode } = useViewStore();
 const { theme, toggleTheme } = useThemeStore();
-const { selectCollection } = useActions();
-const { dropdownOpen, query } = useSearchStore();
 
 // Tabs from md up while there are this many collections or fewer; beyond that, or on
 // a narrower screen, the collections are one menu (docs/DESIGN.md §10).
 const TABS_FIT = 4;
-const tabsFit = computed(() => collections.value.length <= TABS_FIT);
+const tabsFit = computed(() => props.collections.length <= TABS_FIT);
 
 // Below 420px: is the search open across the row?
 const searchOpen = ref(false);
@@ -170,15 +154,7 @@ async function openSearch(): Promise<void> {
 }
 // Leaving an empty search closes it again; one with a query stays, as the filter it is.
 function onSearchFocusOut(e: FocusEvent): void {
-  if (!query.value && !searchEl.value?.contains(e.relatedTarget as Node)) searchOpen.value = false;
+  if (searchEl.value?.contains(e.relatedTarget as Node)) return;
+  if (!searchEl.value?.querySelector('input')?.value) searchOpen.value = false;
 }
-
-const views = computed(() => [
-  {
-    mode: 'group' as const,
-    icon: 'taxonomy' as const,
-    label: viewName('group', activeCollection.value?.groupLabel ?? 'Group'),
-  },
-  { mode: 'month' as const, icon: 'calendar' as const, label: viewName('month', '') },
-]);
 </script>

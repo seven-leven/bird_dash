@@ -1,11 +1,14 @@
-<!-- app/AppShell.vue: the frame. It places each feature: the top bar with the search box in
-     it, the sidebar, the gallery or a page with the footer after it, and the viewer over them
-     (props-based so it stays reusable). Features do not place each other's components. -->
+<!-- app/AppShell.vue: the frame. It places each feature: the top bar with the search box and
+     the view switch in it, the sidebar, the gallery or a page with the footer after it, and the
+     viewer over them. It is the one component that reads every store: what a feature needs of
+     another's (the collections in the top bar, the query in the grid, a tile opening the viewer)
+     it hands over here, as props and events, so each feature injects only its own. -->
 <template>
   <div class="flex flex-col h-screen w-full overflow-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
 
-    <TopBar>
-      <template #search><SearchBox /></template>
+    <TopBar :collections="collections" :active="activeCollection" @select="selectCollection">
+      <template #search><SearchBox @select="selectGlobalResult" /></template>
+      <template #view><ViewSwitch /></template>
     </TopBar>
 
     <!-- Body -->
@@ -21,7 +24,7 @@
       />
 
       <!-- Only the gallery has sections to list. -->
-      <SideNav v-if="page === 'gallery'" />
+      <SideNav v-if="page === 'gallery'" :query="query" />
 
       <!-- Main content -->
       <main class="relative flex flex-1 flex-col overflow-hidden">
@@ -54,7 +57,9 @@
           class="flex-1 overflow-y-auto p-4 sm:p-6 scroll-smooth custom-scrollbar"
         >
           <component :is="currentPage.component" v-if="currentPage"><AppFooter :build="buildInfo" /></component>
-          <Gallery v-else><AppFooter :build="buildInfo" /></Gallery>
+          <Gallery v-else :query="query" @clear-query="clear()" @open="open">
+            <AppFooter :build="buildInfo" />
+          </Gallery>
         </div>
 
       </main>
@@ -68,6 +73,7 @@
       :drawn-items="drawnItems"
       :full-image-base-url="activeCollection.fullImageBase"
       :collection="activeCollection"
+      :query="query"
       @close="close()"
       @update:item="show($event)"
       @go-to-group="showGroup"
@@ -83,6 +89,7 @@ import SideNav from '../shell/SideNav.vue';
 import AppFooter from '../shell/AppFooter.vue';
 import SearchBox from '../search/SearchBox.vue';
 import Gallery from '../gallery/Gallery.vue';
+import ViewSwitch from '../gallery/ViewSwitch.vue';
 import Icon from '../ui/Icon.vue';
 import { useCollectionsStore } from '../gallery/collectionsStore.ts';
 import { useViewStore } from '../gallery/viewStore.ts';
@@ -91,18 +98,20 @@ import { useLayoutStore } from '../shell/layoutStore.ts';
 import { useViewerStore } from '../viewer/viewerStore.ts';
 import { matches, matchesDrawn } from '../domain/countWords.ts';
 import { buildInfo } from './buildInfo.ts';
+import { useActions } from './actions.ts';
 
 // Code-split the viewer: its zoom/pan/drag/keyboard machinery (and ViewerDetails)
 // are only needed after the first tile click, so keep them out of first paint.
 const Viewer = defineAsyncComponent(() => import('../viewer/Viewer.vue'));
 
-const { loadState, activeCollection } = useCollectionsStore();
+const { collections, loadState, activeCollection } = useCollectionsStore();
 const { counts, viewMode, setViewMode, goToSection, updateActiveSection } = useViewStore();
 const { query, clear } = useSearchStore();
 // The scroll container is handed to the layout store (for the scroll-spy) as a function ref.
 const { isNarrow, sidebarOpen, page, currentPage, bindScrollEl, closeSidebar, scrollToTop } =
   useLayoutStore();
-const { isOpen, item, drawnItems, close, show } = useViewerStore();
+const { isOpen, item, drawnItems, open, close, show } = useViewerStore();
+const { selectCollection, selectGlobalResult } = useActions();
 
 // Each page opens at its top; back in the gallery, its sections have just mounted again,
 // so the scroll-spy measures them afresh.

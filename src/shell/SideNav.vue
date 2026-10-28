@@ -118,7 +118,6 @@ import Icon from '../ui/Icon.vue';
 import { useCollectionsStore } from '../gallery/collectionsStore.ts';
 import { useLayoutStore } from './layoutStore.ts';
 import { useViewStore } from '../gallery/viewStore.ts';
-import { useSearchStore } from '../search/searchStore.ts';
 import { drawings, drawnOf, ratio } from '../domain/countWords.ts';
 import { viewName } from '../domain/viewName.ts';
 
@@ -140,6 +139,9 @@ const {
 } = useViewStore();
 // Off-screen on narrow screens until opened: `inert` keeps it out of the tab order.
 const { sidebarOpen, isNarrow, closeSidebar } = useLayoutStore();
-const { query } = useSearchStore();
+defineProps<{
+  /** The search, which the sections say they are filtered by (the app hands it over). */
+  query: string;
+}>();
 
 </script>

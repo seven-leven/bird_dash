@@ -16,21 +16,23 @@ function mount(page: Page = 'gallery') {
   ]);
   const activeId = ref('birds');
   const switched: string[] = [];
-  const host = mountComponent(() => h(CollectionMenu), {
-    stores: {
-      collections: {
-        collections: list,
-        activeCollection: computed(() => list.value.find((c) => c.id === activeId.value)),
-      },
-      actions: {
-        selectCollection: async (id: string) => {
+  // The app hands it the collections, and switches to the one it asks for.
+  const host = mountComponent(
+    () =>
+      h(CollectionMenu, {
+        collections: list.value,
+        active: list.value.find((c) => c.id === activeId.value),
+        onSelect: (id: string) => {
           switched.push(id);
           activeId.value = id;
         },
+      }),
+    {
+      stores: {
+        layout: { pages: PAGES, page: ref(page), currentPage: computed(() => findPage(page)) },
       },
-      layout: { pages: PAGES, page: ref(page), currentPage: computed(() => findPage(page)) },
     },
-  });
+  );
   const button = host.querySelector<HTMLButtonElement>('[aria-controls="collection-menu"]')!;
   const items = () => [...host.querySelectorAll<HTMLButtonElement>('#collection-menu button')];
   const about = () => host.querySelector<HTMLAnchorElement>('#collection-menu a[href="#about"]');

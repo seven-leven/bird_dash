@@ -224,7 +224,10 @@ are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md]
    anything that can be computed is computed. Actions that touch more than one store live in
    `app/actions.ts`.
 6. **Shared UI does not know the app.** Components in `ui/` take props and emit events; they never
-   inject a store. Feature components may inject their own store and the app's.
+   inject a store. A feature's components inject its own stores; what they need of another feature's
+   (the collections in the top bar, the query in the grid, a tile opening the viewer) `AppShell`
+   hands them as props and events. `AppShell` is the one component that reads every store, and
+   `SideNav`, the gallery's sidebar in the shell's drawer, the one that reads two features'.
 7. **Types live with their owner.** A type is defined in the module that makes the value, and
    imported from there. No barrel file, and no `types/` folder. The shapes of the files in `public/`
    (shared with `script/`) live in `data/files.ts`.

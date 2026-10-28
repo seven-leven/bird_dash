@@ -39,7 +39,7 @@
             v-if="position"
             class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums viewer-body"
             aria-live="polite"
-          >{{ position }}<template v-if="query"> · matching '{{ query }}'</template></span>
+          >{{ position }}<template v-if="props.query"> · matching '{{ props.query }}'</template></span>
 
           <!-- Close -->
           <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
@@ -139,12 +139,8 @@ import ViewerDetails from './ViewerDetails.vue';
 import Icon from '../ui/Icon.vue';
 import type { Item } from '../domain/toCollectionItems.ts';
 import { useViewer, type ViewerProps } from './useViewer.ts';
-import { useSearchStore } from '../search/searchStore.ts';
-
-// When a search narrows what the viewer pages through, the counter says so.
-const { query } = useSearchStore();
-
-const props = defineProps<ViewerProps>();
+// When a search narrows what the viewer pages through, the counter says so (`query`).
+const props = defineProps<ViewerProps & { query: string }>();
 
 const emit = defineEmits<{
   (e: 'close'): void;

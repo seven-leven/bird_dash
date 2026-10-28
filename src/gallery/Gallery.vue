@@ -25,7 +25,7 @@
       <template #icon>
         <Icon name="noResults" class="size-6" />
       </template>
-      <button class="btn-ghost focus-ring mt-2 px-3 py-1.5 text-sm font-medium" @click="clear()">
+      <button class="btn-ghost focus-ring mt-2 px-3 py-1.5 text-sm font-medium" @click="emit('clear-query')">
         Clear search
       </button>
     </EmptyState>
@@ -76,6 +76,7 @@
         :count="sectionCount(String(groupName), items.length)"
         :first="groupIndex === 0"
         :collection="activeCollection!"
+        @open="emit('open', $event)"
       />
 
       <!-- What the app places after the drawings: the footer. -->
@@ -95,7 +96,7 @@ import Icon from '../ui/Icon.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
 import { useCollectionsStore } from './collectionsStore.ts';
 import { useViewStore } from './viewStore.ts';
-import { useSearchStore } from '../search/searchStore.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 import { drawings, drawnOf } from '../domain/countWords.ts';
 import { reloadPage } from '../browser/reloadPage.ts';
 
@@ -110,7 +111,17 @@ const {
   setDrawnOnly,
   showUndrawn,
 } = useViewStore();
-const { query, clear } = useSearchStore();
+
+defineProps<{
+  /** The search, which filters the grid (the app hands it over). */
+  query: string;
+}>();
+const emit = defineEmits<{
+  /** "Clear search", from a search that matches nothing. */
+  'clear-query': [];
+  /** A drawn tile was chosen: open the viewer on it. */
+  open: [item: Item];
+}>();
 
 // ---------------------------------------------------------------------------
 // COMPUTED
