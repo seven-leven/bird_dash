@@ -34,9 +34,8 @@
         autocomplete="off"
         class="block w-full pl-7 pr-12 py-1.5 rounded-control text-sm border transition-colors duration-fast
                focus:outline-none focus:ring-1 focus:ring-accent-700 focus:border-accent-700
-               bg-stone-100/80 border-transparent text-stone-900 placeholder-stone-400
-               dark:bg-stone-800/80 dark:border-transparent dark:text-stone-100 dark:placeholder-stone-500
-               dark:focus:ring-accent-500 dark:focus:border-accent-500"
+               bg-hush/80 border-transparent text-ink placeholder-stone-400
+               dark:border-transparent dark:placeholder-stone-500 dark:focus:ring-accent-500 dark:focus:border-accent-500"
       />
 
       <!-- Shortcut hint (shown when empty) -->

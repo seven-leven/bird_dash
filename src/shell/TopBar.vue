@@ -5,8 +5,7 @@
        TABS_FIT collections), and below 420px the search becomes a button that opens it
        across the row. -->
   <header class="flex items-center gap-1 sm:gap-2 h-12 px-3 sm:px-4 shrink-0 z-50 transition-colors duration-fast
-                 bg-white border-b border-stone-200
-                 dark:bg-stone-950 dark:border-stone-800">
+                 bg-surface border-b border-rule">
 
     <!-- Mobile sidebar toggle -->
     <button

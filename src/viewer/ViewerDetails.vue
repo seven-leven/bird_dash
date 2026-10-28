@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white/95 border-stone-200 dark:bg-stone-900/95 dark:border-stone-800
-              backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
+  <div class="bg-white/95 border-rule dark:bg-stone-900/95 backdrop-blur-xl
+              rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
     <!-- Where it sits: its id, its group (a link back to it in the grid), and when it
          was drawn, in the month view's words; a series piece, what in. -->

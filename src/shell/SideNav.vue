@@ -5,8 +5,7 @@
     class="fixed inset-y-0 left-0 z-50 w-64 shrink-0 flex flex-col
            border-r transition-transform duration-slow ease-out
            lg:static lg:translate-x-0
-           bg-white border-stone-200
-           dark:bg-stone-950 dark:border-stone-800"
+           bg-surface border-rule"
     :class="sidebarOpen ? 'translate-x-0 shadow-float' : '-translate-x-full'"
     :inert="isNarrow && !sidebarOpen"
     @keydown.escape="closeSidebar()"
@@ -100,7 +99,7 @@
           {{ drawnOf(archiveCounts.drawn, archiveCounts.total) }}
         </span>
       </div>
-      <div class="h-1 rounded-full overflow-hidden bg-stone-200 dark:bg-stone-800">
+      <div class="h-1 rounded-full overflow-hidden bg-rule">
         <div
           class="h-full rounded-full bg-accent-600 dark:bg-accent-500 transition-all duration-slow ease-out"
           :style="{ width: archiveCounts.total > 0 ? `${(archiveCounts.drawn / archiveCounts.total) * 100}%` : '0%' }"

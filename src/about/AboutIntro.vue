@@ -32,7 +32,7 @@
           </span>
           <span v-if="firstName.roman" class="text-sm text-muted" lang="dv-Latn">{{ firstName.roman }}</span>
         </p>
-        <p class="text-sm font-medium text-stone-900 dark:text-stone-100">{{ first.name }}</p>
+        <p class="text-sm font-medium text-ink">{{ first.name }}</p>
         <p class="mt-1 text-xs text-muted">The first drawing · {{ dayOf(first.drawn) }}</p>
       </figcaption>
     </figure>

@@ -22,7 +22,7 @@
         :id="listboxId"
         role="listbox"
         aria-label="Search results"
-        class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-stone-100 dark:divide-stone-800"
+        class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-hush"
       >
         <SearchResults
           :id-prefix="listboxId"

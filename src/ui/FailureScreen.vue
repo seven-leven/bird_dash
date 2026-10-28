@@ -2,7 +2,7 @@
      (docs/DESIGN.md §11). What trying again means is the caller's: it listens for `retry`. -->
 <template>
   <div
-    class="flex flex-col items-center justify-center min-h-screen bg-stone-50 dark:bg-stone-950"
+    class="flex flex-col items-center justify-center min-h-screen bg-page"
     role="alert"
   >
     <EmptyState :title="title" :hint="hint">

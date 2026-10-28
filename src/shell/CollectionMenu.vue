@@ -8,7 +8,7 @@
     <button
       ref="button"
       class="nav-item focus-ring flex items-center gap-1.5 px-2.5 py-1.5 max-md:min-h-9
-             font-medium text-stone-900 dark:text-stone-100"
+             font-medium text-ink"
       :aria-expanded="open"
       :aria-controls="menuId"
       @click="open = !open"
@@ -27,7 +27,7 @@
       v-if="open"
       :id="menuId"
       class="absolute left-0 top-full mt-1.5 z-50 min-w-48 p-1 rounded-card border shadow-float
-             bg-white border-stone-200 dark:bg-stone-900 dark:border-stone-800"
+             bg-white border-rule dark:bg-stone-900"
     >
       <li v-for="col in collections" :key="col.id">
         <button

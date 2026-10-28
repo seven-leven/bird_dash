@@ -112,8 +112,8 @@ onMounted(async () => {
 
   <!-- Loading: the page's own shape in grey (a header, then tiles), and no message
        on screen; screen readers are told what is happening. -->
-  <div v-else class="min-h-screen bg-stone-50 dark:bg-stone-950" aria-busy="true">
-    <div class="h-12 border-b border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-950" />
+  <div v-else class="min-h-screen bg-page" aria-busy="true">
+    <div class="h-12 border-b border-rule bg-surface" />
     <GallerySkeleton class="p-4 sm:p-6" />
     <p class="sr-only" role="status">Loading the gallery</p>
   </div>

@@ -36,6 +36,16 @@
   --shadow-lift: var(--wi-shadow-lift);
   --radius-control: var(--wi-radius-control);
   --radius-card: var(--wi-radius-card);
+
+  /* The neutral roles, each one colour in the light theme and one in the dark, in one place:
+     light-dark() follows the page's color-scheme (base.css), so `bg-surface` needs no
+     `dark:` partner. A pair used once stays written out where it is used. */
+  --color-surface: light-dark(var(--color-white), var(--color-stone-950)); /* the frame's bars */
+  --color-page: light-dark(var(--color-stone-50), var(--color-stone-950)); /* behind everything */
+  --color-ink: light-dark(var(--color-stone-900), var(--color-stone-100)); /* names, the field */
+  --color-rule: light-dark(var(--color-stone-200), var(--color-stone-800)); /* edges, the grey */
+  --color-hush: light-dark(var(--color-stone-100), var(--color-stone-800)); /* soft fills, rules */
+  --color-tile: light-dark(var(--color-stone-100), var(--color-stone-900)); /* undrawn and pills */
 }
 
 /*
