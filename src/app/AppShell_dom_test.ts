@@ -9,7 +9,7 @@ import { appStores } from '../testing/appStores.ts';
 import { fakeFetch } from '../testing/fakes/fakeFetch.ts';
 import { archiveRoutes } from '../testing/scenarios/archive.ts';
 import { mountComponent } from '../testing/mount.ts';
-import { settle } from '../testing/settle.ts';
+import { settle, settleUntil } from '../testing/settle.ts';
 import { SEARCH_DELAY } from '../search/searchStore.ts';
 
 /** The frame on the real stores, the first collection loaded; `fetch` is put back after the test. */
@@ -44,7 +44,7 @@ test('a page takes the place of the gallery and its sidebar, the footer after it
   const { host, stores, main } = await mount();
   stores.layout.showPage('about');
   // The page's code loads when it is first shown.
-  for (let i = 0; i < 100 && !scroller(main()).querySelector('article'); i++) await settle();
+  await settleUntil(() => scroller(main()).querySelector('article'), 'the About page');
   assertEquals(host.querySelector('#appSidebar'), null);
   const page = scroller(main()).querySelector('article')!;
   assertEquals(page.getAttribute('aria-labelledby'), 'about-title');

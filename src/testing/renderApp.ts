@@ -13,7 +13,7 @@ import App from '../app/App.vue';
 import { mountInDocument } from './mount.ts';
 import { type FakeFetch, fakeFetch, type Route } from './fakes/fakeFetch.ts';
 import { archiveRoutes } from './scenarios/archive.ts';
-import { settle } from './settle.ts';
+import { settleUntil } from './settle.ts';
 import { happyDom } from './happyDom.ts';
 
 export interface RenderedApp extends Disposable {
@@ -56,14 +56,7 @@ export async function renderApp(
   const app: RenderedApp = {
     host,
     fetch,
-    async until(check, what) {
-      for (const start = Date.now(); Date.now() - start < 2000;) {
-        await settle();
-        if (check()) return;
-        await new Promise((resolve) => setTimeout(resolve, 10));
-      }
-      throw new Error(`gave up waiting for ${what}`);
-    },
+    until: settleUntil,
     text,
     control(name, within) {
       const found = [...(within ?? host.ownerDocument).querySelectorAll<HTMLElement>(CONTROLS)]
