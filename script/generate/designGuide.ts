@@ -110,7 +110,7 @@ const theme = (dark: boolean) =>
       hover: SLATE['200'],
       muted: SLATE['400'],
       border: SLATE['800'],
-      viewer: ['#ffffff', whiteOnBlack(0.7), whiteOnBlack(0.5)],
+      text: ['#ffffff', SLATE['300'], SLATE['400']],
       ring: TEAL['500'],
     }
     : {
@@ -122,7 +122,7 @@ const theme = (dark: boolean) =>
       hover: SLATE['800'],
       muted: SLATE['500'],
       border: SLATE['200'],
-      viewer: [SLATE['900'], SLATE['600'], SLATE['500']],
+      text: [SLATE['900'], SLATE['600'], SLATE['500']],
       ring: TEAL['700'], // 500 is too pale on white for a ring
     };
 
@@ -151,8 +151,11 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
       dark ? 'slate-950 / 900' : 'white',
       (sx, sy) => swatch(t.surface, sx, sy),
     ],
-    ['Text', dark ? 'slate-100' : 'slate-900 / 800', (sx, sy) => aa(sx + 2, sy + 21, t.ink)],
-    ['Muted text', dark ? 'slate-400' : 'slate-500', (sx, sy) => aa(sx + 2, sy + 21, t.muted)],
+    [
+      'Text: strong, body, muted',
+      dark ? 'white / slate-300 / 400' : 'slate-900 / 600 / 500',
+      (sx, sy) => t.text.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join(''),
+    ],
     [
       'Borders and dividers',
       dark ? 'slate-800' : 'slate-200 / 100',
@@ -167,11 +170,6 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
       'Primary button',
       'accent-700 + white',
       (sx, sy) => rect(sx, sy, 56, 28, TEAL['700'], 6) + aa(sx + 15, sy + 19, '#ffffff', 14),
-    ],
-    [
-      'Viewer: title, body, label',
-      dark ? 'white 100 / 70 / 50%' : 'slate-900 / 600 / 500',
-      (sx, sy) => t.viewer.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join(''),
     ],
   ];
   const row = 46;
@@ -475,7 +473,7 @@ export function contrastReport(): string[] {
     ['accent-700 ring on white', TEAL['700'], '#ffffff'],
     ['accent-500 ring on slate-950', TEAL['500'], SLATE['950']],
     ['white 70% on black', whiteOnBlack(0.7), '#000000'],
-    ['white 50% on black', whiteOnBlack(0.5), '#000000'],
+    ['body slate-300 on slate-950', SLATE['300'], SLATE['950']],
     [
       `undrawn icon slate-${UNDRAWN.light.ink} on slate-${UNDRAWN.light.background}`,
       SLATE[UNDRAWN.light.ink],

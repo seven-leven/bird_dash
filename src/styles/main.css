@@ -27,7 +27,7 @@
              panels, menus) · rounded-full (pills, progress)
     type     Tailwind's scale, plus text-micro for labels, badges and hints
     motion   duration-fast (hover, colour) · duration-slow (things that move)
-    on dark  text-white (titles) · text-white/70 (body) · text-white/50 (labels)
+    text     .text-strong · .text-body · .text-muted (components.css), in both themes
 */
 @theme {
   /* Type, shadows and radii come from tokens.css, which the docs site shares. */

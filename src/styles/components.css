@@ -67,18 +67,6 @@
       bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300;
   }
 
-  /* The viewer follows the theme like the rest of the page (docs/DESIGN.md section 1):
-     its three text roles, light first. On white: 17.9, 7.6 and 4.8:1; on black: 21,
-     10.0 and 5.3:1. */
-  .viewer-title {
-    @apply text-slate-900 dark:text-white;
-  }
-  .viewer-body {
-    @apply text-slate-600 dark:text-white/70;
-  }
-  .viewer-label {
-    @apply text-slate-500 dark:text-white/50;
-  }
   /* An icon button over the drawing (the viewer's controls). */
   .icon-btn-overlay {
     @apply flex items-center justify-center w-8 h-8 rounded-control
@@ -109,7 +97,14 @@
       dark:focus-visible:ring-offset-slate-950;
   }
 
-  /* Secondary/muted body text — WCAG-AA in both themes. */
+  /* The three text roles, everywhere (the viewer too): titles and names, running text, and
+     labels and counts. On white 17.8, 7.6 and 4.8:1; on slate-950 20.2, 13.6 and 7.7:1. */
+  .text-strong {
+    @apply text-slate-900 dark:text-white;
+  }
+  .text-body {
+    @apply text-slate-600 dark:text-slate-300;
+  }
   .text-muted {
     @apply text-slate-500 dark:text-slate-400;
   }

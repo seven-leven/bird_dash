@@ -3,10 +3,10 @@
   <section class="grid items-center gap-8 pt-4 pb-12 sm:pt-8 md:grid-cols-[1fr_15rem]">
     <div>
       <p class="caps-label text-muted">About</p>
-      <h1 id="about-title" class="mt-2 text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+      <h1 id="about-title" class="mt-2 text-3xl font-semibold tracking-tight text-strong">
         An archive of drawings, in progress.
       </h1>
-      <p class="mt-4 max-w-prose text-base text-slate-600 dark:text-slate-300">
+      <p class="mt-4 max-w-prose text-base text-body">
         <template v-if="species.length">
           Wildlife Illustrated sets out to draw {{ subjectOf(species) }}, one species at a time.
           Each is shown with its English and scientific names, and its Dhivehi name where it has one.
@@ -27,7 +27,7 @@
       </a>
       <figcaption class="mt-3">
         <p v-if="firstName" class="flex flex-wrap items-baseline gap-x-2">
-          <span class="font-dhivehi text-xl font-bold text-slate-900 dark:text-white" dir="rtl" lang="dv">
+          <span class="font-dhivehi text-xl font-bold text-strong" dir="rtl" lang="dv">
             {{ firstName.script }}
           </span>
           <span v-if="firstName.roman" class="text-sm text-muted" lang="dv-Latn">{{ firstName.roman }}</span>

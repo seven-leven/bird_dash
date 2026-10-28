@@ -31,13 +31,13 @@
             <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
               <Icon name="reset" class="size-4" />
             </button>
-            <span class="ml-2 text-micro font-mono viewer-label tabular-nums">{{ Math.round(scale * 100) }}%</span>
+            <span class="ml-2 text-micro font-mono text-muted tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
           <!-- Position in the timeline -->
           <span
             v-if="position"
-            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums viewer-body"
+            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-body"
             aria-live="polite"
           >{{ position }}<template v-if="props.query"> · matching '{{ props.query }}'</template></span>
 
@@ -115,7 +115,7 @@
             </div>
 
             <!-- Error -->
-            <p v-if="error" class="viewer-label text-sm">Could not load image</p>
+            <p v-if="error" class="text-muted text-sm">Could not load image</p>
           </div>
           </div>
 

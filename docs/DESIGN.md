@@ -85,15 +85,13 @@ the CSS.
 | -------------------------------- | ---------------------------- | ---------------------------- |
 | Page                             | `slate-50`                   | `slate-950`                  |
 | Surface: header, sidebar, menus  | white                        | `slate-950` / `slate-900`    |
-| Main text                        | `slate-900` / `slate-800`    | `slate-100`                  |
-| Muted text                       | `slate-500` (`.text-muted`)  | `slate-400` (`.text-muted`)  |
+| Strong text (`.text-strong`)     | `slate-900`                  | white                        |
+| Body text (`.text-body`)         | `slate-600`                  | `slate-300`                  |
+| Muted text (`.text-muted`)       | `slate-500`                  | `slate-400`                  |
 | Borders and dividers             | `slate-200` / `slate-100`    | `slate-800`                  |
 | Focus ring, current marker       | `accent-700`                 | `accent-500`                 |
 | Progress                         | `accent-500`                 | `accent-500`                 |
 | Primary button (`.btn-primary`)  | `accent-700` with white text | `accent-700` with white text |
-| Viewer title (`.viewer-title`)   | `slate-900`                  | white                        |
-| Viewer body (`.viewer-body`)     | `slate-600`                  | white at 70%                 |
-| Viewer label (`.viewer-label`)   | `slate-500`                  | white at 50%                 |
 | Drawing id badge (over an image) | white at 70% on black at 50% | the same                     |
 
 The accent is a signal, not decoration. Reserve it for keyboard focus, the current item, progress,
@@ -122,7 +120,7 @@ icons**.
 | `accent-500` on white       | 2.4:1    |
 | `accent-500` on `slate-950` | 8.3:1    |
 | white at 70% on black       | 10.0:1   |
-| white at 50% on black       | 5.3:1    |
+| `slate-300` on `slate-950`  | 13.6:1   |
 
 A focus ring or marker needs **3:1** against what it sits on. `accent-500` on white is about 2.4:1,
 too pale for that and for text, so on a light page the ring, the current marker and accent-coloured
@@ -145,8 +143,9 @@ from that file.
 
 <!-- /live -->
 
-The viewer follows the page theme: a light page opens a light viewer. Use `.viewer-title`,
-`.viewer-body` and `.viewer-label` for its text; do not hard-code faded white. Every colour needs a
+Text takes one of three roles, on every page and in the viewer alike: `.text-strong` for titles and
+names, `.text-body` for running text, `.text-muted` for labels and counts. The viewer follows the
+page theme, so a light page opens a light viewer with the same three. Every colour needs a
 dark-theme partner, either through paired classes such as `text-slate-500 dark:text-slate-400` or an
 existing class such as `.text-muted`, `.btn-ghost` or `.nav-item`.
 

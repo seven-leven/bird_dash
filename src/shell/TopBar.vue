@@ -29,7 +29,7 @@
       class="hidden sm:flex items-center justify-center gap-2 shrink-0 md:pr-1 select-none focus-ring rounded-control max-md:min-w-9 max-md:min-h-9"
       aria-label="Wildlife Illustrated"
     >
-      <LogoMark class="size-6 text-slate-900 dark:text-white" />
+      <LogoMark class="size-6 text-strong" />
       <span class="hidden md:flex items-baseline gap-1" aria-hidden="true">
         <span class="text-sm font-semibold tracking-tight text-slate-800 dark:text-slate-100">Wildlife</span>
         <span class="text-sm font-light tracking-tight text-muted">Illustrated</span>

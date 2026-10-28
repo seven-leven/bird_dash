@@ -6,7 +6,7 @@
     aria-labelledby="about-recent"
   >
     <h2 id="about-recent" class="caps-label text-muted">Recently drawn</h2>
-    <p class="mt-3 text-xl font-semibold text-slate-900 dark:text-white">The newest pages, newest first.</p>
+    <p class="mt-3 text-xl font-semibold text-strong">The newest pages, newest first.</p>
     <ul class="mt-6 grid gap-4 grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
       <li v-for="d in recent" :key="`${d.collection}/${d.id}`">
         <a :href="drawingHref(d)" class="focus-ring block rounded-card">
