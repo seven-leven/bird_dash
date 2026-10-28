@@ -3,12 +3,13 @@ import { toCollection, toCollectionItems } from '../domain/toCollectionItems.ts'
 import { fetchJson, getBase } from './fetchJson.ts';
 import type { Collection, Item } from '../domain/toCollectionItems.ts';
 import type { CollectionEntry, ListFile } from './files.ts';
+import { checkCollections, checkList } from './files.ts';
 
 /** The collection on screen: its items, and whether they are loading or failed to. */
 export interface LoadState {
   items: Item[];
   loading: boolean;
-  error?: string;
+  error?: string | undefined;
 }
 
 /** How much of the whole archive is drawn, over every collection loaded so far. */
@@ -57,7 +58,7 @@ export function useCollectionLoader() {
   });
 
   const fetchCollectionData = async (col: Collection): Promise<Item[]> => {
-    const raw = await fetchJson<ListFile>(col.dataUrl, col.label);
+    const raw = await fetchJson<ListFile>(col.dataUrl, col.label, checkList);
     return toCollectionItems(col, raw);
   };
 
@@ -133,6 +134,7 @@ export function useCollectionLoader() {
       const rawData = await fetchJson<CollectionEntry[]>(
         `${getBase()}collections.json`,
         'collections.json',
+        checkCollections,
       );
       if (!Array.isArray(rawData) || rawData.length === 0) {
         throw new Error('No collections are configured');
@@ -144,9 +146,10 @@ export function useCollectionLoader() {
       return;
     }
 
-    activeCollectionId.value = collections.value[0].id;
+    const first = collections.value[0]!; // checked above: at least one
+    activeCollectionId.value = first.id;
     isInitialized.value = true;
-    await loadData(collections.value[0]);
+    await loadData(first);
     prefetchOtherCollections();
   };
 

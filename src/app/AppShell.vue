@@ -4,7 +4,7 @@
      another's (the collections in the top bar, the query in the grid, a tile opening the viewer)
      it hands over here, as props and events, so each feature injects only its own. -->
 <template>
-  <div class="flex flex-col h-screen w-full overflow-hidden bg-stone-50 text-stone-900 dark:bg-stone-950 dark:text-stone-100">
+  <div class="flex flex-col h-screen w-full overflow-hidden bg-page text-ink">
 
     <TopBar :collections="collections" :active="activeCollection" @select="selectCollection">
       <template #search><SearchBox @select="selectGlobalResult" /></template>
@@ -36,8 +36,8 @@
           v-if="page === 'gallery' && !loadState.loading && !loadState.error && query"
           :class="dropdownOpen && 'invisible'"
           class="shrink-0 flex items-center gap-3 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
-                 bg-white/95 border-stone-100 text-stone-500
-                 dark:bg-stone-950/95 dark:border-stone-800/60 dark:text-stone-400"
+                 bg-surface/95 border-stone-100 text-stone-500
+                 dark:border-stone-800/60 dark:text-stone-400"
         >
           <button
             v-if="query"

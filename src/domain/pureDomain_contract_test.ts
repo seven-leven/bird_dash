@@ -28,8 +28,8 @@ test('domain/ imports only from itself, and the types it is given', async () => 
   for (const file of files) {
     const code = await readFile(file, 'utf8');
     const outside = importsOf(code).filter(({ from, typesOnly }) =>
-      !from.startsWith('./') &&
-      !(typesOnly && TYPES_FROM.some((allowed) => from.startsWith(allowed)))
+      !from!.startsWith('./') &&
+      !(typesOnly && TYPES_FROM.some((allowed) => from!.startsWith(allowed)))
     );
     assertEquals(outside.map(({ from }) => from), [], `${file} reaches outside domain/`);
   }

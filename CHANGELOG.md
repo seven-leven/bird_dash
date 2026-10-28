@@ -17,6 +17,15 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-28 | feat: the platform, used. The viewer is a native modal `<dialog>` (the page behind
+  inert, the hand-written Tab trap gone); ids come from Vue's `useId`, element refs from
+  `useTemplateRef`, the drawn filter from `defineModel`; the neutral colours are six `light-dark()`
+  roles (computed colours unchanged in both themes). Each file in `public/` is checked as it loads,
+  naming a wrong field; anything that throws shows the failure screen with Try again, not a blank
+  page. The gallery and a page crossfade; headings break evenly. TypeScript checks every index read
+  and every optional field (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`). Measured and
+  dropped: AVIF (17% smaller for the full drawings), `content-visibility`, container queries.
+  Popovers and axe wait for the test overhaul's real browser
 - 2026-10-28 | feat: warm paper. The site's neutral is `stone`, a warm grey, instead of `slate`, so
   its pages match the design guide's paper; the logo tile, the favicon, the phone's browser bar and
   the README's row of drawings follow. Every contrast rule still holds (body text 7.6:1, muted text

@@ -108,10 +108,7 @@ export function useCollectionView(
   const groupData: ComputedRef<CollectionView> = computed(() => {
     const grouped: Record<string, Item[]> = {};
 
-    allFilteredItems.value.forEach((item) => {
-      if (!grouped[item.group]) grouped[item.group] = [];
-      grouped[item.group].push(item);
-    });
+    allFilteredItems.value.forEach((item) => (grouped[item.group] ??= []).push(item));
 
     // The sidebar counts every item of a group ("4 of 8"), even when only the drawn
     // ones are shown, so what is hidden is still accounted for.
@@ -123,26 +120,28 @@ export function useCollectionView(
     // drawn it could only empty the page (and "Show what's planned" with it), so there
     // it does not apply; it filters again wherever something is drawn.
     if (drawnOnly.value && drawnItems.value.length > 0) {
-      for (const g of Object.keys(grouped)) {
-        grouped[g] = grouped[g].filter((i) => i.isDrawn);
-        if (grouped[g].length === 0) delete grouped[g];
+      for (const [g, list] of Object.entries(grouped)) {
+        const drawn = list.filter((i) => i.isDrawn);
+        if (drawn.length) grouped[g] = drawn;
+        else delete grouped[g];
       }
     }
 
-    Object.keys(grouped).forEach((g) => {
-      grouped[g].sort((a, b) => {
+    for (const list of Object.values(grouped)) {
+      list.sort((a, b) => {
         if (a.isDrawn !== b.isDrawn) return a.isDrawn ? -1 : 1;
         return a.sortKey - b.sortKey;
       });
-    });
+    }
 
     return {
       grouped,
+      // Every group shown was counted above, before "drawn only" took any away.
       sidebarItems: Object.keys(grouped).map((g): SectionEntry => ({
         id: g,
         label: g,
-        count: totals[g].drawn,
-        total: totals[g].total,
+        count: totals[g]!.drawn,
+        total: totals[g]!.total,
         disabled: false,
       })),
     };
@@ -177,11 +176,9 @@ export function useCollectionView(
     // searchedDrawnItems is in (drawnTime, sortKey) order; walk it backwards.
     const grouped: Record<string, Item[]> = {};
     for (let n = searchedDrawnItems.value.length - 1; n >= 0; n--) {
-      const i = searchedDrawnItems.value[n];
+      const i = searchedDrawnItems.value[n]!;
       if (!i.drawnTime) continue;
-      const key = monthName(new Date(i.drawnTime));
-      if (!grouped[key]) grouped[key] = [];
-      grouped[key].push(i);
+      (grouped[monthName(new Date(i.drawnTime))] ??= []).push(i);
     }
     const counts = Object.fromEntries(Object.entries(grouped).map(([m, list]) => [m, list.length]));
 

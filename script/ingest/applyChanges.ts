@@ -22,7 +22,7 @@ export interface AppliedChanges {
 export async function applyChanges(
   collection: Collection,
   plan: ChangePlan,
-  options: { date: string; io?: Io; transcoder?: Transcoder },
+  options: { date: string; io?: Io; transcoder?: Transcoder | undefined },
 ): Promise<AppliedChanges> {
   const { date, io = realIo, transcoder = sharpTranscoder } = options;
   const step = (verb: string, detail: string) => io.out(formatStep(collection.id, verb, detail));

@@ -18,7 +18,7 @@ test('the mark is a round 2px stroke in the current text colour, with no fill', 
 
 test('the frame is open: its path is never closed', () => {
   const frame = shapes(LOGO_MARK)[0];
-  assert(!/z\s*$/i.test(frame), 'the frame must stay unfinished');
+  assert(!/z\s*$/i.test(frame!), 'the frame must stay unfinished');
 });
 
 test('the tile is a solid square in the current colour with the drawing reversed out', () => {

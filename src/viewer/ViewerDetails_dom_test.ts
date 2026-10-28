@@ -43,15 +43,15 @@ test('the names are one block, one language per line: Dhivehi (and how to say it
   const { host } = mount(goose);
   const dhivehiLine = host.querySelector('h2')!.parentElement!;
   const [dhivehi, romanised] = [...dhivehiLine.children] as HTMLElement[];
-  assertEquals(dhivehi.textContent?.trim(), 'ރޭރު');
-  assertStringIncludes(dhivehi.className, 'text-3xl');
-  assertEquals(dhivehi.getAttribute('dir'), 'rtl');
+  assertEquals(dhivehi!.textContent?.trim(), 'ރޭރު');
+  assertStringIncludes(dhivehi!.className, 'text-3xl');
+  assertEquals(dhivehi!.getAttribute('dir'), 'rtl');
   // "Reyru" shares the Thaana's line, so it cannot read as part of the English title.
-  assertEquals(romanised.textContent?.trim(), 'Reyru');
-  assertEquals(romanised.querySelector('[lang="dv-Latn"]')?.textContent, 'Reyru');
+  assertEquals(romanised!.textContent?.trim(), 'Reyru');
+  assertEquals(romanised!.querySelector('[lang="dv-Latn"]')?.textContent, 'Reyru');
   const [, english, scientific] = [...dhivehiLine.parentElement!.children] as HTMLElement[];
-  assertEquals(english.textContent?.trim(), 'Cotton Pygmy-Goose');
-  assertEquals(scientific.textContent?.trim(), 'Nettapus coromandelianus');
+  assertEquals(english!.textContent?.trim(), 'Cotton Pygmy-Goose');
+  assertEquals(scientific!.textContent?.trim(), 'Nettapus coromandelianus');
   // The romanised name is not repeated as a field of its own; other facts are.
   assert(!host.textContent!.includes('romanised'));
   assertStringIncludes(host.textContent!, 'Habitat');
@@ -79,7 +79,7 @@ test('an undated drawing has no month', () => {
 
 test('a short note is shown whole, with "#1" a link to that drawing', () => {
   const { host } = mount(goose);
-  const note = host.querySelector('#illustrator-note')!;
+  const note = host.querySelector('blockquote > div')!;
   assert(!note.className.includes('max-h-36'), 'a short note is not folded');
   assertEquals(note.querySelector('a')?.getAttribute('href'), '#birds/001');
   assert(![...host.querySelectorAll('button')].some((b) => b.textContent?.includes('Read more')));
@@ -88,12 +88,13 @@ test('a short note is shown whole, with "#1" a link to that drawing', () => {
 test('a long note opens folded, in paragraphs, and "Read more" unfolds it', async () => {
   const long = 'A first thought about the pen.\n\n' + 'Long. '.repeat(80) + '\n\nAnd a last one.';
   const { host, item } = mount({ ...goose, illustratorNote: long });
-  const note = host.querySelector('#illustrator-note')!;
+  const note = host.querySelector('blockquote > div')!;
   assertEquals(note.querySelectorAll('p').length, 3);
   assertStringIncludes(note.className, 'max-h-36');
 
   const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
   assertEquals(more.getAttribute('aria-expanded'), 'false');
+  assertEquals(document.getElementById(more.getAttribute('aria-controls')!) === note, true);
   more.click();
   await nextTick();
   assert(!note.className.includes('max-h-36'));
@@ -103,15 +104,15 @@ test('a long note opens folded, in paragraphs, and "Read more" unfolds it', asyn
   // The next drawing's note starts folded again.
   item.value = { ...goose, id: 'birds-003', itemId: '003', illustratorNote: long };
   await nextTick();
-  assertStringIncludes(host.querySelector('#illustrator-note')!.className, 'max-h-36');
+  assertStringIncludes(host.querySelector('blockquote > div')!.className, 'max-h-36');
 });
 
 test('three short paragraphs also fold; no note means no section', () => {
   const three = mount({ ...goose, illustratorNote: 'One.\n\nTwo.\n\nThree.' });
-  assertStringIncludes(three.host.querySelector('#illustrator-note')!.className, 'max-h-36');
+  assertStringIncludes(three.host.querySelector('blockquote > div')!.className, 'max-h-36');
 
   const none = mount({ ...goose, illustratorNote: undefined, meta: undefined });
-  assertEquals(none.host.querySelector('#illustrator-note'), null);
+  assertEquals(none.host.querySelector('blockquote > div'), null);
 });
 
 test('the links are plain links that say they open a new tab', () => {
@@ -125,7 +126,7 @@ test('the links are plain links that say they open a new tab', () => {
 test('links within the site are in the accent; links that leave it are not', () => {
   const { host } = mount({ ...goose, illustratorNote: 'See #1.\n\n' + 'Long. '.repeat(80) });
   const group = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Ducks'))!;
-  const noteLink = host.querySelector('#illustrator-note a')!;
+  const noteLink = host.querySelector('blockquote > div a')!;
   const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
   for (const el of [group, noteLink, more]) assert(el.classList.contains('link'), el.className);
   const external = host.querySelector('a[target="_blank"]')!;
@@ -202,13 +203,13 @@ test('a bird with two Dhivehi names gets a line for each, each with its own roma
   assertEquals(title.textContent?.trim(), 'ވަލު ކުކުޅު');
   const parts = (row: HTMLElement) =>
     [...row.children].map((c) => c.textContent?.replace(/\s+/g, ' ').trim());
-  assertEquals(parts(first), ['ވަލު ކުކުޅު', 'Valu Kukulhu']);
+  assertEquals(parts(first!), ['ވަލު ކުކުޅު', 'Valu Kukulhu']);
   // The alternative is smaller, not a second title, and says it is an alternative.
-  const alt = second.firstElementChild as HTMLElement;
+  const alt = second!.firstElementChild as HTMLElement;
   assertEquals(alt.tagName, 'P');
   assertStringIncludes(alt.className, 'text-xl');
-  assertEquals(parts(second), ['ކުލީ ކުކުޅު', 'also Kulhee Kukulhu']);
-  assertEquals(english.textContent?.trim(), 'Watercock');
+  assertEquals(parts(second!), ['ކުލީ ކުކުޅު', 'also Kulhee Kukulhu']);
+  assertEquals(english!.textContent?.trim(), 'Watercock');
 });
 
 test('a series piece says what it is drawn in, after when', () => {

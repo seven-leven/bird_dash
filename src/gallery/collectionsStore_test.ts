@@ -54,7 +54,7 @@ test('the query filters the grid and the counts, across name, group and id', asy
   assertEquals(view.counts.value.filtered, 1);
 
   query.value = 'ducks'; // a group name matches every item in the group
-  assertEquals(names(view.activeData.value.grouped.Ducks), ['Mallard', 'Garganey']);
+  assertEquals(names(view.activeData.value.grouped.Ducks!), ['Mallard', 'Garganey']);
 
   query.value = 'nothing-matches';
   assertEquals(view.activeData.value.grouped, {});

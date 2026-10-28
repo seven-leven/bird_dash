@@ -19,12 +19,13 @@
 
       <div
         v-else
-        id="global-search-listbox"
+        :id="listboxId"
         role="listbox"
         aria-label="Search results"
-        class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-stone-100 dark:divide-stone-800"
+        class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-hush"
       >
         <SearchResults
+          :id-prefix="listboxId"
           :results="results"
           :focused-index="focusedIndex"
           :get-flat-index="getFlatIndex"
@@ -58,6 +59,8 @@ const TRANSITION = {
 } as const;
 
 defineProps<{
+  /** The list's id, which the box's `aria-controls` names; each option's is it and its index. */
+  listboxId: string;
   open: boolean;
   query: string;
   /** The results as listed: long groups folded. */

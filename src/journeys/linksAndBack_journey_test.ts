@@ -5,7 +5,7 @@ import { assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';
 import { press } from '../testing/events.ts';
 
-const dialog = () => document.querySelector<HTMLElement>('[role="dialog"]');
+const dialog = () => document.querySelector<HTMLElement>('dialog');
 
 /** Go back in history, as the browser's back button does. */
 const back = () => history.back();

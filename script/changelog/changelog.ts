@@ -25,7 +25,7 @@ export function parseLog(raw: string): LoggedCommit[] {
   if (!raw.trim()) return [];
   return raw.split('\n').map((line) => {
     const [date, ...rest] = line.split('|');
-    return { date, subject: rest.join('|') };
+    return { date: date!, subject: rest.join('|') };
   });
 }
 

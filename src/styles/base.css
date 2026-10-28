@@ -1,5 +1,5 @@
-/* The page's own rules, beneath every class: the theme the browser draws its parts in, motion
-   for those who ask for less, and the line Thaana needs. */
+/* The page's own rules, beneath every class: the theme the browser draws its parts in, how lines
+   break, motion for those who ask for less, and the line Thaana needs. */
 
 /* The browser's own parts (scrollbars, the search box, form controls) follow the page's
    theme too, so they are not drawn light on a dark page. */
@@ -9,6 +9,18 @@
   }
   :root.dark {
     color-scheme: dark;
+  }
+
+  /* A heading breaks into even lines, not a long one and an orphan; running text avoids a last
+     line of one word. A `truncate` heading stays one line: the utility wins over the base. */
+  h1,
+  h2,
+  h3,
+  blockquote {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
 

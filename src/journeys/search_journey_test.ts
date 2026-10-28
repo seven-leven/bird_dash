@@ -7,14 +7,14 @@ import { press, type } from '../testing/events.ts';
 import { json } from '../testing/fakes/fakeFetch.ts';
 
 const searchBox = () => document.querySelector<HTMLInputElement>('input[role="combobox"]')!;
-const listbox = () => document.querySelector<HTMLElement>('#global-search-listbox');
+const listbox = () => document.querySelector<HTMLElement>('[role="listbox"]');
 
 test('typing finds items in every collection, grouped by collection', async () => {
   using app = await renderApp();
   type(searchBox(), 'grey');
   await app.until(() => listbox(), 'the results');
   assertEquals(searchBox().getAttribute('aria-expanded'), 'true');
-  const groups = app.all('#global-search-listbox [role="group"]');
+  const groups = app.all('[role="listbox"] [role="group"]');
   assertEquals(groups.map((g) => g.getAttribute('aria-label')), ['Birds', 'Sharks']);
   assertStringIncludes(app.text(groups[0]), 'Grey Heron');
   assertStringIncludes(app.text(groups[1]), 'Grey Reef Shark');
@@ -111,11 +111,11 @@ test('a long group is folded, and opens in place', async () => {
   using app = await renderApp({ routes: { '/lists/birds.json': json({ Ducks: ducks }) } });
   type(searchBox(), 'duck');
   await app.until(() => listbox(), 'the results');
-  assertEquals(app.all('#global-search-listbox [role="option"]').length, 7);
+  assertEquals(app.all('[role="listbox"] [role="option"]').length, 7);
 
   app.control('Show 5 more in Birds').click();
   await app.until(
-    () => app.all('#global-search-listbox [role="option"]').length === 12,
+    () => app.all('[role="listbox"] [role="option"]').length === 12,
     'the group to open',
   );
 });

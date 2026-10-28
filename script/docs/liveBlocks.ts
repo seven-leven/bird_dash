@@ -17,5 +17,5 @@ export function liveBlocks(source: string): string {
 
 /** The components a page asks for, in order (to check each one exists). */
 export function liveNames(source: string): string[] {
-  return [...source.matchAll(BLOCK)].map((m) => m[1]);
+  return [...source.matchAll(BLOCK)].map((m) => m[1]!);
 }

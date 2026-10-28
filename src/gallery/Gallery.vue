@@ -61,7 +61,7 @@
           :drawn="counts.drawn"
           :total="loadState.items.length"
           :drawn-only="drawnOnly"
-          @choose="setDrawnOnly"
+          @update:drawn-only="setDrawnOnly"
         />
         <p v-else class="text-sm text-muted tabular-nums">
           {{ viewMode === 'group' ? drawnOf(counts.drawn, loadState.items.length) : drawings(counts.drawn) }}
@@ -146,5 +146,5 @@ const drawnCounts = computed(() => {
 // Group view: how many of the group are drawn. Month view: every item in a month is
 // drawn, so its size is the count (a month after the current one has no sidebar row).
 const sectionCount = (name: string, total: number): string =>
-  viewMode.value === 'group' ? drawnOf(drawnCounts.value[name], total) : drawings(total);
+  viewMode.value === 'group' ? drawnOf(drawnCounts.value[name]!, total) : drawings(total);
 </script>

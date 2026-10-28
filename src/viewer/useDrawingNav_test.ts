@@ -46,7 +46,7 @@ test('useDrawingNav: no open item, or one not in the order, has no place and no 
 
 test("useDrawingNav: an item's images come first, then the next drawing, which opens on its first", () => {
   const sketched = makeItem({ itemId: '002', imageIds: ['002', '002-2', '002-3'] });
-  const order = [items[0], sketched, items[2]];
+  const order = [items[0]!, sketched, items[2]!];
   const item = ref<Item | undefined>(sketched);
   const asked: string[] = [];
   const n = useDrawingNav({

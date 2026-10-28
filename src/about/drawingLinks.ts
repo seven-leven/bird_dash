@@ -4,8 +4,7 @@ import type { Collection } from '../domain/toCollectionItems.ts';
 import type { NewestDrawing } from '../data/files.ts';
 
 /** A drawing sits on white paper in both themes (docs/DESIGN.md §01). */
-export const PAPER =
-  'overflow-hidden rounded-card bg-white ring-1 ring-stone-200 dark:ring-stone-800';
+export const PAPER = 'overflow-hidden rounded-card bg-white ring-1 ring-rule';
 
 /** The drawing in the viewer: `#birds/029`. */
 export const drawingHref = (d: NewestDrawing): string => `#${d.collection}/${d.id}`;

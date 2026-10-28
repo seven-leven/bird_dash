@@ -36,7 +36,7 @@ test('a tab per collection, the current one marked; choosing one asks the app fo
   const tabs = [...host.querySelectorAll<HTMLButtonElement>('nav[aria-label="Collections"] button')]
     .filter((b) => !b.hasAttribute('aria-controls'));
   assertEquals(tabs.map((b) => b.getAttribute('aria-current')), ['page', null]);
-  tabs[1].click();
+  tabs[1]!.click();
   assertEquals(chosen, ['sharks']);
   assertEquals(
     host.querySelector('a[aria-label="Wildlife Illustrated"]')!.getAttribute('href'),

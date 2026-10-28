@@ -2,10 +2,10 @@
 <template>
   <section
     v-if="recent.length"
-    class="border-t border-stone-200 py-12 dark:border-stone-800"
-    aria-labelledby="about-recent"
+    class="border-t border-rule py-12"
+    :aria-labelledby="headingId"
   >
-    <h2 id="about-recent" class="caps-label text-muted">Recently drawn</h2>
+    <h2 :id="headingId" class="caps-label text-muted">Recently drawn</h2>
     <p class="mt-3 text-xl font-semibold text-strong">The newest pages, newest first.</p>
     <ul class="mt-6 grid gap-4 grid-cols-2 sm:grid-cols-[repeat(auto-fill,minmax(9rem,1fr))]">
       <li v-for="d in recent" :key="`${d.collection}/${d.id}`">
@@ -15,12 +15,12 @@
           </span>
           <!-- The Dhivehi line keeps its height without a name, so the English names line up. -->
           <span
-            class="mt-2 block truncate font-dhivehi text-sm text-stone-900 dark:text-stone-100"
+            class="mt-2 block truncate font-dhivehi text-sm text-ink"
             dir="rtl"
             lang="dv"
             :aria-hidden="!d.dhivehi"
           >{{ d.dhivehi ? firstScript(d.dhivehi) : NBSP }}</span>
-          <span class="block text-sm font-medium text-stone-900 dark:text-stone-100">{{ d.name }}</span>
+          <span class="block text-sm font-medium text-ink">{{ d.name }}</span>
           <span class="block text-xs text-muted">{{ monthOf(d.drawn) }}</span>
         </a>
       </li>
@@ -29,11 +29,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useId } from 'vue';
 import type { Collection } from '../domain/toCollectionItems.ts';
 import type { NewestDrawing } from '../data/files.ts';
 import { firstScript, monthOf } from './aboutSentences.ts';
 import { drawingHref, drawingImage, PAPER } from './drawingLinks.ts';
+
+/** Names the section for a screen reader: its heading, by an id unique on the page. */
+const headingId = useId();
 
 /** How many of the newest drawings the page shows (stats.json lists more). */
 const RECENT_COUNT = 5;

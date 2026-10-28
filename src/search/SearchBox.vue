@@ -4,7 +4,7 @@
   <div
     class="relative w-full min-w-0 transition-[max-width] duration-fast"
     :class="dropdownOpen ? 'md:max-w-96' : 'md:max-w-72'"
-    ref="wrapperEl"
+    ref="wrapper"
   >
     <!-- ==================== INPUT FIELD ==================== -->
     <div class="relative w-full">
@@ -15,12 +15,12 @@
 
       <!-- Input -->
       <input
-        ref="inputEl"
+        ref="input"
         type="text"
         role="combobox"
         aria-label="Search all collections"
         aria-autocomplete="list"
-        aria-controls="global-search-listbox"
+        :aria-controls="listboxId"
         :aria-expanded="shouldShowDropdown"
         :aria-activedescendant="activeOptionId"
         :value="query"
@@ -34,9 +34,8 @@
         autocomplete="off"
         class="block w-full pl-7 pr-12 py-1.5 rounded-control text-sm border transition-colors duration-fast
                focus:outline-none focus:ring-1 focus:ring-accent-700 focus:border-accent-700
-               bg-stone-100/80 border-transparent text-stone-900 placeholder-stone-400
-               dark:bg-stone-800/80 dark:border-transparent dark:text-stone-100 dark:placeholder-stone-500
-               dark:focus:ring-accent-500 dark:focus:border-accent-500"
+               bg-hush/80 border-transparent text-ink placeholder-stone-400
+               dark:border-transparent dark:placeholder-stone-500 dark:focus:ring-accent-500 dark:focus:border-accent-500"
       />
 
       <!-- Shortcut hint (shown when empty) -->
@@ -67,6 +66,7 @@
     <div class="sr-only" role="status" aria-live="polite">{{ liveMessage }}</div>
 
     <SearchDropdown
+      :listbox-id="listboxId"
       :open="shouldShowDropdown"
       :query="query"
       :results="visibleResults"
@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, ref, useId, useTemplateRef, watch } from 'vue';
 import type { SearchResult } from './useSearchResults.ts';
 import { matches } from '../domain/countWords.ts';
 
@@ -111,8 +111,10 @@ const {
 /** Open a result: the app shows its collection and rings its tile. */
 const emit = defineEmits<{ select: [collectionId: string, item: Item] }>();
 
-const inputEl = ref<HTMLInputElement | null>(null);
-const wrapperEl = ref<HTMLElement | null>(null);
+const inputEl = useTemplateRef<HTMLInputElement>('input');
+const wrapperEl = useTemplateRef<HTMLElement>('wrapper');
+// The results' list and its options, by ids unique on the page.
+const listboxId = useId();
 
 // Long groups start collapsed ("Show 32 more in Birds") so the next collection
 // is not buried; a new query collapses them again. The arrow keys move through
@@ -140,7 +142,7 @@ const shouldShowDropdown = computed(() => dropdownOpen.value && query.value.trim
 // The option the keyboard cursor is on (only meaningful while results are listed).
 const activeOptionId = computed(() =>
   shouldShowDropdown.value && globalResultCount.value > 0 && focusedIndex.value >= 0
-    ? `search-result-${focusedIndex.value}`
+    ? `${listboxId}-${focusedIndex.value}`
     : undefined
 );
 

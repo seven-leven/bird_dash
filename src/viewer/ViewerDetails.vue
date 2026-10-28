@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white/95 border-stone-200 dark:bg-stone-900/95 dark:border-stone-800
-              backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
+  <div class="bg-white/95 border-rule dark:bg-stone-900/95 backdrop-blur-xl
+              rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
     <!-- Where it sits: its id, its group (a link back to it in the grid), and when it
          was drawn, in the month view's words; a series piece, what in. -->
@@ -75,7 +75,7 @@
       </p>
       <blockquote class="pl-3 border-l border-stone-200 dark:border-stone-700">
         <div
-          id="illustrator-note"
+          :id="noteId"
           class="space-y-2"
           :class="folded && 'max-h-36 overflow-hidden [mask-image:linear-gradient(to_bottom,black_60%,transparent)]'"
         >
@@ -93,7 +93,7 @@
         <button
           v-if="isLong"
           class="focus-ring rounded-control mt-2 text-xs link"
-          aria-controls="illustrator-note"
+          :aria-controls="noteId"
           :aria-expanded="!folded"
           @click="expanded = !expanded"
         >
@@ -134,7 +134,7 @@
 </template>
 <script setup lang="ts">
 import ExternalLink from '../ui/ExternalLink.vue';
-import { computed, ref, watch } from 'vue';
+import { computed, ref, useId, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import { noteSegments } from '../domain/noteSegments.ts';
 import ViewerShare from './ViewerShare.vue';
@@ -157,6 +157,8 @@ const drawnMonth = computed(() =>
 );
 
 const note = computed(() => props.item.illustratorNote ?? '');
+/** The note's id, which "Read more" names as what it unfolds. */
+const noteId = useId();
 
 // The note in paragraphs (split at blank lines); "#11" in it links to that drawing
 // (docs/DESIGN.md §03).

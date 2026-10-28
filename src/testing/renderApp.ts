@@ -26,7 +26,7 @@ export interface RenderedApp extends Disposable {
   /** The visible text of `el` (the app by default), with runs of white space as one space. */
   text(el?: Element): string;
   /** The one control (button, link, tile, option) named `name` (its label, or its text). */
-  control(name: string | RegExp, within?: Element): HTMLElement;
+  control(name: string | RegExp, within?: Element | undefined): HTMLElement;
   /** Every element matching `selector`. */
   all<E extends Element = HTMLElement>(selector: string): E[];
 }
@@ -64,7 +64,7 @@ export async function renderApp(
       if (found.length !== 1) {
         throw new Error(`expected one control named ${name}, found ${found.length}`);
       }
-      return found[0];
+      return found[0]!; // exactly one, checked above
     },
     all,
     [Symbol.dispose]: () => {

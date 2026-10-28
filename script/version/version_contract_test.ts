@@ -39,7 +39,7 @@ test('the command prints this repository’s version, named, with --long', async
   assertEquals(await main(['--long'], { ...realIo, out: output.out, err: output.err }), 0);
   const { name } = await computeVersion();
   assertMatch(
-    output.outLines[0],
+    output.outLines[0]!,
     new RegExp(`^\\d+\\.\\d+\\.\\d+ ${name!.roman} · \\d+ drawings? · [0-9a-f]{7}$`),
   );
 });

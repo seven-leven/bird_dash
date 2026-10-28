@@ -5,8 +5,7 @@
        TABS_FIT collections), and below 420px the search becomes a button that opens it
        across the row. -->
   <header class="flex items-center gap-1 sm:gap-2 h-12 px-3 sm:px-4 shrink-0 z-50 transition-colors duration-fast
-                 bg-white border-b border-stone-200
-                 dark:bg-stone-950 dark:border-stone-800">
+                 bg-surface border-b border-rule">
 
     <!-- Mobile sidebar toggle -->
     <button
@@ -83,7 +82,7 @@
 
     <!-- The search box, placed here by the app (app/AppShell.vue); it sets its own width. -->
     <div
-      ref="searchEl"
+      ref="search"
       class="flex-1 min-w-0 flex justify-end"
       :class="searchOpen ? '' : 'max-[419px]:hidden'"
       @focusout="onSearchFocusOut"
@@ -122,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, ref, useTemplateRef } from 'vue';
 import CollectionMenu from './CollectionMenu.vue';
 import Icon from '../ui/Icon.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
@@ -134,7 +133,7 @@ import type { Collection } from '../domain/toCollectionItems.ts';
 const props = defineProps<{
   collections: Collection[];
   /** The collection on screen, once one is. */
-  active?: Collection;
+  active?: Collection | undefined;
 }>();
 const emit = defineEmits<{ select: [collectionId: string] }>();
 
@@ -148,7 +147,7 @@ const tabsFit = computed(() => props.collections.length <= TABS_FIT);
 
 // Below 420px: is the search open across the row?
 const searchOpen = ref(false);
-const searchEl = ref<HTMLElement | null>(null);
+const searchEl = useTemplateRef<HTMLElement>('search');
 async function openSearch(): Promise<void> {
   searchOpen.value = true;
   await nextTick();

@@ -1,7 +1,7 @@
 <!-- Progress: the totals, then one card per collection; the cards fold after CARDS_FIT. -->
 <template>
-  <section class="border-t border-stone-200 py-12 dark:border-stone-800" aria-labelledby="about-progress">
-    <h2 id="about-progress" class="caps-label text-muted">Progress</h2>
+  <section class="border-t border-rule py-12" :aria-labelledby="headingId">
+    <h2 :id="headingId" class="caps-label text-muted">Progress</h2>
     <p class="mt-3 text-3xl font-semibold tabular-nums text-strong">
       {{ drawnOf(stats.drawn, stats.total) }}
     </p>
@@ -18,15 +18,15 @@
         <a
           :href="`#${card.id}`"
           class="focus-ring flex h-full flex-col gap-3 rounded-card border p-4 transition-colors duration-fast
-                 bg-white border-stone-200 hover:border-stone-300
-                 dark:bg-stone-900 dark:border-stone-800 dark:hover:border-stone-700"
+                 bg-white border-rule hover:border-stone-300
+                 dark:bg-stone-900 dark:hover:border-stone-700"
         >
-          <span class="flex items-center gap-2 text-base font-semibold text-stone-900 dark:text-stone-100">
+          <span class="flex items-center gap-2 text-base font-semibold text-ink">
             <CollectionIcon :collection="card" class="size-5" />
             {{ card.label }}
           </span>
           <span class="text-sm tabular-nums text-body">{{ card.count }}</span>
-          <span class="h-1 overflow-hidden rounded-full bg-stone-100 dark:bg-stone-800" aria-hidden="true">
+          <span class="h-1 overflow-hidden rounded-full bg-hush" aria-hidden="true">
             <span class="block h-full rounded-full bg-accent-500" :style="{ width: `${card.percent}%` }" />
           </span>
           <span class="mt-auto text-xs text-muted">{{ card.meta }}</span>
@@ -45,12 +45,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, useId } from 'vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
 import { drawnOf } from '../domain/countWords.ts';
 import type { Collection } from '../domain/toCollectionItems.ts';
 import type { Stats } from '../data/files.ts';
 import { cardsOf, monthOf } from './aboutSentences.ts';
+
+/** Names the section for a screen reader: its heading, by an id unique on the page. */
+const headingId = useId();
 
 /** Collection cards shown before "Show all": two rows of three. */
 const CARDS_FIT = 6;

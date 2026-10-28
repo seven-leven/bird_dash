@@ -47,7 +47,7 @@ test('a page takes the place of the gallery and its sidebar, the footer after it
   await settleUntil(() => scroller(main()).querySelector('article'), 'the About page');
   assertEquals(host.querySelector('#appSidebar'), null);
   const page = scroller(main()).querySelector('article')!;
-  assertEquals(page.getAttribute('aria-labelledby'), 'about-title');
+  assertEquals(document.getElementById(page.getAttribute('aria-labelledby')!)!.tagName, 'H1');
   assertEquals(page.lastElementChild!.tagName, 'FOOTER');
 });
 

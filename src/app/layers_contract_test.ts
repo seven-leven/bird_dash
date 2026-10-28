@@ -25,7 +25,7 @@ const MAY_IMPORT: Record<string, string[]> = {
 };
 
 /** The layer a path under src/ is in: its first folder, or `app` for main.ts. */
-const layerOf = (path: string) => path === 'src/main.ts' ? 'app' : path.split('/')[1];
+const layerOf = (path: string) => path === 'src/main.ts' ? 'app' : path.split('/')[1]!;
 
 /** A store a feature may inject from another: `<feature>/<name>Store.ts`, or the app's actions. */
 const isInjected = (target: string) =>
@@ -39,7 +39,7 @@ const sources = async () =>
 /** Every module a file imports from inside src/, as a path from the repository's root. */
 const importsOf = (path: string, code: string) =>
   [...code.matchAll(/(?:import|export)[^'"();]*from\s*'(\.[^']+)'|import\s*\(?'(\.[^']+)'/g)]
-    .map((m) => posix.normalize(posix.join(posix.dirname(path), m[1] ?? m[2])))
+    .map((m) => posix.normalize(posix.join(posix.dirname(path), m[1] ?? m[2]!)))
     .filter((target) => target.startsWith('src/'));
 
 test('every layer imports only from the layers below it', async () => {
@@ -48,11 +48,11 @@ test('every layer imports only from the layers below it', async () => {
   const wrong: string[] = [];
   for (const file of files) {
     const from = layerOf(file);
-    assert(from in MAY_IMPORT, `${file}: "${from}" is not a layer (add it to MAY_IMPORT)`);
+    assert(from! in MAY_IMPORT, `${file}: "${from}" is not a layer (add it to MAY_IMPORT)`);
     for (const target of importsOf(file, await readFile(file, 'utf8'))) {
       const to = layerOf(target);
-      if (to === from || MAY_IMPORT[from].includes(to)) continue;
-      if (FEATURES.includes(from) && isInjected(target)) continue;
+      if (to === from || MAY_IMPORT[from]!.includes(to)) continue;
+      if (FEATURES.includes(from!) && isInjected(target)) continue;
       if (from === 'domain' && target === 'src/data/files.ts') continue; // checked as types-only
       wrong.push(`${file} → ${target}`);
     }

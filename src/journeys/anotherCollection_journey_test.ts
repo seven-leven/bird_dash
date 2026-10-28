@@ -39,7 +39,7 @@ test('the collection menu lists every collection and the pages, and switches too
   const menu = app.control('Birds, choose a collection');
   menu.click();
   await app.until(() => menu.getAttribute('aria-expanded') === 'true', 'the menu to open');
-  const list = app.host.querySelector('#collection-menu')!;
+  const list = document.getElementById(menu.getAttribute('aria-controls')!)!;
   assertStringIncludes(app.text(list), 'Sharks');
   assertStringIncludes(app.text(list), 'About');
 

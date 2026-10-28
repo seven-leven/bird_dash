@@ -107,8 +107,8 @@ test('without git, a lenient version is patch 0 and commit unknown, with one war
   const worked = await computeVersion(io, { lenient: true, collections });
   assertEquals([worked.patch, worked.commit, worked.drawn], [0, 'unknown', 2]);
   assertEquals(io.errLines.length, 1);
-  assert(io.errLines[0].startsWith('[version] git is unavailable (git '));
-  assert(io.errLines[0].includes('not a git repository'));
+  assert(io.errLines[0]!.startsWith('[version] git is unavailable (git '));
+  assert(io.errLines[0]!.includes('not a git repository'));
 });
 
 test('in CI even a lenient version fails without git, so a deploy never ships a made-up one', async () => {
@@ -131,13 +131,13 @@ test('the command reports a problem and exits 1 when git is unavailable', async 
   assertEquals(await main([], io), 1);
   assertEquals(io.outLines, []);
   assertEquals(io.errLines.length, 1);
-  assert(/^✗ git .* failed: not a git repository$/.test(io.errLines[0]), io.errLines[0]);
+  assert(/^✗ git .* failed: not a git repository$/.test(io.errLines[0]!), io.errLines[0]);
 });
 
 test('the command exits 2 on an option it does not take, and explains itself with --help', async () => {
   const io = repository();
   assertEquals(await main(['--short'], io), 2);
-  assert(io.errLines[0].startsWith('✗ unknown option --short'));
+  assert(io.errLines[0]!.startsWith('✗ unknown option --short'));
   assertEquals(await main(['--help'], io), 0);
-  assert(io.outLines[0].startsWith('npm run version'));
+  assert(io.outLines[0]!.startsWith('npm run version'));
 });

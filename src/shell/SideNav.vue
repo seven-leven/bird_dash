@@ -5,8 +5,7 @@
     class="fixed inset-y-0 left-0 z-50 w-64 shrink-0 flex flex-col
            border-r transition-transform duration-slow ease-out
            lg:static lg:translate-x-0
-           bg-white border-stone-200
-           dark:bg-stone-950 dark:border-stone-800"
+           bg-surface border-rule"
     :class="sidebarOpen ? 'translate-x-0 shadow-float' : '-translate-x-full'"
     :inert="isNarrow && !sidebarOpen"
     @keydown.escape="closeSidebar()"
@@ -37,7 +36,7 @@
             :drawn="counts.drawn"
             :total="loadState.items.length"
             :drawn-only="drawnOnly"
-            @choose="setDrawnOnly"
+            @update:drawn-only="setDrawnOnly"
           />
           <p v-else-if="counts.drawn > 0" class="mt-0.5 text-xs text-muted tabular-nums">
             {{ viewMode === 'group' ? drawnOf(counts.drawn, loadState.items.length) : drawings(counts.drawn) }}
@@ -48,7 +47,7 @@
 
     <!-- List, labelled with the view's name as the header's tab says it -->
     <div class="flex-1 overflow-y-auto px-3 py-3 custom-scrollbar">
-      <h2 id="sidebar-list-label" class="caps-label text-muted px-3 pt-1 pb-2">
+      <h2 :id="listLabelId" class="caps-label text-muted px-3 pt-1 pb-2">
         {{ viewName(viewMode, activeCollection?.groupLabel ?? 'Group') }}
       </h2>
       <!-- Loading: rows shaped like the real ones, as the grid does -->
@@ -58,7 +57,7 @@
           <span class="h-3 w-8 rounded-full skeleton" />
         </li>
       </ul>
-      <ul v-else-if="activeData.sidebarItems.length" class="space-y-0.5" aria-labelledby="sidebar-list-label">
+      <ul v-else-if="activeData.sidebarItems.length" class="space-y-0.5" :aria-labelledby="listLabelId">
         <li v-for="item in activeData.sidebarItems" :key="item.id">
           <button
             class="nav-item marker-l focus-ring w-full px-3 py-2 text-left flex items-center justify-between
@@ -100,7 +99,7 @@
           {{ drawnOf(archiveCounts.drawn, archiveCounts.total) }}
         </span>
       </div>
-      <div class="h-1 rounded-full overflow-hidden bg-stone-200 dark:bg-stone-800">
+      <div class="h-1 rounded-full overflow-hidden bg-rule">
         <div
           class="h-full rounded-full bg-accent-600 dark:bg-accent-500 transition-all duration-slow ease-out"
           :style="{ width: archiveCounts.total > 0 ? `${(archiveCounts.drawn / archiveCounts.total) * 100}%` : '0%' }"
@@ -111,6 +110,7 @@
 </template>
 
 <script setup lang="ts">
+import { useId } from 'vue';
 import EmptyState from '../ui/EmptyState.vue';
 import DrawnFilter from '../ui/DrawnFilter.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
@@ -139,6 +139,9 @@ const {
 } = useViewStore();
 // Off-screen on narrow screens until opened: `inert` keeps it out of the tab order.
 const { sidebarOpen, isNarrow, closeSidebar } = useLayoutStore();
+/** The sections' list is named by its label, by an id unique on the page. */
+const listLabelId = useId();
+
 defineProps<{
   /** The search, which the sections say they are filtered by (the app hands it over). */
   query: string;

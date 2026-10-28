@@ -23,7 +23,7 @@ test('open with no item, the viewer is still a named dialog', async () => {
   );
   await settle();
   assertEquals(
-    document.querySelector('[role="dialog"]')!.getAttribute('aria-label'),
+    document.querySelector('dialog')!.getAttribute('aria-label'),
     'Image viewer',
   );
 });
@@ -41,6 +41,6 @@ test('the counter names the image too, for a drawing that has more than one', as
     })
   );
   await settle();
-  const counter = document.querySelector('[role="dialog"] [aria-live="polite"]')!;
+  const counter = document.querySelector('dialog [aria-live="polite"]')!;
   assertEquals(counter.textContent!.trim(), '1 of 1 · image 1 of 2');
 });

@@ -1,6 +1,6 @@
 <!-- The manifesto's first line, and the way to the rest of it on the docs site. -->
 <template>
-  <section class="border-t border-stone-200 py-12 dark:border-stone-800" aria-label="Design">
+  <section class="border-t border-rule py-12" aria-label="Design">
     <blockquote class="max-w-prose text-xl font-semibold text-strong">
       The drawings carry the colour. Everything around them makes room.
     </blockquote>

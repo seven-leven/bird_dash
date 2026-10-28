@@ -1,137 +1,140 @@
 <template>
-  <Teleport to="body">
-    <Transition
-      enter-active-class="transition-opacity duration-fast ease-out"
-      leave-active-class="transition-opacity duration-fast ease-in"
-      enter-from-class="opacity-0"
-      leave-to-class="opacity-0"
+  <!-- A native modal <dialog>, opened with showModal() (useDialogKeys): the page behind is
+       inert, so focus cannot leave it, and it sits in the top layer above everything. The
+       browser's own dialog styles (margin, padding, border, a maximum size) are undone; its
+       Escape is the viewer's (cancel is prevented), so it closes the way every key does. On
+       close it leaves the top layer at once and fades out above the page (z-50). -->
+  <Transition
+    enter-active-class="transition-opacity duration-fast ease-out"
+    leave-active-class="transition-opacity duration-fast ease-in"
+    enter-from-class="opacity-0"
+    leave-to-class="opacity-0"
+  >
+    <dialog
+      v-if="isOpen"
+      :ref="setDialogRef"
+      :aria-label="currentItem ? `${currentItem.commonName}, #${currentItem.itemId}` : 'Image viewer'"
+      tabindex="-1"
+      class="fixed inset-0 z-50 m-0 p-0 w-full h-full max-w-none max-h-none border-0 flex items-center justify-center
+             bg-stone-50/95 dark:bg-black/95 outline-none backdrop:bg-transparent"
+      @cancel.prevent
+      @click="handleBackdropClick"
     >
+
+      <!-- Top bar: zoom controls left, zoom % inline, close right -->
+      <div class="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-4 py-3 pointer-events-none">
+
+        <!-- Zoom controls -->
+        <div class="flex items-center gap-1 pointer-events-auto">
+          <button @click="zoomIn"    class="icon-btn-overlay" aria-label="Zoom in">
+            <Icon name="zoomIn" class="size-4" />
+          </button>
+          <button @click="zoomOut"   class="icon-btn-overlay" aria-label="Zoom out">
+            <Icon name="zoomOut" class="size-4" />
+          </button>
+          <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
+            <Icon name="reset" class="size-4" />
+          </button>
+          <span class="ml-2 text-xs font-mono text-muted tabular-nums">{{ Math.round(scale * 100) }}%</span>
+        </div>
+
+        <!-- Position in the timeline -->
+        <span
+          v-if="position"
+          class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-body"
+          aria-live="polite"
+        >{{ position }}<template v-if="imagePosition"> · {{ imagePosition }}</template><template v-if="props.query"> · matching '{{ props.query }}'</template></span>
+
+        <!-- Close -->
+        <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
+          <Icon name="close" class="size-5" />
+        </button>
+      </div>
+
+      <!-- Main layout: image left, info panel right -->
       <div
-        v-if="isOpen"
-        :ref="setDialogRef"
-        role="dialog"
-        aria-modal="true"
-        :aria-label="currentItem ? `${currentItem.commonName}, #${currentItem.itemId}` : 'Image viewer'"
-        tabindex="-1"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-stone-50/95 dark:bg-black/95 outline-none"
+        class="relative w-full h-full flex flex-col lg:flex-row items-center justify-center
+               gap-4 pt-14 pb-4 px-4
+               lg:gap-6 lg:pt-14 lg:pb-8 lg:px-6"
         @click="handleBackdropClick"
       >
 
-        <!-- Top bar: zoom controls left, zoom % inline, close right -->
-        <div class="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-4 py-3 pointer-events-none">
-
-          <!-- Zoom controls -->
-          <div class="flex items-center gap-1 pointer-events-auto">
-            <button @click="zoomIn"    class="icon-btn-overlay" aria-label="Zoom in">
-              <Icon name="zoomIn" class="size-4" />
-            </button>
-            <button @click="zoomOut"   class="icon-btn-overlay" aria-label="Zoom out">
-              <Icon name="zoomOut" class="size-4" />
-            </button>
-            <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
-              <Icon name="reset" class="size-4" />
-            </button>
-            <span class="ml-2 text-xs font-mono text-muted tabular-nums">{{ Math.round(scale * 100) }}%</span>
-          </div>
-
-          <!-- Position in the timeline -->
-          <span
-            v-if="position"
-            class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-body"
-            aria-live="polite"
-          >{{ position }}<template v-if="imagePosition"> · {{ imagePosition }}</template><template v-if="props.query"> · matching '{{ props.query }}'</template></span>
-
-          <!-- Close -->
-          <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
-            <Icon name="close" class="size-5" />
+        <!-- Image column: the gesture area plus prev/next, which sit beside the
+             image at every size (in its gutters from lg up). They are siblings of the gesture area, so
+             pointer capture there cannot swallow their clicks. -->
+        <div class="relative flex-1 w-full h-full min-w-0 min-h-0 lg:px-12">
+          <button
+            v-if="hasPrevious"
+            @click.stop="goToPrevious"
+            class="nav-btn-overlay left-1"
+            aria-label="Previous"
+          >
+            <Icon name="chevronLeft" class="size-5" />
           </button>
-        </div>
+          <button
+            v-if="hasNext"
+            @click.stop="goToNext"
+            class="nav-btn-overlay right-1"
+            aria-label="Next"
+          >
+            <Icon name="chevronRight" class="size-5" />
+          </button>
 
-        <!-- Main layout: image left, info panel right -->
+        <!-- Image area -->
         <div
-          class="relative w-full h-full flex flex-col lg:flex-row items-center justify-center
-                 gap-4 pt-14 pb-4 px-4
-                 lg:gap-6 lg:pt-14 lg:pb-8 lg:px-6"
+          class="w-full h-full flex items-center justify-center overflow-hidden touch-none"
           @click="handleBackdropClick"
+          @wheel.prevent="handleWheel"
+          @pointerdown="handlePointerDown"
+          @pointermove="handlePointerMove"
+          @pointerup="handlePointerUp"
+          @pointercancel="handlePointerUp"
         >
-
-          <!-- Image column: the gesture area plus prev/next, which sit beside the
-               image at every size (in its gutters from lg up). They are siblings of the gesture area, so
-               pointer capture there cannot swallow their clicks. -->
-          <div class="relative flex-1 w-full h-full min-w-0 min-h-0 lg:px-12">
-            <button
-              v-if="hasPrevious"
-              @click.stop="goToPrevious"
-              class="nav-btn-overlay left-1"
-              aria-label="Previous"
-            >
-              <Icon name="chevronLeft" class="size-5" />
-            </button>
-            <button
-              v-if="hasNext"
-              @click.stop="goToNext"
-              class="nav-btn-overlay right-1"
-              aria-label="Next"
-            >
-              <Icon name="chevronRight" class="size-5" />
-            </button>
-
-          <!-- Image area -->
-          <div
-            class="w-full h-full flex items-center justify-center overflow-hidden touch-none"
-            @click="handleBackdropClick"
-            @wheel.prevent="handleWheel"
-            @pointerdown="handlePointerDown"
-            @pointermove="handlePointerMove"
-            @pointerup="handlePointerUp"
-            @pointercancel="handlePointerUp"
+          <Transition
+            enter-active-class="transition-opacity duration-fast"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            mode="out-in"
           >
-            <Transition
-              enter-active-class="transition-opacity duration-fast"
-              enter-from-class="opacity-0"
-              enter-to-class="opacity-100"
-              mode="out-in"
-            >
-              <img
-                v-if="imageUrl && !error"
-                :key="currentItem?.itemId"
-                :src="imageUrl"
-                :alt="currentItem?.commonName"
-                :style="{
-                  transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
-                  cursor: isDragging ? 'grabbing' : (scale > 1 ? 'grab' : 'default'),
-                  transition: isDragging ? 'none' : 'transform 0.15s ease-out',
-                }"
-                class="max-w-full max-h-full object-contain select-none ring-1 ring-stone-200 dark:ring-0"
-                @load="handleImageLoad"
-                @error="handleImageError"
-                draggable="false"
-              />
-            </Transition>
+            <img
+              v-if="imageUrl && !error"
+              :key="currentItem?.itemId"
+              :src="imageUrl"
+              :alt="currentItem?.commonName"
+              :style="{
+                transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
+                cursor: isDragging ? 'grabbing' : (scale > 1 ? 'grab' : 'default'),
+                transition: isDragging ? 'none' : 'transform 0.15s ease-out',
+              }"
+              class="max-w-full max-h-full object-contain select-none ring-1 ring-stone-200 dark:ring-0"
+              @load="handleImageLoad"
+              @error="handleImageError"
+              draggable="false"
+            />
+          </Transition>
 
-            <!-- Loading spinner -->
-            <div v-if="loading" class="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div class="w-8 h-8 border-2 border-stone-300 border-t-stone-500 dark:border-stone-700 dark:border-t-stone-400 rounded-full animate-spin" />
-            </div>
-
-            <!-- Error -->
-            <p v-if="error" class="text-muted text-sm">Could not load image</p>
-          </div>
+          <!-- Loading spinner -->
+          <div v-if="loading" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="w-8 h-8 border-2 border-stone-300 border-t-stone-500 dark:border-stone-700 dark:border-t-stone-400 rounded-full animate-spin" />
           </div>
 
-          <!-- Info panel -->
-          <div
-            v-if="currentItem"
-            class="w-full max-h-[45%] overflow-y-auto rounded-card shrink-0
-                   lg:w-auto lg:max-w-xs lg:max-h-full lg:self-center xl:max-w-sm"
-          >
-            <ViewerDetails :item="currentItem" :collection="collection" @go-to-group="emit('go-to-group', $event)" />
-          </div>
+          <!-- Error -->
+          <p v-if="error" class="text-muted text-sm">Could not load image</p>
+        </div>
         </div>
 
+        <!-- Info panel -->
+        <div
+          v-if="currentItem"
+          class="w-full max-h-[45%] overflow-y-auto rounded-card shrink-0
+                 lg:w-auto lg:max-w-xs lg:max-h-full lg:self-center xl:max-w-sm"
+        >
+          <ViewerDetails :item="currentItem" :collection="collection" @go-to-group="emit('go-to-group', $event)" />
+        </div>
       </div>
-    </Transition>
-  </Teleport>
+
+    </dialog>
+  </Transition>
 </template>
 
 <script setup lang="ts">
@@ -177,7 +180,7 @@ const {
   handleImageError
 } = useViewer({ props, emit });
 
-/** Hands the dialog element to useViewer (its focus trap reads it). */
+/** Hands the dialog element to useViewer, which opens it as a modal and gives it focus. */
 const setDialogRef = (el: unknown) => {
   dialogRef.value = el instanceof HTMLElement ? el : null;
 };

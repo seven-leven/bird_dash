@@ -33,10 +33,14 @@ export function oklchToHex(css: string): string {
   }).join('');
 }
 
-type Ramp = Record<string, string>;
+/** A hue's eleven steps, as Tailwind names them. */
+type Step = '50' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900' | '950';
+type Ramp = Record<Step, string>;
 const tailwind = colors as unknown as Record<string, Ramp | string>;
 const ramp = (hue: string): Ramp =>
-  Object.fromEntries(Object.entries(tailwind[hue] as Ramp).map(([k, v]) => [k, oklchToHex(v)]));
+  Object.fromEntries(
+    Object.entries(tailwind[hue] as Ramp).map(([k, v]) => [k, oklchToHex(v)]),
+  ) as Ramp;
 
 export const STONE: Ramp = ramp('stone');
 export const TEAL: Ramp = ramp('teal');
@@ -63,22 +67,22 @@ export const ACCENT_HEX: Record<string, { 500: string; 700: string }> = Object.f
 /** The accent hues on offer: the `[data-accent='…']` palettes in accents.css, in file order. */
 export async function accentMenu(): Promise<string[]> {
   const css = await readFile('./src/styles/accents.css', 'utf8');
-  return [...new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]))];
+  return [...new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]!))];
 }
 
 /** WCAG relative luminance of a `#rrggbb` colour. */
 function luminance(hex: string): number {
-  const [r, g, b] = [1, 3, 5].map((i) => {
+  const channel = (i: number) => {
     const c = parseInt(hex.slice(i, i + 2), 16) / 255;
     return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  });
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  };
+  return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
 }
 
 /** WCAG contrast ratio between two `#rrggbb` colours (1 to 21). */
 export function contrast(a: string, b: string): number {
-  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
-  return (hi + 0.05) / (lo + 0.05);
+  const [la, lb] = [luminance(a), luminance(b)];
+  return (Math.max(la, lb) + 0.05) / (Math.min(la, lb) + 0.05);
 }
 
 /** `#rrggbb` for white at the given opacity over black. */

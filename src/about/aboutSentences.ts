@@ -46,15 +46,15 @@ export const monthOf = (iso: string): string => monthName(parseDay(iso));
 export const dayOf = (iso: string): string => dayName(parseDay(iso));
 
 /** A species with two Dhivehi names ("a / b") is captioned by the first. */
-export const firstScript = (script: string): string => script.split('/')[0].trim();
+export const firstScript = (script: string): string => script.split('/')[0]!.trim();
 
 /** One collection's card in the Progress section. */
 export interface CollectionCard {
   id: string;
   label: string;
-  icon?: string;
+  icon?: string | undefined;
   emoji: string;
-  accent?: string;
+  accent?: string | undefined;
   /** "12 of 204 drawn", or "Nothing drawn yet". */
   count: string;
   percent: number;

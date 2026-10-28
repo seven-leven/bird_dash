@@ -132,6 +132,11 @@ appears in it with no other change.
 
 ## What the checks enforce
 
+The site checks every file's shape as it loads it (`check…` in
+[`src/data/files.ts`](../src/data/files.ts)): a field missing or of the wrong kind shows the page's
+error, naming the file and the field ("Birds is not as expected: Ducks[1].name is missing"), and the
+contract tests run the same checks on the committed files.
+
 `npm test` (contract tier) fails if:
 
 - `collections.json` is empty or has a duplicate `id`;

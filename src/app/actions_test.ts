@@ -8,7 +8,7 @@ import { createActions } from './actions.ts';
 function setup(known: string[]) {
   const calls: string[] = [];
   const pages: string[] = [];
-  const active = ref<{ id: string } | undefined>({ id: known[0] });
+  const active = ref<{ id: string } | undefined>({ id: known[0]! });
   const pending = new Map<string, () => void>();
 
   const actions = createActions({

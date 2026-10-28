@@ -62,7 +62,7 @@ test('up to NAMES_FIT collections are named one by one; past it they are counted
 
 test('a collection with nothing in its list has an empty bar, not a broken one', () => {
   const [card] = cardsOf([makeCollection('crabs')], [counts('crabs', { total: 0 })]);
-  assertEquals(card.percent, 0);
+  assertEquals(card!.percent, 0);
 });
 
 test('species and series are told apart by their kind', () => {

@@ -1,6 +1,7 @@
 import { ref, shallowRef } from 'vue';
 import { fetchJson, getBase } from './fetchJson.ts';
 import type { Stats } from './files.ts';
+import { checkStats } from './files.ts';
 
 /**
  * The archive's numbers (`public/stats.json`, worked out by the asset build), loaded
@@ -18,7 +19,7 @@ export function useStatsLoader(url = `${getBase()}stats.json`) {
     loading = true;
     error.value = '';
     try {
-      stats.value = await fetchJson<Stats>(url, 'stats.json');
+      stats.value = await fetchJson<Stats>(url, 'stats.json', checkStats);
     } catch (err) {
       error.value = err instanceof Error ? err.message : String(err);
     } finally {

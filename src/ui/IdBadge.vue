@@ -27,7 +27,7 @@ const variantClass = computed(() => {
     case 'overlay':
       return 'bg-black/50 text-white/70 backdrop-blur-sm';
     default:
-      return 'bg-stone-100 text-stone-500 dark:bg-stone-800 dark:text-stone-400';
+      return 'bg-hush text-stone-500 dark:text-stone-400';
   }
 });
 </script>

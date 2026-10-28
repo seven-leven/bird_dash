@@ -35,7 +35,7 @@ test('no exported name starts with a word that says only that something happens'
   for (const path of sources) {
     const text = await readFile(`./script/${path}`, 'utf8');
     for (const [, name] of text.matchAll(/^export (?:async )?(?:function|const|class) (\w+)/gm)) {
-      if (BANNED.test(name)) found.push(`${path}: ${name}`);
+      if (BANNED.test(name!)) found.push(`${path}: ${name}`);
     }
   }
   assertEquals(found, []);

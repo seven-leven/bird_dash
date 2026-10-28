@@ -109,7 +109,6 @@ export async function discoverSources(roots = ['src', 'script']): Promise<string
   const skip = (path: string) =>
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
     path.startsWith('src/testing/') || path.startsWith('src/types/') ||
-    path === 'src/data/files.ts' || // types only: the shapes of the files in public/
     path === 'src/main.ts'; // only mounts App.vue into the page
   const files = [...await findFiles(roots, '*.ts'), ...await findFiles(roots, '*.vue')];
   return files.filter((path) => !skip(path)).sort();
@@ -122,7 +121,7 @@ export interface AreaSummary {
   tests: number;
   failed: number;
   /** Line coverage over the area's files that a test loaded; undefined without coverage. */
-  lines?: Counter;
+  lines?: Counter | undefined;
   /** Source files in the area that no test imported, so coverage says nothing about them. */
   unloaded: string[];
 }
@@ -133,7 +132,7 @@ export interface AreaSummary {
  */
 export function summarizeAreas(
   cases: TestCase[],
-  opts: { coverage?: FileCoverage[]; sources?: string[] } = {},
+  opts: { coverage?: FileCoverage[] | undefined; sources?: string[] } = {},
 ): AreaSummary[] {
   const loaded = new Set((opts.coverage ?? []).map((f) => repoPath(f.file)));
   return AREAS.map((area) => {

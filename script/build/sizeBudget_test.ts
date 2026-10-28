@@ -55,7 +55,7 @@ test('the built files are measured by their path in dist/, as stored and gzipped
   withBuild(async (dir) => {
     const files = await measureFiles(dir);
     assertEquals(files.map((f) => [f.path, f.size]), [['app.js', 1000], ['thumb/1.webp', 60]]);
-    assertEquals(files[0].gzipped < 100, true);
+    assertEquals(files[0]!.gzipped < 100, true);
   }));
 
 test('the plugin fails the build when dist/ is over the budget', () =>
@@ -73,6 +73,6 @@ test('the plugin fails the build when dist/ is over the budget', () =>
         Error,
         'over the size budget: thumb/1.webp is 0.1 kB',
       );
-      await afterBuild([BUDGETS[0]])(); // the JavaScript alone is within its limit
+      await afterBuild([BUDGETS[0]!])(); // the JavaScript alone is within its limit
     }
   }));

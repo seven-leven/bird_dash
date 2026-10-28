@@ -3,7 +3,7 @@
   <section class="grid items-center gap-8 pt-4 pb-12 sm:pt-8 md:grid-cols-[1fr_15rem]">
     <div>
       <p class="caps-label text-muted">About</p>
-      <h1 id="about-title" class="mt-2 text-3xl font-semibold tracking-tight text-strong">
+      <h1 :id="titleId" class="mt-2 text-3xl font-semibold tracking-tight text-strong">
         An archive of drawings, in progress.
       </h1>
       <p class="mt-4 max-w-prose text-base text-body">
@@ -32,7 +32,7 @@
           </span>
           <span v-if="firstName.roman" class="text-sm text-muted" lang="dv-Latn">{{ firstName.roman }}</span>
         </p>
-        <p class="text-sm font-medium text-stone-900 dark:text-stone-100">{{ first.name }}</p>
+        <p class="text-sm font-medium text-ink">{{ first.name }}</p>
         <p class="mt-1 text-xs text-muted">The first drawing · {{ dayOf(first.drawn) }}</p>
       </figcaption>
     </figure>
@@ -50,6 +50,8 @@ import { dayOf, seriesLine, seriesOf, speciesOf, subjectOf } from './aboutSenten
 import { drawingHref, drawingImage, PAPER } from './drawingLinks.ts';
 
 const props = defineProps<{
+  /** The heading's id, which names the page (AboutPage.vue). */
+  titleId: string;
   collections: Collection[];
   /** The collection "Browse the collections" opens. */
   browseId: string;

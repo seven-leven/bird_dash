@@ -28,8 +28,8 @@ test('the five newest drawings, each a link to its page in the viewer, with its 
     '#birds/004',
     '#birds/005',
   ]);
-  assertEquals(links[0].querySelector('img')!.getAttribute('src'), '/thumb/birds/001.webp');
-  assertEquals(links[0].querySelector('img')!.getAttribute('alt'), 'Bird 001');
+  assertEquals(links[0]!.querySelector('img')!.getAttribute('src'), '/thumb/birds/001.webp');
+  assertEquals(links[0]!.querySelector('img')!.getAttribute('alt'), 'Bird 001');
 });
 
 test('a Dhivehi line is captioned by the first name; without one the line keeps its height, hidden', () => {

@@ -31,8 +31,8 @@ export interface Item {
    * group, id and all meta values. Built once at load.
    */
   searchText: string;
-  illustratorNote?: string;
-  meta?: Record<string, string>;
+  illustratorNote?: string | undefined;
+  meta?: Record<string, string> | undefined;
 }
 
 export interface Collection {
@@ -40,10 +40,10 @@ export interface Collection {
   label: string;
   kind: CollectionKind;
   /** A series: what it is drawn in. */
-  medium?: string;
+  medium?: string | undefined;
   emoji: string;
-  icon?: string;
-  accent?: string;
+  icon?: string | undefined;
+  accent?: string | undefined;
   dataUrl: string;
   imageBase: string;
   smallImageBase: string;

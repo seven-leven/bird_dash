@@ -33,9 +33,11 @@ function mount(page: Page = 'gallery') {
       },
     },
   );
-  const button = host.querySelector<HTMLButtonElement>('[aria-controls="collection-menu"]')!;
-  const items = () => [...host.querySelectorAll<HTMLButtonElement>('#collection-menu button')];
-  const about = () => host.querySelector<HTMLAnchorElement>('#collection-menu a[href="#about"]');
+  const button = host.querySelector<HTMLButtonElement>('button[aria-controls]')!;
+  /** The list the button opens: what its `aria-controls` names. */
+  const menuList = () => document.getElementById(button.getAttribute('aria-controls')!);
+  const items = () => [...menuList()?.querySelectorAll<HTMLButtonElement>('button') ?? []];
+  const about = () => menuList()?.querySelector<HTMLAnchorElement>('a[href="#about"]') ?? null;
   return { host, button, items, about, switched };
 }
 
@@ -56,7 +58,7 @@ test('choosing a collection switches to it, closes the list and returns focus', 
   const { button, items, switched } = mount();
   button.click();
   await nextTick();
-  items()[1].click();
+  items()[1]!.click();
   await nextTick();
   await nextTick();
   assertEquals(switched, ['sharks']);
@@ -69,7 +71,7 @@ test('Escape closes the list and returns focus to the button', async () => {
   const { button, items } = mount();
   button.click();
   await nextTick();
-  items()[2].dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  items()[2]!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
   await nextTick();
   await nextTick();
   assertEquals(items(), []);
@@ -85,7 +87,7 @@ test('a press outside closes the list; a press inside does not', async () => {
   const { button, items } = mount();
   button.click();
   await nextTick();
-  items()[0].dispatchEvent(new Event('pointerdown', { bubbles: true }));
+  items()[0]!.dispatchEvent(new Event('pointerdown', { bubbles: true }));
   await nextTick();
   assertEquals(items().length, 3);
 

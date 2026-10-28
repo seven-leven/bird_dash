@@ -18,13 +18,8 @@ folder, and the item here points to it.
       they are the safety net for everything below; phase 4 (a test beside every component) is done
       too (2026-10-28). Next: phase 5, splitting the long test files and renaming to the
       conventions. Also moves the test runner onto `Io`, the scripts overhaul's one exception.
-- [ ] **2. Use the platform** ([PLATFORM.md](PLATFORM.md)). What Node 24, TS 6, Vite 8, Vue 3.5,
-      Tailwind 4 and the browser give that the code does not use yet (`<dialog>` for the viewer,
-      popovers, `defineModel`, `useId`, `using` in the test kit, `util.parseArgs`, `light-dark()`
-      colour tokens), and the general improvements found with them: the data checked at the door, an
-      error state for the whole app, axe in the browser tier, a size budget, a link preview per
-      drawing, a Content-Security-Policy. Most rows ride along with the two overhauls; its own
-      phases are the fixes above, Node in the scripts, the checks, and stricter types last.
+- [ ] **2. Use the platform** ([PLATFORM.md](PLATFORM.md)). Done but for what needs the test
+      overhaul's real browser (popovers, axe) and offline (once images are versioned).
 
 ## ✨ Features
 
@@ -62,6 +57,9 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
 
 **2026-10-28**
 
+- [x] Using the platform: the viewer a native `<dialog>`, Vue's `useId`, `useTemplateRef` and
+      `defineModel`, colour roles with `light-dark()`, the files checked at the door, an error state
+      for the whole app, a crossfade between pages, balanced headings, stricter types.
 - [x] Warm paper: the site's neutral is `stone`, matching the guide's paper. With it the site
       overhaul is done, and its plan is deleted (the CHANGELOG keeps what each phase did).
 - [x] The site overhaul's phases 6 to 8: `app/` places each feature, the styles one kind of rule a

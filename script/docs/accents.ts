@@ -6,7 +6,7 @@ export const STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '80
 
 /** The accent hues on offer: every `[data-accent='…']` palette in src/styles/accents.css, in order. */
 export function accentHues(accentsCss: string): string[] {
-  return [...accentsCss.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]);
+  return [...accentsCss.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]!);
 }
 
 /** The steps of a colour Tailwind's theme lacks (`--color-teal-500: …` in tailwindcss/theme.css). */

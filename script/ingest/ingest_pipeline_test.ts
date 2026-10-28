@@ -88,6 +88,6 @@ test('a drawing with no source art, or a broken full image, fails that item and 
       const applied = await applyChanges(collection, plan, { date: '2025-06-01', io });
       assertEquals(applied.failures.map((failure) => failure.id), ['001', '002']);
       assertEquals(output.errLines.length, 2);
-      assert(output.errLines[0].includes('could not make  001'));
+      assert(output.errLines[0]!.includes('could not make  001'));
     },
   ));

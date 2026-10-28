@@ -95,6 +95,11 @@ the CSS.
 | Primary button (`.btn-primary`)  | `accent-700` with white text | `accent-700` with white text |
 | Drawing id badge (over an image) | white at 70% on black at 50% | the same                     |
 
+The roles used in several places are tokens, each written once in `main.css` with `light-dark()`,
+which follows the theme: `surface` (the bars), `page`, `ink`, `rule`, `hush` (soft fills and rules)
+and `tile` (the undrawn grey). `bg-surface` needs no `dark:` partner; a pair used once stays written
+out.
+
 The accent is a signal, not decoration. Reserve it for keyboard focus, the current item, progress,
 search matches, the primary action, and links that move you within the site (in the viewer: the
 group, "#11" in a note, "Read more"), in `accent-700` so they read as text. Links that leave the
@@ -171,6 +176,9 @@ fails on any other.
 | `text-base` | 16px | Section headings, sidebar title, Dhivehi names              |
 | `text-sm`   | 14px | Controls, body text, English names on tiles                 |
 | `text-xs`   | 12px | Counts, secondary lines, `.caps-label`, `.count-pill`, keys |
+
+Headings break into even lines (`text-wrap: balance`) and running text avoids a one-word last line
+(`pretty`), set once in `base.css`.
 
 Weight carries hierarchy: `font-semibold` for titles and headings, `font-medium` for controls, and
 regular weight for everything else. Use `tabular-nums` for changing or aligned numbers such as

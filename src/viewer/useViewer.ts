@@ -9,7 +9,7 @@ import type { Collection, Item } from '../domain/toCollectionItems.ts';
 /** The viewer component's props, typed once: Viewer.vue declares them with this. */
 export interface ViewerProps {
   isOpen: boolean;
-  item?: Item;
+  item?: Item | undefined;
   /** What it pages through, in time order. */
   drawnItems: Item[];
   fullImageBaseUrl: string;

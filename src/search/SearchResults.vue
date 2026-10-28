@@ -8,7 +8,7 @@
     <!-- Group Header (the group's aria-label already names it) -->
     <div
       class="flex items-center justify-between px-4 py-1.5 sticky top-0 z-10
-                bg-stone-50 border-b border-stone-100 dark:bg-stone-800/70 dark:border-stone-800"
+                bg-stone-50 border-b border-hush dark:bg-stone-800/70"
       aria-hidden="true"
     >
       <div class="flex items-center gap-2">
@@ -23,7 +23,7 @@
     <button
       v-for="{ result, flat } in rows"
       :key="result.item.itemId"
-      :id="`search-result-${flat}`"
+      :id="`${idPrefix}-${flat}`"
       role="option"
       tabindex="-1"
       :aria-selected="focusedIndex === flat"
@@ -34,11 +34,11 @@
              hover:bg-stone-50 dark:hover:bg-stone-800/60"
       :class="{ 'bg-stone-50 dark:bg-stone-800/60': focusedIndex === flat }"
     >
-      <img v-if="result.item.isDrawn" :src="result.item.smallImageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-stone-100 dark:bg-stone-800" loading="lazy" />
+      <img v-if="result.item.isDrawn" :src="result.item.smallImageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-hush" loading="lazy" />
       <!-- Not drawn yet: its collection's icon, faint on the tile grey, as in the grid. -->
       <span
         v-else
-        class="w-8 h-8 rounded-control shrink-0 flex items-center justify-center bg-stone-100 text-stone-400 dark:bg-stone-800 dark:text-stone-600"
+        class="w-8 h-8 rounded-control shrink-0 flex items-center justify-center bg-hush text-stone-400 dark:text-stone-600"
       >
         <CollectionIcon :collection="result.collection" class="size-5 stroke-[1.5]" />
       </span>
@@ -101,6 +101,8 @@ const resultLines = (item: Item) => {
 };
 
 const props = defineProps<{
+  /** Each option's id is this and its index: the box's `aria-activedescendant`. */
+  idPrefix: string;
   results: VisibleGroup[];
   focusedIndex: number;
   getFlatIndex: (collectionId: string, idx: number) => number;
