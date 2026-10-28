@@ -1,4 +1,4 @@
-// The colour ramps the docs site draws in the design manifesto: slate and the accent
+// The colour ramps the docs site draws in the design manifesto: stone and the accent
 // hues, named from the CSS the site itself is built from, so the docs cannot show a
 // palette the site does not have.
 

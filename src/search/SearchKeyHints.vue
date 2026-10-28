@@ -2,7 +2,7 @@
      icons from the registry: Unicode arrows (↑↓ ↵) render at a different size
      and weight in every font. -->
 <template>
-  <div v-once class="px-4 py-2 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+  <div v-once class="px-4 py-2 border-t border-stone-100 dark:border-stone-800 flex items-center gap-2">
     <template v-for="hint in hints" :key="hint.label">
       <kbd class="kbd-hint inline-flex items-center justify-center min-w-6 h-5" :aria-label="hint.name">
         <Icon v-if="hint.icon" :name="hint.icon" class="size-3" aria-hidden="true" />

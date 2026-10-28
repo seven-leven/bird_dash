@@ -34,8 +34,8 @@
         autocomplete="off"
         class="block w-full pl-7 pr-12 py-1.5 rounded-control text-sm border transition-colors duration-fast
                focus:outline-none focus:ring-1 focus:ring-accent-700 focus:border-accent-700
-               bg-slate-100/80 border-transparent text-slate-900 placeholder-slate-400
-               dark:bg-slate-800/80 dark:border-transparent dark:text-slate-100 dark:placeholder-slate-500
+               bg-stone-100/80 border-transparent text-stone-900 placeholder-stone-400
+               dark:bg-stone-800/80 dark:border-transparent dark:text-stone-100 dark:placeholder-stone-500
                dark:focus:ring-accent-500 dark:focus:border-accent-500"
       />
 
@@ -55,7 +55,7 @@
       <button
         v-if="hasQuery"
         @click="clearSearch"
-        class="absolute inset-y-0 right-0 pr-2 flex items-center text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+        class="absolute inset-y-0 right-0 pr-2 flex items-center text-stone-500 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200"
         tabindex="-1"
         aria-label="Clear search"
       >

@@ -73,7 +73,7 @@ test('an undrawn tile is not a button, says so to screen readers, and does nothi
   assertEquals(tile.getAttribute('tabindex'), null);
   assertEquals(img, null);
   assertEquals(stand()!.getAttribute('aria-label'), 'Green-winged Teal (not drawn yet)');
-  assertStringIncludes(tile.className, 'bg-slate-100'); // the interface grey, not paper
+  assertStringIncludes(tile.className, 'bg-stone-100'); // the interface grey, not paper
 
   tile.click();
   const space = key(tile, ' ');
@@ -92,8 +92,8 @@ test('without a Dhivehi name the English name is the only line', () => {
 
 test("what is not drawn shows its collection's icon, faint on the tile grey in either theme", () => {
   const icon = mount({ item: undrawn }).stand()!;
-  // Light: slate-400 on slate-100; dark: slate-600 on slate-900 (docs/DESIGN.md, Reference).
-  assertStringIncludes(icon.className, 'text-slate-400 dark:text-slate-600');
+  // Light: stone-400 on stone-100; dark: stone-600 on stone-900 (docs/DESIGN.md, Reference).
+  assertStringIncludes(icon.className, 'text-stone-400 dark:text-stone-600');
   assert(icon.querySelector('svg'), 'the line icon');
   // A collection with no icon has its emoji instead.
   const emoji = mount({ item: undrawn, collection: { icon: '', emoji: '🐚' } }).stand()!;
@@ -124,7 +124,7 @@ test('a drawing that fails to load shows the icon instead, named for the drawing
 test("an undrawn tile's names are muted, Dhivehi included", () => {
   const { tile } = mount({ item: makeItem({ ...teal, meta: { dhiv_script: 'ސަޓު' } }) });
   const [dhivehi, english] = [...(tile.lastElementChild as HTMLElement).children];
-  for (const line of [dhivehi, english]) assertStringIncludes(line.className, 'text-slate-600');
+  for (const line of [dhivehi, english]) assertStringIncludes(line.className, 'text-stone-600');
 });
 
 test("the id badge's layer stays inside its tile, under the sticky section heading", () => {

@@ -4,7 +4,7 @@
 > browser) and 3 (journeys) done 2026-10-27. The tests were written bottom up, one file at a time,
 > as each piece of code was; this plans them top down, from what the site promises to the smallest
 > rule, and rebuilds the kit they share. One pull request per phase, 100% coverage throughout.
-> Phases 1 to 3 come **before** the [site code](SRC-OVERHAUL.md) overhaul: journey tests are what
+> Phases 1 to 3 came **before** the site code overhaul (done 2026-10-28): journey tests are what
 > make moving every file safe. (The scripts overhaul went first, as the scripts already had direct
 > tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
@@ -84,10 +84,9 @@ changelog takes new commits. `build_pipeline_test.ts` is most of S1 already.
 
 ### 3. Features
 
-Each feature (the [site code plan](SRC-OVERHAUL.md)'s `viewer/`, `search/`, `gallery/`, `about/`,
-`shell/`) has component tests for what a journey does not pin down: the edge cases, the
-accessibility attributes, every state of a component. A component is mounted with fake stores; a
-shared `ui/` component with props alone.
+Each feature (`src/`'s `viewer/`, `search/`, `gallery/`, `about/`, `shell/`) has component tests for
+what a journey does not pin down: the edge cases, the accessibility attributes, every state of a
+component. A component is mounted with fake stores; a shared `ui/` component with props alone.
 
 ### 4. Units and properties
 
@@ -123,9 +122,9 @@ helpers and data). The words (journey, promise, fake, scenario) are in
 
 ## Duplicates to fold
 
-Found by the same sweep as the site's (SRC-OVERHAUL.md, "Duplicates to fold"), on 2026-10-27. On top
-of the patterns above, the tests repeat their **data** more than their code: the same collections
-and the same birds are written out file by file, in `script/` as much as in `src/`.
+Found by the same sweep as the site's (folded by its overhaul), on 2026-10-27. On top of the
+patterns above, the tests repeat their **data** more than their code: the same collections and the
+same birds are written out file by file, in `script/` as much as in `src/`.
 
 | Repeated                                                                                                                                                                                                                                      | Becomes                                                                                                         | Phase |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ----- |

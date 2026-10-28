@@ -5,7 +5,7 @@ import { reactive, watch } from 'vue';
 const STORAGE_KEY = 'theme';
 
 /** The top bar's colour in each theme, for a phone's browser bar (`<meta name="theme-color">`). */
-export const BAR_COLOR = { light: '#ffffff', dark: '#020617' } as const;
+export const BAR_COLOR = { light: '#ffffff', dark: '#0c0a09' } as const; // white, stone-950
 
 /** An explicit stored choice wins; otherwise follow the OS preference. */
 export function resolveInitialTheme(stored: string | null, prefersDark: boolean): boolean {

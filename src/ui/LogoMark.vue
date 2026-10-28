@@ -1,5 +1,5 @@
 <!-- The logo mark (or, with `tile`, the solid version for small sizes). Size and
-     colour come from the class, e.g. <LogoMark class="size-6 text-slate-900" />. -->
+     colour come from the class, e.g. <LogoMark class="size-6 text-stone-900" />. -->
 <template>
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" v-html="body" />
 </template>

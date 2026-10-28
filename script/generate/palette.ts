@@ -38,11 +38,11 @@ const tailwind = colors as unknown as Record<string, Ramp | string>;
 const ramp = (hue: string): Ramp =>
   Object.fromEntries(Object.entries(tailwind[hue] as Ramp).map(([k, v]) => [k, oklchToHex(v)]));
 
-export const SLATE: Ramp = ramp('slate');
+export const STONE: Ramp = ramp('stone');
 export const TEAL: Ramp = ramp('teal');
 
 /**
- * A tile with nothing drawn yet: its collection's icon, faint on the tile grey, by slate step
+ * A tile with nothing drawn yet: its collection's icon, faint on the tile grey, by stone step
  * (`ItemTile.vue` draws it with these classes; a contract test holds the two together). About
  * 2.4:1 against the grey, faint on purpose (docs/DESIGN.md §9).
  */

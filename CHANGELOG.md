@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-28 | feat: warm paper. The site's neutral is `stone`, a warm grey, instead of `slate`, so
+  its pages match the design guide's paper; the logo tile, the favicon, the phone's browser bar and
+  the README's row of drawings follow. Every contrast rule still holds (body text 7.6:1, muted text
+  4.8:1 on white and 7.6:1 on dark); DESIGN.md's ramps and figures are the stone ones. This was the
+  last feature riding along with the site overhaul, so its plan page goes
 - 2026-10-28 | feat: the site overhaul finished, its features in, and a test beside every component.
   `App.vue` and the page list are in `app/`, which places each feature (the search box in the top
   bar, the footer after a page) so the layers point one way; contract tests check the layers and the

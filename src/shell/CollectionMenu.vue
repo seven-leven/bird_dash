@@ -8,7 +8,7 @@
     <button
       ref="buttonRef"
       class="nav-item focus-ring flex items-center gap-1.5 px-2.5 py-1.5 max-md:min-h-9
-             font-medium text-slate-900 dark:text-slate-100"
+             font-medium text-stone-900 dark:text-stone-100"
       :aria-expanded="open"
       aria-controls="collection-menu"
       @click="open = !open"
@@ -27,7 +27,7 @@
       v-if="open"
       id="collection-menu"
       class="absolute left-0 top-full mt-1.5 z-50 min-w-48 p-1 rounded-card border shadow-float
-             bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-800"
+             bg-white border-stone-200 dark:bg-stone-900 dark:border-stone-800"
     >
       <li v-for="col in collections" :key="col.id">
         <button
@@ -42,7 +42,7 @@
       <li
         v-for="(p, i) in pages"
         :key="p.id"
-        :class="i === 0 && 'mt-1 border-t pt-1 border-slate-100 dark:border-slate-800'"
+        :class="i === 0 && 'mt-1 border-t pt-1 border-stone-100 dark:border-stone-800'"
       >
         <a
           :href="`#${p.id}`"

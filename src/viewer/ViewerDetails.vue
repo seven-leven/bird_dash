@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white/95 border-slate-200 dark:bg-slate-900/95 dark:border-slate-800
+  <div class="bg-white/95 border-stone-200 dark:bg-stone-900/95 dark:border-stone-800
               backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
     <!-- Where it sits: its id, its group (a link back to it in the grid), and when it
@@ -73,7 +73,7 @@
       <p class="caps-label text-muted mb-2">
         From the illustrator
       </p>
-      <blockquote class="pl-3 border-l border-slate-200 dark:border-slate-700">
+      <blockquote class="pl-3 border-l border-stone-200 dark:border-stone-700">
         <div
           id="illustrator-note"
           class="space-y-2"

@@ -23,14 +23,14 @@ test('every live section in the docs names a component the docs theme registers'
   assertEquals([...registered].filter((n) => !asked.has(n)), []);
 });
 
-test('every accent in accents.css, and slate, has a full ramp in Tailwind', async () => {
+test('every accent in accents.css, and stone, has a full ramp in Tailwind', async () => {
   const themeCss = await readFile(
     createRequire(import.meta.url).resolve('tailwindcss/theme.css'),
     'utf8',
   );
   const hues = accentHues(await readFile('./src/styles/accents.css', 'utf8'));
   assert(hues.length > 0, 'accents.css has no accent palettes');
-  for (const name of ['slate', ...hues]) {
+  for (const name of ['stone', ...hues]) {
     assertEquals(missingSteps(name, themeCss), [], `${name} is missing steps in Tailwind`);
   }
 });

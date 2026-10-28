@@ -8,7 +8,7 @@ import {
   undrawnTile,
 } from './designGuide.ts';
 import { iconSheetSvg } from './iconSheet.ts';
-import { accentMenu, SLATE, UNDRAWN } from './palette.ts';
+import { accentMenu, STONE, UNDRAWN } from './palette.ts';
 import { ICON_GROUPS, ICONS } from '../../src/ui/icons.ts';
 import { readJson } from '../lib/fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
@@ -47,23 +47,23 @@ test("the guide shows every collection's undrawn tile, light and dark", async ()
     assertEquals(svg.split(body).length - 1 >= 2, true, `${c.id}: light and dark`);
   }
   for (const theme of ['light', 'dark'] as const) {
-    assertStringIncludes(svg, `stroke="${SLATE[UNDRAWN[theme].ink]}" stroke-width="1.5"`);
+    assertStringIncludes(svg, `stroke="${STONE[UNDRAWN[theme].ink]}" stroke-width="1.5"`);
   }
   assertEquals(dhivehi.length, 2); // the specimen and the type scale, drawn in Faruma
 });
 
 test("an undrawn tile is the icon, centred at 56%, in the theme's ink on its grey", () => {
   const tile = undrawnTile('<path d="M0 0"/>', 'dark', 10, 20, 100);
-  assertStringIncludes(tile, `fill="${SLATE[UNDRAWN.dark.background]}"`);
+  assertStringIncludes(tile, `fill="${STONE[UNDRAWN.dark.background]}"`);
   assertStringIncludes(tile, 'translate(32 42) scale(2.3333333333333335)');
-  assertStringIncludes(tile, `stroke="${SLATE[UNDRAWN.dark.ink]}"`);
+  assertStringIncludes(tile, `stroke="${STONE[UNDRAWN.dark.ink]}"`);
 });
 
 test('the contrast report gives a ratio for every pair the guide quotes', () => {
   const lines = contrastReport();
   assertEquals(lines.length, 12);
   for (const line of lines) assertMatch(line, /^ {2}\d+\.\d:1 {2}\S/);
-  assertStringIncludes(lines.join('\n'), 'muted slate-500 on white');
+  assertStringIncludes(lines.join('\n'), 'muted stone-500 on white');
 });
 
 test('a collection with no accent set is listed under teal, the default', async () => {

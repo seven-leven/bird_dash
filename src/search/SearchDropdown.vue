@@ -7,7 +7,7 @@
       v-if="open"
       class="absolute right-0 top-full mt-1.5 w-full md:min-w-90 max-w-130
              rounded-card border shadow-float z-50 overflow-hidden
-             bg-white border-slate-200 dark:bg-slate-900 dark:border-slate-700"
+             bg-white border-stone-200 dark:bg-stone-900 dark:border-stone-700"
     >
       <SearchSummary :count="count" :drawn="drawn" />
 
@@ -22,7 +22,7 @@
         id="global-search-listbox"
         role="listbox"
         aria-label="Search results"
-        class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800"
+        class="overflow-y-auto max-h-105 custom-scrollbar divide-y divide-stone-100 dark:divide-stone-800"
       >
         <SearchResults
           :results="results"

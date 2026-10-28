@@ -1,4 +1,4 @@
-<!-- The colour ramps, live: slate, then every accent a collection may choose, in the
+<!-- The colour ramps, live: stone, then every accent a collection may choose, in the
      order src/styles/accents.css lists them, each swatch the very CSS variable the site
      uses (`--color-teal-500`). On GitHub the same place shows the text. -->
 <template>
@@ -23,7 +23,7 @@
       </div>
     </div>
     <p class="wi-note">
-      Slate is the interface; the rest are the accents on offer, the default first. The 500 step
+      Stone is the interface; the rest are the accents on offer, the default first. The 500 step
       (outlined) draws the current marker and the focus ring on a dark page; 700 draws them on a
       light one, and carries white text.
     </p>
@@ -34,5 +34,5 @@
 import { accentHues, STEPS } from '../../../script/docs/accents.ts';
 import accentsCss from '../../../src/styles/accents.css?raw';
 
-const ramps = ['slate', ...accentHues(accentsCss)];
+const ramps = ['stone', ...accentHues(accentsCss)];
 </script>

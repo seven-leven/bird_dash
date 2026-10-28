@@ -5,7 +5,7 @@ import {
   accentMenu,
   contrast,
   oklchToHex,
-  SLATE,
+  STONE,
   TEAL,
   whiteOnBlack,
 } from './palette.ts';
@@ -32,11 +32,11 @@ test('every accent on the menu in accents.css passes the contrast rule', async (
     const hex = ACCENT_HEX[hue];
     assert(hex, `${hue}: no hex values in ACCENT_HEX, so the design guide cannot draw it`);
     const button = contrast('#ffffff', hex[700]);
-    const darkRing = contrast(hex[500], SLATE['950']);
+    const darkRing = contrast(hex[500], STONE['950']);
     const bar = contrast(hex[500], '#ffffff');
     // White on 700 at 4.5:1 also puts the light page's ring, 700 on white, past its 3:1.
     assert(button >= 4.5, `${hue}: white on 700 is ${button.toFixed(1)}:1, below 4.5:1`);
-    assert(darkRing >= 3, `${hue}: the dark ring, 500 on slate-950, is ${darkRing.toFixed(1)}:1`);
+    assert(darkRing >= 3, `${hue}: the dark ring, 500 on stone-950, is ${darkRing.toFixed(1)}:1`);
     assert(bar >= 2.4, `${hue}: 500 on white is ${bar.toFixed(1)}:1, paler than allowed`);
   }
 });
@@ -46,7 +46,7 @@ test("oklchToHex turns Tailwind's oklch colours into the hex a screen shows", ()
   assertEquals(oklchToHex('oklch(0% 0 0)'), '#000000');
   assertEquals(oklchToHex('oklch(55.6% 0 none)'), '#737373'); // a grey has no hue
   // Tailwind's published hex for these shades.
-  assertEquals([SLATE['500'], TEAL['500'], TEAL['700']], ['#62748e', '#00bba7', '#00786f']);
+  assertEquals([STONE['500'], TEAL['500'], TEAL['700']], ['#79716b', '#00bba7', '#00786f']);
 });
 
 test('oklchToHex refuses anything that is not an oklch() colour', () => {

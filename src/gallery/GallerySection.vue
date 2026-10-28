@@ -7,8 +7,8 @@
     <h2
       class="sticky -top-4 sm:-top-6 z-10 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2.5 mb-4 text-base font-semibold
              flex items-center justify-between gap-3 border-b transition-colors duration-fast
-             bg-slate-50/95 text-slate-800 border-slate-200 backdrop-blur-sm
-             dark:bg-slate-950/95 dark:text-slate-100 dark:border-slate-800"
+             bg-stone-50/95 text-stone-800 border-stone-200 backdrop-blur-sm
+             dark:bg-stone-950/95 dark:text-stone-100 dark:border-stone-800"
     >
       <span class="truncate">{{ name }}</span>
       <span class="with-icon shrink-0 text-xs font-normal tabular-nums text-muted">

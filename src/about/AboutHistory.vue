@@ -1,9 +1,9 @@
 <!-- History: what happened when. Dated events, not counts, so written here. -->
 <template>
-  <section class="border-t border-slate-200 py-12 dark:border-slate-800" aria-labelledby="about-history">
+  <section class="border-t border-stone-200 py-12 dark:border-stone-800" aria-labelledby="about-history">
     <h2 id="about-history" class="caps-label text-muted">So far</h2>
     <p class="mt-3 text-xl font-semibold text-strong">One page at a time.</p>
-    <ol class="mt-6 space-y-6 border-l border-slate-200 pl-6 dark:border-slate-800">
+    <ol class="mt-6 space-y-6 border-l border-stone-200 pl-6 dark:border-stone-800">
       <li v-for="event in HISTORY" :key="event.when">
         <p class="text-xs font-semibold tabular-nums text-muted">{{ event.when }}</p>
         <p class="mt-1 max-w-prose text-sm text-body">{{ event.what }}</p>

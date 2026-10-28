@@ -2,7 +2,7 @@
 <template>
   <section
     v-if="recent.length"
-    class="border-t border-slate-200 py-12 dark:border-slate-800"
+    class="border-t border-stone-200 py-12 dark:border-stone-800"
     aria-labelledby="about-recent"
   >
     <h2 id="about-recent" class="caps-label text-muted">Recently drawn</h2>
@@ -15,12 +15,12 @@
           </span>
           <!-- The Dhivehi line keeps its height without a name, so the English names line up. -->
           <span
-            class="mt-2 block truncate font-dhivehi text-sm text-slate-900 dark:text-slate-100"
+            class="mt-2 block truncate font-dhivehi text-sm text-stone-900 dark:text-stone-100"
             dir="rtl"
             lang="dv"
             :aria-hidden="!d.dhivehi"
           >{{ d.dhivehi ? firstScript(d.dhivehi) : NBSP }}</span>
-          <span class="block text-sm font-medium text-slate-900 dark:text-slate-100">{{ d.name }}</span>
+          <span class="block text-sm font-medium text-stone-900 dark:text-stone-100">{{ d.name }}</span>
           <span class="block text-xs text-muted">{{ monthOf(d.drawn) }}</span>
         </a>
       </li>
