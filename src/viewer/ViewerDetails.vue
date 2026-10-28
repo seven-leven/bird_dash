@@ -3,7 +3,7 @@
               backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
     <!-- Where it sits: its id, its group (a link back to it in the grid), and when it
-         was drawn, in the month view's words. -->
+         was drawn, in the month view's words; a series piece, what in. -->
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs viewer-label">
       <IdBadge :id="item.itemId" />
       <button
@@ -15,7 +15,7 @@
       </button>
       <template v-if="drawnMonth">
         <span aria-hidden="true">·</span>
-        <span>Drawn {{ drawnMonth }}</span>
+        <span>Drawn {{ drawnMonth }}<template v-if="collection.medium">, in {{ collection.medium }}</template></span>
       </template>
     </div>
 

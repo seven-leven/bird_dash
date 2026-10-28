@@ -105,6 +105,13 @@ test('toCollection: derives the data and image URLs from the id and base', () =>
   assertEquals(config.links[0].url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');
 });
 
+test('toCollection: a collection that names no kind is of species; a series keeps its medium', () => {
+  const entry = { id: 'x', label: 'X', emoji: '', groupLabel: 'G', itemLabel: 'i', links: [] };
+  assertEquals(toCollection(entry, './').kind, 'species');
+  const series = toCollection({ ...entry, kind: 'series', medium: 'colour pencil' }, './');
+  assertEquals([series.kind, series.medium], ['series', 'colour pencil']);
+});
+
 test('toCollectionItems: missing fields become empty, a non-numeric id sorts as 0, a bad date as 0', () => {
   const [bare, odd] = toCollectionItems(col, {
     G: [{} as never, { id: 'x1', name: 'Odd', drawn: 'not a date' }],

@@ -23,10 +23,20 @@ export interface ListEntry {
 /** `public/lists/<id>.json`: items keyed by group (family, order, …). */
 export type ListFile = Record<string, ListEntry[]>;
 
+/**
+ * What a collection holds: `species` (named in English, Latin and Dhivehi, and checked
+ * against reference sites) or a `series` of studies (numbered prompts in one medium).
+ */
+export type CollectionKind = 'species' | 'series';
+
 /** One entry in `public/collections.json`. */
 export interface CollectionEntry {
   id: string;
   label: string;
+  /** Absent means `species`. */
+  kind?: CollectionKind;
+  /** A series: what every piece in it is drawn in ("colour pencil"). */
+  medium?: string;
   emoji: string;
   /** Name of a line icon in src/ui/icons.ts; the emoji is the fallback. */
   icon?: string;

@@ -11,6 +11,7 @@ export function makeCollection(
   return {
     id,
     label: id,
+    kind: 'species',
     emoji: '🐦',
     dataUrl: '',
     imageBase: '',

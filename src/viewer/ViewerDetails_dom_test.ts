@@ -210,3 +210,15 @@ test('a bird with two Dhivehi names gets a line for each, each with its own roma
   assertEquals(parts(second), ['ކުލީ ކުކުޅު', 'also Kulhee Kukulhu']);
   assertEquals(english.textContent?.trim(), 'Watercock');
 });
+
+test('a series piece says what it is drawn in, after when', () => {
+  const butterflies = makeCollection('butterflies', {
+    kind: 'series',
+    medium: 'colour pencil',
+    links: [],
+  });
+  const host = mountComponent(() => h(ViewerDetails, { item: goose, collection: butterflies }));
+  assertStringIncludes(host.textContent!, 'Drawn October 2024, in colour pencil');
+  // A species names no medium.
+  assert(!mount(goose).host.textContent!.includes(', in '));
+});
