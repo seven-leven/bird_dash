@@ -4,13 +4,13 @@ import { assert, assertEquals } from '@std/assert';
 import { findFiles } from '../../script/testRunner/tiers.ts';
 
 // docs/ARCHITECTURE.md, rule 3: `domain/` is plain TypeScript, the archive's rules and nothing
-// else. It imports only from itself, and types alone from two places: the shapes of the files it
-// turns into items (`data/files.ts`), and `types/` until the site overhaul's phase 8 removes it.
+// else. It imports only from itself, and types alone from one place: the shapes of the files it
+// turns into items (`data/files.ts`).
 // It touches no browser, network or clock, so every rule in it can be tested with a value in and
 // a value out.
 
 /** What `domain/` may import types (and only types) from, outside itself. */
-const TYPES_FROM = ['../data/files.ts', '../types/'];
+const TYPES_FROM = ['../data/files.ts'];
 
 const sources = async () =>
   (await findFiles(['src/domain'], '*.ts')).filter((path) => !path.endsWith('_test.ts'));

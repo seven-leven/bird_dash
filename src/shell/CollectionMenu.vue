@@ -1,4 +1,4 @@
-<!-- components/layout/CollectionMenu.vue
+<!-- shell/CollectionMenu.vue
      The collections as one button where tabs do not fit (docs/DESIGN.md §10): it names
      the current collection, and opens the list of all of them. A disclosure, not an
      ARIA menu: a button that shows and hides a list of buttons, so Tab, Enter and
@@ -13,8 +13,8 @@
       aria-controls="collection-menu"
       @click="open = !open"
     >
-      <CollectionIcon v-if="page === 'gallery' && activeCollection" :collection="activeCollection" class="size-4" />
-      <span class="truncate max-w-32">{{ currentPage?.label ?? activeCollection?.label }}</span>
+      <CollectionIcon v-if="page === 'gallery' && active" :collection="active" class="size-4" />
+      <span class="truncate max-w-32">{{ currentPage?.label ?? active?.label }}</span>
       <Icon
         name="chevronDown"
         class="size-3 text-muted transition-transform duration-fast"
@@ -32,7 +32,7 @@
       <li v-for="col in collections" :key="col.id">
         <button
           class="nav-item focus-ring w-full flex items-center gap-2 px-3 py-2 text-left min-h-9"
-          :aria-current="page === 'gallery' && col.id === activeCollection?.id ? 'page' : undefined"
+          :aria-current="page === 'gallery' && col.id === active?.id ? 'page' : undefined"
           @click="choose(col.id)"
         >
           <CollectionIcon :collection="col" class="size-4" />
@@ -40,7 +40,7 @@
         </button>
       </li>
       <li
-        v-for="(p, i) in PAGES"
+        v-for="(p, i) in pages"
         :key="p.id"
         :class="i === 0 && 'mt-1 border-t pt-1 border-slate-100 dark:border-slate-800'"
       >
@@ -61,14 +61,17 @@
 import { nextTick, onUnmounted, ref, watch } from 'vue';
 import Icon from '../ui/Icon.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
-import { useCollectionsStore } from '../gallery/collectionsStore.ts';
-import { useActions } from '../app/actions.ts';
 import { useLayoutStore } from './layoutStore.ts';
-import { PAGES } from '../pages.ts';
+import type { Collection } from '../domain/toCollectionItems.ts';
 
-const { collections, activeCollection } = useCollectionsStore();
-const { selectCollection } = useActions();
-const { page, currentPage } = useLayoutStore();
+defineProps<{
+  collections: Collection[];
+  /** The collection on screen, once one is. */
+  active?: Collection;
+}>();
+const emit = defineEmits<{ select: [collectionId: string] }>();
+
+const { pages, page, currentPage } = useLayoutStore();
 
 const open = ref(false);
 const rootRef = ref<HTMLElement | null>(null);
@@ -82,7 +85,7 @@ function close(refocus = false): void {
 }
 
 function choose(id: string): void {
-  selectCollection(id);
+  emit('select', id);
   close(true);
 }
 

@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { noteSegments } from './noteLinks.ts';
+import { noteSegments } from './noteSegments.ts';
 
 test('a reference to another drawing becomes a link, padded to the id length', () => {
   assertEquals(noteSegments('See note for #11 (Greater Flamingo).', 'birds', 3), [

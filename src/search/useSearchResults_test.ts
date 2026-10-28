@@ -3,7 +3,7 @@ import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useSearchResults } from './useSearchResults.ts';
 import { makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { ItemsByCollection } from '../types/index.ts';
+import type { ItemsByCollection } from '../data/useCollectionLoader.ts';
 
 const birds = makeCollection('birds');
 const shells = makeCollection('shells');

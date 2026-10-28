@@ -1,9 +1,6 @@
 // Where things are in the repository, relative to its root (npm runs every command
 // there). The one place a path is written out (docs/SCRIPTS.md, principle 5).
 
-/** A placeholder's theme: the light file is `<id>.webp`, the dark one `<id>-dark.webp`. */
-export type Theme = 'light' | 'dark';
-
 export const PATHS = {
   /** The collections, in order: `public/collections.json`. */
   collections: './public/collections.json',
@@ -13,12 +10,12 @@ export const PATHS = {
   baseVersion: './script/version/base_version.json',
   changelog: './CHANGELOG.md',
   /** The site's CSS, and the parts the docs site shares. */
-  mainCss: './src/styles/main.css',
+  baseCss: './src/styles/base.css',
+  utilitiesCss: './src/styles/utilities.css',
   tokensCss: './src/styles/tokens.css',
   accentsCss: './src/styles/accents.css',
   faruma: './src/styles/fonts/Faruma.woff',
   favicon: './public/favicon.svg',
-  placeholders: './public/placeholders',
   /** The docs' generated images. */
   docsAssets: './docs/assets',
   /** The tools the build runs, by their own entry files. */
@@ -30,9 +27,8 @@ export const PATHS = {
   list: (collectionId: string): string => `./public/lists/${collectionId}.json`,
   /** The illustrator's PNGs for a collection; on your machine only, never in git. */
   sourceArt: (collectionId: string): string => `./raw_png/${collectionId}/`,
-  /** The viewer's WebPs and the tiles' WebPs. */
+  /** The viewer's WebPs, and the tiles' in two sizes (a screen picks one: `srcset`). */
   full: (collectionId: string): string => `./public/full/${collectionId}/`,
   thumb: (collectionId: string): string => `./public/thumb/${collectionId}/`,
-  placeholder: (collectionId: string, theme: Theme): string =>
-    `./public/placeholders/${collectionId}${theme === 'dark' ? '-dark' : ''}.webp`,
+  small: (collectionId: string): string => `./public/small/${collectionId}/`,
 } as const;

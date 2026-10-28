@@ -3,7 +3,7 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { h } from 'vue';
 import ItemTile from './ItemTile.vue';
 import { at, makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 import { mountComponent } from '../testing/mount.ts';
 
 const drawn = makeItem({
@@ -15,15 +15,26 @@ const drawn = makeItem({
 });
 const teal = { itemId: '005', commonName: 'Green-winged Teal', isDrawn: false };
 const undrawn = makeItem(teal);
+const birds = { icon: 'bird', emoji: '🐦' };
 
 /** Mount a tile and record what it emits. */
-function mount(props: { item: Item; dark?: boolean; eager?: boolean }) {
+function mount(props: { item: Item; eager?: boolean; collection?: typeof birds }) {
   const clicked: Item[] = [];
   const host = mountComponent(() =>
-    h(ItemTile, { ...props, onCardClick: (item: Item) => clicked.push(item) })
+    h(ItemTile, {
+      collection: birds,
+      ...props,
+      onCardClick: (item: Item) => clicked.push(item),
+    })
   );
   const tile = host.querySelector<HTMLElement>(`#item-${props.item.itemId}`)!;
-  return { tile, clicked, img: tile.querySelector('img')! };
+  return {
+    tile,
+    clicked,
+    img: tile.querySelector('img')!,
+    /** What stands in for a drawing: the collection's icon. */
+    stand: () => tile.querySelector<HTMLElement>('[role="img"]'),
+  };
 }
 
 const key = (el: HTMLElement, k: string) => {
@@ -57,11 +68,11 @@ test('the caption sits under the image: Dhivehi first, then English, both shown'
 });
 
 test('an undrawn tile is not a button, says so to screen readers, and does nothing', () => {
-  const { tile, clicked, img } = mount({ item: undrawn });
+  const { tile, clicked, img, stand } = mount({ item: undrawn });
   assertEquals(tile.getAttribute('role'), null);
   assertEquals(tile.getAttribute('tabindex'), null);
-  assertEquals(img.getAttribute('alt'), 'Green-winged Teal (not drawn yet)');
-  assertStringIncludes(img.getAttribute('src')!, '/placeholders/');
+  assertEquals(img, null);
+  assertEquals(stand()!.getAttribute('aria-label'), 'Green-winged Teal (not drawn yet)');
   assertStringIncludes(tile.className, 'bg-slate-100'); // the interface grey, not paper
 
   tile.click();
@@ -79,22 +90,35 @@ test('without a Dhivehi name the English name is the only line', () => {
   }
 });
 
-test('the dark theme shows the dark placeholder; eager tiles load first', () => {
-  const dark = mount({ item: undrawn, dark: true });
-  assertStringIncludes(dark.img.getAttribute('src')!, '-dark.webp');
-  assertEquals(dark.img.getAttribute('loading'), 'lazy');
+test("what is not drawn shows its collection's icon, faint on the tile grey in either theme", () => {
+  const icon = mount({ item: undrawn }).stand()!;
+  // Light: slate-400 on slate-100; dark: slate-600 on slate-900 (docs/DESIGN.md, Reference).
+  assertStringIncludes(icon.className, 'text-slate-400 dark:text-slate-600');
+  assert(icon.querySelector('svg'), 'the line icon');
+  // A collection with no icon has its emoji instead.
+  const emoji = mount({ item: undrawn, collection: { icon: '', emoji: '🐚' } }).stand()!;
+  assertEquals(emoji.textContent!.trim(), '🐚');
+});
 
+test('a drawn tile offers both sizes, so a screen takes the smaller where it is enough', () => {
+  const { img } = mount({ item: drawn });
+  assertEquals(img.getAttribute('srcset'), '/small/042.webp 240w, /thumb/birds/042.webp 400w');
+  assertEquals(img.getAttribute('sizes'), '(min-width: 640px) 220px, 46vw');
+});
+
+test('drawn tiles load lazily, the first screen at once', () => {
+  assertEquals(mount({ item: drawn }).img.getAttribute('loading'), 'lazy');
   const eager = mount({ item: drawn, eager: true });
   assertEquals(eager.img.getAttribute('loading'), 'eager');
   assertEquals(eager.img.getAttribute('fetchpriority'), 'high');
 });
 
-test('a drawing that fails to load falls back to the placeholder', async () => {
-  const { img } = mount({ item: drawn });
+test('a drawing that fails to load shows the icon instead, named for the drawing', async () => {
+  const { img, stand } = mount({ item: drawn });
   assertStringIncludes(img.getAttribute('src')!, '/thumb/birds/042.webp');
   img.dispatchEvent(new Event('error'));
   await Promise.resolve();
-  assertStringIncludes(img.getAttribute('src')!, '/placeholders/');
+  assertEquals(stand()!.getAttribute('aria-label'), 'Greater Sand-Plover');
 });
 
 test("an undrawn tile's names are muted, Dhivehi included", () => {

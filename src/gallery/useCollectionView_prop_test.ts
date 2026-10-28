@@ -6,7 +6,7 @@ import { ref } from 'vue';
 import { useCollectionView } from './useCollectionView.ts';
 import { monthName } from '../domain/dates.ts';
 import { at, makeItem } from '../testing/fixtures.ts';
-import type { View } from '../types/index.ts';
+import type { View } from '../domain/viewName.ts';
 
 const DAY = 86_400_000;
 const words = fc.constantFrom('heron', 'egret', 'plover', 'tern', 'noddy', 'kite', 'Reef', 'REEF');

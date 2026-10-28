@@ -1,7 +1,32 @@
 import { computed, type ComputedRef, type Ref, ref } from 'vue';
 import { normalizeQuery } from '../domain/normalizeQuery.ts';
 import { monthName } from '../domain/dates.ts';
-import type { CollectionView, Item, SectionEntry, View, ViewCounts } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
+import type { View } from '../domain/viewName.ts';
+
+/** A collection laid out for the grid: its items by section, and the sidebar's rows. */
+export interface CollectionView {
+  grouped: Record<string, Item[]>;
+  sidebarItems: SectionEntry[];
+}
+
+/** One row of the sidebar: a section (a group, or a month) and how many it holds. */
+export interface SectionEntry {
+  id: string;
+  label: string;
+  count: number;
+  total: number;
+  disabled: boolean;
+}
+
+/** What the gallery counts: everything, what the search leaves, and how many of each are drawn. */
+export interface ViewCounts {
+  total: number;
+  filtered: number;
+  /** How many of the filtered items are drawn. */
+  filteredDrawn: number;
+  drawn: number;
+}
 
 const firstOfMonthUTC = (d: Date) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
 

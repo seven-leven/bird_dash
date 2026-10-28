@@ -1,6 +1,6 @@
 <template>
   <span
-    class="inline-flex items-center rounded-control px-1.5 py-0.5 font-mono text-micro font-semibold tabular-nums"
+    class="inline-flex items-center rounded-control px-1.5 py-0.5 font-mono text-xs font-semibold tabular-nums"
     :class="variantClass"
   >
     <slot>#{{ id }}</slot>

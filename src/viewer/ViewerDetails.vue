@@ -3,11 +3,11 @@
               backdrop-blur-xl rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
     <!-- Where it sits: its id, its group (a link back to it in the grid), and when it
-         was drawn, in the month view's words. -->
-    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs viewer-label">
+         was drawn, in the month view's words; a series piece, what in. -->
+    <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
       <IdBadge :id="item.itemId" />
       <button
-        class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+        class="focus-ring rounded-control link"
         :title="`Show ${item.group} in the grid`"
         @click="emit('go-to-group', item.group)"
       >
@@ -15,7 +15,7 @@
       </button>
       <template v-if="drawnMonth">
         <span aria-hidden="true">·</span>
-        <span>Drawn {{ drawnMonth }}</span>
+        <span>Drawn {{ drawnMonth }}<template v-if="collection.medium">, in {{ collection.medium }}</template></span>
       </template>
     </div>
 
@@ -35,23 +35,23 @@
         >
           <component
             :is="name.role === 'title' ? 'h2' : 'p'"
-            class="font-dhivehi font-bold viewer-title text-left"
+            class="font-dhivehi font-bold text-strong text-left"
             :class="name.role === 'title' ? 'text-3xl' : 'text-xl'"
             dir="rtl"
           >
             {{ name.text }}
           </component>
-          <span v-if="name.roman" class="text-sm viewer-label">
+          <span v-if="name.roman" class="text-sm text-muted">
             <template v-if="name.role === 'also'">also </template><span lang="dv-Latn">{{ name.roman }}</span>
           </span>
         </div>
-        <h2 v-else-if="name.role === 'title'" class="text-xl font-semibold viewer-title leading-tight tracking-tight">
+        <h2 v-else-if="name.role === 'title'" class="text-xl font-semibold text-strong leading-tight tracking-tight">
           {{ name.text }}
         </h2>
-        <p v-else-if="name.role === 'common'" class="text-base font-semibold viewer-title leading-tight mt-1">
+        <p v-else-if="name.role === 'common'" class="text-base font-semibold text-strong leading-tight mt-1">
           {{ name.text }}
         </p>
-        <p v-else class="viewer-label italic text-sm mt-0.5">
+        <p v-else class="text-muted italic text-sm mt-0.5">
           {{ name.text }}
         </p>
       </template>
@@ -60,17 +60,17 @@
     <!-- Any other facts the list carries -->
     <div v-if="Object.keys(otherMeta).length" class="space-y-4">
       <div v-for="(value, key) in otherMeta" :key="key">
-        <p class="caps-label viewer-label mb-1">
+        <p class="caps-label text-muted mb-1">
           {{ formatMetaKey(key) }}
         </p>
-        <p class="text-sm viewer-body">{{ value }}</p>
+        <p class="text-sm text-body">{{ value }}</p>
       </div>
     </div>
 
     <!-- Illustrator note: the illustrator's own words, marked by the rule beside them. A
          long one opens folded to its first lines; the panel itself scrolls. -->
     <div v-if="paragraphs.length">
-      <p class="caps-label viewer-label mb-2">
+      <p class="caps-label text-muted mb-2">
         From the illustrator
       </p>
       <blockquote class="pl-3 border-l border-slate-200 dark:border-slate-700">
@@ -79,12 +79,12 @@
           class="space-y-2"
           :class="folded && 'max-h-36 overflow-hidden [mask-image:linear-gradient(to_bottom,black_60%,transparent)]'"
         >
-          <p v-for="(parts, n) in paragraphs" :key="n" class="viewer-body text-sm leading-relaxed">
+          <p v-for="(parts, n) in paragraphs" :key="n" class="text-body text-sm leading-relaxed">
             <template v-for="(part, i) in parts" :key="i">
               <a
                 v-if="part.href"
                 :href="part.href"
-                class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 underline underline-offset-2 hover:opacity-80"
+                class="focus-ring rounded-control link underline hover:opacity-80"
               >{{ part.text }}</a>
               <template v-else>{{ part.text }}</template>
             </template>
@@ -92,7 +92,7 @@
         </div>
         <button
           v-if="isLong"
-          class="focus-ring rounded-control mt-2 text-xs font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+          class="focus-ring rounded-control mt-2 text-xs link"
           aria-controls="illustrator-note"
           :aria-expanded="!folded"
           @click="expanded = !expanded"
@@ -106,7 +106,7 @@
          leave the site, so they stay neutral; links within it (the group, "#11", Read more)
          are in the accent (docs/DESIGN.md §01). -->
     <div v-if="links.length || item.isDrawn">
-      <p v-if="links.length" class="caps-label viewer-label mb-2">
+      <p v-if="links.length" class="caps-label text-muted mb-2">
         Learn more
       </p>
       <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
@@ -114,7 +114,7 @@
           v-for="link in links"
           :key="link.label"
           :href="link.url(item)"
-          class="text-sm font-medium viewer-body
+          class="text-sm font-medium text-body
                  hover:underline underline-offset-2 transition-colors duration-fast"
         >
           {{ link.label }}
@@ -136,10 +136,10 @@
 import ExternalLink from '../ui/ExternalLink.vue';
 import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
-import { noteSegments } from '../domain/noteLinks.ts';
+import { noteSegments } from '../domain/noteSegments.ts';
 import ViewerShare from './ViewerShare.vue';
 import { monthName } from '../domain/dates.ts';
-import type { Item, Collection } from '../types/index.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
 
 const props = defineProps<{
   item:       Item;

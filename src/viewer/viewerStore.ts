@@ -1,6 +1,6 @@
 import { computed, readonly, type Ref, ref, shallowRef } from 'vue';
 import { defineInjection } from '../browser/defineInjection.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 /**
  * The viewer: whether it is open, and on which drawing. `drawnItems` (what it pages

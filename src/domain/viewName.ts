@@ -1,4 +1,5 @@
-import type { View } from '../types/index.ts';
+/** How the gallery lays out a collection: by its groups (families, orders), or by month drawn. */
+export type View = 'group' | 'month';
 
 /**
  * What a view is called, in the header tab and the sidebar alike: the

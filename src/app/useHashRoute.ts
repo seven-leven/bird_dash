@@ -1,6 +1,8 @@
 import { nextTick, onMounted, onUnmounted, type Ref, watch } from 'vue';
-import { findPage, type PageId } from '../pages.ts';
-import type { Collection, Item, ItemsByCollection, Page } from '../types/index.ts';
+import { findPage, type PageId } from './pages.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
+import type { ItemsByCollection } from '../data/useCollectionLoader.ts';
+import type { Page } from '../shell/layoutStore.ts';
 
 /** Parse the hash grammar `#<collectionId>[/<itemId>]` (leading `#`/`/` optional). */
 export function parseHash(hash: string): { collectionId: string; itemId: string } {

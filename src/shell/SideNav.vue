@@ -30,7 +30,7 @@
             {{ activeCollection?.label }}
           </h1>
           <!-- No count until it is known: "0 of 0 drawn" would read as a real answer. -->
-          <p v-if="loadState.loading" class="h-3 w-24 mt-2 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
+          <p v-if="loadState.loading" class="h-3 w-24 mt-2 rounded-full skeleton" />
           <DrawnFilter
             v-else-if="showsDrawnFilter"
             class="-ml-2.5 mt-0.5"
@@ -54,8 +54,8 @@
       <!-- Loading: rows shaped like the real ones, as the grid does -->
       <ul v-if="loadState.loading" class="space-y-0.5" aria-busy="true">
         <li v-for="n in 8" :key="n" class="flex items-center justify-between px-3 py-2.5">
-          <span class="h-3 w-32 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
-          <span class="h-3 w-8 rounded-full animate-pulse bg-slate-200 dark:bg-slate-800" />
+          <span class="h-3 w-32 rounded-full skeleton" />
+          <span class="h-3 w-8 rounded-full skeleton" />
         </li>
       </ul>
       <ul v-else-if="activeData.sidebarItems.length" class="space-y-0.5" aria-labelledby="sidebar-list-label">
@@ -118,7 +118,6 @@ import Icon from '../ui/Icon.vue';
 import { useCollectionsStore } from '../gallery/collectionsStore.ts';
 import { useLayoutStore } from './layoutStore.ts';
 import { useViewStore } from '../gallery/viewStore.ts';
-import { useSearchStore } from '../search/searchStore.ts';
 import { drawings, drawnOf, ratio } from '../domain/countWords.ts';
 import { viewName } from '../domain/viewName.ts';
 
@@ -140,6 +139,9 @@ const {
 } = useViewStore();
 // Off-screen on narrow screens until opened: `inert` keeps it out of the tab order.
 const { sidebarOpen, isNarrow, closeSidebar } = useLayoutStore();
-const { query } = useSearchStore();
+defineProps<{
+  /** The search, which the sections say they are filtered by (the app hands it over). */
+  query: string;
+}>();
 
 </script>

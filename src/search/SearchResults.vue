@@ -34,7 +34,14 @@
              hover:bg-slate-50 dark:hover:bg-slate-800/60"
       :class="{ 'bg-slate-50 dark:bg-slate-800/60': focusedIndex === flat }"
     >
-      <img :src="tileImage(result.item, theme.isDark)" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
+      <img v-if="result.item.isDrawn" :src="result.item.smallImageUrl" alt="" class="w-8 h-8 rounded-control object-cover shrink-0 bg-slate-100 dark:bg-slate-800" loading="lazy" />
+      <!-- Not drawn yet: its collection's icon, faint on the tile grey, as in the grid. -->
+      <span
+        v-else
+        class="w-8 h-8 rounded-control shrink-0 flex items-center justify-center bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-600"
+      >
+        <CollectionIcon :collection="result.collection" class="size-5 stroke-[1.5]" />
+      </span>
       <div class="flex-1 min-w-0">
         <!-- The names a query can match first (English, then Latin), then the Thaana -->
         <template v-for="(line, l) in resultLines(result.item)" :key="line.lang">
@@ -59,7 +66,7 @@
       </div>
       <span
         v-if="!result.item.isDrawn"
-        class="shrink-0 text-micro text-muted whitespace-nowrap"
+        class="shrink-0 text-xs text-muted whitespace-nowrap"
       >Not drawn yet</span>
       <IdBadge class="shrink-0">
         <span v-html="highlight(`#${result.item.itemId}`)" />
@@ -83,13 +90,9 @@
 import { computed } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
-import { tileImage } from '../domain/tileImage.ts';
 import { nameLines } from '../domain/itemNames.ts';
-import { useThemeStore } from '../shell/themeStore.ts';
-import type { Item, SearchResult } from '../types/index.ts';
-import type { VisibleGroup } from '../domain/collapseGroups.ts';
-
-const { theme } = useThemeStore();
+import type { Item } from '../domain/toCollectionItems.ts';
+import type { SearchResult, VisibleGroup } from './useSearchResults.ts';
 
 // A result's names, the ones a query matches (English, Latin) before the Thaana.
 const resultLines = (item: Item) => {

@@ -39,6 +39,7 @@ export async function tempCollection(options: {
       sourceArt: `${dir.path}/raw/`,
       full: `${dir.path}/full/`,
       thumb: `${dir.path}/thumb/`,
+      small: `${dir.path}/small/`,
     },
   });
   if (options.items) {

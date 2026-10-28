@@ -65,10 +65,10 @@ command plans and reports and does not apply.
 
 ### 4. Every generated file has one generator and one check
 
-`stats.json`, the placeholders, the design guide, the icon sheet, the logo files and the README's
-row of drawings are all generated. Each has exactly one generator under `script/generate/`, and
-`check` regenerates it in memory and compares, so a stale file fails CI instead of going live. A
-generated file is never edited by hand.
+`stats.json`, the design guide, the icon sheet, the logo files and the README's row of drawings are
+all generated. Each has exactly one generator under `script/generate/`, and `check` regenerates it
+in memory and compares, so a stale file fails CI instead of going live. A generated file is never
+edited by hand.
 
 ### 5. One home for anything shared
 
@@ -183,9 +183,9 @@ export const main = command(USAGE, async (args, io) => {
 
 ### npm scripts
 
-A word for the job, then a colon and which part of it: `build:site`, `generate:placeholders`,
-`test:dom`. The bare word does the whole job (`build` is the site and the docs). No two scripts do
-the same thing.
+A word for the job, then a colon and which part of it: `build:site`, `generate:logo`, `test:dom`.
+The bare word does the whole job (`build` is the site and the docs). No two scripts do the same
+thing.
 
 ## Comments
 

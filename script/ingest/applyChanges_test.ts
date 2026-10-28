@@ -22,9 +22,11 @@ test('new source art is dated, its images made, and a missing thumbnail repaired
   const { io, made, transcoder } = makeRepository();
   const plan = planChanges({
     drawnIds: set('001'),
+    extraIds: new Set<string>(),
     sourceIds: set('001', '002'),
     fullIds: set('001'),
     thumbIds: set(),
+    smallIds: set(),
   });
   const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
 
@@ -42,9 +44,11 @@ test('source art with no item in the list is skipped with a warning, and nothing
   const before = io.files.get(birds.paths.json);
   const plan = planChanges({
     drawnIds: set(),
+    extraIds: new Set<string>(),
     sourceIds: set('999'),
     fullIds: set('999'),
     thumbIds: set('999'),
+    smallIds: set('999'),
   });
   const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
 
@@ -57,9 +61,11 @@ test('an image that cannot be made is a failure for that item, reported, and the
   const { io, made, transcoder } = makeRepository(['002', '001']);
   const plan = planChanges({
     drawnIds: set('001', '002'),
+    extraIds: new Set<string>(),
     sourceIds: set('001', '002'),
     fullIds: set('001'),
     thumbIds: set(),
+    smallIds: set(),
   });
   const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
 
@@ -68,4 +74,20 @@ test('an image that cannot be made is a failure for that item, reported, and the
   assertEquals(io.errLines.length, 2);
   assert(io.errLines[0].includes('could not make  002  boom'));
   assert(io.errLines[1].includes('could not repair the thumbnail  001  boom'));
+});
+
+test("an item's other images are made, full size alone, and a failure says which", async () => {
+  const { io, made, transcoder } = makeRepository(['001-3']);
+  const plan = planChanges({
+    drawnIds: set('001'),
+    extraIds: set('001-2', '001-3'),
+    sourceIds: set('001', '001-2', '001-3'),
+    fullIds: set('001'),
+    thumbIds: set('001'),
+    smallIds: set('001'),
+  });
+  const applied = await applyChanges(birds, plan, { date: '2025-06-01', io, transcoder });
+  assertEquals(made, ['extra 001-2', 'extra 001-3']);
+  assertEquals(applied.failures, [{ id: '001-3', reason: 'boom' }]);
+  assert(io.errLines.some((line) => line.includes('could not make  001-3  boom')));
 });

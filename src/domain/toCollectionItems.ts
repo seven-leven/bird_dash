@@ -1,7 +1,8 @@
-import type { CollectionEntry, ListFile } from '../data/files.ts';
+import type { CollectionEntry, CollectionKind, ListFile } from '../data/files.ts';
 import type { ItemName } from './itemNames.ts';
 import { buildNames, nameWords } from './itemNames.ts';
 import { linkUrl } from './linkUrl.ts';
+import { imageIds } from './imageIds.ts';
 
 export interface Item {
   id: string;
@@ -15,11 +16,11 @@ export interface Item {
    */
   names: readonly ItemName[];
   group: string;
+  /** Its images in the viewer, by file name: the drawing, then any others (`001-2`). */
+  imageIds: string[];
+  /** The drawing's thumbnail (400px), and its smaller size (240px); only drawn items have them. */
   imageUrl: string;
-  placeholderUrl: string;
-  /** The same placeholder drawn for the dark theme. */
-  placeholderDarkUrl: string;
-  /** Precomputed once at load — avoids repeated `imageUrl !== placeholderUrl` checks. */
+  smallImageUrl: string;
   isDrawn: boolean;
   /** Numeric form of `itemId`, precomputed for sort comparators. */
   sortKey: number;
@@ -37,11 +38,15 @@ export interface Item {
 export interface Collection {
   id: string;
   label: string;
+  kind: CollectionKind;
+  /** A series: what it is drawn in. */
+  medium?: string;
   emoji: string;
   icon?: string;
   accent?: string;
   dataUrl: string;
   imageBase: string;
+  smallImageBase: string;
   fullImageBase: string;
   groupLabel: string;
   itemLabel: string;
@@ -60,14 +65,17 @@ const KNOWN_KEYS = new Set([
   'dhiv_script',
   'drawn',
   'illustratorNote',
+  'images',
 ]);
 
 /** A `collections.json` entry plus the URLs the app derives from its id. */
 export function toCollection(raw: CollectionEntry, base: string): Collection {
   return {
     ...raw,
+    kind: raw.kind ?? 'species',
     dataUrl: `${base}lists/${raw.id}.json`,
     imageBase: `${base}thumb/${raw.id}/`,
+    smallImageBase: `${base}small/${raw.id}/`,
     fullImageBase: `${base}full/${raw.id}/`,
     links: raw.links.map((l) => ({
       label: l.label,
@@ -83,13 +91,10 @@ export function toCollection(raw: CollectionEntry, base: string): Collection {
  * also lets the shallowReactive cache skip proxying them.
  */
 export function toCollectionItems(
-  col: Pick<Collection, 'id' | 'imageBase'>,
+  col: Pick<Collection, 'id' | 'imageBase' | 'smallImageBase'>,
   raw: ListFile,
-  base: string,
 ): Item[] {
   const items: Item[] = [];
-  const placeholder = `${base}placeholders/${col.id}.webp`;
-  const placeholderDark = `${base}placeholders/${col.id}-dark.webp`;
 
   let counter = 1;
   for (const [groupName, list] of Object.entries(raw)) {
@@ -122,9 +127,9 @@ export function toCollectionItems(
         scientificName,
         names,
         group: groupName,
-        imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : placeholder,
-        placeholderUrl: placeholder,
-        placeholderDarkUrl: placeholderDark,
+        imageIds: imageIds(itemId, typeof r.images === 'number' ? r.images : 1),
+        imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : '',
+        smallImageUrl: hasImg ? `${col.smallImageBase}${itemId}.webp` : '',
         isDrawn: hasImg,
         sortKey: Number.parseInt(itemId, 10) || 0,
         drawnTime: hasImg ? (new Date(String(r.drawn)).getTime() || 0) : 0,

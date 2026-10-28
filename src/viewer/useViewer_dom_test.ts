@@ -3,7 +3,7 @@ import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive } from 'vue';
 import { useViewer } from './useViewer.ts';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 import { mountComposable, runInScope } from '../testing/mount.ts';
 
 const items = [
@@ -464,4 +464,25 @@ test('unmounting while open unlocks the page and stops listening for keys', asyn
   globalThis.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
   assertEquals(emitted, []);
   assertEquals(lb.scale.value, 1);
+});
+
+test("the arrows page through an item's images, each loaded afresh at fit, then on to the next", async () => {
+  const t = setup(0);
+  t.props.item = makeItem({ itemId: '001', imageIds: ['001', '001-2'] });
+  t.props.drawnItems = [t.props.item, items[1]];
+  await t.open();
+  assertEquals(t.lb.imageUrl.value, '/full/x/001.webp');
+  t.lb.handleImageLoad();
+  t.lb.zoomIn();
+
+  t.key('ArrowRight');
+  await nextTick();
+  assertEquals(t.lb.imageUrl.value, '/full/x/001-2.webp');
+  assertEquals([t.lb.loading.value, t.lb.scale.value], [true, 1]);
+  assertEquals(t.lb.imagePosition.value, 'image 2 of 2');
+  assertEquals(t.emitted, []);
+
+  t.key('ArrowRight');
+  assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '002']]);
+  t.stop();
 });

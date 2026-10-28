@@ -1,10 +1,10 @@
 <!-- The manifesto's first line, and the way to the rest of it on the docs site. -->
 <template>
   <section class="border-t border-slate-200 py-12 dark:border-slate-800" aria-label="Design">
-    <blockquote class="max-w-prose text-xl font-semibold text-slate-900 dark:text-white">
+    <blockquote class="max-w-prose text-xl font-semibold text-strong">
       The drawings carry the colour. Everything around them makes room.
     </blockquote>
-    <p class="mt-3 max-w-prose text-sm text-slate-600 dark:text-slate-300">
+    <p class="mt-3 max-w-prose text-sm text-body">
       Five principles shape the site, from the grey that waits for a drawing to the way
       each count is worded.
     </p>

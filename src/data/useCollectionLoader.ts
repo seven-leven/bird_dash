@@ -58,7 +58,7 @@ export function useCollectionLoader() {
 
   const fetchCollectionData = async (col: Collection): Promise<Item[]> => {
     const raw = await fetchJson<ListFile>(col.dataUrl, col.label);
-    return toCollectionItems(col, raw, getBase());
+    return toCollectionItems(col, raw);
   };
 
   // One in-flight request per collection, shared by the active load and the

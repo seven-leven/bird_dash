@@ -11,11 +11,11 @@ This document is both its point of view and its practical reference.
 ![Design guide](assets/design-guide.png)
 
 The picture is drawn from the real tokens and icons by `npm run generate`. The source of truth for
-the tokens is [`src/styles/main.css`](../src/styles/main.css), with the parts the docs site shares
-in [`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css); this
-guide explains the decisions behind them and how to apply them. The picture has a voice of its own
-(warm paper, a serif for statements); neither is a site token. The site's colours are the swatches
-drawn on it.
+the tokens is [`src/styles/`](../src/styles/main.css): `main.css` maps them into Tailwind,
+[`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css) hold the
+parts the docs site shares, and `components.css` the classes each role uses; this guide explains the
+decisions behind them and how to apply them. The picture has a voice of its own (warm paper, a serif
+for statements); neither is a site token. The site's colours are the swatches drawn on it.
 
 ---
 
@@ -85,15 +85,13 @@ the CSS.
 | -------------------------------- | ---------------------------- | ---------------------------- |
 | Page                             | `slate-50`                   | `slate-950`                  |
 | Surface: header, sidebar, menus  | white                        | `slate-950` / `slate-900`    |
-| Main text                        | `slate-900` / `slate-800`    | `slate-100`                  |
-| Muted text                       | `slate-500` (`.text-muted`)  | `slate-400` (`.text-muted`)  |
+| Strong text (`.text-strong`)     | `slate-900`                  | white                        |
+| Body text (`.text-body`)         | `slate-600`                  | `slate-300`                  |
+| Muted text (`.text-muted`)       | `slate-500`                  | `slate-400`                  |
 | Borders and dividers             | `slate-200` / `slate-100`    | `slate-800`                  |
 | Focus ring, current marker       | `accent-700`                 | `accent-500`                 |
 | Progress                         | `accent-500`                 | `accent-500`                 |
 | Primary button (`.btn-primary`)  | `accent-700` with white text | `accent-700` with white text |
-| Viewer title (`.viewer-title`)   | `slate-900`                  | white                        |
-| Viewer body (`.viewer-body`)     | `slate-600`                  | white at 70%                 |
-| Viewer label (`.viewer-label`)   | `slate-500`                  | white at 50%                 |
 | Drawing id badge (over an image) | white at 70% on black at 50% | the same                     |
 
 The accent is a signal, not decoration. Reserve it for keyboard focus, the current item, progress,
@@ -122,7 +120,7 @@ icons**.
 | `accent-500` on white       | 2.4:1    |
 | `accent-500` on `slate-950` | 8.3:1    |
 | white at 70% on black       | 10.0:1   |
-| white at 50% on black       | 5.3:1    |
+| `slate-300` on `slate-950`  | 13.6:1   |
 
 A focus ring or marker needs **3:1** against what it sits on. `accent-500` on white is about 2.4:1,
 too pale for that and for text, so on a light page the ring, the current marker and accent-coloured
@@ -145,8 +143,9 @@ from that file.
 
 <!-- /live -->
 
-The viewer follows the page theme: a light page opens a light viewer. Use `.viewer-title`,
-`.viewer-body` and `.viewer-label` for its text; do not hard-code faded white. Every colour needs a
+Text takes one of three roles, on every page and in the viewer alike: `.text-strong` for titles and
+names, `.text-body` for running text, `.text-muted` for labels and counts. The viewer follows the
+page theme, so a light page opens a light viewer with the same three. Every colour needs a
 dark-theme partner, either through paired classes such as `text-slate-500 dark:text-slate-400` or an
 existing class such as `.text-muted`, `.btn-ghost` or `.nav-item`.
 
@@ -161,16 +160,16 @@ font list but only covers Thaana, so Dhivehi is set in it wherever it appears, e
 search; everything else falls through to the sans-serif. Mark a Dhivehi name with `.font-dhivehi`
 and `dir="rtl"`. That class also sets a line height of 1.85: Faruma's vowel marks reach half an em
 below the baseline, and a tighter line, or a truncated one, cuts them off, so never add `leading-*`
-to Dhivehi. The type scale has six sizes; do not add another or write pixel sizes by hand.
+to Dhivehi. The type scale has five sizes; do not add another or write pixel sizes by hand. A test
+fails on any other.
 
-| Token        | Size | Purpose                                                    |
-| ------------ | ---- | ---------------------------------------------------------- |
-| `text-3xl`   | 30px | Dhivehi title in the viewer                                |
-| `text-xl`    | 20px | English title in the viewer, when no Dhivehi name heads it |
-| `text-base`  | 16px | Section headings, sidebar title, Dhivehi names             |
-| `text-sm`    | 14px | Controls, body text, English names on tiles                |
-| `text-xs`    | 12px | Counts and secondary lines                                 |
-| `text-micro` | 11px | `.caps-label`, `.count-pill`, keyboard hints               |
+| Token       | Size | Purpose                                                     |
+| ----------- | ---- | ----------------------------------------------------------- |
+| `text-3xl`  | 30px | Dhivehi title in the viewer                                 |
+| `text-xl`   | 20px | English title in the viewer, when no Dhivehi name heads it  |
+| `text-base` | 16px | Section headings, sidebar title, Dhivehi names              |
+| `text-sm`   | 14px | Controls, body text, English names on tiles                 |
+| `text-xs`   | 12px | Counts, secondary lines, `.caps-label`, `.count-pill`, keys |
 
 Weight carries hierarchy: `font-semibold` for titles and headings, `font-medium` for controls, and
 regular weight for everything else. Use `tabular-nums` for changing or aligned numbers such as
@@ -388,6 +387,7 @@ name="…" />`; the logo is the only other SVG in the project. The registry, the
 <!-- live: IconSheet -->
 
 - **Collections:** `bird`, `shark`, `shell`
+- **Series:** `butterfly`, `cake`, `mountain`, `sphere`, `face`, `hare`
 - **Views:** `taxonomy`, `calendar`
 - **Search:** `search`, `noResults`
 - **Navigation:** `menu`, `chevronLeft`, `chevronRight`, `chevronDown`, `close`, `externalLink`
@@ -415,7 +415,8 @@ Icons take `currentColor` and come in four sizes, by role: `size-3` (12px) besid
 `size-4` (16px) in a control, `size-5` or `size-6` (20 or 24px) standing alone. Label icons sit
 before their text through `.with-icon`, which sizes them. One icon is larger: the collection's
 emblem at the top of the sidebar, `size-10` (40px) in the accent, the biggest icon on the page and
-the only one of its size. A test fails on any other size, or a second emblem.
+the only one of its size. And what stands in for an undrawn drawing grows with its tile
+(`size-[56%]`, in the tile alone). A test fails on any other size, or a second emblem.
 
 Each icon has one meaning wherever it appears: `tag` is the version, `image` the drawing count,
 `commit` the build's commit, `layers` all collections together, and `pencil` the illustrator or
@@ -457,12 +458,12 @@ The small top-left `IdBadge` is the only thing allowed over a drawing. Undrawn t
 shading, shadow or hover. A grid with many gaps should feel quiet, so the finished drawings stand
 out.
 
-Placeholders are 512 × 512, generated from the collection icon once per theme. Their background is
-the tile's grey, never white, so they cannot be mistaken for sketches on paper. Their files and
-colours are in the [reference](#reference) below.
-
-`npm run generate` draws both from the icon set; do not edit them by hand. A contract test checks
-that both exist. At about 2.4:1 against their background, they are faint on purpose.
+What stands in for a drawing is its collection's icon, drawn by the tile itself at 56% of the square
+with a thin stroke, in the faint step on the tile's grey. The grey is never white, so the icon
+cannot be mistaken for a sketch on paper. The same icon stands in for a drawing that fails to load,
+and in a search result not drawn yet. It is drawn in the page's theme, so there is no image to make
+per collection or per theme; its colours are in the [reference](#reference) below. At about 2.4:1
+against the grey, it is faint on purpose.
 
 ---
 
@@ -498,8 +499,10 @@ current collection is always named:
 2. **The logo goes.** Below 640px the row keeps the collection's name over the logo mark, because
    orientation matters most.
 3. **Search folds into a button.** Below 420px an inline field would be too narrow to type in, so
-   search is a button; opened, it takes the whole row, with a close button, until closed or left
-   empty.
+   search is a button; opened, it takes the whole row, with **Done** beside it, until done or left
+   empty. Done is a word, not a second ✕: the box's ✕ empties the query, Done keeps it as the grid's
+   filter. The filter's own bar stays unseen while the results are open over it, so one ✕ shows at a
+   time.
 
 The view switch and the theme toggle never give way: they are icons, 36px each.
 
@@ -572,7 +575,7 @@ A short review of whether a change still belongs to the same design.
 
 ### One way to do each thing
 
-- [ ] Does it use the slate and accent tokens, the six type sizes, 4px spacing and the three corner
+- [ ] Does it use the slate and accent tokens, the five type sizes, 4px spacing and the three corner
       treatments?
 - [ ] Does it use the shared classes and components, with sentence-case wording?
 - [ ] If a token or an icon changed, was `npm run generate` run?
@@ -587,8 +590,7 @@ A short review of whether a change still belongs to the same design.
 ## Reference
 
 The exact values behind the rules above. Tests check these tables against the code that draws and
-measures them (`script/generate/palette.ts`, `script/generate/placeholders.ts`), so they cannot
-drift.
+measures them (`script/generate/palette.ts`, `src/gallery/ItemTile.vue`), so they cannot drift.
 
 ### Ramps
 
@@ -606,12 +608,12 @@ drift.
 | `900` | `#0f172b` | `#0b4f4a`         |
 | `950` | `#020618` | `#022f2e`         |
 
-### Placeholder files
+### Undrawn tile
 
-| Theme | File             | Background              | Icon                    |
-| ----- | ---------------- | ----------------------- | ----------------------- |
-| Light | `<id>.webp`      | `slate-100` (`#f1f5f9`) | `#a1a1a1`               |
-| Dark  | `<id>-dark.webp` | `slate-900` (`#0f172b`) | `slate-600` (`#45556c`) |
+| Theme | Tile                    | Icon                    |
+| ----- | ----------------------- | ----------------------- |
+| Light | `slate-100` (`#f1f5f9`) | `slate-400` (`#90a1b9`) |
+| Dark  | `slate-900` (`#0f172b`) | `slate-600` (`#45556c`) |
 
 ---
 

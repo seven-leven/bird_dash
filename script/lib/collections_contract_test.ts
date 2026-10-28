@@ -6,7 +6,7 @@ import { readList } from './lists.ts';
 import { readJson } from './fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 import { isIconName } from '../../src/ui/icons.ts';
-import { PAGES } from '../../src/pages.ts';
+import { PAGES } from '../../src/app/pages.ts';
 
 // The app is data-driven: a typo in public/*.json silently breaks routing, search
 // or the timeline rather than failing a build. These tests are that missing gate.
@@ -22,7 +22,7 @@ test('collections.json: at least one collection, unique ids', () => {
 test("collections.json: no collection takes a page's id (#about would show the page)", () => {
   const pages = new Set<string>(PAGES.map((p) => p.id));
   const taken = COLLECTIONS.map((c) => c.id).filter((id) => pages.has(id));
-  assertEquals(taken, [], `collection ids that are also pages in src/pages.ts: ${taken}`);
+  assertEquals(taken, [], `collection ids that are also pages in src/app/pages.ts: ${taken}`);
 });
 
 test('collections.json: every accent names a palette defined in accents.css', async () => {
@@ -57,11 +57,45 @@ test('collections.json: link templates only use known placeholders', async () =>
   }
 });
 
+test('collections.json: each kind has its own fields (a series its medium, a species none)', async () => {
+  const raw = await readJson<CollectionEntry[]>('./public/collections.json');
+  for (const col of raw) {
+    const kind = col.kind ?? 'species';
+    assert(kind === 'species' || kind === 'series', `${col.id}: unknown kind "${col.kind}"`);
+    if (kind === 'series') {
+      assert(col.medium?.trim(), `${col.id}: a series names its medium`);
+      const sci = col.links.filter((l) => l.url.includes('{{sci}}'));
+      assertEquals(sci.map((l) => l.label), [], `${col.id}: a series has no {{sci}} to fill in`);
+    } else {
+      assertEquals(col.medium, undefined, `${col.id}: a medium belongs to a series`);
+    }
+  }
+});
+
+/** The fields an item of each kind must have, and those it must not. */
+const ITEM_FIELDS = {
+  species: { needs: ['sci'], never: [] as string[] },
+  series: { needs: [] as string[], never: ['sci', 'dhiv', 'dhiv_script'] },
+};
+
 for (const col of COLLECTIONS) {
+  test(`${col.id}: items have the fields of the collection's kind`, async () => {
+    const raw = await readJson<CollectionEntry[]>('./public/collections.json');
+    const { needs, never } = ITEM_FIELDS[raw.find((c) => c.id === col.id)!.kind ?? 'species'];
+    const problems: string[] = [];
+    for (const [group, items] of Object.entries(await readList(col))) {
+      for (const item of items) {
+        const missing = needs.filter((f) => !String(item[f] ?? '').trim());
+        const extra = never.filter((f) => f in item);
+        if (missing.length) problems.push(`${group} / ${item.id}: needs ${missing}`);
+        if (extra.length) problems.push(`${group} / ${item.id}: a series has no ${extra}`);
+      }
+    }
+    assertEquals(problems, [], problems.join('\n'));
+  });
+
   test(`${col.id}: list file has the files the app expects`, async () => {
     assert(await exists(col.paths.json), `missing ${col.paths.json}`);
-    assert(await exists(col.paths.placeholder), `missing ${col.paths.placeholder}`);
-    assert(await exists(col.paths.placeholderDark), `missing ${col.paths.placeholderDark}`);
   });
 
   test(`${col.id}: items have unique numeric ids, names, and valid drawn dates`, async () => {
@@ -82,6 +116,9 @@ for (const col of COLLECTIONS) {
         seen.add(item.id);
 
         if (!item.name?.trim()) problems.push(`${where}: missing name`);
+        if (item.images !== undefined && !(Number.isInteger(item.images) && item.images >= 1)) {
+          problems.push(`${where}: images must be a whole number, 1 or more`);
+        }
 
         // '' means "not drawn yet"; anything else must be a real YYYY-MM-DD date.
         const drawn = item.drawn ?? '';

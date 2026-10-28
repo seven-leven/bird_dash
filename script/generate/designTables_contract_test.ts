@@ -1,8 +1,7 @@
 import { test } from 'vitest';
-import { readFile } from 'node:fs/promises';
+import { glob, readFile } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
-import { contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
-import { THEMES } from './placeholders.ts';
+import { contrast, SLATE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
 
 // The numbers DESIGN.md quotes are typed by hand; these check them against the
 // code that draws and measures them, so the page cannot drift from the tokens.
@@ -50,13 +49,21 @@ test('every contrast ratio in DESIGN.md is what the palette measures', async () 
   }
 });
 
-test('the placeholder colours in DESIGN.md are the ones the images are drawn in', async () => {
-  const rows = await table('| Theme | File ');
+test("the undrawn tile's colours in DESIGN.md are the ones the site and the guide draw in", async () => {
+  const rows = await table('| Theme | Tile ');
   const hexes = (cell: string) => cell.match(/#[0-9a-f]{6}/g);
-  assertEquals(rows.map((r) => [hexes(r[2])?.at(-1), hexes(r[3])?.at(-1)]), [
-    [THEMES.light.background, THEMES.light.ink],
-    [THEMES.dark.background, THEMES.dark.ink],
+  assertEquals(rows.map((r) => [hexes(r[1])?.at(-1), hexes(r[2])?.at(-1)]), [
+    [SLATE[UNDRAWN.light.background], SLATE[UNDRAWN.light.ink]],
+    [SLATE[UNDRAWN.dark.background], SLATE[UNDRAWN.dark.ink]],
   ]);
+  // The tile itself (src/gallery/ItemTile.vue) draws in the same steps.
+  const tile = await readFile('./src/gallery/ItemTile.vue', 'utf8');
+  const { light, dark } = UNDRAWN;
+  assert(tile.includes(`text-slate-${light.ink} dark:text-slate-${dark.ink}`), 'the icon');
+  assert(
+    tile.includes(`bg-slate-${light.background} dark:bg-slate-${dark.background}`),
+    'the grey',
+  );
 });
 
 test('a colour the palette lacks is reported, not guessed', () => {
@@ -67,4 +74,21 @@ test('a colour the palette lacks is reported, not guessed', () => {
     message = (e as Error).message;
   }
   assertEquals(message, 'DESIGN.md names a colour the palette does not have: amber-500');
+});
+
+test('the site sets text in the five sizes DESIGN.md lists, and no other', async () => {
+  const listed = (await table('| Token ')).map((row) => row[0]);
+  assertEquals(listed.length, 5);
+  const used = new Set<string>();
+  for await (const path of glob('src/**/*.{vue,css}')) {
+    const source = await readFile(path, 'utf8');
+    for (
+      const [size] of source.matchAll(
+        /\btext-(?:xs|sm|base|lg|[0-9]?xl|micro|\[[^\]]+\])(?=[\s"'`;]|$)/g,
+      )
+    ) {
+      used.add(size);
+    }
+  }
+  assertEquals([...used].filter((size) => !listed.includes(size)), []);
 });

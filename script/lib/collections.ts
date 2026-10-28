@@ -10,8 +10,7 @@ export interface CollectionPaths {
   sourceArt: string; // raw_png/{id}/
   full: string; // public/full/{id}/
   thumb: string; // public/thumb/{id}/
-  placeholder: string; // public/placeholders/{id}.webp
-  placeholderDark: string; // public/placeholders/{id}-dark.webp
+  small: string; // public/small/{id}/
 }
 
 export interface Collection {
@@ -35,7 +34,6 @@ export const COLLECTIONS: Collection[] = RAW_COLLECTIONS.map((c) => ({
     sourceArt: PATHS.sourceArt(c.id),
     full: PATHS.full(c.id),
     thumb: PATHS.thumb(c.id),
-    placeholder: PATHS.placeholder(c.id, 'light'),
-    placeholderDark: PATHS.placeholder(c.id, 'dark'),
+    small: PATHS.small(c.id),
   },
 }));

@@ -115,18 +115,18 @@ The helpers are in [`src/testing/`](../src/testing/).
 Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
 belongs to one area, by its folder ([`script/testRunner/areas.ts`](../script/testRunner/areas.ts)):
 
-| Area                          | Folders                                                               | Protects                                                |
-| ----------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------- |
-| Site: data and search         | `src/domain`, `src/data`, `src/search`                                | The archive's rules, loading collections, search        |
-| Site: state and routing       | `src/browser`, `src/app`, `src/shell`, `src/pages.ts`                 | The shell and its stores, links, the pages, theme       |
-| Site: viewer and interface    | `src/viewer`, `src/gallery`, `src/about`, `src/ui`, `src/styles`      | The viewer, the gallery, About, icons and logo          |
-| Site: journeys                | `src/journeys`, `src/App.vue`                                         | A whole visit, from first load to the back button       |
-| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders | Ingest, the integrity check, the files in `public/`     |
-| Version and changelog         | `script/version`, `script/changelog`                                  | The version in the footer, the changelog task           |
-| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                 | The runner and its reports, guide images, the docs site |
+| Area                          | Folders                                                          | Protects                                                |
+| ----------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
+| Site: data and search         | `src/domain`, `src/data`, `src/search`                           | The archive's rules, loading collections, search        |
+| Site: state and routing       | `src/browser`, `src/app`, `src/shell`                            | The shell and its stores, links, the pages, theme       |
+| Site: viewer and interface    | `src/viewer`, `src/gallery`, `src/about`, `src/ui`, `src/styles` | The viewer, the gallery, About, icons and logo          |
+| Site: journeys                | `src/journeys`, `src/app/App.vue`                                | A whole visit, from first load to the back button       |
+| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats             | Ingest, the integrity check, the files in `public/`     |
+| Version and changelog         | `script/version`, `script/changelog`                             | The version in the footer, the changelog task           |
+| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`            | The runner and its reports, guide images, the docs site |
 
-When two areas' folders overlap, the longer path wins: the generated data files in `script/generate`
-(stats, placeholders) are pipeline, the rest of the folder tooling.
+When two areas' folders overlap, the longer path wins: the generated data file in `script/generate`
+(stats) is pipeline, the rest of the folder tooling.
 
 A new folder must be added to an area, or a contract test fails.
 
@@ -261,8 +261,13 @@ its text, roles and labels, what a click or a key does, what it emits. See
   `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with only the
   members it reads; or the app's real stores, with nothing loaded, from `appStores()`
   ([`src/testing/appStores.ts`](../src/testing/appStores.ts)).
-- One test file per component, named after it (`DrawnFilter.vue` → `DrawnFilter_dom_test.ts`), so a
-  failure says which component broke.
+- One test file per component, beside it and named after it (`DrawnFilter.vue` →
+  `DrawnFilter_dom_test.ts`), so a failure says which component broke. Every component has one, even
+  one a journey covers: a contract test checks. A part split out of a bigger component (an About
+  section, `ViewerShare`) is tested on its own props; its parent's test keeps only what the parent
+  does (the About page: loading, failing, the order of its sections).
+- What a component places but does not own comes in by a slot (the footer after a page, the search
+  box in the top bar); its test passes a stand-in and checks where it lands.
 - happy-dom is not a full browser: it does not support the `~` sibling selector, so walk
   `parentElement.children` instead.
 - A component a test loads counts toward coverage at once, so cover every branch of its template

@@ -19,11 +19,12 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
 └───────────────┬─────────────────────────────────────────────┘
                 ▼
    public/   collections.json · lists/<id>.json
-             full/ · thumb/ · placeholders/
+             full/ · thumb/ · small/
                 │   the contract: fetched at runtime, never imported by src/
                 ▼
 ┌─ 2. The site (src/) ────────────────────────────────────────┐
-│ types ← lib ← composables ← stores ← components ← App.vue   │
+│ app/  →  gallery/ viewer/ search/ about/ shell/             │
+│      →  ui/  browser/  data/  →  domain/                    │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─ 3. Test harness and CI (script/testRunner/, .github/) ────┐
@@ -38,7 +39,7 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
    everything else from them. There is no server and no database.
 3. **The harness** runs the tests and gates every merge and deploy.
 
-The shape of the `public/` files is typed once, in [`src/types/data.ts`](../src/types/data.ts), and
+The shape of the `public/` files is typed once, in [`src/data/files.ts`](../src/data/files.ts), and
 used by all three.
 
 ## Where things are
@@ -49,11 +50,14 @@ public/                 Static assets, served as-is
   lists/<id>.json       Item data per collection, grouped by taxonomy
   stats.json            The archive's numbers, written by the asset build
   full/<id>/            Full-resolution WebP illustrations
-  thumb/<id>/           Grid thumbnails (generated)
-  placeholders/<id>.webp  Shown for undrawn items (<id>-dark.webp in the dark theme)
+  thumb/<id>/           Grid thumbnails, 400px (generated)
+  small/<id>/           The same at 240px; a tile picks one by screen (srcset)
 src/
-  App.vue               Makes the stores, provides them, starts the router (phase 6 moves it to app/)
-  app/                  AppShell (the frame), the router, actions that touch more than one store
+  main.ts               Mounts app/App.vue
+  env.d.ts              The build-time globals, which only app/buildInfo.ts reads
+  app/                  App.vue (makes and provides the stores, starts the router), AppShell (the
+                        frame, which places each feature), the router, the pages, the build's
+                        details, actions that touch more than one store
   shell/                TopBar, CollectionMenu, SideNav, AppFooter; the theme and layout stores
   gallery/              Gallery, its sections and tiles, the scroll-spy, the view over a
                         collection; the collections and view stores
@@ -72,15 +76,15 @@ src/
   domain/               The archive's rules, pure: items and collections, names, counts and their
                         wording, dates, the project's links (the scripts use some of it too)
   journeys/             Whole visits through the real app (TESTING.md, the journey tier)
-  types/                Types still shared from one place, until the site overhaul's phase 8
-  styles/               main.css (Tailwind), tokens.css and accents.css (shared with the docs site), fonts/
+  styles/               main.css (Tailwind's setup and the imports), tokens.css and accents.css
+                        (shared with the docs site), base.css, components.css, utilities.css, fonts/
   testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
                         The tests themselves sit next to the code they cover (see TESTING.md)
 script/                 One folder per command, run by Node; shared code in lib/ (SCRIPTS.md)
   ingest/               Take in new drawings: scan, plan, transcode, date them in the lists
   build/                The build's stages, and its Vite plugins: the size budget, the
                         Content-Security-Policy, a link preview per drawing
-  generate/             Every generated file: stats, placeholders, the design guide, icons, logo
+  generate/             Every generated file: stats, the design guide, icons, logo
   check/                Read-only checks: the assets, and the generated files are current
   version/              The derived version; base_version.json stores major/minor only
   changelog/            Insert unlogged commits into CHANGELOG.md
@@ -101,7 +105,7 @@ Imports only point leftwards in this list; nothing imports from a layer to its r
 | Data and browser | `src/data/`, `src/browser/`                | The network (only `data/` fetches) and the browser's APIs                                   |
 | Shared UI        | `src/ui/`                                  | Components that take props and emit events, and inject no store; the icon and logo drawings |
 | Features         | `src/{gallery,viewer,search,about,shell}/` | Each feature's components, composables and store. A feature does not import another's code  |
-| App              | `src/app/`, `src/App.vue`                  | The frame, the router, the actions across stores; `App.vue` makes and provides the stores   |
+| App              | `src/app/`                                 | `App.vue` makes and provides the stores; the frame, the router, the actions across stores   |
 
 ### Stores
 
@@ -148,22 +152,23 @@ State moves one way:
 grammar is `#<collection>`, `#<collection>/<item>` or `#<page>`. State changes are mirrored to the
 hash, and a hash change (a deep link, the back button) is applied to the stores.
 
-The pages that are not a collection (today, About) are one list, [`src/pages.ts`](../src/pages.ts):
-an id, a label and a component each. The route, the top bar's tabs, the collection menu and the main
-area all read it, so a new page is one entry there. A contract test keeps collection ids and page
-ids apart.
+The pages that are not a collection (today, About) are one list,
+[`src/app/pages.ts`](../src/app/pages.ts): an id, a label and a component each. The route reads it,
+and `App.vue` hands it to the layout store, where the top bar's tabs, the collection menu, the
+footer and the main area read it; so a new page is one entry there. A contract test keeps collection
+ids and page ids apart.
 
 ## The asset pipeline
 
 `npm run ingest` runs four steps per collection (it changes files git tracks, so it runs on your
 machine, never in CI):
 
-| Step       | File                                  | Does                                                           |
-| ---------- | ------------------------------------- | -------------------------------------------------------------- |
-| **Scan**   | `script/ingest/scanSources.ts`        | Reads the list file and the three image folders, once          |
-| **Plan**   | `script/ingest/planChanges.ts`        | Pure set arithmetic: what to register, transcode, or flag      |
-| **Apply**  | `script/ingest/applyChanges.ts`       | Dates new items in the JSON, writes `full/` and `thumb/` WebPs |
-| **Report** | `script/ingest/formatIngestReport.ts` | The warnings, each step, the summary                           |
+| Step       | File                                  | Does                                                                         |
+| ---------- | ------------------------------------- | ---------------------------------------------------------------------------- |
+| **Scan**   | `script/ingest/scanSources.ts`        | Reads the list file and the three image folders, once                        |
+| **Plan**   | `script/ingest/planChanges.ts`        | Pure set arithmetic: what to register, transcode, or flag                    |
+| **Apply**  | `script/ingest/applyChanges.ts`       | Dates new items in the JSON, writes the `full/`, `thumb/` and `small/` WebPs |
+| **Report** | `script/ingest/formatIngestReport.ts` | The warnings, each step, the summary                                         |
 
 Keeping the plan pure is what makes it testable without touching the disk. `npm run check`
 (`script/check/`) runs scan and plan only, and fails if anything is missing or orphaned; it also
@@ -195,8 +200,10 @@ only through `Io`.
 
 ## Rules for the site's code
 
-The site overhaul ([plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)) moved the code to these rules
-(phases 1 to 5); phases 6 to 8 finish `app/`, the styles and the checks that keep them. The words
+The code follows these rules, and two contract tests keep it so:
+[`layers_contract_test.ts`](../src/app/layers_contract_test.ts) (rules 1, 2 and 6) and
+[`naming_contract_test.ts`](../src/app/naming_contract_test.ts) (the naming a machine can check);
+[`pureDomain_contract_test.ts`](../src/domain/pureDomain_contract_test.ts) keeps rule 3. The words
 are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md](DECISIONS.md)
 ("Folders by feature", "One word per idea").
 
@@ -206,7 +213,9 @@ are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md]
    holds its components, its composables and its store. Code two features share moves down a layer,
    never sideways into one of them.
 2. **Layers point one way.** `app/` → features → `ui/`, `browser/`, `data/` → `domain/`. A layer
-   imports only from the layers below it. A contract test checks the imports.
+   imports only from the layers below it, and a feature not from another: it may inject another's
+   store (or the app's actions), which `App.vue` makes and provides, but whatever a feature shows of
+   another's (the search box in the top bar, the footer after a page) the app places, by a slot.
 3. **`domain/` is pure.** Plain TypeScript: no Vue, no `document`, no `fetch`, no clock. The rules
    of the archive (names, counts, wording, groups, dates) live here and are tested hardest.
 4. **One door to the outside.** Only `data/` fetches; only `browser/` (and components) touch
@@ -216,7 +225,10 @@ are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md]
    anything that can be computed is computed. Actions that touch more than one store live in
    `app/actions.ts`.
 6. **Shared UI does not know the app.** Components in `ui/` take props and emit events; they never
-   inject a store. Feature components may inject their own store and the app's.
+   inject a store. A feature's components inject its own stores; what they need of another feature's
+   (the collections in the top bar, the query in the grid, a tile opening the viewer) `AppShell`
+   hands them as props and events. `AppShell` is the one component that reads every store, and
+   `SideNav`, the gallery's sidebar in the shell's drawer, the one that reads two features'.
 7. **Types live with their owner.** A type is defined in the module that makes the value, and
    imported from there. No barrel file, and no `types/` folder. The shapes of the files in `public/`
    (shared with `script/`) live in `data/files.ts`.
@@ -243,8 +255,6 @@ are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md]
 
 ## Known gaps
 
-- Some `.vue` files have no test of their own; the journeys load and cover every one, and the test
-  overhaul's phase 4 gives each its own ([plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md)).
 - `vite.config.ts` imports `script/version/version.ts` and the build's plugins in `script/build/`.
   They are the places the site's build depends on the scripts, kept so the version formula and each
   build step exist once.

@@ -1,4 +1,4 @@
-import type { Collection, Item } from '../types/index.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
 import { buildNames, nameWords } from '../domain/itemNames.ts';
 
 let counter = 0;
@@ -11,9 +11,11 @@ export function makeCollection(
   return {
     id,
     label: id,
+    kind: 'species',
     emoji: '🐦',
     dataUrl: '',
     imageBase: '',
+    smallImageBase: '',
     fullImageBase: '',
     groupLabel: 'Group',
     itemLabel: 'item',
@@ -53,9 +55,9 @@ export function makeItem(overrides: Partial<Item> = {}): Item {
     scientificName,
     names,
     group,
+    imageIds: overrides.imageIds ?? [itemId],
     imageUrl: overrides.imageUrl ?? `/thumb/${itemId}.webp`,
-    placeholderUrl: overrides.placeholderUrl ?? '/placeholders/col.webp',
-    placeholderDarkUrl: overrides.placeholderDarkUrl ?? '/placeholders/col-dark.webp',
+    smallImageUrl: overrides.smallImageUrl ?? `/small/${itemId}.webp`,
     isDrawn,
     sortKey: overrides.sortKey ?? (Number.parseInt(itemId, 10) || counter),
     drawnTime,

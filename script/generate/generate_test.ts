@@ -36,13 +36,6 @@ test('--into writes into the folder given instead, and changes nothing else', as
   assert(io.outLines[0].includes('into ./out, so nothing git tracks is changed'));
 });
 
-test('a collection with no icon gets no placeholder, and the command says so', async () => {
-  const io = emptyRepository();
-  assertEquals(await main(['placeholders', '--into', './out'], io), 0);
-  assert(io.outLines.includes('  · placeholders: ghosts has no icon in collections.json'));
-  assertEquals(io.outLines.at(-1), '  ✓ placeholders  nothing to draw yet');
-});
-
 test('with nothing drawn the README’s strip has nothing to draw', async () => {
   const io = emptyRepository();
   assertEquals(await main(['drawingsStrip', '--into', './out'], io), 0);
@@ -52,7 +45,7 @@ test('with nothing drawn the README’s strip has nothing to draw', async () => 
 test('without --into, a generator with nothing to draw writes nothing in its own place', async () => {
   const io = emptyRepository();
   const before = new Map(io.files);
-  assertEquals(await main(['placeholders', 'drawingsStrip'], io), 0);
+  assertEquals(await main(['drawingsStrip'], io), 0);
   assertEquals(io.files, before);
 });
 

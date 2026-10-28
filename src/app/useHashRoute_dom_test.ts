@@ -3,7 +3,8 @@ import { assertEquals } from '@std/assert';
 import { nextTick, reactive, ref, toRef } from 'vue';
 import { useHashRoute } from './useHashRoute.ts';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { Collection, Item, Page } from '../types/index.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
+import type { Page } from '../shell/layoutStore.ts';
 import { mountComposable, runInScope } from '../testing/mount.ts';
 
 // The router is a small state machine (bare load / reflect / deep link / own

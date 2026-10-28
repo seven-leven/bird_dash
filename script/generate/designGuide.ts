@@ -6,8 +6,9 @@
  */
 import { readFile } from 'node:fs/promises';
 import sharp, { type OverlayOptions } from 'sharp';
+import { ICONS, isIconName } from '../../src/ui/icons.ts';
 import { PRINCIPLES } from './principles.ts';
-import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
+import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import { PATHS } from '../lib/paths.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
@@ -46,21 +47,21 @@ export interface FormTokens {
 }
 
 /**
- * The form tokens, from the text of tokens.css and main.css (rem at 16px to the rem).
+ * The form tokens, from the text of tokens.css and utilities.css (rem at 16px to the rem).
  * Throws when one is missing, so a renamed token fails the guide instead of a number
  * going stale on it.
  */
-export function formTokensFrom(tokensCss: string, mainCss: string): FormTokens {
+export function formTokensFrom(tokensCss: string, utilitiesCss: string): FormTokens {
   const rem = (name: string) => {
     const found = tokensCss.match(new RegExp(`--wi-radius-${name}:\\s*([\\d.]+)rem`));
     if (!found) throw new Error(`tokens.css has no --wi-radius-${name} in rem`);
     return Number(found[1]) * 16;
   };
   const ms = (name: string) => {
-    const found = mainCss.match(
+    const found = utilitiesCss.match(
       new RegExp(`@utility duration-${name} \\{\\s*transition-duration:\\s*(\\d+)ms`),
     );
-    if (!found) throw new Error(`main.css has no duration-${name} in ms`);
+    if (!found) throw new Error(`utilities.css has no duration-${name} in ms`);
     return Number(found[1]);
   };
   return { controlPx: rem('control'), cardPx: rem('card'), fastMs: ms('fast'), slowMs: ms('slow') };
@@ -70,7 +71,7 @@ export function formTokensFrom(tokensCss: string, mainCss: string): FormTokens {
 export async function readFormTokens(): Promise<FormTokens> {
   return formTokensFrom(
     await readFile(PATHS.tokensCss, 'utf8'),
-    await readFile(PATHS.mainCss, 'utf8'),
+    await readFile(PATHS.utilitiesCss, 'utf8'),
   );
 }
 
@@ -109,7 +110,7 @@ const theme = (dark: boolean) =>
       hover: SLATE['200'],
       muted: SLATE['400'],
       border: SLATE['800'],
-      viewer: ['#ffffff', whiteOnBlack(0.7), whiteOnBlack(0.5)],
+      text: ['#ffffff', SLATE['300'], SLATE['400']],
       ring: TEAL['500'],
     }
     : {
@@ -121,7 +122,7 @@ const theme = (dark: boolean) =>
       hover: SLATE['800'],
       muted: SLATE['500'],
       border: SLATE['200'],
-      viewer: [SLATE['900'], SLATE['600'], SLATE['500']],
+      text: [SLATE['900'], SLATE['600'], SLATE['500']],
       ring: TEAL['700'], // 500 is too pale on white for a ring
     };
 
@@ -150,8 +151,11 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
       dark ? 'slate-950 / 900' : 'white',
       (sx, sy) => swatch(t.surface, sx, sy),
     ],
-    ['Text', dark ? 'slate-100' : 'slate-900 / 800', (sx, sy) => aa(sx + 2, sy + 21, t.ink)],
-    ['Muted text', dark ? 'slate-400' : 'slate-500', (sx, sy) => aa(sx + 2, sy + 21, t.muted)],
+    [
+      'Text: strong, body, muted',
+      dark ? 'white / slate-300 / 400' : 'slate-900 / 600 / 500',
+      (sx, sy) => t.text.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join(''),
+    ],
     [
       'Borders and dividers',
       dark ? 'slate-800' : 'slate-200 / 100',
@@ -166,11 +170,6 @@ function roleCard(x: number, y: number, w: number, dark: boolean) {
       'Primary button',
       'accent-700 + white',
       (sx, sy) => rect(sx, sy, 56, 28, TEAL['700'], 6) + aa(sx + 15, sy + 19, '#ffffff', 14),
-    ],
-    [
-      'Viewer: title, body, label',
-      dark ? 'white 100 / 70 / 50%' : 'slate-900 / 600 / 500',
-      (sx, sy) => t.viewer.map((c, i) => aa(sx + i * 22, sy + 20, c, 14)).join(''),
     ],
   ];
   const row = 46;
@@ -204,13 +203,30 @@ function navStates(x: number, y: number, w: number, dark: boolean): string {
 
 type Overlay = OverlayOptions;
 
+/** An undrawn tile, `size` px square at (x, y): the icon, centred, faint on the tile grey. */
+export function undrawnTile(
+  iconBody: string,
+  theme: keyof typeof UNDRAWN,
+  x: number,
+  y: number,
+  size: number,
+): string {
+  const { background, ink } = UNDRAWN[theme];
+  const scale = (size * 0.56) / 24; // the icon is 56% of the tile, as on the site
+  const offset = (size - 24 * scale) / 2;
+  return rect(x, y, size, size, SLATE[background]) +
+    `<g transform="translate(${x + offset} ${y + offset}) scale(${scale})" fill="none" ` +
+    `stroke="${SLATE[ink]}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">` +
+    `${iconBody}</g>`;
+}
+
 /**
- * The guide as an SVG, plus the images laid over it: the placeholders, and the
- * Dhivehi samples (which the SVG renderer cannot shape).
+ * The guide as an SVG, plus the images laid over it: the Dhivehi samples (which the SVG
+ * renderer cannot shape).
  */
 export async function designGuide(
   collections?: CollectionEntry[], // defaults to public/collections.json
-): Promise<{ svg: string; placeholders: Overlay[]; dhivehi: Overlay[] }> {
+): Promise<{ svg: string; dhivehi: Overlay[] }> {
   const cols = collections ?? await readJson<CollectionEntry[]>('./public/collections.json');
   const parts: string[] = [];
   const dhivehi: Overlay[] = [];
@@ -320,8 +336,7 @@ export async function designGuide(
     ['text-xl', 20, 600, 'Lesser Whistling-Duck', 'English title, with no Dhivehi name'],
     ['text-base', 16, 600, 'Ducks, Geese, and Swans', 'Section headings, sidebar title'],
     ['text-sm', 14, 500, 'Search all collections…', 'Controls, body text, tile titles'],
-    ['text-xs', 12, 400, '4 of 8 drawn · Dendrocygna javanica', 'Counts, secondary lines'],
-    ['text-micro', 11, 600, 'FROM THE ILLUSTRATOR   #001', 'Labels, badges, key hints'],
+    ['text-xs', 12, 400, '4 of 8 drawn · FROM THE ILLUSTRATOR', 'Counts, labels, badges, keys'],
   ];
   let ty = hero + 176;
   for (const [token, px, weight, sample, use] of sizes) {
@@ -409,34 +424,28 @@ export async function designGuide(
   parts.push(groups.svg);
   y = groups.bottom + 36;
 
-  // ── Tiles: the placeholders, light beside dark ──
+  // ── Tiles: what is not drawn yet, light beside dark ──
   s = section(
     y,
     'Tiles',
     'Paper or possibility.',
-    'An undrawn tile shows its collection icon, faint on the tile grey, drawn once per theme.',
+    'An undrawn tile shows its collection icon, faint on the tile grey, in either theme.',
   );
   parts.push(s.svg);
   const P = 120;
   const gap = 16;
-  const darkX = X + cols.length * (P + gap) + 48;
-  const placeholders = await Promise.all(
-    ['', '-dark'].flatMap((suffix, dark) =>
-      cols.map(async (c, i) => ({
-        input: await sharp(`./public/placeholders/${c.id}${suffix}.webp`).resize(P).png()
-          .toBuffer(),
-        left: (dark ? darkX : X) + i * (P + gap),
-        top: s.top + 6,
-      }))
-    ),
-  );
-  parts.push(
-    caps(X, s.top - 10, 'Light'),
-    caps(darkX, s.top - 10, 'Dark'),
-    ...placeholders.map((p) =>
-      rect(p.left - 1, p.top - 1, P + 2, P + 2, 'none', 0, `stroke="${RULE}"`)
-    ),
-  );
+  const iconed = cols.filter((c) => isIconName(c.icon));
+  const darkX = X + iconed.length * (P + gap) + 48;
+  parts.push(caps(X, s.top - 10, 'Light'), caps(darkX, s.top - 10, 'Dark'));
+  for (const [theme, left] of [['light', X], ['dark', darkX]] as const) {
+    iconed.forEach((c, i) => {
+      const x = left + i * (P + gap);
+      parts.push(
+        undrawnTile(ICONS[c.icon as keyof typeof ICONS].body, theme, x, s.top + 6, P),
+        rect(x - 1, s.top + 5, P + 2, P + 2, 'none', 0, `stroke="${RULE}"`),
+      );
+    });
+  }
   y = s.top + 6 + P + 150;
 
   // ── The ending, set like the opening ──
@@ -448,7 +457,7 @@ export async function designGuide(
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${height}">` +
     rect(0, 0, W, height, PAPER) + parts.join('') + '</svg>';
-  return { svg, placeholders, dhivehi };
+  return { svg, dhivehi };
 }
 
 /** The contrast figures quoted in docs/DESIGN.md, one line each. */
@@ -463,18 +472,26 @@ export function contrastReport(): string[] {
     ['accent-700 ring on white', TEAL['700'], '#ffffff'],
     ['accent-500 ring on slate-950', TEAL['500'], SLATE['950']],
     ['white 70% on black', whiteOnBlack(0.7), '#000000'],
-    ['white 50% on black', whiteOnBlack(0.5), '#000000'],
-    ['placeholder #a1a1a1 on white', '#a1a1a1', '#ffffff'],
-    ['dark placeholder slate-600 on slate-900', SLATE['600'], SLATE['900']],
+    ['body slate-300 on slate-950', SLATE['300'], SLATE['950']],
+    [
+      `undrawn icon slate-${UNDRAWN.light.ink} on slate-${UNDRAWN.light.background}`,
+      SLATE[UNDRAWN.light.ink],
+      SLATE[UNDRAWN.light.background],
+    ],
+    [
+      `dark undrawn icon slate-${UNDRAWN.dark.ink} on slate-${UNDRAWN.dark.background}`,
+      SLATE[UNDRAWN.dark.ink],
+      SLATE[UNDRAWN.dark.background],
+    ],
   ];
   return pairs.map(([label, a, b]) => `  ${contrast(a, b).toFixed(1)}:1  ${label}`);
 }
 
 /** Draw the guide into `dir` (docs/assets/ by default) as design-guide.png. */
 export async function writeDesignGuide(dir: string = PATHS.docsAssets): Promise<string> {
-  const { svg, placeholders, dhivehi } = await designGuide();
+  const { svg, dhivehi } = await designGuide();
   const path = `${dir}/design-guide.png`;
-  await sharp(new TextEncoder().encode(svg)).composite([...placeholders, ...dhivehi]).png()
+  await sharp(new TextEncoder().encode(svg)).composite(dhivehi).png()
     .toFile(path);
   return path;
 }

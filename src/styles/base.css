@@ -1,0 +1,34 @@
+/* The page's own rules, beneath every class: the theme the browser draws its parts in, motion
+   for those who ask for less, and the line Thaana needs. */
+
+/* The browser's own parts (scrollbars, the search box, form controls) follow the page's
+   theme too, so they are not drawn light on a dark page. */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+  :root.dark {
+    color-scheme: dark;
+  }
+}
+
+/* Respect "reduce motion": keep state changes, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Faruma's vowel marks (fili) reach up to 0.5em below the baseline, more than
+   twice what the font declares, so a tight or clipped (truncate) line cuts them
+   off. A line height of 1.85 leaves them 0.59em; measured over every name on the
+   site, the deepest needs 0.5. Unlayered, so it wins over any leading-* utility. */
+.font-dhivehi {
+  font-family: 'Faruma', 'Arial Unicode MS', 'FreeSerif', sans-serif;
+  line-height: 1.85;
+}

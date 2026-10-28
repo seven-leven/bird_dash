@@ -13,15 +13,6 @@ test('every fixed path in PATHS exists in this repository', () => {
   }
 });
 
-test("each collection's list and placeholders are where PATHS says", async () => {
-  for (const { id } of COLLECTIONS) {
-    await realIo.readText(PATHS.list(id));
-    const placeholders = await realIo.listFiles(PATHS.placeholders);
-    for (const theme of ['light', 'dark'] as const) {
-      assert(
-        placeholders.includes(PATHS.placeholder(id, theme).split('/').at(-1)!),
-        `${id} ${theme}`,
-      );
-    }
-  }
+test("each collection's list is where PATHS says", async () => {
+  for (const { id } of COLLECTIONS) await realIo.readText(PATHS.list(id));
 });

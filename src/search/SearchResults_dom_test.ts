@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { h, reactive } from 'vue';
+import { h } from 'vue';
 import SearchResults from './SearchResults.vue';
 import { makeCollection, makeItem } from '../testing/fixtures.ts';
 import { mountComponent } from '../testing/mount.ts';
@@ -30,7 +30,6 @@ test('after the first line, only a Latin name is set in italics', () => {
         getFlatIndex: (_: string, i: number) => i,
         highlight: (text: string) => text,
       }),
-    { stores: { theme: { theme: reactive({ isDark: false }) } } },
   );
   const lines = [...host.querySelectorAll('[role="option"] p')];
   assertEquals(lines.map((p) => p.textContent), ['Anas platyrhynchos', 'Mallard']);

@@ -4,8 +4,7 @@
      within the site. Keyed by the drawing, so each one starts at "Share". -->
 <template>
   <button
-    class="ml-auto focus-ring rounded-control inline-flex items-center gap-1 text-sm font-medium
-           text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+    class="ml-auto focus-ring rounded-control inline-flex items-center gap-1 text-sm link"
     @click="share"
   >
     <Icon name="share" class="size-3" />

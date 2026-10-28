@@ -22,10 +22,15 @@ export function formatWarnings(collection: Collection, plan: ChangePlan): Line[]
   const warn = (detail: string): Line => ({ text: formatStep(collection.id, 'warn', detail) });
   return [
     // Missing source art matters only for an item that still needs its images.
-    ...plan.missingSource.filter((id) => plan.toTranscode.includes(id))
+    ...plan.missingSource.filter((id) =>
+      plan.toTranscode.includes(id) || plan.toTranscodeExtra.includes(id)
+    )
       .map((id) => warn(`drawn in the list but its source art is missing; cannot make  ${id}`)),
     ...plan.orphanedFull.map((id) => warn(`a full WebP with no item in the list  ${id}`)),
     ...plan.orphanedThumb.map((id) => warn(`a thumbnail with no item in the list  ${id}`)),
+    ...plan.uncountedSource.map((id) =>
+      warn(`source art for an image the list does not count  ${id}`)
+    ),
   ];
 }
 
@@ -35,7 +40,7 @@ export function formatDryRun(collection: Collection, plan: ChangePlan): Line[] {
     ids.map((id) => ({ text: formatStep(collection.id, verb, id) }));
   const lines = [
     ...would('would register', plan.toRegister),
-    ...would('would make', plan.toTranscode),
+    ...would('would make', [...plan.toTranscode, ...plan.toTranscodeExtra]),
     ...would('would repair', plan.toRepairThumb),
   ];
   return lines.length > 0

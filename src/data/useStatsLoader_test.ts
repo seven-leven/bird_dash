@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useStatsLoader } from './useStatsLoader.ts';
-import type { Stats } from '../types/index.ts';
+import type { Stats } from './files.ts';
 import { fails, fakeFetch, inTurn, json, status } from '../testing/fakes/fakeFetch.ts';
 
 const STATS: Stats = { drawn: 1, total: 2, collections: [], first: null, newest: [] };

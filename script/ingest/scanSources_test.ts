@@ -36,3 +36,19 @@ test('a scan reads the drawn ids and the three image folders, each for its own k
   assertEquals([...scan.fullIds], ['001']); // only .webp
   assertEquals([...scan.thumbIds], []);
 });
+
+test('a scan counts the images the list gives a drawn item after its first', async () => {
+  const birds = makeScriptCollection('birds');
+  const io = fakeIo({
+    files: {
+      [birds.paths.json]: JSON.stringify({
+        Ducks: [
+          { id: '001', name: 'A', drawn: '2025-01-01', images: 3 },
+          { id: '002', name: 'B', images: 2 }, // not drawn: nothing to look for yet
+          { id: '003', name: 'C', drawn: '2025-01-01' },
+        ],
+      }),
+    },
+  });
+  assertEquals([...(await scanSources(birds, io)).extraIds], ['001-2', '001-3']);
+});

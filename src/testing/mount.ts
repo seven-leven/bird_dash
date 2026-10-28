@@ -9,7 +9,7 @@
 // Everything mounted is unmounted after its test, so no test has to clean up.
 import { afterEach } from 'vitest';
 import { type Component, createApp, createRenderer, defineComponent, effectScope, h } from 'vue';
-import { type AppActions, provideActions } from '../app/actions.ts';
+import { type Actions, provideActions } from '../app/actions.ts';
 import { provideThemeStore, type ThemeStore } from '../shell/themeStore.ts';
 import { type LayoutStore, provideLayoutStore } from '../shell/layoutStore.ts';
 import { type CollectionsStore, provideCollectionsStore } from '../gallery/collectionsStore.ts';
@@ -47,7 +47,7 @@ export interface FakeStores {
   search?: Partial<SearchStore>;
   viewer?: Partial<ViewerStore>;
   stats?: Partial<StatsStore>;
-  actions?: Partial<AppActions>;
+  actions?: Partial<Actions>;
 }
 
 /**
@@ -80,7 +80,7 @@ export function mountInDocument(
       if (stores.search) provideSearchStore(stores.search as SearchStore);
       if (stores.viewer) provideViewerStore(stores.viewer as ViewerStore);
       if (stores.stats) provideStatsStore(stores.stats as StatsStore);
-      if (stores.actions) provideActions(stores.actions as AppActions);
+      if (stores.actions) provideActions(stores.actions as Actions);
       return render;
     },
   });

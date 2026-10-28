@@ -11,14 +11,15 @@ import { createViewStore } from '../gallery/viewStore.ts';
 import { createSearchStore } from '../search/searchStore.ts';
 import { createViewerStore } from '../viewer/viewerStore.ts';
 import { createStatsStore } from '../about/statsStore.ts';
-import { createAppActions } from '../app/actions.ts';
+import { createActions } from '../app/actions.ts';
+import { PAGES } from '../app/pages.ts';
 import { runInScope } from './mount.ts';
 
 /** Every store, made in App.vue's order; stopped after the test (`runInScope`). */
 export function appStores() {
   return runInScope(() => {
     const theme = createThemeStore();
-    const layout = createLayoutStore();
+    const layout = createLayoutStore(PAGES);
     const collections = createCollectionsStore();
     const search = createSearchStore({
       collections: collections.collections,
@@ -33,7 +34,7 @@ export function appStores() {
     });
     const viewer = createViewerStore({ drawnItems: view.drawnItems });
     const stats = createStatsStore();
-    const actions = createAppActions({ search, layout, view, collections });
+    const actions = createActions({ search, layout, view, collections });
     return { theme, layout, collections, view, search, viewer, stats, actions };
   }).value;
 }

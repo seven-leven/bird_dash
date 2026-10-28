@@ -5,13 +5,13 @@ import type { CollectionsStore } from '../gallery/collectionsStore.ts';
 import type { SearchStore } from '../search/searchStore.ts';
 import type { LayoutStore } from '../shell/layoutStore.ts';
 import type { ViewStore } from '../gallery/viewStore.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 /**
  * The few genuinely cross-store orchestrations. Everything single-domain lives
  * on its own store; this holds only the actions that must touch more than one.
  */
-export interface AppActions {
+export interface Actions {
   /** Open a collection, clearing the search and resetting the scroll and the spy. */
   selectCollection: (id: string) => Promise<void>;
   /** From a global-search result: switch collection if needed, then ring the tile. */
@@ -20,12 +20,12 @@ export interface AppActions {
   ringTile: (item: Item) => Promise<void>;
 }
 
-export function createAppActions(deps: {
+export function createActions(deps: {
   search: Pick<SearchStore, 'clear' | 'setDropdown'>;
   layout: Pick<LayoutStore, 'scrollToTop' | 'showPage'>;
   view: Pick<ViewStore, 'resetHeaders' | 'showUndrawn' | 'hidePlanned'>;
   collections: Pick<CollectionsStore, 'activeCollection' | 'selectCollection'>;
-}): AppActions {
+}): Actions {
   const { search, layout, view, collections } = deps;
 
   const selectCollection = async (id: string): Promise<void> => {
@@ -61,4 +61,4 @@ export function createAppActions(deps: {
   return { selectCollection, selectGlobalResult, ringTile };
 }
 
-export const [provideActions, useActions] = defineInjection<AppActions>('actions');
+export const [provideActions, useActions] = defineInjection<Actions>('actions');

@@ -1,7 +1,11 @@
-<!-- components/search/SearchBox.vue -->
+<!-- search/SearchBox.vue: the one search, across every collection. -->
 <template>
-  <!-- Width is set by the header (full row on phones, capped from md up). -->
-  <div class="relative min-w-0 transition-[max-width] duration-fast" ref="wrapperEl">
+  <!-- The full row on a phone; from md up, capped, and wider while the results are open. -->
+  <div
+    class="relative w-full min-w-0 transition-[max-width] duration-fast"
+    :class="dropdownOpen ? 'md:max-w-96' : 'md:max-w-72'"
+    ref="wrapperEl"
+  >
     <!-- ==================== INPUT FIELD ==================== -->
     <div class="relative w-full">
       <!-- Search Icon -->
@@ -80,7 +84,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
-import type { SearchResult } from '../types/index.ts';
+import type { SearchResult } from './useSearchResults.ts';
 import { matches } from '../domain/countWords.ts';
 
 import { useResultKeys } from './useResultKeys.ts';
@@ -90,7 +94,7 @@ import { useFocusShortcut } from '../browser/useFocusShortcut.ts';
 import { COLLAPSED_SIZE, collapseGroups } from '../domain/collapseGroups.ts';
 
 import { useSearchStore } from './searchStore.ts';
-import { useActions } from '../app/actions.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 import Icon from '../ui/Icon.vue';
 import SearchDropdown from './SearchDropdown.vue';
@@ -104,7 +108,8 @@ const {
   resultCount: globalResultCount,
   drawnResultCount: globalDrawnCount,
 } = useSearchStore();
-const { selectGlobalResult } = useActions();
+/** Open a result: the app shows its collection and rings its tile. */
+const emit = defineEmits<{ select: [collectionId: string, item: Item] }>();
 
 const inputEl = ref<HTMLInputElement | null>(null);
 const wrapperEl = ref<HTMLElement | null>(null);
@@ -189,7 +194,7 @@ function selectFocused() {
 }
 
 function onSelectResult(result: SearchResult) {
-  selectGlobalResult(result.collection.id, result.item);
+  emit('select', result.collection.id, result.item);
   closeDropdown();
 }
 </script>

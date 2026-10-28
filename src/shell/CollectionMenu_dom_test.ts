@@ -1,10 +1,10 @@
-import { findPage } from '../pages.ts';
+import { findPage, PAGES } from '../app/pages.ts';
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { computed, h, nextTick, ref } from 'vue';
 import CollectionMenu from './CollectionMenu.vue';
 import { makeCollection } from '../testing/fixtures.ts';
-import type { Page } from '../types/index.ts';
+import type { Page } from './layoutStore.ts';
 import { mountComponent } from '../testing/mount.ts';
 
 /** Mount the menu over three collections, Birds current; record what it switches to. */
@@ -16,21 +16,23 @@ function mount(page: Page = 'gallery') {
   ]);
   const activeId = ref('birds');
   const switched: string[] = [];
-  const host = mountComponent(() => h(CollectionMenu), {
-    stores: {
-      collections: {
-        collections: list,
-        activeCollection: computed(() => list.value.find((c) => c.id === activeId.value)),
-      },
-      actions: {
-        selectCollection: async (id: string) => {
+  // The app hands it the collections, and switches to the one it asks for.
+  const host = mountComponent(
+    () =>
+      h(CollectionMenu, {
+        collections: list.value,
+        active: list.value.find((c) => c.id === activeId.value),
+        onSelect: (id: string) => {
           switched.push(id);
           activeId.value = id;
         },
+      }),
+    {
+      stores: {
+        layout: { pages: PAGES, page: ref(page), currentPage: computed(() => findPage(page)) },
       },
-      layout: { page: ref(page), currentPage: computed(() => findPage(page)) },
     },
-  });
+  );
   const button = host.querySelector<HTMLButtonElement>('[aria-controls="collection-menu"]')!;
   const items = () => [...host.querySelectorAll<HTMLButtonElement>('#collection-menu button')];
   const about = () => host.querySelector<HTMLAnchorElement>('#collection-menu a[href="#about"]');

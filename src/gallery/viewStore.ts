@@ -2,7 +2,8 @@ import { computed, nextTick, readonly, type Ref, ref } from 'vue';
 import { defineInjection } from '../browser/defineInjection.ts';
 import { useCollectionView } from './useCollectionView.ts';
 import { useScrollSpy } from './useScrollSpy.ts';
-import type { Item, View } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
+import type { View } from '../domain/viewName.ts';
 
 /**
  * How the gallery shows the collection on screen: by group or by month, drawn only or not,

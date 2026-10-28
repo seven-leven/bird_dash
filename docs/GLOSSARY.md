@@ -8,28 +8,28 @@ Use the word in the first column; avoid the ones in the last.
 
 ## The archive
 
-| Word                   | Means                                                                                                    | In the code                                                                | Not                                       |
-| ---------------------- | -------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------- |
-| **archive**            | Everything on the site together: every collection, drawn and not                                         | `stats.json` counts it                                                     | portfolio, gallery (that is a page)       |
-| **collection**         | Birds, sharks, shells: one entry in `public/collections.json`, with its own list, icon and accent        | `Collection` (`src/domain/toCollectionItems.ts`)                           | category, set, series                     |
-| **list**               | A collection's file of items, `public/lists/<collection>.json`, keyed by group                           | `ListFile` (`src/data/files.ts`)                                           | data, catalogue                           |
-| **item**               | One entry in a list, drawn or not. Most are species; not every one has to be                             | `Item` (`src/domain/toCollectionItems.ts`)                                 | species (in general), card, entry         |
-| **item id**            | The digits that number an item in its collection (`029`): in the URL, the file names and the order       | `itemId`. The internal `id` (`birds-item-1`, in list order) is never shown | number, index                             |
-| **drawing**            | A drawn item's picture, by the illustrator                                                               | `isDrawn`, `drawnTime`                                                     | image (for the idea), illustration        |
-| **drawn**              | An item that has a drawing: a `drawn` date in its list entry                                             | `drawn: 'YYYY-MM-DD'`                                                      | done, complete                            |
-| **placeholder**        | What an item without a drawing shows: its collection's icon, faint on grey; one per collection and theme | `public/placeholders/<id>.webp`, `<id>-dark.webp`                          | blank, missing image                      |
-| **group**              | A list's top-level key: a family, an order, a group. The collection names it (`groupLabel`: "Family")    | `group`, `groupLabel`                                                      | category, section (that is the gallery's) |
-| **names**              | An item's names, in order: its Dhivehi names, English, Latin                                             | `item.names` (`src/domain/itemNames.ts`)                                   | title, label                              |
-| **title**              | The name an item is headed by: the first Dhivehi name, or the English one when it has none               | role `title`                                                               | heading                                   |
-| **Dhivehi name**       | A name in Thaana, set in Faruma, often with its **romanisation** (how to say it in Latin letters)        | `dhiv_script`, `dhiv`; role `title` or `also`, `roman`                     | local name, translation                   |
-| **illustrator's note** | The illustrator's own words about a drawing                                                              | `illustratorNote`                                                          | description, caption                      |
-| **stats**              | The archive's numbers, worked out by the build into `public/stats.json` and shown on the About page      | `Stats`, the `stats` store                                                 | counts (those are live)                   |
+| Word                   | Means                                                                                                 | In the code                                                                | Not                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------- |
+| **archive**            | Everything on the site together: every collection, drawn and not                                      | `stats.json` counts it                                                     | portfolio, gallery (that is a page)       |
+| **collection**         | Birds, sharks, shells: one entry in `public/collections.json`, with its own list, icon and accent     | `Collection` (`src/domain/toCollectionItems.ts`)                           | category, set, series                     |
+| **list**               | A collection's file of items, `public/lists/<collection>.json`, keyed by group                        | `ListFile` (`src/data/files.ts`)                                           | data, catalogue                           |
+| **item**               | One entry in a list, drawn or not. Most are species; not every one has to be                          | `Item` (`src/domain/toCollectionItems.ts`)                                 | species (in general), card, entry         |
+| **item id**            | The digits that number an item in its collection (`029`): in the URL, the file names and the order    | `itemId`. The internal `id` (`birds-item-1`, in list order) is never shown | number, index                             |
+| **drawing**            | A drawn item's picture, by the illustrator                                                            | `isDrawn`, `drawnTime`                                                     | image (for the idea), illustration        |
+| **drawn**              | An item that has a drawing: a `drawn` date in its list entry                                          | `drawn: 'YYYY-MM-DD'`                                                      | done, complete                            |
+| **placeholder**        | What an item without a drawing shows: its collection's icon, faint on the tile grey                   | `ItemTile.vue`, `UNDRAWN` (`script/generate/palette.ts`)                   | blank, missing image                      |
+| **group**              | A list's top-level key: a family, an order, a group. The collection names it (`groupLabel`: "Family") | `group`, `groupLabel`                                                      | category, section (that is the gallery's) |
+| **names**              | An item's names, in order: its Dhivehi names, English, Latin                                          | `item.names` (`src/domain/itemNames.ts`)                                   | title, label                              |
+| **title**              | The name an item is headed by: the first Dhivehi name, or the English one when it has none            | role `title`                                                               | heading                                   |
+| **Dhivehi name**       | A name in Thaana, set in Faruma, often with its **romanisation** (how to say it in Latin letters)     | `dhiv_script`, `dhiv`; role `title` or `also`, `roman`                     | local name, translation                   |
+| **illustrator's note** | The illustrator's own words about a drawing                                                           | `illustratorNote`                                                          | description, caption                      |
+| **stats**              | The archive's numbers, worked out by the build into `public/stats.json` and shown on the About page   | `Stats`, the `stats` store                                                 | counts (those are live)                   |
 
 ## The site
 
 | Word                   | Means                                                                                        | In the code                                   | Not                                       |
 | ---------------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------- |
-| **page**               | What the main area shows: the gallery, or one of the pages in `src/pages.ts` (About)         | `Page`, `PAGES`                               | route, screen, view                       |
+| **page**               | What the main area shows: the gallery, or one of the pages in `src/app/pages.ts` (About)     | `Page`, `PAGES`                               | route, screen, view                       |
 | **gallery**            | The page of one collection's tiles, in sections                                              | `Gallery.vue`                                 | grid (that is its layout), content        |
 | **view**               | How the gallery is arranged: by **group** or by **month**                                    | `View` `'group' \| 'month'`                   | mode, date view                           |
 | **section**            | One heading and its tiles in the gallery: a group, or a month                                | `activeSection`, `registerHeader`             | group (in the month view), block          |
@@ -46,37 +46,37 @@ Use the word in the first column; avoid the ones in the last.
 | **theme**              | Light or dark                                                                                | `useTheme`, `.dark`                           | mode, colour scheme                       |
 | **id badge**           | The small `#029` on a tile and in the viewer                                                 | `IdBadge.vue`                                 | number tag                                |
 | **mark**, **wordmark** | The logo's drawing; the words "Wildlife Illustrated" set beside it. Together, a **lockup**   | `LogoMark.vue`, `WORDMARK`                    | icon (for the mark), logo (for the words) |
-| **icon**               | One drawing from the registry in `src/lib/icons.ts`, drawn by `<Icon>`                       | `ICONS`, `Icon.vue`                           | glyph, symbol                             |
+| **icon**               | One drawing from the registry in `src/ui/icons.ts`, drawn by `<Icon>`                        | `ICONS`, `Icon.vue`                           | glyph, symbol                             |
 | **manifesto**          | The design rules, [DESIGN.md](DESIGN.md), and its five **principles** (P1–P5)                |                                               | style guide                               |
 | **docs site**          | These pages built in the site's design, at `/bird_dash/docs/`                                | `docs/.vitepress/`                            | wiki                                      |
 
 ## The code
 
-| Word                            | Means                                                                                                       | In the code                                    | Not                |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------ |
-| **store**                       | One area of state, made once in `App.vue` and shared with `provide`/`inject`: read-only state and its verbs | `create…Store`, `use…`                         | context, service   |
-| **action**                      | A verb that changes more than one store                                                                     | `src/stores/actions.ts`                        | handler            |
-| **composable**                  | A `use…` function that builds reactive state or behaviour                                                   | `src/composables/`                             | hook, mixin        |
-| **derived**                     | Computed from other state, never stored                                                                     | `computed`                                     | cached             |
-| **layer**, **feature**          | The planned layout of `src/`: shared layers (`domain/`, `data/`, `browser/`, `ui/`) under feature folders   | [plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md) | module (too vague) |
-| **command**                     | A script run as `npm run <word>`; one job each ([SCRIPTS.md](SCRIPTS.md))                                   | `script/<command>/`                            | task, tool         |
-| **plan**, **apply**, **report** | A command's three parts: decide (pure), do, say                                                             | `planChanges`, `applyChanges`                  |                    |
+| Word                            | Means                                                                                                       | In the code                        | Not                |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------ |
+| **store**                       | One area of state, made once in `App.vue` and shared with `provide`/`inject`: read-only state and its verbs | `create…Store`, `use…`             | context, service   |
+| **action**                      | A verb that changes more than one store                                                                     | `src/app/actions.ts`               | handler            |
+| **composable**                  | A `use…` function that builds reactive state or behaviour, in the feature (or layer) that uses it           | `use…`                             | hook, mixin        |
+| **derived**                     | Computed from other state, never stored                                                                     | `computed`                         | cached             |
+| **layer**, **feature**          | The layout of `src/`: shared layers (`domain/`, `data/`, `browser/`, `ui/`) under feature folders           | [ARCHITECTURE.md](ARCHITECTURE.md) | module (too vague) |
+| **command**                     | A script run as `npm run <word>`; one job each ([SCRIPTS.md](SCRIPTS.md))                                   | `script/<command>/`                | task, tool         |
+| **plan**, **apply**, **report** | A command's three parts: decide (pure), do, say                                                             | `planChanges`, `applyChanges`      |                    |
 
 ## Building and releasing
 
-| Word                | Means                                                                                                     | In the code                                   | Not                                   |
-| ------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------- | ------------------------------------- |
-| **source art**      | The illustrator's PNGs, in `raw_png/<collection>/` on your machine, never in git                          | `raw_png/`                                    | originals, raw                        |
-| **full**, **thumb** | The two WebP sizes made from source art: the viewer's and the tile's                                      | `public/full/`, `public/thumb/`               | large, small, thumbnail               |
-| **ingest**          | Take in new drawings: make the WebPs, date the new entries, rewrite `stats.json`. Changes tracked files   | `npm run ingest`, `script/ingest/`            | import, add, build                    |
-| **build**           | Make `dist/` from what is committed: the site, then the docs. Changes nothing git tracks                  | `npm run build`, its stages `site` and `docs` | compile, bundle (that is Vite's part) |
-| **generate**        | Redraw a generated file: the placeholders, the design guide, the icon sheet, the logo files, `stats.json` | `npm run generate`, `script/generate/`        | render, export                        |
-| **generated file**  | A committed file a command writes, never edited by hand; `check` fails when one is stale                  |                                               | asset (too vague)                     |
-| **check**           | Compare the repository with what it should be, change nothing, exit 1 on a problem                        | `npm run check`                               | validate, lint (that is ESLint)       |
-| **deploy**          | Publish `dist/` to GitHub Pages; every merge to `main` does, if the checks pass                           | `deploy.yml`                                  | release                               |
-| **version**         | `0.9.<commits>`, worked out at build time, never stored                                                   | `npm run version`                             | release number                        |
-| **line**            | A line of work, the `major.minor` part (`0.9`), named after a drawing's Dhivehi name: v0.9 "Valu Kukulhu" | `base_version.json`, `line_names.ts`          | release, milestone                    |
-| **changelog entry** | One line of `CHANGELOG.md`: a date, then what changed, in words a visitor understands                     | `npm run changelog`                           | commit message                        |
+| Word                           | Means                                                                                                     | In the code                                      | Not                                   |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------ | ------------------------------------- |
+| **source art**                 | The illustrator's PNGs, in `raw_png/<collection>/` on your machine, never in git                          | `raw_png/`                                       | originals, raw                        |
+| **full**, **thumb**, **small** | The WebP sizes made from source art: the viewer's, the tile's, and the tile's on a smaller screen         | `public/full/`, `public/thumb/`, `public/small/` | large, thumbnail                      |
+| **ingest**                     | Take in new drawings: make the WebPs, date the new entries, rewrite `stats.json`. Changes tracked files   | `npm run ingest`, `script/ingest/`               | import, add, build                    |
+| **build**                      | Make `dist/` from what is committed: the site, then the docs. Changes nothing git tracks                  | `npm run build`, its stages `site` and `docs`    | compile, bundle (that is Vite's part) |
+| **generate**                   | Redraw a generated file: the design guide, the icon sheet, the logo files, `stats.json`                   | `npm run generate`, `script/generate/`           | render, export                        |
+| **generated file**             | A committed file a command writes, never edited by hand; `check` fails when one is stale                  |                                                  | asset (too vague)                     |
+| **check**                      | Compare the repository with what it should be, change nothing, exit 1 on a problem                        | `npm run check`                                  | validate, lint (that is ESLint)       |
+| **deploy**                     | Publish `dist/` to GitHub Pages; every merge to `main` does, if the checks pass                           | `deploy.yml`                                     | release                               |
+| **version**                    | `0.9.<commits>`, worked out at build time, never stored                                                   | `npm run version`                                | release number                        |
+| **line**                       | A line of work, the `major.minor` part (`0.9`), named after a drawing's Dhivehi name: v0.9 "Valu Kukulhu" | `base_version.json`, `line_names.ts`             | release, milestone                    |
+| **changelog entry**            | One line of `CHANGELOG.md`: a date, then what changed, in words a visitor understands                     | `npm run changelog`                              | commit message                        |
 
 ## Testing
 

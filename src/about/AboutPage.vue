@@ -9,9 +9,9 @@
 
     <!-- Loading: the sections' shape in grey; nothing to read yet. -->
     <div v-if="!stats && !error" class="space-y-4" aria-busy="true">
-      <div class="h-8 w-48 rounded-control animate-pulse bg-slate-200 dark:bg-slate-800" />
+      <div class="h-8 w-48 rounded-control skeleton" />
       <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(15rem,1fr))]">
-        <div v-for="n in 3" :key="n" class="h-32 rounded-card animate-pulse bg-slate-200 dark:bg-slate-800" />
+        <div v-for="n in 3" :key="n" class="h-32 rounded-card skeleton" />
       </div>
       <p class="sr-only" role="status">Loading the numbers</p>
     </div>
@@ -28,7 +28,8 @@
 
     <AboutHistory />
     <AboutDesign />
-    <AppFooter />
+    <!-- What the app places after a page: the footer. -->
+    <slot />
   </article>
 </template>
 
@@ -36,7 +37,6 @@
 import { computed, onMounted } from 'vue';
 import EmptyState from '../ui/EmptyState.vue';
 import RetryButton from '../ui/RetryButton.vue';
-import AppFooter from '../shell/AppFooter.vue';
 import AboutIntro from './AboutIntro.vue';
 import AboutProgress from './AboutProgress.vue';
 import AboutNewest from './AboutNewest.vue';

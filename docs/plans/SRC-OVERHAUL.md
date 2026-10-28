@@ -1,12 +1,13 @@
 # Site code overhaul
 
-> **Status:** planned 2026-10-26; phases 0 (the rules) to 5 (features) done 2026-10-27, after the
-> test overhaul's phases 1–3 (its journey tests are the safety net for moving files). Rebuilds the
-> layout and naming of `src/` (the site's code: components, composables, lib, stores, styles, types)
-> from the ground up, one pull request per phase, with the site looking and behaving the same
-> throughout. `src/testing/` is out of scope except where its imports have to follow a move. The
-> scripts went through the same (done 2026-10-26: [SCRIPTS.md](../SCRIPTS.md) and the CHANGELOG).
-> Delete this page when phase 8 is done.
+> **Status:** planned 2026-10-26; phases 0 to 5 done 2026-10-27 and 6 to 8 on 2026-10-28, after the
+> test overhaul's phases 1–3 (its journey tests are the safety net for moving files). Every feature
+> that rides along is in too, but one: warm paper. Rebuilds the layout and naming of `src/` (the
+> site's code: components, composables, lib, stores, styles, types) from the ground up, one pull
+> request per phase, with the site looking and behaving the same throughout. `src/testing/` is out
+> of scope except where its imports have to follow a move. The scripts went through the same (done
+> 2026-10-26: [SCRIPTS.md](../SCRIPTS.md) and the CHANGELOG). Delete this page when warm paper is
+> in, or dropped.
 
 ## Why
 
@@ -193,17 +194,27 @@ every file moves.
       `domain/tileImage.ts`, as the search results use it too; and `components/`, `composables/` and
       `stores/` could only go with `AppShell` (was `Chrome`), `useHashRoute` and `actions` in
       `app/`, so they moved ahead of phase 6. No file is over 200 lines.
-- [ ] **6. App.** `App.vue`, `pages.ts` and `buildInfo.ts` into `app/` (`AppShell.vue`,
-      `useHashRoute.ts` and `actions.ts` went in phases 3 and 5); `vite-env.d.ts` becomes
-      `env.d.ts`. _Done when_ `src/` holds only `main.ts`, `env.d.ts` and the folders above.
-- [ ] **7. Styles.** `main.css` split into `tokens`, `accents` (if not already), `base`
-      (`.font-dhivehi`, reduced motion), `components` (the `@layer components` classes) and
-      `utilities`; `main.css` keeps only Tailwind's setup and the imports. _Done when_ each file has
-      one kind of rule.
-- [ ] **8. Close.** The import-direction test covers every layer; a naming test (file name matches
-      its main export; no banned word in a composable's name; no function defined twice under one
-      name); the layout diagram in ARCHITECTURE.md redrawn; `types/` gone; this page deleted. _Done
-      when_ ARCHITECTURE.md describes the code as it is.
+- [x] **6. App** (2026-10-28). `App.vue` and `pages.ts` into `app/`; `app/buildInfo.ts` reads the
+      build-time globals, once; `vite-env.d.ts` is `env.d.ts`. So that the layers point one way, the
+      app places the features rather than the features each other: `AppShell` puts the search box in
+      the top bar (a slot) and the footer after the gallery or a page (their default slot), and
+      hands the footer the build; `App.vue` hands the page list to the layout store, where the shell
+      reads it.
+- [x] **7. Styles** (2026-10-28). `main.css` is Tailwind's setup (the sources, the dark variant, the
+      theme mapping) and the imports; `base.css` the page's own rules (colour scheme, reduced
+      motion, the Thaana line), `components.css` the `@layer components` classes, `utilities.css`
+      the speeds, the tile grid and the scrollbar; `tokens.css` and `accents.css` as they were.
+      Folded: `.skeleton` and `.link`. The guide reads the speeds from `utilities.css`. Gone: the
+      unused `shimmer` animation.
+- [x] **8. Close** (2026-10-28). `layers_contract_test.ts` checks every layer's imports (a feature
+      may inject another's store or the app's actions, nothing else of it);
+      `naming_contract_test.ts` checks that a file is named after what it makes (so `noteLinks.ts`
+      is `noteSegments.ts`, and `createAppActions` is `createActions`), that no composable is called
+      Logic, Data, Manager or Helper, and that no function is defined twice. `types/` is gone: each
+      type lives with the module that makes it (`View` in `domain/viewName.ts`, the search's in
+      `useSearchResults.ts`, the gallery's in `useCollectionView.ts`), and `collapseGroups` folds
+      any group, so `domain/` needs none of them. The layout diagram in ARCHITECTURE.md is redrawn.
+      This page goes once the features below are in.
 
 ## Features that ride along
 
@@ -212,18 +223,18 @@ request straight after that phase**, on the new layout, so the phases themselves
 nothing a visitor sees, and every visible change is reviewed on its own (in the browser, both
 themes, a phone width).
 
-| After phase  | Feature (from TODO.md)                                                                                                                                                                                              | Why there                                                                                                      |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| 1. Domain    | **A `kind` per collection** (`species` or `series`) in the `Collection` type and `data/files.ts`; the data contract test checks each kind's fields                                                                  | The domain types are rewritten in phase 1; adding the kind then costs one type, not a second pass              |
-| 3. Stores    | **Fewer stores per component**: `Chrome`, `TopBar` and `GalleryContent` inject four stores each (the "afterwards" note under the decoupling items)                                                                  | Splitting the ui store and moving the grid's derivations is exactly what lets each component take only its own |
-| 4. Shared UI | **Placeholders as icons**: an undrawn tile, a failed load and a search row draw `CollectionIcon` in the muted colour, instead of a generated image; `public/placeholders/`, its generator and `tileImage`'s URLs go | `ui/` is assembled in phase 4, and the icon component it builds is the one that replaces the images            |
-| 4. Shared UI | **An icon per series** (butterfly, cake, mountain, sphere, face, running animal), drawn to the icon rules                                                                                                           | New entries in the registry `ui/` now owns                                                                     |
-| 5. Features  | **Several images per item** (a series piece, or a drawing with its sketches): the viewer pages through an item's images with the same zoom and keys                                                                 | The viewer's parts (`useZoomPan`, `useDialogKeys`, `useDrawingNav`) land in `viewer/` together                 |
-| 5. Features  | **The About page by kind**: "species", "Named in Dhivehi" and "Checked against references" counted for `species` collections only, series counted on their own                                                      | `AboutPage.vue` is split into sections in phase 5                                                              |
-| 5. Features  | **Responsive thumbnails**: `srcset` on tiles, once `npm run ingest` makes a second, smaller size                                                                                                                    | The tile moves into `gallery/`; the second size is a scripts change made first                                 |
-| 7. Styles    | **One set of text roles** (`.text-strong`, `.text-body`, `.text-muted`) replacing `.viewer-title/-body/-label`                                                                                                      | `components.css` is written in phase 7                                                                         |
-| 7. Styles    | **Five type sizes**: drop `text-micro`, use `text-xs` for `.caps-label`, `.count-pill`, `.kbd-hint`; check 375px                                                                                                    | Same file, same pass; the guide and DESIGN.md change with it                                                   |
-| 7. Styles    | **Warm paper on the site** (slate to stone), as its own commit so it is easy to drop                                                                                                                                | The neutral ramp lives in the files phase 7 writes                                                             |
+| After phase  | Feature (from TODO.md)                                                                                                                                                                                                                  | Why there                                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| 1. Domain    | ✓ **A `kind` per collection** (done 2026-10-28) (`species` or `series`) in the `Collection` type and `data/files.ts`; the data contract test checks each kind's fields                                                                  | The domain types are rewritten in phase 1; adding the kind then costs one type, not a second pass              |
+| 3. Stores    | ✓ **Fewer stores per component** (done 2026-10-28: AppShell hands each feature what it needs of another's): `Chrome`, `TopBar` and `GalleryContent` inject four stores each (the "afterwards" note under the decoupling items)          | Splitting the ui store and moving the grid's derivations is exactly what lets each component take only its own |
+| 4. Shared UI | ✓ **Placeholders as icons** (done 2026-10-28): an undrawn tile, a failed load and a search row draw `CollectionIcon` in the muted colour, instead of a generated image; `public/placeholders/`, its generator and `tileImage`'s URLs go | `ui/` is assembled in phase 4, and the icon component it builds is the one that replaces the images            |
+| 4. Shared UI | ✓ **An icon per series** (done 2026-10-28: butterfly, cake, mountain, sphere, face, hare) (butterfly, cake, mountain, sphere, face, running animal), drawn to the icon rules                                                            | New entries in the registry `ui/` now owns                                                                     |
+| 5. Features  | ✓ **Several images per item** (done 2026-10-28) (a series piece, or a drawing with its sketches): the viewer pages through an item's images with the same zoom and keys                                                                 | The viewer's parts (`useZoomPan`, `useDialogKeys`, `useDrawingNav`) land in `viewer/` together                 |
+| 5. Features  | ✓ **The About page by kind** (done 2026-10-28): "species", "Named in Dhivehi" and "Checked against references" counted for `species` collections only, series counted on their own                                                      | `AboutPage.vue` is split into sections in phase 5                                                              |
+| 5. Features  | ✓ **Responsive thumbnails** (done 2026-10-28, at 240px beside the 400px): `srcset` on tiles, once `npm run ingest` makes a second, smaller size                                                                                         | The tile moves into `gallery/`; the second size is a scripts change made first                                 |
+| 7. Styles    | ✓ **One set of text roles** (done 2026-10-28) (`.text-strong`, `.text-body`, `.text-muted`) replacing `.viewer-title/-body/-label`                                                                                                      | `components.css` is written in phase 7                                                                         |
+| 7. Styles    | ✓ **Five type sizes** (done 2026-10-28): drop `text-micro`, use `text-xs` for `.caps-label`, `.count-pill`, `.kbd-hint`; check 375px                                                                                                    | Same file, same pass; the guide and DESIGN.md change with it                                                   |
+| 7. Styles    | **Warm paper on the site** (slate to stone), as its own commit so it is easy to drop                                                                                                                                                    | The neutral ramp lives in the files phase 7 writes                                                             |
 
 [PLATFORM.md](PLATFORM.md) lists what Vue 3.5, Tailwind 4 and the browser add in the same phases
 (`defineModel`, `useId`, `<dialog>` for the viewer, popovers, `light-dark()` tokens, the data

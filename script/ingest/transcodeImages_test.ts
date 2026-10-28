@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { readFile, rm } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import sharp from 'sharp';
-import { transcodeFull, transcodeThumb } from './transcodeImages.ts';
+import { transcodeExtra, transcodeFull, transcodeThumb } from './transcodeImages.ts';
 import type { Collection } from '../lib/collections.ts';
 import { imageSize, tempCollection } from '../../src/testing/fakes/tempCollection.ts';
 
@@ -15,7 +15,7 @@ async function withCollection(sources: string[], fn: (collection: Collection) =>
   await fn(collection);
 }
 
-test('the full image is a 2048px WebP square and the thumbnail a 400px one', () =>
+test('the full image is a 2048px WebP square, the thumbnail a 400px one and a 240px one', () =>
   withCollection(['001'], async (collection) => {
     assertEquals(await transcodeFull(collection, '001'), { ok: true });
     assertEquals(await imageSize(`${collection.paths.full}001.webp`), {
@@ -26,6 +26,11 @@ test('the full image is a 2048px WebP square and the thumbnail a 400px one', () 
     assertEquals(await imageSize(`${collection.paths.thumb}001.webp`), {
       width: 400,
       height: 400,
+      format: 'webp',
+    });
+    assertEquals(await imageSize(`${collection.paths.small}001.webp`), {
+      width: 240,
+      height: 240,
       format: 'webp',
     });
   }));
@@ -55,7 +60,17 @@ test('a thumbnail is remade from the full image, and fails without one', () =>
   withCollection(['001'], async (collection) => {
     await transcodeFull(collection, '001');
     await rm(`${collection.paths.thumb}001.webp`);
+    await rm(`${collection.paths.small}001.webp`);
     assertEquals(await transcodeThumb(collection, '001'), { ok: true });
     assertEquals((await imageSize(`${collection.paths.thumb}001.webp`)).width, 400);
+    assertEquals((await imageSize(`${collection.paths.small}001.webp`)).width, 240);
     assertEquals((await transcodeThumb(collection, '404')).ok, false);
+  }));
+
+test("an item's other image is a full WebP alone, with no thumbnail; without source art it fails", () =>
+  withCollection(['001-2'], async (collection) => {
+    assertEquals(await transcodeExtra(collection, '001-2'), { ok: true });
+    assertEquals((await imageSize(`${collection.paths.full}001-2.webp`)).width, 2048);
+    assertEquals(await readFile(`${collection.paths.thumb}001-2.webp`).catch(() => null), null);
+    assertEquals((await transcodeExtra(collection, '001-3')).ok, false);
   }));

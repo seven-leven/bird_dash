@@ -22,7 +22,7 @@ export interface AssetRow {
 export function assetProblems(plan: ChangePlan): string[] {
   return [
     ...plan.toRegister.map((id) => `unregistered PNG      ${id}`),
-    ...plan.toTranscode.map((id) => `missing full WebP     ${id}`),
+    ...[...plan.toTranscode, ...plan.toTranscodeExtra].map((id) => `missing full WebP     ${id}`),
     ...plan.toRepairThumb.map((id) => `missing thumb         ${id}`),
     ...plan.orphanedFull.map((id) => `orphaned full WebP    ${id}`),
     ...plan.orphanedThumb.map((id) => `orphaned thumb        ${id}`),

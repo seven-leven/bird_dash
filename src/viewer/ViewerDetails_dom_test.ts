@@ -3,7 +3,7 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { h, nextTick, ref } from 'vue';
 import ViewerDetails from './ViewerDetails.vue';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 import { settle } from '../testing/settle.ts';
 import { mountComponent } from '../testing/mount.ts';
 
@@ -127,7 +127,7 @@ test('links within the site are in the accent; links that leave it are not', () 
   const group = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Ducks'))!;
   const noteLink = host.querySelector('#illustrator-note a')!;
   const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
-  for (const el of [group, noteLink, more]) assertStringIncludes(el.className, 'text-accent-700');
+  for (const el of [group, noteLink, more]) assert(el.classList.contains('link'), el.className);
   const external = host.querySelector('a[target="_blank"]')!;
   assert(!external.className.includes('accent'), 'an external link stays neutral');
 });
@@ -151,43 +151,19 @@ const shareButton = (host: Element) =>
   [...host.querySelectorAll('button')].find((b) => b.textContent!.trim() === 'Share') ??
     [...host.querySelectorAll('button')].find((b) => /Copied|Couldn't copy/.test(b.textContent!));
 
-/** A clipboard that keeps what is copied, or refuses. */
-function fakeClipboard(refuses = false) {
-  const copied: string[] = [];
+test('a drawn item offers Share (ViewerShare_dom_test.ts), each drawing starting fresh', async () => {
   Object.defineProperty(navigator, 'clipboard', {
     configurable: true,
-    value: {
-      writeText: (text: string) =>
-        refuses ? Promise.reject(new Error('denied')) : (copied.push(text), Promise.resolve()),
-    },
+    value: { writeText: () => Promise.resolve() },
   });
-  return copied;
-}
-
-test("sharing a drawing copies its link preview's address, and says so", async () => {
-  const copied = fakeClipboard();
   const { host, item } = mount(goose);
-  const button = shareButton(host)!;
-  assertEquals(button.textContent!.trim(), 'Share');
-  button.click();
+  shareButton(host)!.click();
   await settle();
-  assertEquals(copied, [new URL('birds/002/', location.href.split('#')[0]).href]);
-  // A short word on the button keeps it on the links' line; a screen reader hears it whole.
-  assertEquals(button.textContent!.trim(), 'Copied');
-  assertEquals(host.querySelector('[role="status"]')!.textContent, 'Link copied');
-  // The next drawing's button starts fresh.
+  assertEquals(shareButton(host)!.textContent!.trim(), 'Copied');
+  // The button is keyed by the drawing, so the next one says Share again.
   item.value = gooseWith({ itemId: '003', id: 'birds-003' });
   await nextTick();
   assertEquals(shareButton(host)!.textContent!.trim(), 'Share');
-});
-
-test('when the clipboard refuses, the button says it could not copy', async () => {
-  fakeClipboard(true);
-  const { host } = mount(goose);
-  shareButton(host)!.click();
-  await settle();
-  assertEquals(shareButton(host)!.textContent!.trim(), "Couldn't copy");
-  assertEquals(host.querySelector('[role="status"]')!.textContent, "Couldn't copy the link");
 });
 
 test('Share sits at the end of the Learn more row, after the links that leave the site', () => {
@@ -233,4 +209,16 @@ test('a bird with two Dhivehi names gets a line for each, each with its own roma
   assertStringIncludes(alt.className, 'text-xl');
   assertEquals(parts(second), ['ކުލީ ކުކުޅު', 'also Kulhee Kukulhu']);
   assertEquals(english.textContent?.trim(), 'Watercock');
+});
+
+test('a series piece says what it is drawn in, after when', () => {
+  const butterflies = makeCollection('butterflies', {
+    kind: 'series',
+    medium: 'colour pencil',
+    links: [],
+  });
+  const host = mountComponent(() => h(ViewerDetails, { item: goose, collection: butterflies }));
+  assertStringIncludes(host.textContent!, 'Drawn October 2024, in colour pencil');
+  // A species names no medium.
+  assert(!mount(goose).host.textContent!.includes(', in '));
 });

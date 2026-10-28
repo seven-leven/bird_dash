@@ -23,8 +23,7 @@ export function makeScriptCollection(
       sourceArt: PATHS.sourceArt(id),
       full: PATHS.full(id),
       thumb: PATHS.thumb(id),
-      placeholder: PATHS.placeholder(id, 'light'),
-      placeholderDark: PATHS.placeholder(id, 'dark'),
+      small: PATHS.small(id),
       ...overrides.paths,
     },
   };
@@ -46,7 +45,11 @@ export function fakeTranscoder(failing: string[] = []): { transcoder: Transcoder
     );
   };
   return {
-    transcoder: { full: (_, id) => answer('full', id), thumb: (_, id) => answer('thumb', id) },
+    transcoder: {
+      full: (_, id) => answer('full', id),
+      thumb: (_, id) => answer('thumb', id),
+      extra: (_, id) => answer('extra', id),
+    },
     made,
   };
 }

@@ -3,7 +3,7 @@ import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useDrawingNav } from './useDrawingNav.ts';
 import { makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 const items = ['001', '002', '003'].map((itemId) => makeItem({ itemId }));
 
@@ -42,4 +42,49 @@ test('useDrawingNav: no open item, or one not in the order, has no place and no 
     n.goToPrevious();
     assertEquals(asked, []);
   }
+});
+
+test("useDrawingNav: an item's images come first, then the next drawing, which opens on its first", () => {
+  const sketched = makeItem({ itemId: '002', imageIds: ['002', '002-2', '002-3'] });
+  const order = [items[0], sketched, items[2]];
+  const item = ref<Item | undefined>(sketched);
+  const asked: string[] = [];
+  const n = useDrawingNav({
+    item: () => item.value,
+    items: () => order,
+    onNavigate: (next) => {
+      asked.push(next.itemId);
+      item.value = next;
+    },
+  });
+  const at = () => [n.imageId.value, n.imagePosition.value, n.position.value];
+  assertEquals(at(), ['002', 'image 1 of 3', '2 of 3']);
+  n.goToNext();
+  n.goToNext();
+  assertEquals(at(), ['002-3', 'image 3 of 3', '2 of 3']);
+  assertEquals(asked, []); // still the same drawing
+  n.goToPrevious();
+  assertEquals(n.imageId.value, '002-2');
+  n.goToNext();
+  n.goToNext(); // past its last image: the next drawing
+  assertEquals(asked, ['003']);
+});
+
+test('useDrawingNav: an item of one image has no image count; the last image of the last item stops', () => {
+  const sketched = makeItem({ itemId: '009', imageIds: ['009', '009-2'] });
+  const item = ref<Item | undefined>(sketched);
+  const n = useDrawingNav({
+    item: () => item.value,
+    items: () => [sketched],
+    onNavigate: () => {},
+  });
+  assertEquals([n.hasPrevious.value, n.hasNext.value], [false, true]);
+  n.goToNext();
+  assertEquals([n.hasPrevious.value, n.hasNext.value], [true, false]);
+  n.goToNext(); // nowhere further
+  assertEquals(n.imageId.value, '009-2');
+  item.value = items[0];
+  assertEquals([n.imagePosition.value, n.imageId.value], ['', '001']);
+  item.value = undefined;
+  assertEquals(n.imageId.value, '');
 });

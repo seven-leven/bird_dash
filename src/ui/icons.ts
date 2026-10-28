@@ -26,6 +26,37 @@ export const ICONS = {
     body:
       '<path d="M14 11a2 2 0 1 1-4 0 4 4 0 0 1 8 0 6 6 0 0 1-12 0 8 8 0 0 1 16 0 10 10 0 1 1-20 0 11.93 11.93 0 0 1 2.42-7.22 2 2 0 1 1 3.160 2.44"/>',
   },
+  // The series (docs/plans/TODO.md, "Collections that are not species lists"), one each.
+  // Butterflies, in colour pencil: two pairs of wings on a body.
+  butterfly: {
+    body:
+      '<path d="M12 8.5C10.2 5.6 5.3 2.6 3.2 4.6 1.6 6.2 3.2 10.5 7.6 12 4.5 13.4 4.3 17.6 6.8 18.7 9.2 19.7 11.3 16.9 12 14"/><path d="M12 8.5c1.8-2.9 6.7-5.9 8.8-3.9 1.6 1.6 0 5.900-4.4 7.400 3.1 1.4 3.3 5.6.8 6.700-2.4 1-4.5-1.800-5.200-4.700"/><path d="M12 8v12"/><path d="M12 8 9.5 3.5M12 8l2.5-4.5"/>',
+  },
+  // Sweet Treats: a layer cake with one candle.
+  cake: {
+    body:
+      '<path d="M4 21V13a1.5 1.5 0 0 1 1.5-1.5h13A1.5 1.5 0 0 1 20 13v8"/><path d="M2.5 21h19"/><path d="M4 15.5c1.3 1.300 2.700 1.300 4 0s2.700-1.300 4 0 2.700 1.300 4 0 2.700-1.300 4 0"/><path d="M12 11.5V7"/><path d="M12 2.5c1 1 1.2 2 0 3-1.200-1-1-2 0-3Z"/>',
+  },
+  // Landscapes: a range under the sun.
+  mountain: {
+    body:
+      '<path d="M2 20.5 9 8l4.5 7.500L16 11.500l6 9Z"/><path d="m6.700 12.100 2.300 1.400 2.200-1.400"/><circle cx="18" cy="5" r="2.5"/>',
+  },
+  // Digital Value Studies: a sphere, its shadow line and the ground.
+  sphere: {
+    body:
+      '<circle cx="12" cy="10.5" r="8.5"/><path d="M6.400 16.900C12 17.200 17.500 12.600 19.400 6.300"/><path d="M5 21.500h14"/>',
+  },
+  // Movie Character Portraits: a face.
+  face: {
+    body:
+      '<path d="M12 2.500c-4.400 0-7.500 3.700-7.500 8.700 0 5.700 3.500 10.300 7.500 10.300s7.500-4.600 7.500-10.300c0-5-3.100-8.700-7.500-8.700Z"/><path d="M9 10.500h.01M15 10.500h.01"/><path d="M12 11.500v3h-1.200"/><path d="M9.600 17.300c1.500.900 3.300.900 4.800 0"/>',
+  },
+  // Dynamic Animals: a hare mid-leap, ears back.
+  hare: {
+    body:
+      '<path d="M3.5 13.5C4.500 10 8 8.500 12 8.500c2.500 0 4.200.800 5.500 2l2-.300c1.500 0 2.500.900 2.500 2s-1 2-2.500 2h-3C14.500 16 11.500 16.500 8 16 5.500 15.700 3.500 15 3.500 13.500Z"/><path d="M16 9.500 13 3.500"/><path d="M18 10 16.500 4"/><path d="m16 15.500 4.500 4"/><path d="M6 15.800 2 19.500"/>',
+  },
 
   // ── Views — the group / date switch ──
   taxonomy: {
@@ -173,6 +204,7 @@ export const isIconName = (name: string | undefined): name is IconName =>
  */
 export const ICON_GROUPS: { label: string; icons: IconName[] }[] = [
   { label: 'Collections', icons: ['bird', 'shark', 'shell'] },
+  { label: 'Series', icons: ['butterfly', 'cake', 'mountain', 'sphere', 'face', 'hare'] },
   { label: 'Views', icons: ['taxonomy', 'calendar'] },
   { label: 'Search', icons: ['search', 'noResults'] },
   {

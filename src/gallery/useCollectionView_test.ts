@@ -3,7 +3,8 @@ import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { monthRows, useCollectionView } from './useCollectionView.ts';
 import { at, makeItem } from '../testing/fixtures.ts';
-import type { Item, View } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
+import type { View } from '../domain/viewName.ts';
 
 function setup(items: Item[], query = '', mode: View = 'group') {
   return useCollectionView(ref(items), ref(query), ref(mode));

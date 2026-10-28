@@ -219,20 +219,15 @@ Production code changes only where a test cannot reach it otherwise, and says so
       the current month counted "0 drawings". A fourth (a search result in a collection with nothing
       drawn) was fixed right after. **The site overhaul starts after this** (the scripts overhaul is
       done).
-- [ ] **4. Vue component tests.** Every `.vue` file gets its own `_dom_test.ts` beside it, for what
-      a journey leaves open: every empty, loading and error state, the ARIA attributes, the keys,
-      the emitted events. Mounted with `mountComponent` and fake stores (or `appStores()`); tests
-      check what a visitor sees and does (text, ARIA state, clicks, events), not the markup. Phase 3
-      started six (`TopBar`, `SideNav`, `Gallery`, `Viewer`, `SearchResults`, `LogoMark`) with the
-      states journeys cannot reach. After the site overhaul's phases 2 to 5, 15 of the 33 `.vue`
-      files have no test of their own: - **never tested alone:** `App.vue` (the journeys cover its
-      loading, error and loaded screens), `app/AppShell`, `search/SearchBox`, `SearchSummary`,
-      `SearchKeyHints`; - **split out of a tested parent, tested through it:** the About page's six
-      sections (`AboutPage_dom_test.ts`), `GallerySection` and `GallerySkeleton` (`Gallery`),
-      `SearchDropdown` (the search journey), `ViewerShare` (`ViewerDetails_dom_test.ts`).
-
-      The second group's tests move to the part they test. _Done
-      when_ every `.vue` file has a test beside it.
+- [x] **4. Vue component tests** (2026-10-28). Every `.vue` file has its own `_dom_test.ts` beside
+      it, and a contract test (`tiers_contract_test.ts`) keeps it so. New: `App.vue` (the loading
+      screen, the accent), `AppShell` (where it places each feature, the search's filter bar, the
+      drawer's backdrop, a page opening at its top), `SearchBox` (the combobox, on a real search
+      store over the fixture archive), `SearchDropdown`, `SearchSummary`, `SearchKeyHints`,
+      `GallerySection`, `GallerySkeleton`. Moved to the part they test: the About page's six
+      sections out of `AboutPage_dom_test.ts` (which keeps loading, failing and the order), with
+      `aboutSentences_test.ts` for the wording rules; the share button's outcomes out of
+      `ViewerDetails_dom_test.ts` into `ViewerShare_dom_test.ts`, which adds a phone's share sheet.
 
 - [ ] **5. Split and rename.** `useViewer_dom_test.ts` (was `useLightbox_dom_test.ts`) into one file
       per composable; `testRunner_test.ts` by concern; the 116 `functionName:` titles rewritten as

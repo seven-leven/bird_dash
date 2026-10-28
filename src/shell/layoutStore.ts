@@ -1,15 +1,23 @@
-import { computed, readonly, ref, shallowReadonly } from 'vue';
+import { type Component, computed, readonly, ref, shallowReadonly } from 'vue';
 import { useBreakpoint } from '../browser/useBreakpoint.ts';
 import { defineInjection } from '../browser/defineInjection.ts';
-import { findPage } from '../pages.ts';
-import type { Page } from '../types/index.ts';
+
+/** A page beside the gallery: shown at `#<id>`, named `label` in the top bar and the menu. */
+export interface PageEntry {
+  id: string;
+  label: string;
+  component: Component;
+}
+
+/** What the main area shows: `'gallery'` (a collection's drawings), or a page's id. */
+export type Page = string;
 
 /**
  * The frame around what is shown: whether the window is narrow, whether the sidebar drawer
- * is open, which page shows, and the element the content scrolls in (the shell hands it
- * over with `bindScrollEl`, a template function ref).
+ * is open, which of `pages` shows (the app's registry, app/pages.ts), and the element the
+ * content scrolls in (the shell hands it over with `bindScrollEl`, a template function ref).
  */
-export function createLayoutStore() {
+export function createLayoutStore(pages: readonly PageEntry[] = []) {
   const sidebarOpen = ref(false);
   const page = ref<Page>('gallery');
   const { isNarrow } = useBreakpoint();
@@ -26,8 +34,8 @@ export function createLayoutStore() {
     page.value = next;
     if (next !== 'gallery') sidebarOpen.value = false;
   };
-  /** The page shown instead of the gallery, if any (src/pages.ts). */
-  const currentPage = computed(() => findPage(page.value));
+  /** The page shown instead of the gallery, if any. */
+  const currentPage = computed(() => pages.find((p) => p.id === page.value));
 
   const bindScrollEl = (el: unknown): void => {
     scrollEl.value = el as HTMLElement | null;
@@ -37,6 +45,7 @@ export function createLayoutStore() {
   };
 
   return {
+    pages,
     sidebarOpen: readonly(sidebarOpen),
     page: readonly(page),
     isNarrow: readonly(isNarrow),

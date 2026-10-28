@@ -46,8 +46,7 @@ import EmptyState from '../ui/EmptyState.vue';
 import SearchSummary from './SearchSummary.vue';
 import SearchResults from './SearchResults.vue';
 import SearchKeyHints from './SearchKeyHints.vue';
-import type { VisibleGroup } from '../domain/collapseGroups.ts';
-import type { SearchResult } from '../types/index.ts';
+import type { SearchResult, VisibleGroup } from './useSearchResults.ts';
 
 const TRANSITION = {
   enterActiveClass: 'transition duration-fast ease-out',

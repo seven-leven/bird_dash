@@ -308,8 +308,9 @@ reaching into `src/components/` blurred the layers. For the test report they sti
 
 ### Generated images are committed
 
-**Chosen:** `public/full/`, `public/thumb/` and `public/placeholders/` are in git, although `npm run
-ingest` and `npm run generate` make them. The source PNGs (`raw_png/`, tens of MB) are not.
+**Chosen:** `public/full/`, `public/thumb/` and `public/small/` are in git, although `npm run
+ingest` makes them (`public/placeholders/` was too, until the tiles drew the icon themselves). The
+source PNGs (`raw_png/`, tens of MB) are not.
 
 **Why.** CI and the deploy run only the Vite build: they never see `raw_png/`, so the generated
 images must already be in the repository. Committing the small WebPs (a few MB) instead of the large

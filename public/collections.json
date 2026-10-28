@@ -1,6 +1,7 @@
 [
   {
     "id": "birds",
+    "kind": "species",
     "label": "Birds",
     "emoji": "🐦",
     "icon": "bird",
@@ -24,6 +25,7 @@
   },
   {
     "id": "sharks",
+    "kind": "species",
     "label": "Sharks",
     "emoji": "🦈",
     "icon": "shark",
@@ -47,6 +49,7 @@
   },
   {
     "id": "shells",
+    "kind": "species",
     "label": "Shells",
     "emoji": "🐚",
     "icon": "shell",

@@ -1,14 +1,20 @@
 import { test } from 'vitest';
 import { assertEquals, assertMatch, assertStringIncludes, assertThrows } from '@std/assert';
-import { contrastReport, designGuide, formTokensFrom, readFormTokens } from './designGuide.ts';
+import {
+  contrastReport,
+  designGuide,
+  formTokensFrom,
+  readFormTokens,
+  undrawnTile,
+} from './designGuide.ts';
 import { iconSheetSvg } from './iconSheet.ts';
-import { accentMenu } from './palette.ts';
+import { accentMenu, SLATE, UNDRAWN } from './palette.ts';
 import { ICON_GROUPS, ICONS } from '../../src/ui/icons.ts';
 import { readJson } from '../lib/fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 
 // The generated images are drawn from the real tokens, icons and data, so these
-// read main.css, collections.json and the placeholder files.
+// read utilities.css and collections.json.
 
 test('the guide names every accent hue on the menu and who uses each', async () => {
   const { svg } = await designGuide();
@@ -33,11 +39,24 @@ test('the guide and the icon sheet both show every icon, under its group', async
   }
 });
 
-test('the guide shows both placeholders of every collection', async () => {
-  const { placeholders: overlays, dhivehi } = await designGuide();
+test("the guide shows every collection's undrawn tile, light and dark", async () => {
+  const { svg, dhivehi } = await designGuide();
   const collections = await readJson<CollectionEntry[]>('./public/collections.json');
-  assertEquals(overlays.length, collections.length * 2); // light and dark
+  for (const c of collections) {
+    const body = ICONS[c.icon as keyof typeof ICONS].body;
+    assertEquals(svg.split(body).length - 1 >= 2, true, `${c.id}: light and dark`);
+  }
+  for (const theme of ['light', 'dark'] as const) {
+    assertStringIncludes(svg, `stroke="${SLATE[UNDRAWN[theme].ink]}" stroke-width="1.5"`);
+  }
   assertEquals(dhivehi.length, 2); // the specimen and the type scale, drawn in Faruma
+});
+
+test("an undrawn tile is the icon, centred at 56%, in the theme's ink on its grey", () => {
+  const tile = undrawnTile('<path d="M0 0"/>', 'dark', 10, 20, 100);
+  assertStringIncludes(tile, `fill="${SLATE[UNDRAWN.dark.background]}"`);
+  assertStringIncludes(tile, 'translate(32 42) scale(2.3333333333333335)');
+  assertStringIncludes(tile, `stroke="${SLATE[UNDRAWN.dark.ink]}"`);
 });
 
 test('the contrast report gives a ratio for every pair the guide quotes', () => {
@@ -76,5 +95,5 @@ test('a form token missing from the CSS fails the guide instead of going stale o
     '@utility duration-slow {\n  transition-duration: 300ms;\n}';
   assertEquals(formTokensFrom(tokens, main).cardPx, 12);
   assertThrows(() => formTokensFrom('', main), Error, 'tokens.css has no --wi-radius-control');
-  assertThrows(() => formTokensFrom(tokens, ''), Error, 'main.css has no duration-fast');
+  assertThrows(() => formTokensFrom(tokens, ''), Error, 'utilities.css has no duration-fast');
 });

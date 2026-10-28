@@ -1,6 +1,6 @@
 import { ref, shallowRef } from 'vue';
 import { fetchJson, getBase } from './fetchJson.ts';
-import type { Stats } from '../types/index.ts';
+import type { Stats } from './files.ts';
 
 /**
  * The archive's numbers (`public/stats.json`, worked out by the asset build), loaded
