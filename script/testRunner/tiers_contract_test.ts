@@ -55,3 +55,14 @@ test('every area has at least one source file, so none is a stale entry', async 
     assert(sources.some((s) => areaOf(s)?.id === area.id), `area "${area.id}" matches no file`);
   }
 });
+
+test('every component has a test of its own beside it (Foo.vue, Foo_dom_test.ts)', async () => {
+  const tests = new Set(await discoverTests());
+  const components = (await discoverSources()).filter((f) => f.endsWith('.vue'));
+  assert(components.length > 20, `found only ${components.length} components`);
+  assertEquals(
+    components.filter((f) => !tests.has(f.replace(/\.vue$/, '_dom_test.ts'))),
+    [],
+    'a journey is not enough: give each a _dom_test.ts for its own states (docs/TESTING.md)',
+  );
+});

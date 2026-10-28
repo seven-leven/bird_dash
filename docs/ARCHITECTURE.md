@@ -247,8 +247,6 @@ are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md]
 
 ## Known gaps
 
-- Some `.vue` files have no test of their own; the journeys load and cover every one, and the test
-  overhaul's phase 4 gives each its own ([plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md)).
 - `vite.config.ts` imports `script/version/version.ts` and the build's plugins in `script/build/`.
   They are the places the site's build depends on the scripts, kept so the version formula and each
   build step exist once.

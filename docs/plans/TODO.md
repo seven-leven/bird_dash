@@ -15,9 +15,9 @@ folder, and the item here points to it.
 - [ ] **1. The tests, top down** ([TEST-OVERHAUL.md](TEST-OVERHAUL.md)). From the site's promises to
       journeys through the whole app, then features, units and contracts, with one kit for fakes,
       mounting and waiting. Phases 1–3 (the kit, one way to a browser, the journeys) come first:
-      they are the safety net for everything below. Phase 4 is the **Vue component tests**: the 11
-      components that have no test of their own yet. Also moves the test runner onto `Io`, the
-      scripts overhaul's one exception.
+      they are the safety net for everything below; phase 4 (a test beside every component) is done
+      too. Next: phase 5, splitting the long test files and renaming to the conventions. Also moves
+      the test runner onto `Io`, the scripts overhaul's one exception.
 - [ ] **2. The site's code, the same way** ([SRC-OVERHAUL.md](SRC-OVERHAUL.md)). `src/` by feature
       (`viewer/`, `search/`, `gallery/`, …) over pure `domain/`, `data/`, `browser/` and `ui/`
       layers, one word per idea, in nine phases. Most features below ride along with it, each as its

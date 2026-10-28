@@ -261,8 +261,13 @@ its text, roles and labels, what a click or a key does, what it emits. See
   `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with only the
   members it reads; or the app's real stores, with nothing loaded, from `appStores()`
   ([`src/testing/appStores.ts`](../src/testing/appStores.ts)).
-- One test file per component, named after it (`DrawnFilter.vue` → `DrawnFilter_dom_test.ts`), so a
-  failure says which component broke.
+- One test file per component, beside it and named after it (`DrawnFilter.vue` →
+  `DrawnFilter_dom_test.ts`), so a failure says which component broke. Every component has one, even
+  one a journey covers: a contract test checks. A part split out of a bigger component (an About
+  section, `ViewerShare`) is tested on its own props; its parent's test keeps only what the parent
+  does (the About page: loading, failing, the order of its sections).
+- What a component places but does not own comes in by a slot (the footer after a page, the search
+  box in the top bar); its test passes a stand-in and checks where it lands.
 - happy-dom is not a full browser: it does not support the `~` sibling selector, so walk
   `parentElement.children` instead.
 - A component a test loads counts toward coverage at once, so cover every branch of its template

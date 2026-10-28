@@ -151,43 +151,19 @@ const shareButton = (host: Element) =>
   [...host.querySelectorAll('button')].find((b) => b.textContent!.trim() === 'Share') ??
     [...host.querySelectorAll('button')].find((b) => /Copied|Couldn't copy/.test(b.textContent!));
 
-/** A clipboard that keeps what is copied, or refuses. */
-function fakeClipboard(refuses = false) {
-  const copied: string[] = [];
+test('a drawn item offers Share (ViewerShare_dom_test.ts), each drawing starting fresh', async () => {
   Object.defineProperty(navigator, 'clipboard', {
     configurable: true,
-    value: {
-      writeText: (text: string) =>
-        refuses ? Promise.reject(new Error('denied')) : (copied.push(text), Promise.resolve()),
-    },
+    value: { writeText: () => Promise.resolve() },
   });
-  return copied;
-}
-
-test("sharing a drawing copies its link preview's address, and says so", async () => {
-  const copied = fakeClipboard();
   const { host, item } = mount(goose);
-  const button = shareButton(host)!;
-  assertEquals(button.textContent!.trim(), 'Share');
-  button.click();
+  shareButton(host)!.click();
   await settle();
-  assertEquals(copied, [new URL('birds/002/', location.href.split('#')[0]).href]);
-  // A short word on the button keeps it on the links' line; a screen reader hears it whole.
-  assertEquals(button.textContent!.trim(), 'Copied');
-  assertEquals(host.querySelector('[role="status"]')!.textContent, 'Link copied');
-  // The next drawing's button starts fresh.
+  assertEquals(shareButton(host)!.textContent!.trim(), 'Copied');
+  // The button is keyed by the drawing, so the next one says Share again.
   item.value = gooseWith({ itemId: '003', id: 'birds-003' });
   await nextTick();
   assertEquals(shareButton(host)!.textContent!.trim(), 'Share');
-});
-
-test('when the clipboard refuses, the button says it could not copy', async () => {
-  fakeClipboard(true);
-  const { host } = mount(goose);
-  shareButton(host)!.click();
-  await settle();
-  assertEquals(shareButton(host)!.textContent!.trim(), "Couldn't copy");
-  assertEquals(host.querySelector('[role="status"]')!.textContent, "Couldn't copy the link");
 });
 
 test('Share sits at the end of the Learn more row, after the links that leave the site', () => {
