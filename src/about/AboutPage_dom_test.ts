@@ -62,11 +62,14 @@ function mount(list: Collection[], active?: Collection, stats = fakeStats(STATS)
     },
   );
   const text = () => host.textContent!.replace(/\s+/g, ' ');
-  /** Each section by its label: the intro has none. */
+  /** Each section by what names it: its heading, or its label; the intro has neither. */
   const sections = () =>
-    [...host.querySelectorAll('section')].map((s) =>
-      s.getAttribute('aria-labelledby') ?? s.getAttribute('aria-label') ?? 'intro'
-    );
+    [...host.querySelectorAll('section')].map((s) => {
+      const heading = s.getAttribute('aria-labelledby');
+      return heading
+        ? document.getElementById(heading)!.textContent!.trim()
+        : s.getAttribute('aria-label') ?? 'intro';
+    });
   return { host, text, sections };
 }
 
@@ -75,20 +78,31 @@ test('it loads the numbers once, showing their shape while they come, then every
   const { host, text, sections } = mount([birds], undefined, stats);
   assert(host.querySelector('[aria-busy="true"]'));
   assert(text().includes('Loading the numbers'));
-  assertEquals(sections(), ['intro', 'about-history', 'Design']);
+  assertEquals(sections(), ['intro', 'So far', 'Design']);
   await settle();
   assertEquals(stats.loads(), 1);
   assertEquals(host.querySelector('[aria-busy="true"]'), null);
   assertEquals(sections(), [
     'intro',
-    'about-progress',
-    'about-recent',
-    'about-made',
-    'about-history',
+    'Progress',
+    'Recently drawn',
+    'How it is made',
+    'So far',
     'Design',
   ]);
   assert(text().includes('1 of 2 drawn'));
   assertEquals(host.querySelector('figure a')!.getAttribute('href'), '#birds/001');
+});
+
+test('the page is named by its title, each section by its heading, with ids unique on the page', async () => {
+  const { host } = mount([birds]);
+  await settle();
+  const title = document.getElementById(
+    host.querySelector('article')!.getAttribute('aria-labelledby')!,
+  );
+  assertEquals(title!.tagName, 'H1');
+  const ids = [...host.querySelectorAll('[id]')].map((el) => el.id);
+  assertEquals(new Set(ids).size, ids.length);
 });
 
 test('what the app places after the page comes last (the footer)', async () => {

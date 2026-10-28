@@ -23,7 +23,7 @@
     <button
       v-for="{ result, flat } in rows"
       :key="result.item.itemId"
-      :id="`search-result-${flat}`"
+      :id="`${idPrefix}-${flat}`"
       role="option"
       tabindex="-1"
       :aria-selected="focusedIndex === flat"
@@ -101,6 +101,8 @@ const resultLines = (item: Item) => {
 };
 
 const props = defineProps<{
+  /** Each option's id is this and its index: the box's `aria-activedescendant`. */
+  idPrefix: string;
   results: VisibleGroup[];
   focusedIndex: number;
   getFlatIndex: (collectionId: string, idx: number) => number;

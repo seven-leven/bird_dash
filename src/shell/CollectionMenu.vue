@@ -4,13 +4,13 @@
      ARIA menu: a button that shows and hides a list of buttons, so Tab, Enter and
      Escape work as everywhere else. -->
 <template>
-  <div class="relative" ref="rootRef" @keydown.escape="close(true)">
+  <div class="relative" ref="root" @keydown.escape="close(true)">
     <button
-      ref="buttonRef"
+      ref="button"
       class="nav-item focus-ring flex items-center gap-1.5 px-2.5 py-1.5 max-md:min-h-9
              font-medium text-stone-900 dark:text-stone-100"
       :aria-expanded="open"
-      aria-controls="collection-menu"
+      :aria-controls="menuId"
       @click="open = !open"
     >
       <CollectionIcon v-if="page === 'gallery' && active" :collection="active" class="size-4" />
@@ -25,7 +25,7 @@
 
     <ul
       v-if="open"
-      id="collection-menu"
+      :id="menuId"
       class="absolute left-0 top-full mt-1.5 z-50 min-w-48 p-1 rounded-card border shadow-float
              bg-white border-stone-200 dark:bg-stone-900 dark:border-stone-800"
     >
@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { nextTick, onUnmounted, ref, watch } from 'vue';
+import { nextTick, onUnmounted, ref, useId, useTemplateRef, watch } from 'vue';
 import Icon from '../ui/Icon.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
 import { useLayoutStore } from './layoutStore.ts';
@@ -74,14 +74,15 @@ const emit = defineEmits<{ select: [collectionId: string] }>();
 const { pages, page, currentPage } = useLayoutStore();
 
 const open = ref(false);
-const rootRef = ref<HTMLElement | null>(null);
-const buttonRef = ref<HTMLButtonElement | null>(null);
+const rootEl = useTemplateRef<HTMLElement>('root');
+const buttonEl = useTemplateRef<HTMLButtonElement>('button');
+const menuId = useId();
 
 /** Close the list; `refocus` returns focus to the button (after Escape). */
 function close(refocus = false): void {
   if (!open.value) return;
   open.value = false;
-  if (refocus) nextTick(() => buttonRef.value?.focus());
+  if (refocus) nextTick(() => buttonEl.value?.focus());
 }
 
 function choose(id: string): void {
@@ -91,7 +92,7 @@ function choose(id: string): void {
 
 // A press anywhere outside closes the list, as a click-away should.
 const onPointerDown = (e: PointerEvent) => {
-  if (!rootRef.value?.contains(e.target as Node)) close();
+  if (!rootEl.value?.contains(e.target as Node)) close();
 };
 watch(open, (isOpen) => {
   if (isOpen) document.addEventListener('pointerdown', onPointerDown);

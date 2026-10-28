@@ -34,6 +34,7 @@ function mount(
   const host = mountComponent(
     () =>
       h(SearchDropdown, {
+        listboxId: 'results',
         open,
         query: 'gar',
         results,
@@ -58,7 +59,8 @@ test('open: the summary, the results as a listbox, then the keys', () => {
   const { host, text } = mount();
   assert(text().includes('2 matches, 1 drawn'));
   const listbox = host.querySelector('[role="listbox"]')!;
-  assertEquals(listbox.id, 'global-search-listbox'); // the box's aria-controls
+  assertEquals(listbox.id, 'results'); // the box's aria-controls
+  assertEquals(listbox.querySelector('[role="option"]')!.id, 'results-0'); // its activedescendant
   assertEquals(listbox.getAttribute('aria-label'), 'Search results');
   assertEquals(listbox.querySelectorAll('[role="option"]').length, 2);
   assert(host.querySelector('kbd'));

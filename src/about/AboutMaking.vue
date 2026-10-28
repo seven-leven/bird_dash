@@ -2,8 +2,8 @@
      the reference sites from collections.json. Names and references are counted over the species
      collections alone. -->
 <template>
-  <section class="border-t border-stone-200 py-12 dark:border-stone-800" aria-labelledby="about-made">
-    <h2 id="about-made" class="caps-label text-muted">How it is made</h2>
+  <section class="border-t border-stone-200 py-12 dark:border-stone-800" :aria-labelledby="headingId">
+    <h2 :id="headingId" class="caps-label text-muted">How it is made</h2>
     <p class="mt-3 text-xl font-semibold text-strong">
       {{ species.length ? 'By hand, by name, by reference.' : 'By hand.' }}
     </p>
@@ -36,10 +36,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useId } from 'vue';
 import type { Collection } from '../domain/toCollectionItems.ts';
 import type { CollectionCounts } from '../data/files.ts';
 import { namedLine, referencesLine, speciesOf } from './aboutSentences.ts';
+
+/** Names the section for a screen reader: its heading, by an id unique on the page. */
+const headingId = useId();
 
 const props = defineProps<{ collections: Collection[]; counts: CollectionCounts[] }>();
 

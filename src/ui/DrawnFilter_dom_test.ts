@@ -12,7 +12,7 @@ test('DrawnFilter is the count and the filter: All and Drawn, the current one pr
       drawn: 15,
       total: 204,
       drawnOnly: drawnOnly.value,
-      onChoose: (only: boolean) => chosen.push(drawnOnly.value = only),
+      'onUpdate:drawnOnly': (only: boolean) => chosen.push(drawnOnly.value = only),
     })
   );
   const [all, drawn] = [...host.querySelectorAll('button')];

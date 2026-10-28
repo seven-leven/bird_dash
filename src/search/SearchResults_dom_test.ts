@@ -20,6 +20,7 @@ test('after the first line, only a Latin name is set in italics', () => {
   const host = mountComponent(
     () =>
       h(SearchResults, {
+        idPrefix: 'results',
         results: [{
           collection: birds,
           results: [{ item, collection: birds, matchedFields: ['commonName'] }],

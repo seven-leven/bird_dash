@@ -8,23 +8,29 @@ import { archiveStats } from '../testing/scenarios/archive.ts';
 
 const dialog = () => document.querySelector<HTMLElement>('[role="dialog"]');
 
+/** The page's section named `heading` (its `aria-labelledby`). */
+const section = (heading: string) =>
+  [...document.querySelectorAll<HTMLElement>('section[aria-labelledby]')].find((s) =>
+    document.getElementById(s.getAttribute('aria-labelledby')!)?.textContent?.trim() === heading
+  )!;
+
 test("the About tab opens the page, with the archive's numbers", async () => {
   using app = await renderApp();
   app.control('About', app.host.querySelector('nav[aria-label="Collections"]')!).click();
   await app.until(() => app.text().includes('Progress'), 'the numbers');
-  const progress = app.host.querySelector('[aria-labelledby="about-progress"]')!;
+  const progress = section('Progress');
   assertStringIncludes(app.text(progress), '2 of 4 drawn');
   assertStringIncludes(app.text(progress), 'The latest drawing is the Grey Heron, in March 2025.');
-  assertEquals(app.all('[aria-labelledby="about-progress"] li').length, 2); // a card each
+  assertEquals(progress.querySelectorAll('li').length, 2); // a card each
 });
 
 test('the first and the newest drawings are shown, and each opens the viewer', async () => {
   using app = await renderApp({ at: 'about' });
   await app.until(() => app.text().includes('Recently drawn'), 'the newest drawings');
   assertStringIncludes(app.text(), 'The first drawing');
-  const recent = app.host.querySelector('[aria-labelledby="about-recent"]')!;
+  const recent = section('Recently drawn');
   // Newest first, each with its month.
-  assertEquals(app.all('[aria-labelledby="about-recent"] li').map((li) => app.text(li)), [
+  assertEquals([...recent.querySelectorAll('li')].map((li) => app.text(li)), [
     'Grey HeronMarch 2025',
     'MallardJanuary 2025',
   ]);
@@ -37,7 +43,7 @@ test('the first and the newest drawings are shown, and each opens the viewer', a
 test('a collection card opens that collection', async () => {
   using app = await renderApp({ at: 'about' });
   await app.until(() => app.text().includes('Progress'), 'the numbers');
-  app.control(/^Sharks/, app.host.querySelector('[aria-labelledby="about-progress"]')!).click();
+  app.control(/^Sharks/, section('Progress')).click();
   await app.until(() => location.hash === '#sharks', 'the sharks');
   await app.until(() => app.text().includes('Nothing drawn yet'), 'the sharks to show');
 });

@@ -50,7 +50,7 @@ function mount() {
 test('empty: the shortcut hint, no clear button, and the results closed', () => {
   const { host, input, expanded, announced, clearButton } = mount();
   assertEquals(expanded(), 'false');
-  assertEquals(input.getAttribute('aria-controls'), 'global-search-listbox');
+  assert(input.getAttribute('aria-controls'), 'it names the list it controls');
   assert(host.querySelector('kbd')!.textContent!.includes('K'));
   assertEquals(clearButton(), null);
   assertEquals(announced(), '');
@@ -67,12 +67,18 @@ test('typing opens the results and announces how many there are', async () => {
 });
 
 test('↓ makes the first result the active option; ↵ picks it, and the results close', async () => {
-  const { input, typeAndWait, picked, expanded } = mount();
+  const { host, input, typeAndWait, picked, expanded } = mount();
   await typeAndWait('mallard');
   assertEquals(input.getAttribute('aria-activedescendant'), null);
   assertEquals(press('ArrowDown', input).defaultPrevented, true);
   await settle();
-  assertEquals(input.getAttribute('aria-activedescendant'), 'search-result-0');
+  // The active option is the first, named by its id, which the list's own id begins.
+  const active = document.getElementById(input.getAttribute('aria-activedescendant')!)!;
+  assertEquals(active === host.querySelector('[role="option"]'), true);
+  assertEquals(
+    active.closest('[role="listbox"]')!.id,
+    input.getAttribute('aria-controls'),
+  );
   press('Enter', input);
   await settle();
   assertEquals(picked, [['birds', 'Mallard']]);

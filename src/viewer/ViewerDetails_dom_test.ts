@@ -79,7 +79,7 @@ test('an undated drawing has no month', () => {
 
 test('a short note is shown whole, with "#1" a link to that drawing', () => {
   const { host } = mount(goose);
-  const note = host.querySelector('#illustrator-note')!;
+  const note = host.querySelector('blockquote > div')!;
   assert(!note.className.includes('max-h-36'), 'a short note is not folded');
   assertEquals(note.querySelector('a')?.getAttribute('href'), '#birds/001');
   assert(![...host.querySelectorAll('button')].some((b) => b.textContent?.includes('Read more')));
@@ -88,12 +88,13 @@ test('a short note is shown whole, with "#1" a link to that drawing', () => {
 test('a long note opens folded, in paragraphs, and "Read more" unfolds it', async () => {
   const long = 'A first thought about the pen.\n\n' + 'Long. '.repeat(80) + '\n\nAnd a last one.';
   const { host, item } = mount({ ...goose, illustratorNote: long });
-  const note = host.querySelector('#illustrator-note')!;
+  const note = host.querySelector('blockquote > div')!;
   assertEquals(note.querySelectorAll('p').length, 3);
   assertStringIncludes(note.className, 'max-h-36');
 
   const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
   assertEquals(more.getAttribute('aria-expanded'), 'false');
+  assertEquals(document.getElementById(more.getAttribute('aria-controls')!) === note, true);
   more.click();
   await nextTick();
   assert(!note.className.includes('max-h-36'));
@@ -103,15 +104,15 @@ test('a long note opens folded, in paragraphs, and "Read more" unfolds it', asyn
   // The next drawing's note starts folded again.
   item.value = { ...goose, id: 'birds-003', itemId: '003', illustratorNote: long };
   await nextTick();
-  assertStringIncludes(host.querySelector('#illustrator-note')!.className, 'max-h-36');
+  assertStringIncludes(host.querySelector('blockquote > div')!.className, 'max-h-36');
 });
 
 test('three short paragraphs also fold; no note means no section', () => {
   const three = mount({ ...goose, illustratorNote: 'One.\n\nTwo.\n\nThree.' });
-  assertStringIncludes(three.host.querySelector('#illustrator-note')!.className, 'max-h-36');
+  assertStringIncludes(three.host.querySelector('blockquote > div')!.className, 'max-h-36');
 
   const none = mount({ ...goose, illustratorNote: undefined, meta: undefined });
-  assertEquals(none.host.querySelector('#illustrator-note'), null);
+  assertEquals(none.host.querySelector('blockquote > div'), null);
 });
 
 test('the links are plain links that say they open a new tab', () => {
@@ -125,7 +126,7 @@ test('the links are plain links that say they open a new tab', () => {
 test('links within the site are in the accent; links that leave it are not', () => {
   const { host } = mount({ ...goose, illustratorNote: 'See #1.\n\n' + 'Long. '.repeat(80) });
   const group = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Ducks'))!;
-  const noteLink = host.querySelector('#illustrator-note a')!;
+  const noteLink = host.querySelector('blockquote > div a')!;
   const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
   for (const el of [group, noteLink, more]) assert(el.classList.contains('link'), el.className);
   const external = host.querySelector('a[target="_blank"]')!;

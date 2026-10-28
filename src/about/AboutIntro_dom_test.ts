@@ -19,13 +19,15 @@ const duck: NewestDrawing = {
 };
 
 function mount(first: NewestDrawing | null, collections: Collection[] = [birds, sharks]) {
-  const host = mountComponent(() => h(AboutIntro, { collections, browseId: 'sharks', first }));
+  const host = mountComponent(() =>
+    h(AboutIntro, { titleId: 'intro-title', collections, browseId: 'sharks', first })
+  );
   return { host, text: host.textContent!.replace(/\s+/g, ' ') };
 }
 
 test('it says what the archive sets out to draw, from the collections', () => {
   const { host, text } = mount(null);
-  assertEquals(host.querySelector('h1')!.id, 'about-title');
+  assertEquals(host.querySelector('h1')!.id, 'intro-title'); // the page is named by it
   assert(text.includes('sets out to draw the birds and sharks in its lists'));
 });
 

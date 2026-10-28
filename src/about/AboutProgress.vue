@@ -1,7 +1,7 @@
 <!-- Progress: the totals, then one card per collection; the cards fold after CARDS_FIT. -->
 <template>
-  <section class="border-t border-stone-200 py-12 dark:border-stone-800" aria-labelledby="about-progress">
-    <h2 id="about-progress" class="caps-label text-muted">Progress</h2>
+  <section class="border-t border-stone-200 py-12 dark:border-stone-800" :aria-labelledby="headingId">
+    <h2 :id="headingId" class="caps-label text-muted">Progress</h2>
     <p class="mt-3 text-3xl font-semibold tabular-nums text-strong">
       {{ drawnOf(stats.drawn, stats.total) }}
     </p>
@@ -45,12 +45,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, useId } from 'vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
 import { drawnOf } from '../domain/countWords.ts';
 import type { Collection } from '../domain/toCollectionItems.ts';
 import type { Stats } from '../data/files.ts';
 import { cardsOf, monthOf } from './aboutSentences.ts';
+
+/** Names the section for a screen reader: its heading, by an id unique on the page. */
+const headingId = useId();
 
 /** Collection cards shown before "Show all": two rows of three. */
 const CARDS_FIT = 6;

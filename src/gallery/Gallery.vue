@@ -61,7 +61,7 @@
           :drawn="counts.drawn"
           :total="loadState.items.length"
           :drawn-only="drawnOnly"
-          @choose="setDrawnOnly"
+          @update:drawn-only="setDrawnOnly"
         />
         <p v-else class="text-sm text-muted tabular-nums">
           {{ viewMode === 'group' ? drawnOf(counts.drawn, loadState.items.length) : drawings(counts.drawn) }}

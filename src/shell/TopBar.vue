@@ -83,7 +83,7 @@
 
     <!-- The search box, placed here by the app (app/AppShell.vue); it sets its own width. -->
     <div
-      ref="searchEl"
+      ref="search"
       class="flex-1 min-w-0 flex justify-end"
       :class="searchOpen ? '' : 'max-[419px]:hidden'"
       @focusout="onSearchFocusOut"
@@ -122,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, ref } from 'vue';
+import { computed, nextTick, ref, useTemplateRef } from 'vue';
 import CollectionMenu from './CollectionMenu.vue';
 import Icon from '../ui/Icon.vue';
 import CollectionIcon from '../ui/CollectionIcon.vue';
@@ -148,7 +148,7 @@ const tabsFit = computed(() => props.collections.length <= TABS_FIT);
 
 // Below 420px: is the search open across the row?
 const searchOpen = ref(false);
-const searchEl = ref<HTMLElement | null>(null);
+const searchEl = useTemplateRef<HTMLElement>('search');
 async function openSearch(): Promise<void> {
   searchOpen.value = true;
   await nextTick();
