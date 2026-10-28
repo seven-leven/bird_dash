@@ -4,7 +4,7 @@
 // archive, and the app's action is a stand-in that keeps what it is asked.
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
-import { h, reactive, ref } from 'vue';
+import { h, ref } from 'vue';
 import SearchBox from './SearchBox.vue';
 import { createSearchStore, SEARCH_DELAY } from './searchStore.ts';
 import { type Item, toCollection, toCollectionItems } from '../domain/toCollectionItems.ts';
@@ -17,7 +17,7 @@ function mount() {
   const collections = archiveCollections().map((entry) => toCollection(entry, '/'));
   const lists = archiveLists();
   const itemsByCollection = Object.fromEntries(
-    collections.map((c) => [c.id, toCollectionItems(c, lists[c.id as keyof typeof lists], '/')]),
+    collections.map((c) => [c.id, toCollectionItems(c, lists[c.id as keyof typeof lists])]),
   );
   const search =
     runInScope(() => createSearchStore({ collections: ref(collections), itemsByCollection })).value;
@@ -25,7 +25,6 @@ function mount() {
   const host = mountComponent(() => h(SearchBox), {
     stores: {
       search,
-      theme: { theme: reactive({ isDark: false }) },
       actions: {
         selectGlobalResult: async (id: string, item: Item) => {
           picked.push([id, item.commonName]);

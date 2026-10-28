@@ -15,11 +15,8 @@ export interface Item {
    */
   names: readonly ItemName[];
   group: string;
+  /** The drawing's thumbnail; only drawn items have one to show. */
   imageUrl: string;
-  placeholderUrl: string;
-  /** The same placeholder drawn for the dark theme. */
-  placeholderDarkUrl: string;
-  /** Precomputed once at load — avoids repeated `imageUrl !== placeholderUrl` checks. */
   isDrawn: boolean;
   /** Numeric form of `itemId`, precomputed for sort comparators. */
   sortKey: number;
@@ -89,11 +86,8 @@ export function toCollection(raw: CollectionEntry, base: string): Collection {
 export function toCollectionItems(
   col: Pick<Collection, 'id' | 'imageBase'>,
   raw: ListFile,
-  base: string,
 ): Item[] {
   const items: Item[] = [];
-  const placeholder = `${base}placeholders/${col.id}.webp`;
-  const placeholderDark = `${base}placeholders/${col.id}-dark.webp`;
 
   let counter = 1;
   for (const [groupName, list] of Object.entries(raw)) {
@@ -126,9 +120,7 @@ export function toCollectionItems(
         scientificName,
         names,
         group: groupName,
-        imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : placeholder,
-        placeholderUrl: placeholder,
-        placeholderDarkUrl: placeholderDark,
+        imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : '',
         isDrawn: hasImg,
         sortKey: Number.parseInt(itemId, 10) || 0,
         drawnTime: hasImg ? (new Date(String(r.drawn)).getTime() || 0) : 0,

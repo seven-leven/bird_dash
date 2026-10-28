@@ -17,8 +17,9 @@
     <div class="relative aspect-square" :class="drawn ? 'bg-white' : 'bg-slate-100 dark:bg-slate-900'">
       <!-- Illustration — above-the-fold tiles load eagerly (LCP), rest are lazy -->
       <img
-        :src="src"
-        :alt="drawn ? props.item.commonName : `${props.item.commonName} (not drawn yet)`"
+        v-if="drawn && !failed"
+        :src="props.item.imageUrl"
+        :alt="props.item.commonName"
         :loading="eager ? 'eager' : 'lazy'"
         :fetchpriority="eager ? 'high' : 'auto'"
         decoding="async"
@@ -26,6 +27,16 @@
         draggable="false"
         @error="onError"
       />
+      <!-- Not drawn yet, or the drawing failed to load: the collection's icon, faint on the
+           tile grey (docs/DESIGN.md §9), drawn in the page's theme. -->
+      <div
+        v-else
+        role="img"
+        :aria-label="drawn ? props.item.commonName : `${props.item.commonName} (not drawn yet)`"
+        class="absolute inset-0 flex items-center justify-center text-slate-400 dark:text-slate-600"
+      >
+        <CollectionIcon :collection="collection" class="size-[56%] stroke-[1.5] text-7xl" />
+      </div>
 
       <!-- The one thing allowed on the image -->
       <IdBadge
@@ -64,19 +75,19 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
-import { tileImage } from '../domain/tileImage.ts';
+import CollectionIcon from '../ui/CollectionIcon.vue';
 import { nameLines } from '../domain/itemNames.ts';
 import type { Item } from '../domain/toCollectionItems.ts';
 
 const props = withDefaults(
   defineProps<{
     item: Item;
+    /** Its collection, whose icon stands in for a drawing not made (or not loaded) yet. */
+    collection: { icon?: string; emoji: string };
     /** Above-the-fold tiles load eagerly with high priority (helps LCP). */
     eager?: boolean;
-    /** Dark theme: undrawn items show the dark placeholder. */
-    dark?: boolean;
   }>(),
-  { eager: false, dark: false },
+  { eager: false },
 );
 
 const emit = defineEmits<{ (e: 'cardClick', item: Item): void }>();
@@ -106,9 +117,8 @@ const onSpace = (e: KeyboardEvent) => {
 };
 
 // The tile is keyed by item.id in the grid, so a new item => a fresh component;
-// no watcher needed. Undrawn items and load failures fall back to the placeholder.
+// no watcher needed. A drawing that fails to load shows the icon instead.
 const failed = ref(false);
-const src = computed(() => tileImage(props.item, props.dark, failed.value));
 
 function onError() {
   failed.value = true;

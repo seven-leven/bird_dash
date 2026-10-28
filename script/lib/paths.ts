@@ -1,9 +1,6 @@
 // Where things are in the repository, relative to its root (npm runs every command
 // there). The one place a path is written out (docs/SCRIPTS.md, principle 5).
 
-/** A placeholder's theme: the light file is `<id>.webp`, the dark one `<id>-dark.webp`. */
-export type Theme = 'light' | 'dark';
-
 export const PATHS = {
   /** The collections, in order: `public/collections.json`. */
   collections: './public/collections.json',
@@ -19,7 +16,6 @@ export const PATHS = {
   accentsCss: './src/styles/accents.css',
   faruma: './src/styles/fonts/Faruma.woff',
   favicon: './public/favicon.svg',
-  placeholders: './public/placeholders',
   /** The docs' generated images. */
   docsAssets: './docs/assets',
   /** The tools the build runs, by their own entry files. */
@@ -34,6 +30,4 @@ export const PATHS = {
   /** The viewer's WebPs and the tiles' WebPs. */
   full: (collectionId: string): string => `./public/full/${collectionId}/`,
   thumb: (collectionId: string): string => `./public/thumb/${collectionId}/`,
-  placeholder: (collectionId: string, theme: Theme): string =>
-    `./public/placeholders/${collectionId}${theme === 'dark' ? '-dark' : ''}.webp`,
 } as const;

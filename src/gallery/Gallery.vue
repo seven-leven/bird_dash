@@ -75,6 +75,7 @@
         :items="items"
         :count="sectionCount(String(groupName), items.length)"
         :first="groupIndex === 0"
+        :collection="activeCollection!"
       />
 
       <!-- What the app places after the drawings: the footer. -->

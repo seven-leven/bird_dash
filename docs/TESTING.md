@@ -115,18 +115,18 @@ The helpers are in [`src/testing/`](../src/testing/).
 Tiers say _how_ a test runs. **Areas say what it protects.** Every source file and every test file
 belongs to one area, by its folder ([`script/testRunner/areas.ts`](../script/testRunner/areas.ts)):
 
-| Area                          | Folders                                                               | Protects                                                |
-| ----------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------- |
-| Site: data and search         | `src/domain`, `src/data`, `src/search`                                | The archive's rules, loading collections, search        |
-| Site: state and routing       | `src/browser`, `src/app`, `src/shell`                                 | The shell and its stores, links, the pages, theme       |
-| Site: viewer and interface    | `src/viewer`, `src/gallery`, `src/about`, `src/ui`, `src/styles`      | The viewer, the gallery, About, icons and logo          |
-| Site: journeys                | `src/journeys`, `src/app/App.vue`                                     | A whole visit, from first load to the back button       |
-| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats and placeholders | Ingest, the integrity check, the files in `public/`     |
-| Version and changelog         | `script/version`, `script/changelog`                                  | The version in the footer, the changelog task           |
-| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`                 | The runner and its reports, guide images, the docs site |
+| Area                          | Folders                                                          | Protects                                                |
+| ----------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------- |
+| Site: data and search         | `src/domain`, `src/data`, `src/search`                           | The archive's rules, loading collections, search        |
+| Site: state and routing       | `src/browser`, `src/app`, `src/shell`                            | The shell and its stores, links, the pages, theme       |
+| Site: viewer and interface    | `src/viewer`, `src/gallery`, `src/about`, `src/ui`, `src/styles` | The viewer, the gallery, About, icons and logo          |
+| Site: journeys                | `src/journeys`, `src/app/App.vue`                                | A whole visit, from first load to the back button       |
+| Asset pipeline and data files | `script/ingest`, `script/build`, `script/lib`, stats             | Ingest, the integrity check, the files in `public/`     |
+| Version and changelog         | `script/version`, `script/changelog`                             | The version in the footer, the changelog task           |
+| Test harness and docs tooling | `script/testRunner`, `script/generate`, `script/docs`            | The runner and its reports, guide images, the docs site |
 
-When two areas' folders overlap, the longer path wins: the generated data files in `script/generate`
-(stats, placeholders) are pipeline, the rest of the folder tooling.
+When two areas' folders overlap, the longer path wins: the generated data file in `script/generate`
+(stats) is pipeline, the rest of the folder tooling.
 
 A new folder must be added to an area, or a contract test fails.
 

@@ -22,7 +22,7 @@
         v-for="(item, index) in items"
         :key="item.id"
         :item="item"
-        :dark="theme.isDark"
+        :collection="collection"
         :eager="first && index < EAGER_TILES"
         @card-click="open($event)"
       />
@@ -34,7 +34,6 @@
 import Icon from '../ui/Icon.vue';
 import ItemTile from './ItemTile.vue';
 import { useViewStore } from './viewStore.ts';
-import { useThemeStore } from '../shell/themeStore.ts';
 import { useViewerStore } from '../viewer/viewerStore.ts';
 import type { Item } from '../domain/toCollectionItems.ts';
 
@@ -44,6 +43,8 @@ const EAGER_TILES = 6;
 defineProps<{
   name: string;
   items: Item[];
+  /** The collection on screen, whose icon stands in for what is not drawn yet. */
+  collection: { icon?: string; emoji: string };
   /** "4 of 8 drawn", or "3 drawings". */
   count: string;
   /** The first section on the page, whose first tiles are wanted at once. */
@@ -51,6 +52,5 @@ defineProps<{
 }>();
 
 const { registerHeader } = useViewStore();
-const { theme } = useThemeStore();
 const { open } = useViewerStore();
 </script>

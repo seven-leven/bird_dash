@@ -130,6 +130,6 @@ test('with coverage but no source list, nothing is reported unloaded', () => {
 
 test('the longest matching prefix wins: the generated data files are pipeline, the rest of generate/ tooling', () => {
   assertEquals(areaOf('script/generate/stats.ts')?.id, 'pipeline');
-  assertEquals(areaOf('script/generate/placeholders_test.ts')?.id, 'pipeline');
+  assertEquals(areaOf('script/generate/stats_test.ts')?.id, 'pipeline');
   assertEquals(areaOf('script/generate/logo.ts')?.id, 'tooling');
 });

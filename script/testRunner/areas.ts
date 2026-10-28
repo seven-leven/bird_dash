@@ -67,9 +67,8 @@ export const AREAS: Area[] = [
       'script/check/',
       'script/build/',
       'script/lib/',
-      // The generated files the site serves; the rest of generate/ is the docs' images.
+      // The generated file the site serves; the rest of generate/ is the docs' images.
       'script/generate/stats',
-      'script/generate/placeholders',
     ],
   },
   {

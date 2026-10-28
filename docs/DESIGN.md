@@ -415,7 +415,8 @@ Icons take `currentColor` and come in four sizes, by role: `size-3` (12px) besid
 `size-4` (16px) in a control, `size-5` or `size-6` (20 or 24px) standing alone. Label icons sit
 before their text through `.with-icon`, which sizes them. One icon is larger: the collection's
 emblem at the top of the sidebar, `size-10` (40px) in the accent, the biggest icon on the page and
-the only one of its size. A test fails on any other size, or a second emblem.
+the only one of its size. And what stands in for an undrawn drawing grows with its tile
+(`size-[56%]`, in the tile alone). A test fails on any other size, or a second emblem.
 
 Each icon has one meaning wherever it appears: `tag` is the version, `image` the drawing count,
 `commit` the build's commit, `layers` all collections together, and `pencil` the illustrator or
@@ -457,12 +458,12 @@ The small top-left `IdBadge` is the only thing allowed over a drawing. Undrawn t
 shading, shadow or hover. A grid with many gaps should feel quiet, so the finished drawings stand
 out.
 
-Placeholders are 512 × 512, generated from the collection icon once per theme. Their background is
-the tile's grey, never white, so they cannot be mistaken for sketches on paper. Their files and
-colours are in the [reference](#reference) below.
-
-`npm run generate` draws both from the icon set; do not edit them by hand. A contract test checks
-that both exist. At about 2.4:1 against their background, they are faint on purpose.
+What stands in for a drawing is its collection's icon, drawn by the tile itself at 56% of the square
+with a thin stroke, in the faint step on the tile's grey. The grey is never white, so the icon
+cannot be mistaken for a sketch on paper. The same icon stands in for a drawing that fails to load,
+and in a search result not drawn yet. It is drawn in the page's theme, so there is no image to make
+per collection or per theme; its colours are in the [reference](#reference) below. At about 2.4:1
+against the grey, it is faint on purpose.
 
 ---
 
@@ -587,8 +588,7 @@ A short review of whether a change still belongs to the same design.
 ## Reference
 
 The exact values behind the rules above. Tests check these tables against the code that draws and
-measures them (`script/generate/palette.ts`, `script/generate/placeholders.ts`), so they cannot
-drift.
+measures them (`script/generate/palette.ts`, `src/gallery/ItemTile.vue`), so they cannot drift.
 
 ### Ramps
 
@@ -606,12 +606,12 @@ drift.
 | `900` | `#0f172b` | `#0b4f4a`         |
 | `950` | `#020618` | `#022f2e`         |
 
-### Placeholder files
+### Undrawn tile
 
-| Theme | File             | Background              | Icon                    |
-| ----- | ---------------- | ----------------------- | ----------------------- |
-| Light | `<id>.webp`      | `slate-100` (`#f1f5f9`) | `#a1a1a1`               |
-| Dark  | `<id>-dark.webp` | `slate-900` (`#0f172b`) | `slate-600` (`#45556c`) |
+| Theme | Tile                    | Icon                    |
+| ----- | ----------------------- | ----------------------- |
+| Light | `slate-100` (`#f1f5f9`) | `slate-400` (`#90a1b9`) |
+| Dark  | `slate-900` (`#0f172b`) | `slate-600` (`#45556c`) |
 
 ---
 

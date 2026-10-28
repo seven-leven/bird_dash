@@ -2,7 +2,7 @@
  * The colours the design guide draws, and the contrast maths behind the rules
  * in docs/DESIGN.md. Every value is read from Tailwind's own palette, the one
  * the site renders, and converted from oklch to hex here, so the guide, the
- * contrast figures and the placeholders measure the colours visitors see.
+ * contrast figures and the undrawn tiles measure the colours visitors see.
  */
 
 import { readFile } from 'node:fs/promises';
@@ -40,6 +40,16 @@ const ramp = (hue: string): Ramp =>
 
 export const SLATE: Ramp = ramp('slate');
 export const TEAL: Ramp = ramp('teal');
+
+/**
+ * A tile with nothing drawn yet: its collection's icon, faint on the tile grey, by slate step
+ * (`ItemTile.vue` draws it with these classes; a contract test holds the two together). About
+ * 2.4:1 against the grey, faint on purpose (docs/DESIGN.md §9).
+ */
+export const UNDRAWN = {
+  light: { background: '100', ink: '400' },
+  dark: { background: '900', ink: '600' },
+} as const;
 
 /** The 500 and 700 shades of every Tailwind hue, any of which an accent may use. */
 export const ACCENT_HEX: Record<string, { 500: string; 700: string }> = Object.fromEntries(

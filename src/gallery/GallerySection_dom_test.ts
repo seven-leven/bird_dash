@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { h, reactive } from 'vue';
+import { h } from 'vue';
 import GallerySection from './GallerySection.vue';
 import { at, makeItem } from '../testing/fixtures.ts';
 import { mountComponent } from '../testing/mount.ts';
@@ -12,16 +12,22 @@ const drawn = (n: number) =>
     (_, i) => makeItem({ commonName: `Bird ${i}`, drawnTime: at(2025, 1, 1) }),
   );
 
-/** The section, with the stores it reads: what it registers, what it opens, and the theme. */
-function mount(items: Item[], { first = false, dark = false } = {}) {
+/** The section, with the stores it reads: what it registers, and what it opens. */
+function mount(items: Item[], { first = false } = {}) {
   const registered: [string, unknown][] = [];
   const opened: Item[] = [];
   const host = mountComponent(
-    () => h(GallerySection, { name: 'Ducks', items, count: '4 of 8 drawn', first }),
+    () =>
+      h(GallerySection, {
+        name: 'Ducks',
+        items,
+        count: '4 of 8 drawn',
+        first,
+        collection: { icon: 'bird', emoji: '🐦' },
+      }),
     {
       stores: {
         view: { registerHeader: (name: string, el: unknown) => registered.push([name, el]) },
-        theme: { theme: reactive({ isDark: dark }) },
         viewer: { open: (item: Item) => opened.push(item) },
       },
     },

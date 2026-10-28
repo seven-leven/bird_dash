@@ -19,7 +19,7 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
 └───────────────┬─────────────────────────────────────────────┘
                 ▼
    public/   collections.json · lists/<id>.json
-             full/ · thumb/ · placeholders/
+             full/ · thumb/
                 │   the contract: fetched at runtime, never imported by src/
                 ▼
 ┌─ 2. The site (src/) ────────────────────────────────────────┐
@@ -51,7 +51,6 @@ public/                 Static assets, served as-is
   stats.json            The archive's numbers, written by the asset build
   full/<id>/            Full-resolution WebP illustrations
   thumb/<id>/           Grid thumbnails (generated)
-  placeholders/<id>.webp  Shown for undrawn items (<id>-dark.webp in the dark theme)
 src/
   main.ts               Mounts app/App.vue
   env.d.ts              The build-time globals, which only app/buildInfo.ts reads
@@ -84,7 +83,7 @@ script/                 One folder per command, run by Node; shared code in lib/
   ingest/               Take in new drawings: scan, plan, transcode, date them in the lists
   build/                The build's stages, and its Vite plugins: the size budget, the
                         Content-Security-Policy, a link preview per drawing
-  generate/             Every generated file: stats, placeholders, the design guide, icons, logo
+  generate/             Every generated file: stats, the design guide, icons, logo
   check/                Read-only checks: the assets, and the generated files are current
   version/              The derived version; base_version.json stores major/minor only
   changelog/            Insert unlogged commits into CHANGELOG.md

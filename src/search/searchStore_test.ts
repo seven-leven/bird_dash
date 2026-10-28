@@ -11,7 +11,7 @@ function searchOverTheArchive() {
   const collections = archiveCollections().map((entry) => toCollection(entry, '/'));
   const lists = archiveLists();
   const itemsByCollection = Object.fromEntries(
-    collections.map((c) => [c.id, toCollectionItems(c, lists[c.id as keyof typeof lists], '/')]),
+    collections.map((c) => [c.id, toCollectionItems(c, lists[c.id as keyof typeof lists])]),
   );
   return runInScope(() => createSearchStore({ collections: ref(collections), itemsByCollection }));
 }

@@ -77,17 +77,9 @@ test('every generated file in the repository is up to date with the code that dr
       );
     }
     // Image bytes can differ between machines (fonts, encoders), so compare what is stable.
-    const placeholders = await realIo.listFiles(PATHS.placeholders, (n) => n.endsWith('.webp'));
-    const images: [string, string][] = [
-      ...['design-guide.png', 'icons.png', 'logo.png', 'drawings.webp'].map((
-        name,
-      ): [string, string] => [`${PATHS.docsAssets}/${name}`, `${dir}/${name}`]),
-      ...placeholders.map((name): [string, string] => [
-        `${PATHS.placeholders}/${name}`,
-        `${dir}/${name}`,
-      ]),
-    ];
-    assert(placeholders.length > 0, 'public/placeholders/ has no placeholders');
+    const images = ['design-guide.png', 'icons.png', 'logo.png', 'drawings.webp'].map((
+      name,
+    ): [string, string] => [`${PATHS.docsAssets}/${name}`, `${dir}/${name}`]);
     for (const [committed, fresh] of images) {
       assertEquals(await imageSize(committed), await imageSize(fresh), stale(committed));
     }

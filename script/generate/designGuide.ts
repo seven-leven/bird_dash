@@ -6,8 +6,9 @@
  */
 import { readFile } from 'node:fs/promises';
 import sharp, { type OverlayOptions } from 'sharp';
+import { ICONS, isIconName } from '../../src/ui/icons.ts';
 import { PRINCIPLES } from './principles.ts';
-import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, whiteOnBlack } from './palette.ts';
+import { ACCENT_HEX, accentMenu, contrast, SLATE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
 import { readJson } from '../lib/fs.ts';
 import { PATHS } from '../lib/paths.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
@@ -204,13 +205,30 @@ function navStates(x: number, y: number, w: number, dark: boolean): string {
 
 type Overlay = OverlayOptions;
 
+/** An undrawn tile, `size` px square at (x, y): the icon, centred, faint on the tile grey. */
+export function undrawnTile(
+  iconBody: string,
+  theme: keyof typeof UNDRAWN,
+  x: number,
+  y: number,
+  size: number,
+): string {
+  const { background, ink } = UNDRAWN[theme];
+  const scale = (size * 0.56) / 24; // the icon is 56% of the tile, as on the site
+  const offset = (size - 24 * scale) / 2;
+  return rect(x, y, size, size, SLATE[background]) +
+    `<g transform="translate(${x + offset} ${y + offset}) scale(${scale})" fill="none" ` +
+    `stroke="${SLATE[ink]}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">` +
+    `${iconBody}</g>`;
+}
+
 /**
- * The guide as an SVG, plus the images laid over it: the placeholders, and the
- * Dhivehi samples (which the SVG renderer cannot shape).
+ * The guide as an SVG, plus the images laid over it: the Dhivehi samples (which the SVG
+ * renderer cannot shape).
  */
 export async function designGuide(
   collections?: CollectionEntry[], // defaults to public/collections.json
-): Promise<{ svg: string; placeholders: Overlay[]; dhivehi: Overlay[] }> {
+): Promise<{ svg: string; dhivehi: Overlay[] }> {
   const cols = collections ?? await readJson<CollectionEntry[]>('./public/collections.json');
   const parts: string[] = [];
   const dhivehi: Overlay[] = [];
@@ -409,34 +427,28 @@ export async function designGuide(
   parts.push(groups.svg);
   y = groups.bottom + 36;
 
-  // ── Tiles: the placeholders, light beside dark ──
+  // ── Tiles: what is not drawn yet, light beside dark ──
   s = section(
     y,
     'Tiles',
     'Paper or possibility.',
-    'An undrawn tile shows its collection icon, faint on the tile grey, drawn once per theme.',
+    'An undrawn tile shows its collection icon, faint on the tile grey, in either theme.',
   );
   parts.push(s.svg);
   const P = 120;
   const gap = 16;
-  const darkX = X + cols.length * (P + gap) + 48;
-  const placeholders = await Promise.all(
-    ['', '-dark'].flatMap((suffix, dark) =>
-      cols.map(async (c, i) => ({
-        input: await sharp(`./public/placeholders/${c.id}${suffix}.webp`).resize(P).png()
-          .toBuffer(),
-        left: (dark ? darkX : X) + i * (P + gap),
-        top: s.top + 6,
-      }))
-    ),
-  );
-  parts.push(
-    caps(X, s.top - 10, 'Light'),
-    caps(darkX, s.top - 10, 'Dark'),
-    ...placeholders.map((p) =>
-      rect(p.left - 1, p.top - 1, P + 2, P + 2, 'none', 0, `stroke="${RULE}"`)
-    ),
-  );
+  const iconed = cols.filter((c) => isIconName(c.icon));
+  const darkX = X + iconed.length * (P + gap) + 48;
+  parts.push(caps(X, s.top - 10, 'Light'), caps(darkX, s.top - 10, 'Dark'));
+  for (const [theme, left] of [['light', X], ['dark', darkX]] as const) {
+    iconed.forEach((c, i) => {
+      const x = left + i * (P + gap);
+      parts.push(
+        undrawnTile(ICONS[c.icon as keyof typeof ICONS].body, theme, x, s.top + 6, P),
+        rect(x - 1, s.top + 5, P + 2, P + 2, 'none', 0, `stroke="${RULE}"`),
+      );
+    });
+  }
   y = s.top + 6 + P + 150;
 
   // ── The ending, set like the opening ──
@@ -448,7 +460,7 @@ export async function designGuide(
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${height}">` +
     rect(0, 0, W, height, PAPER) + parts.join('') + '</svg>';
-  return { svg, placeholders, dhivehi };
+  return { svg, dhivehi };
 }
 
 /** The contrast figures quoted in docs/DESIGN.md, one line each. */
@@ -464,17 +476,25 @@ export function contrastReport(): string[] {
     ['accent-500 ring on slate-950', TEAL['500'], SLATE['950']],
     ['white 70% on black', whiteOnBlack(0.7), '#000000'],
     ['white 50% on black', whiteOnBlack(0.5), '#000000'],
-    ['placeholder #a1a1a1 on white', '#a1a1a1', '#ffffff'],
-    ['dark placeholder slate-600 on slate-900', SLATE['600'], SLATE['900']],
+    [
+      `undrawn icon slate-${UNDRAWN.light.ink} on slate-${UNDRAWN.light.background}`,
+      SLATE[UNDRAWN.light.ink],
+      SLATE[UNDRAWN.light.background],
+    ],
+    [
+      `dark undrawn icon slate-${UNDRAWN.dark.ink} on slate-${UNDRAWN.dark.background}`,
+      SLATE[UNDRAWN.dark.ink],
+      SLATE[UNDRAWN.dark.background],
+    ],
   ];
   return pairs.map(([label, a, b]) => `  ${contrast(a, b).toFixed(1)}:1  ${label}`);
 }
 
 /** Draw the guide into `dir` (docs/assets/ by default) as design-guide.png. */
 export async function writeDesignGuide(dir: string = PATHS.docsAssets): Promise<string> {
-  const { svg, placeholders, dhivehi } = await designGuide();
+  const { svg, dhivehi } = await designGuide();
   const path = `${dir}/design-guide.png`;
-  await sharp(new TextEncoder().encode(svg)).composite([...placeholders, ...dhivehi]).png()
+  await sharp(new TextEncoder().encode(svg)).composite(dhivehi).png()
     .toFile(path);
   return path;
 }

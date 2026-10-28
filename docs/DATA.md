@@ -13,8 +13,6 @@ public/
   stats.json                  the archive's numbers, worked out from the lists (generated)
   full/<id>/<item>.webp       full-size drawing (generated)
   thumb/<id>/<item>.webp      grid thumbnail (generated)
-  placeholders/<id>.webp      shown for undrawn items, light theme (generated)
-  placeholders/<id>-dark.webp the same for the dark theme (generated)
 raw_png/<id>/<item>.png       your source art; not in git
 ```
 
@@ -45,7 +43,7 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 | `medium`     | a series | What every piece in a series is drawn in ("colour pencil"); the viewer names it                 |
 | `label`      | yes      | The name on the tab                                                                             |
 | `emoji`      | yes      | Shown in terminal reports, and on the tab if there is no `icon`                                 |
-| `icon`       | no       | Name of an icon in `src/ui/icons.ts`. Also what the placeholder is drawn from                   |
+| `icon`       | no       | Name of an icon in `src/ui/icons.ts`. Also what an undrawn tile shows                           |
 | `accent`     | no       | The collection's accent colour: a hue from the menu in `src/styles/accents.css`. Default `teal` |
 | `groupLabel` | yes      | What a group is called ("Family", "Order"); labels the group view and the sidebar               |
 | `itemLabel`  | yes      | The singular noun for an item ("bird")                                                          |
@@ -106,12 +104,11 @@ Notes:
 
 Do not edit these by hand; run the task that makes them.
 
-| Files                                   | Made by            | From                                 |
-| --------------------------------------- | ------------------ | ------------------------------------ |
-| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run ingest`   | `raw_png/<id>/*.png`                 |
-| `placeholders/<id>[-dark].webp`         | `npm run generate` | the collection's `icon`              |
-| `drawn` dates on newly added items      | `npm run ingest`   | a new PNG whose item has no date yet |
-| `stats.json`                            | `npm run ingest`   | every `lists/<id>.json`              |
+| Files                                   | Made by          | From                                 |
+| --------------------------------------- | ---------------- | ------------------------------------ |
+| `full/<id>/*.webp`, `thumb/<id>/*.webp` | `npm run ingest` | `raw_png/<id>/*.png`                 |
+| `drawn` dates on newly added items      | `npm run ingest` | a new PNG whose item has no date yet |
+| `stats.json`                            | `npm run ingest` | every `lists/<id>.json`              |
 
 ### `stats.json`
 
@@ -138,7 +135,7 @@ appears in it with no other change.
   `{{sci}}`, or a species has a `medium`;
 - an item lacks its kind's fields (a species its `sci`) or has another kind's (a series item a
   `sci`, `dhiv` or `dhiv_script`);
-- a collection has no list file, or is missing either placeholder image;
+- a collection has no list file;
 - an item's `id` is not digits or is repeated, its `name` is empty, or its `drawn` is not a real
   `YYYY-MM-DD` date; or a group name is blank.
 
@@ -165,9 +162,9 @@ appears in it with no other change.
 
 1. Add an entry to `collections.json`. Pick an `icon` (add one to `icons.ts` if needed) and an
    `accent` from the menu in [DESIGN.md](DESIGN.md).
-2. Create `public/lists/<id>.json`.
-3. Run `npm run generate -- placeholders` to draw its two placeholder images.
-4. Add source art under `raw_png/<id>/` and run `npm run ingest`.
+2. Create `public/lists/<id>.json`. Until something is drawn, each tile shows the collection's icon
+   (or its emoji).
+3. Add source art under `raw_png/<id>/` and run `npm run ingest`.
 
 **Add a new kind of information** (a habitat, where it was seen): add a string field to the items.
 It appears in the viewer and in search with no code change. Give it its own treatment later by

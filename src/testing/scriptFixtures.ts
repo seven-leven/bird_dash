@@ -23,8 +23,6 @@ export function makeScriptCollection(
       sourceArt: PATHS.sourceArt(id),
       full: PATHS.full(id),
       thumb: PATHS.thumb(id),
-      placeholder: PATHS.placeholder(id, 'light'),
-      placeholderDark: PATHS.placeholder(id, 'dark'),
       ...overrides.paths,
     },
   };

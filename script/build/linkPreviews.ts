@@ -11,7 +11,7 @@ import { SITE_URL } from '../../src/domain/links.ts';
 import type { ListEntry } from '../../src/data/files.ts';
 
 /** Folders the built site already has; a collection with one of these ids would collide. */
-export const TAKEN = ['assets', 'docs', 'full', 'thumb', 'lists', 'placeholders'];
+export const TAKEN = ['assets', 'docs', 'full', 'thumb', 'lists'];
 
 const escape = (text: string): string =>
   text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')

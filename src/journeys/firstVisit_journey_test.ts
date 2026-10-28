@@ -11,18 +11,19 @@ test('the first collection opens, its items in their groups, drawn or not', asyn
     'Ducks 1 of 2 drawn',
     'Herons 1 of 1 drawn',
   ]);
-  assertEquals(sections.map((s) => s.querySelectorAll('img').length), [2, 1]);
+  assertEquals(sections.map((s) => s.querySelectorAll('[id^="item-"]').length), [2, 1]);
   assertStringIncludes(app.text(sections[0]), 'Mallard');
   assertStringIncludes(app.text(sections[0]), 'Garganey');
 });
 
-test('a drawn item is a button that names it; one not drawn yet is a placeholder', async () => {
+test("a drawn item is a button that names it; one not drawn yet shows its collection's icon", async () => {
   using app = await renderApp();
   assertEquals(app.control('Mallard, #001').getAttribute('tabindex'), '0');
-  const garganey = app.all<HTMLImageElement>('img').find((img) => img.alt.startsWith('Garganey'))!;
-  assertEquals(garganey.alt, 'Garganey (not drawn yet)');
-  assertStringIncludes(garganey.src, '/placeholders/birds');
-  assertEquals(garganey.closest('[role="button"]'), null);
+  // In its place, the collection's icon (ItemTile_dom_test.ts), named for what is not there yet.
+  const garganey = app.all('[role="img"][aria-label="Garganey (not drawn yet)"]');
+  assertEquals(garganey.length, 1);
+  assertEquals(garganey[0].closest('[role="button"]'), null);
+  assertEquals(app.all('img[alt="Garganey"]'), []);
 });
 
 test('the counts say how many are drawn of how many, the same way everywhere', async () => {

@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
-import { h, reactive } from 'vue';
+import { h } from 'vue';
 import SearchDropdown from './SearchDropdown.vue';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
 import { mountComponent } from '../testing/mount.ts';
@@ -46,7 +46,6 @@ function mount(
         onSelect: (r: SearchResult) => emitted.push(['select', r]),
         onExpand: (id: string) => emitted.push(['expand', id]),
       }),
-    { stores: { theme: { theme: reactive({ isDark: false }) } } },
   );
   return { host, emitted, text: () => host.textContent!.replace(/\s+/g, ' ') };
 }

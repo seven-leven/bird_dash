@@ -4,18 +4,16 @@
  * is edited by hand; a contract test regenerates them all and fails on a stale one.
  *
  *   npm run generate                     every generator
- *   npm run generate -- placeholders     the ones named
+ *   npm run generate -- logo             the ones named
  *   npm run generate -- --into <dir>     write into <dir> instead, to look before committing
  *
  * It changes files git tracks (unless `--into`), so it runs on your machine.
  */
 import { COLLECTIONS } from '../lib/collections.ts';
-import { type Io, readJson } from '../lib/io.ts';
+import type { Io } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import { command, EXIT, MARK, parseArgs, UsageError } from '../lib/cli.ts';
-import type { CollectionEntry } from '../../src/data/files.ts';
 import { writeStats } from './stats.ts';
-import { writePlaceholders } from './placeholders.ts';
 import { contrastReport, writeDesignGuide } from './designGuide.ts';
 import { writeIconSheet } from './iconSheet.ts';
 import { writeFavicons, writeLogoFiles } from './logo.ts';
@@ -38,16 +36,6 @@ export const GENERATORS: Generator[] = [
       await writeStats(COLLECTIONS, io, path);
       return [path];
     },
-  },
-  {
-    id: 'placeholders',
-    makes: 'public/placeholders/, each collection’s light and dark placeholder',
-    write: async (io, into) =>
-      writePlaceholders(
-        await readJson<CollectionEntry[]>(io, PATHS.collections),
-        into ?? PATHS.placeholders,
-        (id) => io.out(`  ${MARK.skipped} placeholders: ${id} has no icon in collections.json`),
-      ),
   },
   {
     id: 'designGuide',
