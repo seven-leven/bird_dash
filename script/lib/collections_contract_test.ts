@@ -7,11 +7,18 @@ import { readJson } from './fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 import { isIconName } from '../../src/ui/icons.ts';
 import { PAGES } from '../../src/app/pages.ts';
+import { checkCollections, checkList, checkStats } from '../../src/data/files.ts';
 
 // The app is data-driven: a typo in public/*.json silently breaks routing, search
 // or the timeline rather than failing a build. These tests are that missing gate.
 
 const exists = (path: string) => stat(path).then(() => true, () => false);
+
+test('collections.json, every list and stats.json pass the checks the site makes when it loads them', async () => {
+  assertEquals(checkCollections(await readJson('./public/collections.json')), []);
+  for (const col of COLLECTIONS) assertEquals(checkList(await readList(col)), [], col.id);
+  assertEquals(checkStats(await readJson('./public/stats.json')), []);
+});
 
 test('collections.json: at least one collection, unique ids', () => {
   assert(COLLECTIONS.length > 0, 'no collections configured');

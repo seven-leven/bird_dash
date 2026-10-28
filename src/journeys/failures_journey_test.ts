@@ -40,3 +40,14 @@ test('an archive with no collections says so, rather than showing an empty page'
   using app = await renderApp({ routes: { '/collections.json': json([]) } });
   assertStringIncludes(app.text(app.host.querySelector('[role="alert"]')!), 'No collections');
 });
+
+test('a list not of its shape says which field is wrong, and the others still work', async () => {
+  using app = await renderApp({
+    routes: { '/lists/sharks.json': json({ Requiem: [{ id: '001', sci: 'Carcharhinus' }] }) },
+  });
+  app.control('Sharks').click();
+  await app.until(() => app.text().includes("Couldn't load Sharks"), 'the failure');
+  assertStringIncludes(app.text(), 'Sharks is not as expected: Requiem[0].name is missing');
+  app.control('Birds').click();
+  await app.until(() => app.text().includes('Mallard'), 'the birds, still there');
+});

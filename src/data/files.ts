@@ -1,7 +1,9 @@
 // =============================================================================
 // The shape of the files in public/ — the contract between the build scripts
 // (script/), the app's loader (src/domain/toCollectionItems.ts) and the data contract
-// test. Change a field here and all three see it.
+// test. Change a field here and all three see it. Each file is also checked when it
+// arrives (the `check…` functions at the end): a field missing or of the wrong kind
+// names itself, instead of failing later in whatever component reads it.
 // =============================================================================
 
 /** One entry in `public/lists/<id>.json`. */
@@ -89,4 +91,126 @@ export interface Stats {
   first: NewestDrawing | null;
   /** Newest first; on the same day, in collection order and then by id. */
   newest: NewestDrawing[];
+}
+
+// ---------------------------------------------------------------------------
+// The files checked at the door
+// ---------------------------------------------------------------------------
+
+/**
+ * What a field holds: a kind of value, one of some words, or a list of things of a shape.
+ * A key ending in `?` may be left out.
+ */
+type Field = 'string' | 'number' | 'count' | 'string or null' | readonly string[] | [Shape];
+interface Shape {
+  [key: string]: Field;
+}
+
+/** A field that holds one of some words (`['species', 'series']`). */
+const isWords = (field: Field): field is readonly string[] => typeof field[0] === 'string';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+/** Every way `value`, at `where`, is not of `shape`: `Ducks[1].name is missing`. */
+function problemsIn(value: unknown, shape: Shape, where: string): string[] {
+  if (!isRecord(value)) return [`${where} is not an object`];
+  return Object.entries(shape).flatMap(([key, field]) => {
+    const name = key.replace(/\?$/, '');
+    const at = `${where}.${name}`;
+    const found = value[name];
+    if (found === undefined) return key.endsWith('?') ? [] : [`${at} is missing`];
+    if (typeof field !== 'string' && !isWords(field)) {
+      // A list of things of a shape: each checked in its place.
+      return Array.isArray(found)
+        ? found.flatMap((item, i) => problemsIn(item, field[0], `${at}[${i}]`))
+        : [`${at} is not a list`];
+    }
+    return fits(found, field) ? [] : [`${at} is not ${describe(field)}`];
+  });
+}
+
+/** Whether `value` is the kind of value, or one of the words, that `field` asks for. */
+function fits(value: unknown, field: Exclude<Field, [Shape]>): boolean {
+  if (field === 'string') return typeof value === 'string';
+  if (field === 'number') return typeof value === 'number';
+  if (field === 'count') return Number.isInteger(value) && (value as number) >= 1;
+  if (field === 'string or null') return value === null || typeof value === 'string';
+  return field.includes(value as string);
+}
+
+const describe = (field: Exclude<Field, [Shape]>): string =>
+  field === 'count'
+    ? 'a whole number of 1 or more'
+    : typeof field === 'string'
+    ? `a ${field}`
+    : `one of ${field.join(', ')}`;
+
+const COLLECTION_ENTRY: Shape = {
+  id: 'string',
+  label: 'string',
+  'kind?': ['species', 'series'],
+  'medium?': 'string',
+  emoji: 'string',
+  'icon?': 'string',
+  'accent?': 'string',
+  groupLabel: 'string',
+  itemLabel: 'string',
+  links: [{ label: 'string', url: 'string' }],
+};
+const LIST_ENTRY: Shape = {
+  id: 'string',
+  name: 'string',
+  'sci?': 'string',
+  'drawn?': 'string',
+  'illustratorNote?': 'string',
+  'images?': 'count',
+  'dhiv?': 'string',
+  'dhiv_script?': 'string',
+};
+const DRAWING: Shape = {
+  collection: 'string',
+  id: 'string',
+  name: 'string',
+  'dhivehi?': 'string',
+  'roman?': 'string',
+  drawn: 'string',
+};
+const STATS: Shape = {
+  drawn: 'number',
+  total: 'number',
+  collections: [{
+    id: 'string',
+    label: 'string',
+    total: 'number',
+    drawn: 'number',
+    groups: 'number',
+    named: 'number',
+    firstDrawn: 'string or null',
+    lastDrawn: 'string or null',
+  }],
+  newest: [DRAWING],
+};
+
+/** What is wrong with `collections.json`, as it was parsed; nothing when it has the shape. */
+export function checkCollections(file: unknown): string[] {
+  if (!Array.isArray(file)) return ['the file is not a list'];
+  return file.flatMap((entry, i) => problemsIn(entry, COLLECTION_ENTRY, `[${i}]`));
+}
+
+/** What is wrong with a `lists/<id>.json`: each group a list of items of the shape. */
+export function checkList(file: unknown): string[] {
+  if (!isRecord(file)) return ['the file is not an object'];
+  return Object.entries(file).flatMap(([group, entries]) =>
+    Array.isArray(entries)
+      ? entries.flatMap((entry, i) => problemsIn(entry, LIST_ENTRY, `${group}[${i}]`))
+      : [`${group} is not a list`]
+  );
+}
+
+/** What is wrong with `stats.json`; its first drawing may be null, while nothing is drawn. */
+export function checkStats(file: unknown): string[] {
+  const problems = problemsIn(file, STATS, 'stats');
+  if (!isRecord(file) || file.first === null) return problems;
+  return [...problems, ...problemsIn(file.first, DRAWING, 'stats.first')];
 }

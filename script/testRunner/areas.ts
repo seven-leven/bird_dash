@@ -109,7 +109,6 @@ export async function discoverSources(roots = ['src', 'script']): Promise<string
   const skip = (path: string) =>
     path.endsWith('_test.ts') || path.endsWith('.d.ts') ||
     path.startsWith('src/testing/') || path.startsWith('src/types/') ||
-    path === 'src/data/files.ts' || // types only: the shapes of the files in public/
     path === 'src/main.ts'; // only mounts App.vue into the page
   const files = [...await findFiles(roots, '*.ts'), ...await findFiles(roots, '*.vue')];
   return files.filter((path) => !skip(path)).sort();

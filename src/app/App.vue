@@ -2,9 +2,8 @@
 import { nextTick, onMounted, watch } from 'vue';
 
 import AppShell from './AppShell.vue';
-import EmptyState from '../ui/EmptyState.vue';
-import Icon from '../ui/Icon.vue';
-import RetryButton from '../ui/RetryButton.vue';
+import ErrorBoundary from '../ui/ErrorBoundary.vue';
+import FailureScreen from '../ui/FailureScreen.vue';
 import GallerySkeleton from '../gallery/GallerySkeleton.vue';
 import { useHashRoute } from './useHashRoute.ts';
 import { createThemeStore, provideThemeStore } from '../shell/themeStore.ts';
@@ -97,20 +96,17 @@ onMounted(async () => {
 </script>
 
 <template>
-  <AppShell v-if="isInitialized" />
+  <!-- Anything that throws below shows the failure screen, never a blank page. -->
+  <ErrorBoundary v-if="isInitialized" @retry="reloadPage">
+    <AppShell />
+  </ErrorBoundary>
 
-  <div
+  <FailureScreen
     v-else-if="initError"
-    class="flex flex-col items-center justify-center min-h-screen bg-stone-50 dark:bg-stone-950"
-    role="alert"
-  >
-    <EmptyState title="Couldn't load the gallery" :hint="initError">
-      <template #icon>
-        <Icon name="close" class="size-6" />
-      </template>
-      <RetryButton @retry="reloadPage()" />
-    </EmptyState>
-  </div>
+    title="Couldn't load the gallery"
+    :hint="initError"
+    @retry="reloadPage()"
+  />
 
   <!-- Loading: the page's own shape in grey (a header, then tiles), and no message
        on screen; screen readers are told what is happening. -->
