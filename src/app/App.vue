@@ -14,7 +14,7 @@ import { createViewStore, provideViewStore } from '../gallery/viewStore.ts';
 import { createSearchStore, provideSearchStore } from '../search/searchStore.ts';
 import { createViewerStore, provideViewerStore } from '../viewer/viewerStore.ts';
 import { createStatsStore, provideStatsStore } from '../about/statsStore.ts';
-import { createAppActions, provideActions } from './actions.ts';
+import { createActions, provideActions } from './actions.ts';
 import { PAGES } from './pages.ts';
 import { applyAccent } from '../browser/applyAccent.ts';
 import { reloadPage } from '../browser/reloadPage.ts';
@@ -54,7 +54,7 @@ provideStatsStore(stats);
 // (app/actions.ts). URL sync is handled by the route adapter below, so nothing
 // there pokes location.hash.
 // =============================================================================
-const actions = createAppActions({ search, layout, view, collections });
+const actions = createActions({ search, layout, view, collections });
 provideActions(actions);
 
 // =============================================================================

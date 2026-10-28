@@ -1,13 +1,27 @@
 import { computed, type ComputedRef, type Ref } from 'vue';
 import { normalizeQuery } from '../domain/normalizeQuery.ts';
-import type {
-  Collection,
-  Item,
-  ItemsByCollection,
-  MatchedField,
-  SearchResult,
-  SearchResultGroup,
-} from '../types/index.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
+import type { ItemsByCollection } from '../data/useCollectionLoader.ts';
+
+/** Why an item matched: the fields the query was found in. */
+export type MatchedField = 'id' | 'commonName' | 'scientificName' | 'group';
+
+/** One item a search found, with its collection and why. */
+export interface SearchResult {
+  item: Item;
+  collection: Collection;
+  matchedFields: MatchedField[];
+}
+
+/** A collection's results, and how many there are. */
+export interface SearchResultGroup {
+  collection: Collection;
+  results: SearchResult[];
+  count: number;
+}
+
+/** A group as the dropdown lists it: long ones folded, with how many are held back. */
+export type VisibleGroup = SearchResultGroup & { hidden: number };
 
 // ---------------------------------------------------------------------------
 // HELPERS

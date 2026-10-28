@@ -5,7 +5,7 @@ import { createViewStore } from './viewStore.ts';
 import { createLayoutStore } from '../shell/layoutStore.ts';
 import { mountComposable } from '../testing/mount.ts';
 import { at, makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 const drawn = makeItem({ drawnTime: at(2025, 1) });
 const undrawn = makeItem({ isDrawn: false });

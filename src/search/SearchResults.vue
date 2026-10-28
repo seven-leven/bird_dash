@@ -86,8 +86,8 @@ import CollectionIcon from '../ui/CollectionIcon.vue';
 import { tileImage } from '../domain/tileImage.ts';
 import { nameLines } from '../domain/itemNames.ts';
 import { useThemeStore } from '../shell/themeStore.ts';
-import type { Item, SearchResult } from '../types/index.ts';
-import type { VisibleGroup } from '../domain/collapseGroups.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
+import type { SearchResult, VisibleGroup } from './useSearchResults.ts';
 
 const { theme } = useThemeStore();
 

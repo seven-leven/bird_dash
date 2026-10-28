@@ -137,7 +137,7 @@
 <script setup lang="ts">
 import ViewerDetails from './ViewerDetails.vue';
 import Icon from '../ui/Icon.vue';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 import { useViewer, type ViewerProps } from './useViewer.ts';
 import { useSearchStore } from '../search/searchStore.ts';
 

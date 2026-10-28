@@ -46,21 +46,21 @@ Use the word in the first column; avoid the ones in the last.
 | **theme**              | Light or dark                                                                                | `useTheme`, `.dark`                           | mode, colour scheme                       |
 | **id badge**           | The small `#029` on a tile and in the viewer                                                 | `IdBadge.vue`                                 | number tag                                |
 | **mark**, **wordmark** | The logo's drawing; the words "Wildlife Illustrated" set beside it. Together, a **lockup**   | `LogoMark.vue`, `WORDMARK`                    | icon (for the mark), logo (for the words) |
-| **icon**               | One drawing from the registry in `src/lib/icons.ts`, drawn by `<Icon>`                       | `ICONS`, `Icon.vue`                           | glyph, symbol                             |
+| **icon**               | One drawing from the registry in `src/ui/icons.ts`, drawn by `<Icon>`                        | `ICONS`, `Icon.vue`                           | glyph, symbol                             |
 | **manifesto**          | The design rules, [DESIGN.md](DESIGN.md), and its five **principles** (P1–P5)                |                                               | style guide                               |
 | **docs site**          | These pages built in the site's design, at `/bird_dash/docs/`                                | `docs/.vitepress/`                            | wiki                                      |
 
 ## The code
 
-| Word                            | Means                                                                                                       | In the code                                    | Not                |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------------- | ------------------ |
-| **store**                       | One area of state, made once in `App.vue` and shared with `provide`/`inject`: read-only state and its verbs | `create…Store`, `use…`                         | context, service   |
-| **action**                      | A verb that changes more than one store                                                                     | `src/stores/actions.ts`                        | handler            |
-| **composable**                  | A `use…` function that builds reactive state or behaviour                                                   | `src/composables/`                             | hook, mixin        |
-| **derived**                     | Computed from other state, never stored                                                                     | `computed`                                     | cached             |
-| **layer**, **feature**          | The planned layout of `src/`: shared layers (`domain/`, `data/`, `browser/`, `ui/`) under feature folders   | [plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md) | module (too vague) |
-| **command**                     | A script run as `npm run <word>`; one job each ([SCRIPTS.md](SCRIPTS.md))                                   | `script/<command>/`                            | task, tool         |
-| **plan**, **apply**, **report** | A command's three parts: decide (pure), do, say                                                             | `planChanges`, `applyChanges`                  |                    |
+| Word                            | Means                                                                                                       | In the code                        | Not                |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------ |
+| **store**                       | One area of state, made once in `App.vue` and shared with `provide`/`inject`: read-only state and its verbs | `create…Store`, `use…`             | context, service   |
+| **action**                      | A verb that changes more than one store                                                                     | `src/app/actions.ts`               | handler            |
+| **composable**                  | A `use…` function that builds reactive state or behaviour, in the feature (or layer) that uses it           | `use…`                             | hook, mixin        |
+| **derived**                     | Computed from other state, never stored                                                                     | `computed`                         | cached             |
+| **layer**, **feature**          | The layout of `src/`: shared layers (`domain/`, `data/`, `browser/`, `ui/`) under feature folders           | [ARCHITECTURE.md](ARCHITECTURE.md) | module (too vague) |
+| **command**                     | A script run as `npm run <word>`; one job each ([SCRIPTS.md](SCRIPTS.md))                                   | `script/<command>/`                | task, tool         |
+| **plan**, **apply**, **report** | A command's three parts: decide (pure), do, say                                                             | `planChanges`, `applyChanges`      |                    |
 
 ## Building and releasing
 

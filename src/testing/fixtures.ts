@@ -1,4 +1,4 @@
-import type { Collection, Item } from '../types/index.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
 import { buildNames, nameWords } from '../domain/itemNames.ts';
 
 let counter = 0;

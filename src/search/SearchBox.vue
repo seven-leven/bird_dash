@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
-import type { SearchResult } from '../types/index.ts';
+import type { SearchResult } from './useSearchResults.ts';
 import { matches } from '../domain/countWords.ts';
 
 import { useResultKeys } from './useResultKeys.ts';

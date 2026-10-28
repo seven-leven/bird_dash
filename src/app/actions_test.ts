@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
-import { createAppActions } from './actions.ts';
+import { createActions } from './actions.ts';
 
 // A stand-in collections store: `switch` makes the collection active and resolves
 // either at once (cached) or when the test releases it (still loading).
@@ -11,7 +11,7 @@ function setup(known: string[]) {
   const active = ref<{ id: string } | undefined>({ id: known[0] });
   const pending = new Map<string, () => void>();
 
-  const actions = createAppActions({
+  const actions = createActions({
     search: { clear: () => calls.push('clear'), setDropdown: () => {} },
     layout: {
       scrollToTop: () => calls.push('scrollToTop'),

@@ -4,7 +4,7 @@ import { computed, ref, watch } from 'vue';
 import { useDialogKeys } from './useDialogKeys.ts';
 import { useDrawingNav } from './useDrawingNav.ts';
 import { useZoomPan } from './useZoomPan.ts';
-import type { Collection, Item } from '../types/index.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
 
 /** The viewer component's props, typed once: Viewer.vue declares them with this. */
 export interface ViewerProps {

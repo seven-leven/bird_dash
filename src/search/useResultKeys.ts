@@ -1,5 +1,5 @@
 import { computed, ref } from 'vue';
-import type { SearchResultGroup } from '../types/index.ts';
+import type { SearchResultGroup } from './useSearchResults.ts';
 
 export function useResultKeys(
   results: () => SearchResultGroup[],

@@ -11,7 +11,7 @@ import { createViewStore } from '../gallery/viewStore.ts';
 import { createSearchStore } from '../search/searchStore.ts';
 import { createViewerStore } from '../viewer/viewerStore.ts';
 import { createStatsStore } from '../about/statsStore.ts';
-import { createAppActions } from '../app/actions.ts';
+import { createActions } from '../app/actions.ts';
 import { PAGES } from '../app/pages.ts';
 import { runInScope } from './mount.ts';
 
@@ -34,7 +34,7 @@ export function appStores() {
     });
     const viewer = createViewerStore({ drawnItems: view.drawnItems });
     const stats = createStatsStore();
-    const actions = createAppActions({ search, layout, view, collections });
+    const actions = createActions({ search, layout, view, collections });
     return { theme, layout, collections, view, search, viewer, stats, actions };
   }).value;
 }

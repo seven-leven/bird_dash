@@ -4,7 +4,7 @@ import { assert, assertEquals } from '@std/assert';
 import { computed, h, nextTick, ref } from 'vue';
 import CollectionMenu from './CollectionMenu.vue';
 import { makeCollection } from '../testing/fixtures.ts';
-import type { Page } from '../types/index.ts';
+import type { Page } from './layoutStore.ts';
 import { mountComponent } from '../testing/mount.ts';
 
 /** Mount the menu over three collections, Birds current; record what it switches to. */

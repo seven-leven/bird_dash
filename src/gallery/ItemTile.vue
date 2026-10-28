@@ -66,7 +66,7 @@ import { computed, ref } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
 import { tileImage } from '../domain/tileImage.ts';
 import { nameLines } from '../domain/itemNames.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 const props = withDefaults(
   defineProps<{

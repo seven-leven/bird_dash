@@ -4,7 +4,7 @@ import { h, ref } from 'vue';
 import AppFooter from './AppFooter.vue';
 import { PAGES } from '../app/pages.ts';
 import { buildInfo } from '../app/buildInfo.ts';
-import type { Page } from '../types/index.ts';
+import type { Page } from './layoutStore.ts';
 import { mountComponent } from '../testing/mount.ts';
 
 function mount(page: Page) {

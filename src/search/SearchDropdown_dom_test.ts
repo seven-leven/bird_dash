@@ -4,8 +4,7 @@ import { h, reactive } from 'vue';
 import SearchDropdown from './SearchDropdown.vue';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
 import { mountComponent } from '../testing/mount.ts';
-import type { VisibleGroup } from '../domain/collapseGroups.ts';
-import type { SearchResult } from '../types/index.ts';
+import type { SearchResult, VisibleGroup } from './useSearchResults.ts';
 
 const birds = makeCollection('birds', { label: 'Birds' });
 const mallard = makeItem({ itemId: '001', commonName: 'Mallard', drawnTime: at(2025, 1, 10) });

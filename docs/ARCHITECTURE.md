@@ -23,7 +23,8 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
                 │   the contract: fetched at runtime, never imported by src/
                 ▼
 ┌─ 2. The site (src/) ────────────────────────────────────────┐
-│ types ← lib ← composables ← stores ← components ← App.vue   │
+│ app/  →  gallery/ viewer/ search/ about/ shell/             │
+│      →  ui/  browser/  data/  →  domain/                    │
 └─────────────────────────────────────────────────────────────┘
 
 ┌─ 3. Test harness and CI (script/testRunner/, .github/) ────┐
@@ -38,7 +39,7 @@ raw_png/ (not in git)              script/version/base_version.json + git histor
    everything else from them. There is no server and no database.
 3. **The harness** runs the tests and gates every merge and deploy.
 
-The shape of the `public/` files is typed once, in [`src/types/data.ts`](../src/types/data.ts), and
+The shape of the `public/` files is typed once, in [`src/data/files.ts`](../src/data/files.ts), and
 used by all three.
 
 ## Where things are
@@ -75,7 +76,6 @@ src/
   domain/               The archive's rules, pure: items and collections, names, counts and their
                         wording, dates, the project's links (the scripts use some of it too)
   journeys/             Whole visits through the real app (TESTING.md, the journey tier)
-  types/                Types still shared from one place, until the site overhaul's phase 8
   styles/               main.css (Tailwind's setup and the imports), tokens.css and accents.css
                         (shared with the docs site), base.css, components.css, utilities.css, fonts/
   testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
@@ -200,8 +200,10 @@ only through `Io`.
 
 ## Rules for the site's code
 
-The site overhaul ([plans/SRC-OVERHAUL.md](plans/SRC-OVERHAUL.md)) moved the code to these rules
-(phases 1 to 5); phases 6 to 8 finish `app/`, the styles and the checks that keep them. The words
+The code follows these rules, and two contract tests keep it so:
+[`layers_contract_test.ts`](../src/app/layers_contract_test.ts) (rules 1, 2 and 6) and
+[`naming_contract_test.ts`](../src/app/naming_contract_test.ts) (the naming a machine can check);
+[`pureDomain_contract_test.ts`](../src/domain/pureDomain_contract_test.ts) keeps rule 3. The words
 are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md](DECISIONS.md)
 ("Folders by feature", "One word per idea").
 
@@ -211,7 +213,9 @@ are in [GLOSSARY.md](GLOSSARY.md); the choices behind them are in [DECISIONS.md]
    holds its components, its composables and its store. Code two features share moves down a layer,
    never sideways into one of them.
 2. **Layers point one way.** `app/` → features → `ui/`, `browser/`, `data/` → `domain/`. A layer
-   imports only from the layers below it. A contract test checks the imports.
+   imports only from the layers below it, and a feature not from another: it may inject another's
+   store (or the app's actions), which `App.vue` makes and provides, but whatever a feature shows of
+   another's (the search box in the top bar, the footer after a page) the app places, by a slot.
 3. **`domain/` is pure.** Plain TypeScript: no Vue, no `document`, no `fetch`, no clock. The rules
    of the archive (names, counts, wording, groups, dates) live here and are tested hardest.
 4. **One door to the outside.** Only `data/` fetches; only `browser/` (and components) touch

@@ -205,10 +205,15 @@ every file moves.
       the speeds, the tile grid and the scrollbar; `tokens.css` and `accents.css` as they were.
       Folded: `.skeleton` and `.link`. The guide reads the speeds from `utilities.css`. Gone: the
       unused `shimmer` animation.
-- [ ] **8. Close.** The import-direction test covers every layer; a naming test (file name matches
-      its main export; no banned word in a composable's name; no function defined twice under one
-      name); the layout diagram in ARCHITECTURE.md redrawn; `types/` gone; this page deleted. _Done
-      when_ ARCHITECTURE.md describes the code as it is.
+- [x] **8. Close** (2026-10-28). `layers_contract_test.ts` checks every layer's imports (a feature
+      may inject another's store or the app's actions, nothing else of it);
+      `naming_contract_test.ts` checks that a file is named after what it makes (so `noteLinks.ts`
+      is `noteSegments.ts`, and `createAppActions` is `createActions`), that no composable is called
+      Logic, Data, Manager or Helper, and that no function is defined twice. `types/` is gone: each
+      type lives with the module that makes it (`View` in `domain/viewName.ts`, the search's in
+      `useSearchResults.ts`, the gallery's in `useCollectionView.ts`), and `collapseGroups` folds
+      any group, so `domain/` needs none of them. The layout diagram in ARCHITECTURE.md is redrawn.
+      This page goes once the features below are in.
 
 ## Features that ride along
 

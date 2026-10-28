@@ -1,7 +1,7 @@
 // useDrawingNav.ts — moving between drawings: where the open one sits, and the ones beside it.
 import { computed } from 'vue';
 import { ratio } from '../domain/countWords.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 /**
  * The open drawing's place in the order the viewer pages through, and the moves to the

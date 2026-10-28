@@ -3,7 +3,7 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { h, nextTick, ref } from 'vue';
 import ViewerDetails from './ViewerDetails.vue';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 import { settle } from '../testing/settle.ts';
 import { mountComponent } from '../testing/mount.ts';
 

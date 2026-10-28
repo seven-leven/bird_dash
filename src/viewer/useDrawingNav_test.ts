@@ -3,7 +3,7 @@ import { assertEquals } from '@std/assert';
 import { ref } from 'vue';
 import { useDrawingNav } from './useDrawingNav.ts';
 import { makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 
 const items = ['001', '002', '003'].map((itemId) => makeItem({ itemId }));
 

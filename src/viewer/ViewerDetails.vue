@@ -136,10 +136,10 @@
 import ExternalLink from '../ui/ExternalLink.vue';
 import { computed, ref, watch } from 'vue';
 import IdBadge from '../ui/IdBadge.vue';
-import { noteSegments } from '../domain/noteLinks.ts';
+import { noteSegments } from '../domain/noteSegments.ts';
 import ViewerShare from './ViewerShare.vue';
 import { monthName } from '../domain/dates.ts';
-import type { Item, Collection } from '../types/index.ts';
+import type { Collection, Item } from '../domain/toCollectionItems.ts';
 
 const props = defineProps<{
   item:       Item;

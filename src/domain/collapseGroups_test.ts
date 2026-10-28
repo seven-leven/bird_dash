@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { COLLAPSE_AT, COLLAPSED_SIZE, collapseGroups } from './collapseGroups.ts';
 import { makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { SearchResultGroup } from '../types/index.ts';
+import type { SearchResultGroup } from '../search/useSearchResults.ts';
 
 function group(id: string, n: number): SearchResultGroup {
   const collection = makeCollection(id);

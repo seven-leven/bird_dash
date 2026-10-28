@@ -1,5 +1,4 @@
 import { onScopeDispose, type Ref, ref } from 'vue';
-import type { UseScrollLogicReturn } from '../types/index.ts';
 import { scrollBehavior } from '../browser/scrollBehavior.ts';
 
 export function useScrollSpy(
@@ -8,7 +7,7 @@ export function useScrollSpy(
   // On mobile, jumping to a section closes the sidebar. Passed as explicit deps
   // so this stays decoupled from the ui store's shape.
   opts: { isNarrow: Readonly<Ref<boolean>>; closeSidebar: () => void },
-): UseScrollLogicReturn {
+) {
   const activeSection = ref<string>('');
 
   // The active section is the last group header that has scrolled above a line

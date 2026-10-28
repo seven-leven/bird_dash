@@ -1,7 +1,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { ref } from 'vue';
-import { createAppActions } from './actions.ts';
+import { createActions } from './actions.ts';
 import { at, makeItem } from '../testing/fixtures.ts';
 
 const drawn = makeItem({ itemId: '042', drawnTime: at(2025, 3, 10) });
@@ -11,7 +11,7 @@ const undrawn = makeItem({ itemId: '042', isDrawn: false });
 function setup(active: string) {
   const calls: string[] = [];
   const current = ref<{ id: string } | undefined>({ id: active });
-  const actions = createAppActions({
+  const actions = createActions({
     search: {
       clear: () => calls.push('clear'),
       setDropdown: (open: boolean) => calls.push(`dropdown:${open}`),

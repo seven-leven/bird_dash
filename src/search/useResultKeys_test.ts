@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useResultKeys } from './useResultKeys.ts';
 import { makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { SearchResultGroup } from '../types/index.ts';
+import type { SearchResultGroup } from './useSearchResults.ts';
 
 const birds = makeCollection('birds');
 const shells = makeCollection('shells');

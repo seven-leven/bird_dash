@@ -3,7 +3,7 @@ import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive } from 'vue';
 import { useViewer } from './useViewer.ts';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
-import type { Item } from '../types/index.ts';
+import type { Item } from '../domain/toCollectionItems.ts';
 import { mountComposable, runInScope } from '../testing/mount.ts';
 
 const items = [
