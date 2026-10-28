@@ -70,6 +70,11 @@ test('while searching, a bar above the grid says what filters it, and clears it'
   await settle();
   assertEquals(bar()!.getAttribute('aria-label'), 'Clear filter grey');
   assertEquals(bar()!.textContent!.replace(/\s+/g, ' ').trim(), '1 match, 1 drawn for “grey”');
+  // While the results are open over it, it keeps its place unseen: one ✕ at a time.
+  assert(bar()!.parentElement!.classList.contains('invisible'));
+  stores.search.setDropdown(false);
+  await settle();
+  assert(!bar()!.parentElement!.classList.contains('invisible'));
   // In the month view it counts drawings alone.
   stores.view.setViewMode('month');
   await settle();

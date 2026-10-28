@@ -42,8 +42,8 @@ test('below 420px the search is a button that opens the box across the row', asy
   using app = await renderApp({ width: PHONE });
   app.control('Search all collections').click();
   await app.until(() => document.activeElement === searchBox(), 'the box, focused');
-  app.control('Close search').click();
-  await app.until(() => app.all('[aria-label="Close search"]').length === 0, 'the box to close');
+  app.control('Done searching').click();
+  await app.until(() => app.all('[aria-label="Done searching"]').length === 0, 'the box to close');
 });
 
 test('leaving an empty search closes it; one with a query stays, as the filter it is', async () => {
@@ -51,12 +51,12 @@ test('leaving an empty search closes it; one with a query stays, as the filter i
   app.control('Search all collections').click();
   await app.until(() => document.activeElement === searchBox(), 'the box, focused');
   searchBox().dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
-  await app.until(() => app.all('[aria-label="Close search"]').length === 0, 'the box to close');
+  await app.until(() => app.all('[aria-label="Done searching"]').length === 0, 'the box to close');
 
   app.control('Search all collections').click();
   await app.until(() => document.activeElement === searchBox(), 'the box again');
   type(searchBox(), 'grey');
   searchBox().dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
   await app.until(() => app.all('[aria-label^="Clear filter"]').length, 'the filter');
-  assertEquals(app.all('[aria-label="Close search"]').length, 1);
+  assertEquals(app.all('[aria-label="Done searching"]').length, 1);
 });

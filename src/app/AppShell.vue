@@ -30,9 +30,11 @@
       <main class="relative flex flex-1 flex-col overflow-hidden">
 
         <!-- Active search filter. The section in view is named by its own sticky
-             heading (Gallery), so this bar only appears while searching. -->
+             heading (Gallery), so this bar only appears while searching. While the results
+             are open over it, it keeps its place but is not drawn: their ✕ is the search's. -->
         <div
           v-if="page === 'gallery' && !loadState.loading && !loadState.error && query"
+          :class="dropdownOpen && 'invisible'"
           class="shrink-0 flex items-center gap-3 px-6 py-1.5 border-b text-xs font-medium tracking-wide transition-colors
                  bg-white/95 border-slate-100 text-slate-500
                  dark:bg-slate-950/95 dark:border-slate-800/60 dark:text-slate-400"
@@ -106,7 +108,7 @@ const Viewer = defineAsyncComponent(() => import('../viewer/Viewer.vue'));
 
 const { collections, loadState, activeCollection } = useCollectionsStore();
 const { counts, viewMode, setViewMode, goToSection, updateActiveSection } = useViewStore();
-const { query, clear } = useSearchStore();
+const { query, dropdownOpen, clear } = useSearchStore();
 // The scroll container is handed to the layout store (for the scroll-spy) as a function ref.
 const { isNarrow, sidebarOpen, page, currentPage, bindScrollEl, closeSidebar, scrollToTop } =
   useLayoutStore();

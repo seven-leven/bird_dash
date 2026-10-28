@@ -66,7 +66,7 @@ test('on a phone the search opens across the row; leaving it empty closes it, a 
       }),
     { stores: appStores() },
   );
-  const closeButton = () => host.querySelector('button[aria-label="Close search"]');
+  const closeButton = () => host.querySelector('button[aria-label="Done searching"]');
   host.querySelector<HTMLButtonElement>('button[aria-label="Search all collections"]')!.click();
   await settle();
   const box = host.querySelector<HTMLInputElement>('#box')!;

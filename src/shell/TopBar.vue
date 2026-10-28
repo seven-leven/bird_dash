@@ -90,13 +90,15 @@
     >
       <slot name="search" />
     </div>
+    <!-- A word, not a second ✕ beside the box's own: it closes the row and keeps the query as
+         the grid's filter, where the box's ✕ empties it. -->
     <button
       v-if="searchOpen"
-      class="btn-ghost focus-ring min-[420px]:hidden flex items-center justify-center size-9 shrink-0"
-      aria-label="Close search"
+      class="btn-ghost focus-ring min-[420px]:hidden flex items-center justify-center h-9 px-2 shrink-0 text-sm font-medium"
+      aria-label="Done searching"
       @click="searchOpen = false"
     >
-      <Icon name="close" class="size-4" />
+      Done
     </button>
 
     <!-- The gallery's view switch, placed here by the app; only the gallery has views. -->

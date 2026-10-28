@@ -498,8 +498,10 @@ current collection is always named:
 2. **The logo goes.** Below 640px the row keeps the collection's name over the logo mark, because
    orientation matters most.
 3. **Search folds into a button.** Below 420px an inline field would be too narrow to type in, so
-   search is a button; opened, it takes the whole row, with a close button, until closed or left
-   empty.
+   search is a button; opened, it takes the whole row, with **Done** beside it, until done or left
+   empty. Done is a word, not a second ✕: the box's ✕ empties the query, Done keeps it as the grid's
+   filter. The filter's own bar stays unseen while the results are open over it, so one ✕ shows at a
+   time.
 
 The view switch and the theme toggle never give way: they are icons, 36px each.
 
