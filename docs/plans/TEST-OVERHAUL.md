@@ -232,9 +232,23 @@ Production code changes only where a test cannot reach it otherwise, and says so
       per composable; `testRunner_test.ts` by concern; the 116 `functionName:` titles rewritten as
       sentences; the 18 local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer`
       onto the kit's events; the arbitraries named `any…`; the contracts not tied to a file renamed
-      for what they guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`). _Done
-      when_ no test file is over about 300 lines and every title and file name follows the
-      conventions.
+      for what they guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`).
+
+      **One table of tiers.** What a tier is lives in four places that must agree: the
+      descriptions in `tiers.ts`, the name checks in `tierOf`, the Vitest projects in
+      `vite.config.ts` (whose include and exclude lists repeat the suffixes) and the setup file.
+      The tier axis also mixes two things: where a test runs (`dom`, `journey`: the fake browser)
+      and how it checks (`unit`, `prop`, `contract`: all plain Node). So one table, as data, not
+      classes: the environments are the base (`node`, `dom`, and `browser` in phase 7), each with
+      its Vitest environment, setup file and timeout; each tier is one of them plus its suffix and
+      what is its own (`prop`: the run count; `contract`: the real files; `journey`: `renderApp`).
+      `tierOf`, the projects and the docs' table are worked out from it, so phase 7's tier is one
+      row. Not finer tiers (components apart from composables): the folder already says that. The
+      report gains a grid, areas down and tiers across, with counts, so a gap shows (an area with
+      no property tests, one tested only by journeys).
+
+      _Done when_ no test file is over about 300 lines, every title and file name follows the
+      conventions, and a tier is defined in one place.
 - [ ] **6. The promise map.** Each journey names its promises (`// Keeps: P2, P3`); a contract test
       checks the list in TESTING.md against them. _Done when_ every promise is kept by a test.
 - [ ] **7. A real browser.** Playwright, pinned, on the built `dist/`, as a CI job that does not

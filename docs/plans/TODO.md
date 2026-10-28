@@ -17,7 +17,10 @@ folder, and the item here points to it.
       mounting and waiting. Phases 1–3 (the kit, one way to a browser, the journeys) come first:
       they are the safety net for everything below; phase 4 (a test beside every component) is done
       too (2026-10-28). Next: phase 5, splitting the long test files and renaming to the
-      conventions. Also moves the test runner onto `Io`, the scripts overhaul's one exception.
+      conventions, with **one table of tiers**: the environments (`node`, `dom`, later `browser`) as
+      the base, each tier one of them plus what is its own, and the runner, `tierOf` and Vite's
+      projects worked out from it; the report gains an area × tier grid. Also moves the test runner
+      onto `Io`, the scripts overhaul's one exception.
 - [ ] **2. Use the platform** ([PLATFORM.md](PLATFORM.md)). Done but for what needs the test
       overhaul's real browser (popovers, axe) and offline (once images are versioned).
 
