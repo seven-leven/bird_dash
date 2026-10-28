@@ -1,5 +1,5 @@
 import { test } from 'vitest';
-import { readFile } from 'node:fs/promises';
+import { glob, readFile } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import { contrast, SLATE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
 
@@ -74,4 +74,21 @@ test('a colour the palette lacks is reported, not guessed', () => {
     message = (e as Error).message;
   }
   assertEquals(message, 'DESIGN.md names a colour the palette does not have: amber-500');
+});
+
+test('the site sets text in the five sizes DESIGN.md lists, and no other', async () => {
+  const listed = (await table('| Token ')).map((row) => row[0]);
+  assertEquals(listed.length, 5);
+  const used = new Set<string>();
+  for await (const path of glob('src/**/*.{vue,css}')) {
+    const source = await readFile(path, 'utf8');
+    for (
+      const [size] of source.matchAll(
+        /\btext-(?:xs|sm|base|lg|[0-9]?xl|micro|\[[^\]]+\])(?=[\s"'`;]|$)/g,
+      )
+    ) {
+      used.add(size);
+    }
+  }
+  assertEquals([...used].filter((size) => !listed.includes(size)), []);
 });

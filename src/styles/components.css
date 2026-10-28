@@ -63,7 +63,7 @@
 
   /* Small count pill (search results, group totals). */
   .count-pill {
-    @apply rounded-full px-1.5 py-0.5 text-micro font-semibold tabular-nums
+    @apply rounded-full px-1.5 py-0.5 text-xs font-semibold tabular-nums
       bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300;
   }
 
@@ -111,7 +111,7 @@
 
   /* Micro label: uppercase section/meta headings. Color set at point of use. */
   .caps-label {
-    @apply text-micro font-semibold uppercase tracking-widest;
+    @apply text-xs font-semibold uppercase tracking-widest;
   }
 
   /* A small icon sitting before a label or a figure. */
@@ -124,7 +124,7 @@
 
   /* Keyboard hint chip. */
   .kbd-hint {
-    @apply rounded-control border px-1.5 py-0.5 font-mono text-micro
+    @apply rounded-control border px-1.5 py-0.5 font-mono text-xs
       bg-slate-50 border-slate-200 text-slate-600
       dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300;
   }

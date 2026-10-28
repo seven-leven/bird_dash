@@ -8,7 +8,7 @@
         <Icon v-if="hint.icon" :name="hint.icon" class="size-3" aria-hidden="true" />
         <template v-else>{{ hint.text }}</template>
       </kbd>
-      <span class="text-micro text-muted mr-1">{{ hint.label }}</span>
+      <span class="text-xs text-muted mr-1">{{ hint.label }}</span>
     </template>
   </div>
 </template>

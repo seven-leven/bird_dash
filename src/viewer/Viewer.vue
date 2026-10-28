@@ -31,7 +31,7 @@
             <button @click="resetZoom" class="icon-btn-overlay" aria-label="Reset zoom">
               <Icon name="reset" class="size-4" />
             </button>
-            <span class="ml-2 text-micro font-mono text-muted tabular-nums">{{ Math.round(scale * 100) }}%</span>
+            <span class="ml-2 text-xs font-mono text-muted tabular-nums">{{ Math.round(scale * 100) }}%</span>
           </div>
 
           <!-- Position in the timeline -->

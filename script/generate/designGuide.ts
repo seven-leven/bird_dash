@@ -336,8 +336,7 @@ export async function designGuide(
     ['text-xl', 20, 600, 'Lesser Whistling-Duck', 'English title, with no Dhivehi name'],
     ['text-base', 16, 600, 'Ducks, Geese, and Swans', 'Section headings, sidebar title'],
     ['text-sm', 14, 500, 'Search all collections…', 'Controls, body text, tile titles'],
-    ['text-xs', 12, 400, '4 of 8 drawn · Dendrocygna javanica', 'Counts, secondary lines'],
-    ['text-micro', 11, 600, 'FROM THE ILLUSTRATOR   #001', 'Labels, badges, key hints'],
+    ['text-xs', 12, 400, '4 of 8 drawn · FROM THE ILLUSTRATOR', 'Counts, labels, badges, keys'],
   ];
   let ty = hero + 176;
   for (const [token, px, weight, sample, use] of sizes) {

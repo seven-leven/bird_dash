@@ -35,7 +35,7 @@
         :aria-label="drawn ? props.item.commonName : `${props.item.commonName} (not drawn yet)`"
         class="absolute inset-0 flex items-center justify-center text-slate-400 dark:text-slate-600"
       >
-        <CollectionIcon :collection="collection" class="size-[56%] stroke-[1.5] text-7xl" />
+        <CollectionIcon :collection="collection" class="size-[56%] stroke-[1.5] text-3xl" />
       </div>
 
       <!-- The one thing allowed on the image -->

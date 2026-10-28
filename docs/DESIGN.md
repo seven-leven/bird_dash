@@ -160,16 +160,16 @@ font list but only covers Thaana, so Dhivehi is set in it wherever it appears, e
 search; everything else falls through to the sans-serif. Mark a Dhivehi name with `.font-dhivehi`
 and `dir="rtl"`. That class also sets a line height of 1.85: Faruma's vowel marks reach half an em
 below the baseline, and a tighter line, or a truncated one, cuts them off, so never add `leading-*`
-to Dhivehi. The type scale has six sizes; do not add another or write pixel sizes by hand.
+to Dhivehi. The type scale has five sizes; do not add another or write pixel sizes by hand. A test
+fails on any other.
 
-| Token        | Size | Purpose                                                    |
-| ------------ | ---- | ---------------------------------------------------------- |
-| `text-3xl`   | 30px | Dhivehi title in the viewer                                |
-| `text-xl`    | 20px | English title in the viewer, when no Dhivehi name heads it |
-| `text-base`  | 16px | Section headings, sidebar title, Dhivehi names             |
-| `text-sm`    | 14px | Controls, body text, English names on tiles                |
-| `text-xs`    | 12px | Counts and secondary lines                                 |
-| `text-micro` | 11px | `.caps-label`, `.count-pill`, keyboard hints               |
+| Token       | Size | Purpose                                                     |
+| ----------- | ---- | ----------------------------------------------------------- |
+| `text-3xl`  | 30px | Dhivehi title in the viewer                                 |
+| `text-xl`   | 20px | English title in the viewer, when no Dhivehi name heads it  |
+| `text-base` | 16px | Section headings, sidebar title, Dhivehi names              |
+| `text-sm`   | 14px | Controls, body text, English names on tiles                 |
+| `text-xs`   | 12px | Counts, secondary lines, `.caps-label`, `.count-pill`, keys |
 
 Weight carries hierarchy: `font-semibold` for titles and headings, `font-medium` for controls, and
 regular weight for everything else. Use `tabular-nums` for changing or aligned numbers such as
@@ -572,7 +572,7 @@ A short review of whether a change still belongs to the same design.
 
 ### One way to do each thing
 
-- [ ] Does it use the slate and accent tokens, the six type sizes, 4px spacing and the three corner
+- [ ] Does it use the slate and accent tokens, the five type sizes, 4px spacing and the three corner
       treatments?
 - [ ] Does it use the shared classes and components, with sentence-case wording?
 - [ ] If a token or an icon changed, was `npm run generate` run?

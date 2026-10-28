@@ -25,7 +25,7 @@
   everywhere.
     radius   rounded-control (buttons, inputs, badges) · rounded-card (tiles,
              panels, menus) · rounded-full (pills, progress)
-    type     Tailwind's scale, plus text-micro for labels, badges and hints
+    type     five of Tailwind's sizes: text-xs, -sm, -base, -xl, -3xl (docs/DESIGN.md §02)
     motion   duration-fast (hover, colour) · duration-slow (things that move)
     text     .text-strong · .text-body · .text-muted (components.css), in both themes
 */
@@ -36,9 +36,6 @@
   --shadow-lift: var(--wi-shadow-lift);
   --radius-control: var(--wi-radius-control);
   --radius-card: var(--wi-radius-card);
-
-  --text-micro: 0.6875rem;
-  --text-micro--line-height: 1rem;
 }
 
 /*

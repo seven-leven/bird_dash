@@ -66,7 +66,7 @@
       </div>
       <span
         v-if="!result.item.isDrawn"
-        class="shrink-0 text-micro text-muted whitespace-nowrap"
+        class="shrink-0 text-xs text-muted whitespace-nowrap"
       >Not drawn yet</span>
       <IdBadge class="shrink-0">
         <span v-html="highlight(`#${result.item.itemId}`)" />

@@ -40,7 +40,7 @@
           <button
             v-if="query"
             @click="clear()"
-            class="focus-ring ml-auto flex items-center gap-1.5 rounded-full py-0.5 pl-2.5 pr-1.5 text-micro font-medium
+            class="focus-ring ml-auto flex items-center gap-1.5 rounded-full py-0.5 pl-2.5 pr-1.5 text-xs font-medium
                    bg-accent-50 text-accent-700 hover:bg-accent-100
                    dark:bg-accent-950/60 dark:text-accent-300 dark:hover:bg-accent-900/60
                    transition-colors duration-fast"
