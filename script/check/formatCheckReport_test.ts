@@ -10,6 +10,7 @@ const text = (lines: { text: string }[]) => lines.map((line) => line.text).join(
 test('the asset report lists each problem by kind, as a problem, and notes missing source art', () => {
   const scan = {
     drawnIds: new Set(['001', '002']),
+    extraIds: new Set<string>(),
     sourceIds: new Set(['003']),
     fullIds: new Set(['001', '777']),
     thumbIds: new Set(['888']),
@@ -32,7 +33,14 @@ test('the asset report lists each problem by kind, as a problem, and notes missi
 
 test('a clean collection gets a tick, and one problem is "1 issue"', () => {
   const ids = new Set(['001']);
-  const clean = { drawnIds: ids, sourceIds: ids, fullIds: ids, thumbIds: ids, smallIds: ids };
+  const clean = {
+    drawnIds: ids,
+    extraIds: new Set<string>(),
+    sourceIds: ids,
+    fullIds: ids,
+    thumbIds: ids,
+    smallIds: ids,
+  };
   const lines = formatAssetReport(
     [{ collection: birds, scan: clean, plan: planChanges(clean) }],
     'v',

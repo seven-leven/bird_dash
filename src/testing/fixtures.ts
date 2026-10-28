@@ -55,6 +55,7 @@ export function makeItem(overrides: Partial<Item> = {}): Item {
     scientificName,
     names,
     group,
+    imageIds: overrides.imageIds ?? [itemId],
     imageUrl: overrides.imageUrl ?? `/thumb/${itemId}.webp`,
     smallImageUrl: overrides.smallImageUrl ?? `/small/${itemId}.webp`,
     isDrawn,

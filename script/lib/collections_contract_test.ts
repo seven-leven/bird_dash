@@ -116,6 +116,9 @@ for (const col of COLLECTIONS) {
         seen.add(item.id);
 
         if (!item.name?.trim()) problems.push(`${where}: missing name`);
+        if (item.images !== undefined && !(Number.isInteger(item.images) && item.images >= 1)) {
+          problems.push(`${where}: images must be a whole number, 1 or more`);
+        }
 
         // '' means "not drawn yet"; anything else must be a real YYYY-MM-DD date.
         const drawn = item.drawn ?? '';

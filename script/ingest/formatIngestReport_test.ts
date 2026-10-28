@@ -24,6 +24,7 @@ test('a step lines up its collection, its verb and what it is about', () => {
 test('missing source art is a warning only for an item that still needs its images', () => {
   const plan = planChanges({
     drawnIds: set('001', '002'),
+    extraIds: new Set<string>(),
     sourceIds: set(),
     fullIds: set('001', '777'), // 002 has no images; 777 has no item
     thumbIds: set('001', '888'),
@@ -39,6 +40,7 @@ test('missing source art is a warning only for an item that still needs its imag
 test('a dry run lists what it would register, make and repair, or that there is nothing to do', () => {
   const busy = planChanges({
     drawnIds: set('001', '002'),
+    extraIds: new Set<string>(),
     sourceIds: set('001', '002', '003'),
     fullIds: set('001'),
     thumbIds: set(),
@@ -50,6 +52,7 @@ test('a dry run lists what it would register, make and repair, or that there is 
 
   const idle = planChanges({
     drawnIds: set(),
+    extraIds: new Set<string>(),
     sourceIds: set(),
     fullIds: set(),
     thumbIds: set(),
@@ -89,4 +92,19 @@ test('two failures in a collection are counted as errors', () => {
     0,
   );
   assert(text(lines).includes('✗ 2 errors'));
+});
+
+test("an item's other images: a dry run would make them; uncounted source art is a warning", () => {
+  const plan = planChanges({
+    drawnIds: set('001'),
+    extraIds: set('001-2'),
+    sourceIds: set('001', '001-3'),
+    fullIds: set('001'),
+    thumbIds: set('001'),
+    smallIds: set('001'),
+  });
+  assert(text(formatDryRun(birds, plan)).includes('would make      001-2'));
+  const warnings = text(formatWarnings(birds, plan));
+  assert(warnings.includes('source art for an image the list does not count  001-3'));
+  assert(warnings.includes('its source art is missing; cannot make  001-2'));
 });

@@ -2,6 +2,7 @@ import type { CollectionEntry, CollectionKind, ListFile } from '../data/files.ts
 import type { ItemName } from './itemNames.ts';
 import { buildNames, nameWords } from './itemNames.ts';
 import { linkUrl } from './linkUrl.ts';
+import { imageIds } from './imageIds.ts';
 
 export interface Item {
   id: string;
@@ -15,6 +16,8 @@ export interface Item {
    */
   names: readonly ItemName[];
   group: string;
+  /** Its images in the viewer, by file name: the drawing, then any others (`001-2`). */
+  imageIds: string[];
   /** The drawing's thumbnail (400px), and its smaller size (240px); only drawn items have them. */
   imageUrl: string;
   smallImageUrl: string;
@@ -62,6 +65,7 @@ const KNOWN_KEYS = new Set([
   'dhiv_script',
   'drawn',
   'illustratorNote',
+  'images',
 ]);
 
 /** A `collections.json` entry plus the URLs the app derives from its id. */
@@ -123,6 +127,7 @@ export function toCollectionItems(
         scientificName,
         names,
         group: groupName,
+        imageIds: imageIds(itemId, typeof r.images === 'number' ? r.images : 1),
         imageUrl: hasImg ? `${col.imageBase}${itemId}.webp` : '',
         smallImageUrl: hasImg ? `${col.smallImageBase}${itemId}.webp` : '',
         isDrawn: hasImg,

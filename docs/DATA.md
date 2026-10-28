@@ -11,7 +11,7 @@ public/
   collections.json            the list of collections
   lists/<id>.json             the items of one collection, grouped
   stats.json                  the archive's numbers, worked out from the lists (generated)
-  full/<id>/<item>.webp       full-size drawing (generated)
+  full/<id>/<item>.webp       full-size drawing; <item>-2.webp and on for its other images (generated)
   thumb/<id>/<item>.webp      grid thumbnail, 400px (generated)
   small/<id>/<item>.webp      the same at 240px, for a screen that needs no more (generated)
 raw_png/<id>/<item>.png       your source art; not in git
@@ -88,6 +88,7 @@ order written; within a group, drawn items come first, then by id.
 | `sci`             | no       | Scientific name, shown in italics                                                                                 |
 | `drawn`           | no       | `YYYY-MM-DD`. Present means drawn; absent or `""` means a placeholder is shown                                    |
 | `illustratorNote` | no       | A note shown in the viewer                                                                                        |
+| `images`          | no       | How many images the item has, 1 when absent: the drawing, then its sketches or a series piece's other parts       |
 | `dhiv`            | no       | Dhivehi name, romanised                                                                                           |
 | `dhiv_script`     | no       | Dhivehi name in Thaana script; becomes the title on the tile and in the viewer                                    |
 | anything else     | no       | Any other **string** field is shown in the viewer under its name and is searchable. Non-string values are ignored |
@@ -96,6 +97,10 @@ Notes:
 
 - **`drawn` is what makes an item real.** The site looks for `thumb/<id>/<item>.webp` and
   `full/<id>/<item>.webp` only when it is set.
+- **More than one image.** With `"images": 3` the viewer pages through `<item>.webp`, then
+  `<item>-2.webp` and `<item>-3.webp` in `full/<id>/`, before the next drawing. The tile shows the
+  first. `npm run ingest` makes each from `raw_png/<id>/<item>-2.png` and so on; `check` fails if
+  one the list counts is missing, and warns of source art for one it does not count.
 - **Dates are read as UTC,** so a drawing dated the 1st stays in that month for every visitor.
 - **A group with no items is allowed** and simply does not appear.
 - **Search covers** the common name, scientific name, group name, id and every extra string field,
@@ -137,8 +142,8 @@ appears in it with no other change.
 - an item lacks its kind's fields (a species its `sci`) or has another kind's (a series item a
   `sci`, `dhiv` or `dhiv_script`);
 - a collection has no list file;
-- an item's `id` is not digits or is repeated, its `name` is empty, or its `drawn` is not a real
-  `YYYY-MM-DD` date; or a group name is blank.
+- an item's `id` is not digits or is repeated, its `name` is empty, its `drawn` is not a real
+  `YYYY-MM-DD` date, or its `images` is not a whole number of 1 or more; or a group name is blank.
 
 `npm run check` fails if:
 
@@ -156,6 +161,10 @@ appears in it with no other change.
 2. Make sure the item exists in `public/lists/<collection>.json`. You can leave `drawn` out; the
    build dates it today.
 3. Run `npm run ingest` (`-- --dry-run` first shows what it will do), then `npm run check`.
+
+**Add sketches to a drawing** (or the other parts of a series piece): put them in `raw_png/<id>/` as
+`<item>-2.png`, `<item>-3.png`, set `"images"` on the item to the count, drawing included, and run
+`npm run ingest`.
 
 **Add an item that is not drawn yet:** add it to the list file with `id` and `name` and no `drawn`.
 

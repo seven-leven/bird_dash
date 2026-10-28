@@ -28,6 +28,8 @@ export interface Transcoder {
   full(collection: Collection, id: string): Promise<Transcoded>;
   /** The thumbnail alone (both sizes), from the full image. */
   thumb(collection: Collection, id: string): Promise<Transcoded>;
+  /** One of an item's other images (`001-2`): the full image alone, from its source art. */
+  extra(collection: Collection, id: string): Promise<Transcoded>;
 }
 
 /** The thumbnail in both sizes, from a square full image (a path or its bytes). */
@@ -45,17 +47,31 @@ async function writeThumbs(
   ]);
 }
 
+/** The full image from the source art, written and returned. */
+async function writeFull(collection: Collection, id: string): Promise<Uint8Array> {
+  await ensureDir(collection.paths.full);
+  const full = await sharp(`${collection.paths.sourceArt}${id}.png`)
+    .rotate()
+    .resize(FULL_SIZE_PX, FULL_SIZE_PX, { fit: 'contain', background: WHITE })
+    .webp(WEBP_OPTIONS)
+    .toBuffer();
+  // Already WebP: written as it is (a second pass through sharp would encode it again).
+  await writeFile(`${collection.paths.full}${id}.webp`, full);
+  return full;
+}
+
 export async function transcodeFull(collection: Collection, id: string): Promise<Transcoded> {
   try {
-    await ensureDir(collection.paths.full);
-    const full = await sharp(`${collection.paths.sourceArt}${id}.png`)
-      .rotate()
-      .resize(FULL_SIZE_PX, FULL_SIZE_PX, { fit: 'contain', background: WHITE })
-      .webp(WEBP_OPTIONS)
-      .toBuffer();
-    // Already WebP: written as it is (a second pass through sharp would encode it again).
-    await writeFile(`${collection.paths.full}${id}.webp`, full);
-    await writeThumbs(full, collection, id);
+    await writeThumbs(await writeFull(collection, id), collection, id);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: errorMessage(err) };
+  }
+}
+
+export async function transcodeExtra(collection: Collection, id: string): Promise<Transcoded> {
+  try {
+    await writeFull(collection, id);
     return { ok: true };
   } catch (err) {
     return { ok: false, error: errorMessage(err) };
@@ -71,4 +87,8 @@ export async function transcodeThumb(collection: Collection, id: string): Promis
   }
 }
 
-export const sharpTranscoder: Transcoder = { full: transcodeFull, thumb: transcodeThumb };
+export const sharpTranscoder: Transcoder = {
+  full: transcodeFull,
+  thumb: transcodeThumb,
+  extra: transcodeExtra,
+};

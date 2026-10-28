@@ -48,6 +48,15 @@ export async function applyChanges(
     }
   }
 
+  for (const id of plan.toTranscodeExtra) {
+    step('making', id);
+    const made = await transcoder.extra(collection, id);
+    if (!made.ok) {
+      applied.failures.push({ id, reason: made.error });
+      fail(`could not make  ${id}  ${made.error}`);
+    }
+  }
+
   for (const id of plan.toRepairThumb) {
     step('repairing', id);
     const made = await transcoder.thumb(collection, id);

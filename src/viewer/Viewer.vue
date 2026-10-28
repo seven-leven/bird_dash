@@ -39,7 +39,7 @@
             v-if="position"
             class="absolute left-1/2 -translate-x-1/2 text-xs tabular-nums text-body"
             aria-live="polite"
-          >{{ position }}<template v-if="props.query"> · matching '{{ props.query }}'</template></span>
+          >{{ position }}<template v-if="imagePosition"> · {{ imagePosition }}</template><template v-if="props.query"> · matching '{{ props.query }}'</template></span>
 
           <!-- Close -->
           <button @click="close" class="icon-btn-overlay pointer-events-auto" aria-label="Close">
@@ -154,6 +154,7 @@ const {
   hasPrevious,
   hasNext,
   position,
+  imagePosition,
   imageUrl,
   loading,
   error,

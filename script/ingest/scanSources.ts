@@ -1,12 +1,14 @@
 // What is on disk for one collection, read once: the drawn items in its list, and the
 // ids in its four image folders (source art, full, and the thumbnail's two sizes).
-import { readDrawnIds } from '../lib/lists.ts';
+import { eachDrawnItem, extraImageIds, readList } from '../lib/lists.ts';
 import type { Collection } from '../lib/collections.ts';
 import { type Io, realIo } from '../lib/io.ts';
 
 export interface SourceScan {
   /** Items with a `drawn` date in the list. */
   drawnIds: Set<string>;
+  /** Their images after the first, as the list counts them (`images`): `001-2`, `001-3`. */
+  extraIds: Set<string>;
   /** Source art: a PNG in raw_png/<id>/ (on your machine only). */
   sourceIds: Set<string>;
   fullIds: Set<string>;
@@ -22,15 +24,17 @@ export function toIds(files: string[]): Set<string> {
 
 export async function scanSources(collection: Collection, io: Io = realIo): Promise<SourceScan> {
   const webp = (name: string) => name.endsWith('.webp');
-  const [drawnIds, sourceFiles, fullFiles, thumbFiles, smallFiles] = await Promise.all([
-    readDrawnIds(collection, io),
+  const [list, sourceFiles, fullFiles, thumbFiles, smallFiles] = await Promise.all([
+    readList(collection, io),
     io.listFiles(collection.paths.sourceArt, (name) => name.endsWith('.png')),
     io.listFiles(collection.paths.full, webp),
     io.listFiles(collection.paths.thumb, webp),
     io.listFiles(collection.paths.small, webp),
   ]);
+  const drawn = eachDrawnItem(list);
   return {
-    drawnIds,
+    drawnIds: new Set(drawn.map((item) => item.id)),
+    extraIds: new Set(drawn.flatMap(extraImageIds)),
     sourceIds: toIds(sourceFiles),
     fullIds: toIds(fullFiles),
     thumbIds: toIds(thumbFiles),

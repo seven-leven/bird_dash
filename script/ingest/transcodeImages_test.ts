@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { readFile, rm } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import sharp from 'sharp';
-import { transcodeFull, transcodeThumb } from './transcodeImages.ts';
+import { transcodeExtra, transcodeFull, transcodeThumb } from './transcodeImages.ts';
 import type { Collection } from '../lib/collections.ts';
 import { imageSize, tempCollection } from '../../src/testing/fakes/tempCollection.ts';
 
@@ -65,4 +65,12 @@ test('a thumbnail is remade from the full image, and fails without one', () =>
     assertEquals((await imageSize(`${collection.paths.thumb}001.webp`)).width, 400);
     assertEquals((await imageSize(`${collection.paths.small}001.webp`)).width, 240);
     assertEquals((await transcodeThumb(collection, '404')).ok, false);
+  }));
+
+test("an item's other image is a full WebP alone, with no thumbnail; without source art it fails", () =>
+  withCollection(['001-2'], async (collection) => {
+    assertEquals(await transcodeExtra(collection, '001-2'), { ok: true });
+    assertEquals((await imageSize(`${collection.paths.full}001-2.webp`)).width, 2048);
+    assertEquals(await readFile(`${collection.paths.thumb}001-2.webp`).catch(() => null), null);
+    assertEquals((await transcodeExtra(collection, '001-3')).ok, false);
   }));

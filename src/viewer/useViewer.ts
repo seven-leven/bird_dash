@@ -38,7 +38,7 @@ export function useViewer({ props, emit }: ViewerOptions) {
     items: () => props.drawnItems,
     onNavigate: (item) => emit('update:item', item),
   });
-  const { currentItem, goToPrevious, goToNext } = nav;
+  const { currentItem, imageId, goToPrevious, goToNext } = nav;
 
   const zoom = useZoomPan({
     onSwipe: (dir) => (dir === 'next' ? goToNext() : goToPrevious()),
@@ -67,9 +67,7 @@ export function useViewer({ props, emit }: ViewerOptions) {
 
   // Empty while closed so the image drops out immediately during the fade-out.
   const imageUrl = computed(() =>
-    props.isOpen && currentItem.value
-      ? `${props.fullImageBaseUrl}${currentItem.value.itemId}.webp`
-      : ''
+    props.isOpen && currentItem.value ? `${props.fullImageBaseUrl}${imageId.value}.webp` : ''
   );
 
   const startLoad = () => {
@@ -103,8 +101,9 @@ export function useViewer({ props, emit }: ViewerOptions) {
     }
   });
 
-  watch(() => props.item, () => {
-    if (props.isOpen) {
+  // Another drawing, or another of its images: back to fit, and load it.
+  watch(imageUrl, (now, before) => {
+    if (props.isOpen && now && before) {
       zoom.resetZoom();
       startLoad();
     }
@@ -116,6 +115,7 @@ export function useViewer({ props, emit }: ViewerOptions) {
     hasPrevious: nav.hasPrevious,
     hasNext: nav.hasNext,
     position: nav.position,
+    imagePosition: nav.imagePosition,
     imageUrl,
     loading,
     error,

@@ -45,7 +45,11 @@ export function fakeTranscoder(failing: string[] = []): { transcoder: Transcoder
     );
   };
   return {
-    transcoder: { full: (_, id) => answer('full', id), thumb: (_, id) => answer('thumb', id) },
+    transcoder: {
+      full: (_, id) => answer('full', id),
+      thumb: (_, id) => answer('thumb', id),
+      extra: (_, id) => answer('extra', id),
+    },
     made,
   };
 }

@@ -13,6 +13,11 @@ export interface ListEntry {
   /** `YYYY-MM-DD` once drawn; absent or `''` while it is still a placeholder. */
   drawn?: string;
   illustratorNote?: string;
+  /**
+   * How many images the item has, 1 when absent: the drawing (`<id>.webp`), then
+   * `<id>-2.webp`, `<id>-3.webp`… (its sketches, or a series piece's other parts).
+   */
+  images?: number;
   /** Dhivehi name, romanised and in Thaana script. */
   dhiv?: string;
   dhiv_script?: string;

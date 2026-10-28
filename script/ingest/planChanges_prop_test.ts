@@ -9,6 +9,7 @@ const POOL: string[] = ['001', '002', '003', '004', '005', '006', '007', '008'];
 const ids = fc.uniqueArray(fc.constantFrom(...POOL));
 const state = fc.record({ drawn: ids, source: ids, full: ids, thumb: ids }).map((s) => ({
   drawnIds: new Set(s.drawn),
+  extraIds: new Set<string>(),
   sourceIds: new Set(s.source),
   fullIds: new Set(s.full),
   thumbIds: new Set(s.thumb),
@@ -45,6 +46,7 @@ test('property: carrying out a plan leaves nothing left to do', () => {
       // Simulate applyChanges: register new PNGs, transcode (full + thumb), repair thumbs.
       const after = {
         drawnIds: new Set([...s.drawnIds, ...first.toRegister]),
+        extraIds: new Set<string>(),
         sourceIds: s.sourceIds,
         fullIds: new Set([...s.fullIds, ...first.toTranscode]),
         thumbIds: new Set([...s.thumbIds, ...first.toTranscode, ...first.toRepairThumb]),
@@ -67,6 +69,7 @@ test('property: a fully consistent state has no blocking issues', () => {
       // every drawn id has raw, full and thumb; nothing else exists
       const plan = planChanges({
         drawnIds: set,
+        extraIds: new Set<string>(),
         sourceIds: set,
         fullIds: set,
         thumbIds: set,

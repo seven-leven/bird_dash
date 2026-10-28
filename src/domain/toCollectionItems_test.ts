@@ -119,3 +119,17 @@ test('toCollectionItems: missing fields become empty, a non-numeric id sorts as 
   assertEquals([bare.itemId, bare.commonName, bare.scientificName], ['', '', '']);
   assertEquals([odd.sortKey, odd.isDrawn, odd.drawnTime], [0, true, 0]);
 });
+
+test('toCollectionItems: an item lists its images, the drawing and as many more as `images` counts', () => {
+  const [one, three] = toCollectionItems(col, {
+    G: [{ id: '001', name: 'A', drawn: '2025-01-01' }, {
+      id: '002',
+      name: 'B',
+      drawn: '2025-01-01',
+      images: 3,
+    }],
+  });
+  assertEquals(one.imageIds, ['001']);
+  assertEquals(three.imageIds, ['002', '002-2', '002-3']);
+  assertEquals(three.meta, undefined); // `images` is not a fact to show
+});

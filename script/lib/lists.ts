@@ -1,6 +1,7 @@
 // A collection's list file (`public/lists/<id>.json`): reading it, the drawn items in it,
 // and dating an item when its drawing comes in.
 import { type Io, readJson, realIo, writeJson } from './io.ts';
+import { imageIds } from '../../src/domain/imageIds.ts';
 import type { Collection } from './collections.ts';
 // The list-file shape is defined once, next to the app's own types.
 import type { ListEntry, ListFile } from '../../src/data/files.ts';
@@ -13,6 +14,9 @@ export function readList(collection: Collection, io: Io = realIo): Promise<ListF
 export function eachDrawnItem(list: ListFile): ListEntry[] {
   return Object.values(list).flatMap((group) => group.filter((item) => item.drawn));
 }
+
+/** A drawn item's images after the first, by file name: `001-2`, `001-3`. */
+export const extraImageIds = (item: ListEntry): string[] => imageIds(item.id, item.images).slice(1);
 
 /** The ids of the collection's drawn items. */
 export async function readDrawnIds(collection: Collection, io: Io = realIo): Promise<Set<string>> {
