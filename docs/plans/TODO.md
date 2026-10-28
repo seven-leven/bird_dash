@@ -42,16 +42,6 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
 
 ## 🗂️ Data and tooling
 
-- [ ] **Proper group names** throughout each collection: the right taxonomy per item in
-      `public/lists/*.json` (a data task).
-- [ ] **Group images by collection**, matching the storage layout (needs a spec first).
-- [ ] **Script duplicates** the overhauls do not reach (one small PR, any time): the report frame
-      (`ID_WIDTH`, `DIVIDER`) in both `formatCheckReport.ts` and `formatIngestReport.ts`, into
-      `script/lib/report.ts`; `script/generate/logo.ts` redefines `INK`, `MUTED`, `FONT` and
-      `text()` that `guideDrawing.ts` exports; the `<svg xmlns=…>` opening written in five
-      generators, into one `svgDocument(width, height, body)`; `readJson` and `writeJson` in both
-      `lib/fs.ts` and `lib/io.ts`, with `designGuide.ts` reading around `Io`. The rest of the sweep
-      is in TEST-OVERHAUL.md ("Duplicates to fold").
 - [ ] **VitePress 2.0** when it is released: the docs site runs the 2.0 alpha, the one that shares
       the site's Vite 8.
 
@@ -59,6 +49,13 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
 
 **2026-10-28**
 
+- [x] Proper group names: bird families as eBird names them, sharks by order, shells by class
+      (groups named "Class", which the sidebar calls "Classes").
+- [x] Images grouped by collection: every image folder (`raw_png/`, `full/`, `thumb/`, `small/`)
+      already holds one folder per collection, as DATA.md lays out.
+- [x] The script duplicates: the report frame in `lib/report.ts`, the logo sheet on the design
+      guide's colours and text, one `svgDocument` for the five generators, one `readJson` (on `Io`,
+      which the design guide now reads through).
 - [x] Using the platform: the viewer a native `<dialog>`, Vue's `useId`, `useTemplateRef` and
       `defineModel`, colour roles with `light-dark()`, the files checked at the door, an error state
       for the whole app, a crossfade between pages, balanced headings, stricter types.

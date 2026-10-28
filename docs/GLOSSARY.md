@@ -101,7 +101,7 @@ Use the word in the first column; avoid the ones in the last.
 | **tile**   | In the gallery, an item's tile. In the logo, the **tile** is the solid square version of the mark (`tile.svg`). Say "logo tile" for that one. |
 | **assets** | `public/` holds the site's images; `docs/assets/` holds the docs' generated images; `dist/assets/` is what Vite emits. Name the folder.       |
 | **id**     | An item's **item id** (`029`) or a collection's id (`birds`). The internal `id` (`birds-item-1`) is code only.                                |
-| **group**  | A list's group ("Ducks, Geese, and Swans"), or the **view** by group. Never a search result's collection: say "results from Birds".           |
+| **group**  | A list's group ("Ducks, Geese, and Waterfowl"), or the **view** by group. Never a search result's collection: say "results from Birds".       |
 | **stats**  | Only `stats.json`. The numbers on screen are **counts**.                                                                                      |
 
 ## Adding a word

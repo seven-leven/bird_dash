@@ -1,16 +1,14 @@
 // What `npm run ingest` says, as lines: the warnings before it starts, each step as it
 // happens, what a dry run would do, and the summary at the end. Pure; the command prints.
 import { plural } from '../../src/domain/countWords.ts';
-import { COLLECTIONS } from '../lib/collections.ts';
 import type { Collection } from '../lib/collections.ts';
 import { type Line, MARK } from '../lib/cli.ts';
+import { DIVIDER, ID_WIDTH } from '../lib/report.ts';
 import type { ChangePlan } from './planChanges.ts';
 import type { AppliedChanges } from './applyChanges.ts';
 
-/** Columns, so the collections' lines line up. */
-const ID_WIDTH = Math.max(...COLLECTIONS.map((collection) => collection.id.length));
+/** The verb's column, after the collection's. */
 const VERB_WIDTH = 14;
-const DIVIDER = '─'.repeat(52);
 
 /** One step, as it happens: `  birds  registered      Watercock (029)`. */
 export function formatStep(collectionId: string, verb: string, detail: string): string {

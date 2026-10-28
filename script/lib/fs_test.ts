@@ -1,7 +1,7 @@
 import { test } from 'vitest';
-import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { mkdir, stat, writeFile } from 'node:fs/promises';
 import { assertEquals, assertRejects } from '@std/assert';
-import { ensureDir, listFiles, readJson, writeJson } from './fs.ts';
+import { ensureDir, listFiles } from './fs.ts';
 import { tempDir } from '../../src/testing/fakes/tempDir.ts';
 
 /** Run `fn` with a fresh temporary directory, removed afterwards. */
@@ -30,18 +30,6 @@ test('ensureDir creates nested folders and is safe to repeat', () =>
     await ensureDir(nested);
     await ensureDir(nested); // already there: no error
     assertEquals((await stat(nested)).isDirectory(), true);
-  }));
-
-test('writeJson then readJson round-trips, 2-space indented with a trailing newline', () =>
-  withTempDir(async (dir) => {
-    const path = `${dir}/data.json`;
-    const data = { Ducks: [{ id: '001', name: 'Mallard' }] };
-    await writeJson(path, data);
-    assertEquals(await readJson(path), data);
-
-    const text = await readFile(path, 'utf8');
-    assertEquals(text.endsWith('}\n'), true);
-    assertEquals(text.split('\n')[1], '  "Ducks": [');
   }));
 
 test('listFiles still throws for errors other than a missing directory', () =>

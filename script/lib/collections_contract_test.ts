@@ -3,7 +3,7 @@ import { readFile, stat } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';
 import { COLLECTIONS } from './collections.ts';
 import { readList } from './lists.ts';
-import { readJson } from './fs.ts';
+import { readJson, realIo } from './io.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 import { isIconName } from '../../src/ui/icons.ts';
 import { PAGES } from '../../src/app/pages.ts';
@@ -15,9 +15,9 @@ import { checkCollections, checkList, checkStats } from '../../src/data/files.ts
 const exists = (path: string) => stat(path).then(() => true, () => false);
 
 test('collections.json, every list and stats.json pass the checks the site makes when it loads them', async () => {
-  assertEquals(checkCollections(await readJson('./public/collections.json')), []);
+  assertEquals(checkCollections(await readJson(realIo, './public/collections.json')), []);
   for (const col of COLLECTIONS) assertEquals(checkList(await readList(col)), [], col.id);
-  assertEquals(checkStats(await readJson('./public/stats.json')), []);
+  assertEquals(checkStats(await readJson(realIo, './public/stats.json')), []);
 });
 
 test('collections.json: at least one collection, unique ids', () => {
@@ -37,7 +37,7 @@ test('collections.json: every accent names a palette defined in accents.css', as
   const palettes = new Set([...css.matchAll(/\[data-accent='([\w-]+)'\]/g)].map((m) => m[1]));
   assert(palettes.size > 0, 'no [data-accent] palettes found in accents.css');
 
-  const raw = await readJson<CollectionEntry[]>('./public/collections.json');
+  const raw = await readJson<CollectionEntry[]>(realIo, './public/collections.json');
   for (const col of raw) {
     if (col.accent === undefined) continue; // falls back to the default
     assert(
@@ -48,7 +48,7 @@ test('collections.json: every accent names a palette defined in accents.css', as
 });
 
 test('collections.json: link templates only use known placeholders', async () => {
-  const raw = await readJson<CollectionEntry[]>('./public/collections.json');
+  const raw = await readJson<CollectionEntry[]>(realIo, './public/collections.json');
   for (const col of raw) {
     // A missing icon falls back to the emoji; a misspelt one would do so silently.
     if (col.icon !== undefined) {
@@ -65,7 +65,7 @@ test('collections.json: link templates only use known placeholders', async () =>
 });
 
 test('collections.json: a medium, where one is named, is words', async () => {
-  const raw = await readJson<CollectionEntry[]>('./public/collections.json');
+  const raw = await readJson<CollectionEntry[]>(realIo, './public/collections.json');
   for (const col of raw) {
     if (col.medium !== undefined) assert(col.medium.trim(), `${col.id}: an empty medium`);
   }

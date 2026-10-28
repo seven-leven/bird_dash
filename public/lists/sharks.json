@@ -93,7 +93,7 @@
       "illustratorNote": ""
     }
   ],
-  "Requiem Sharks": [
+  "Ground Sharks": [
     {
       "id": "011",
       "name": "Blacktip Reef Shark",
@@ -201,9 +201,7 @@
       "sci": "Carcharhinus macloti",
       "drawn": "",
       "illustratorNote": ""
-    }
-  ],
-  "Reef Sharks": [
+    },
     {
       "id": "023",
       "name": "Whitetip Reef Shark",
@@ -248,9 +246,7 @@
       "sci": "Hemipristis elongata",
       "drawn": "",
       "illustratorNote": ""
-    }
-  ],
-  "Hammerhead Sharks": [
+    },
     {
       "id": "028",
       "name": "Scalloped Hammerhead Shark",
@@ -277,18 +273,36 @@
       "sci": "Sphyrna zygaena",
       "drawn": "",
       "illustratorNote": ""
-    }
-  ],
-  "Deep Sea Sharks": [
+    },
     {
-      "id": "031",
-      "name": "Bramble Shark",
-      "dhiv": "Kashi Miyaru",
-      "dhiv_script": "ކަށި މިޔަރު",
-      "sci": "Echinorhinus brucus",
+      "id": "039",
+      "name": "Pygmy Ribbontail Catshark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Eridacnis radcliffei",
       "drawn": "",
       "illustratorNote": ""
     },
+    {
+      "id": "040",
+      "name": "Arabian Catshark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Bythaelurus alcockii",
+      "drawn": "",
+      "illustratorNote": ""
+    },
+    {
+      "id": "041",
+      "name": "Graceful Catshark",
+      "dhiv": "",
+      "dhiv_script": "",
+      "sci": "Proscyllium habereri",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Cow Sharks": [
     {
       "id": "032",
       "name": "Bluntnose Sixgill Shark",
@@ -306,7 +320,20 @@
       "sci": "Hexanchus nakamurai",
       "drawn": "",
       "illustratorNote": ""
-    },
+    }
+  ],
+  "Bramble Sharks": [
+    {
+      "id": "031",
+      "name": "Bramble Shark",
+      "dhiv": "Kashi Miyaru",
+      "dhiv_script": "ކަށި މިޔަރު",
+      "sci": "Echinorhinus brucus",
+      "drawn": "",
+      "illustratorNote": ""
+    }
+  ],
+  "Dogfish Sharks": [
     {
       "id": "034",
       "name": "Smallfin Gulper Shark",
@@ -349,33 +376,6 @@
       "dhiv": "",
       "dhiv_script": "",
       "sci": "Squalus blainville",
-      "drawn": "",
-      "illustratorNote": ""
-    },
-    {
-      "id": "039",
-      "name": "Pygmy Ribbontail Catshark",
-      "dhiv": "",
-      "dhiv_script": "",
-      "sci": "Eridacnis radcliffei",
-      "drawn": "",
-      "illustratorNote": ""
-    },
-    {
-      "id": "040",
-      "name": "Arabian Catshark",
-      "dhiv": "",
-      "dhiv_script": "",
-      "sci": "Bythaelurus alcockii",
-      "drawn": "",
-      "illustratorNote": ""
-    },
-    {
-      "id": "041",
-      "name": "Graceful Catshark",
-      "dhiv": "",
-      "dhiv_script": "",
-      "sci": "Proscyllium habereri",
       "drawn": "",
       "illustratorNote": ""
     },
