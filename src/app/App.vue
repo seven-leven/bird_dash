@@ -17,6 +17,7 @@ import { createActions, provideActions } from './actions.ts';
 import { PAGES } from './pages.ts';
 import { applyAccent } from '../browser/applyAccent.ts';
 import { reloadPage } from '../browser/reloadPage.ts';
+import { withViewTransition } from '../browser/withViewTransition.ts';
 
 // =============================================================================
 // STORES — one per feature, made in dependency order and shared through
@@ -70,7 +71,8 @@ const route = useHashRoute({
   closeViewer: viewer.close,
   ringTile: actions.ringTile,
   page: layout.page,
-  showPage: layout.showPage,
+  // The gallery and a page crossfade, where the browser can and the visitor allows.
+  showPage: (page) => withViewTransition(() => layout.showPage(page)),
 });
 
 // When a collection's data (re)loads: rebuild the scroll-spy and apply any
