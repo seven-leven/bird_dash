@@ -25,7 +25,7 @@ async function fakePublic(ids: string[]): Promise<TempDir> {
 }
 
 test('the strip shows the newest drawings, at most five, each in its own card', async () => {
-  for (const [count, shown] of [[7, STRIP.count], [2, 2]]) {
+  for (const [count, shown] of [[7, STRIP.count], [2, 2]] as const) {
     await using folder = await fakePublic(Array.from({ length: count }, (_, i) => `00${i}`));
     const dir = folder.path;
     assertEquals(
@@ -34,7 +34,7 @@ test('the strip shows the newest drawings, at most five, each in its own card', 
     );
     const { width, height } = await sharp(await readFile(`${dir}/strip.webp`)).metadata();
     assertEquals([width, height], [
-      shown * STRIP.tile + (shown + 1) * STRIP.gap,
+      shown! * STRIP.tile + (shown! + 1) * STRIP.gap,
       STRIP.tile + 2 * STRIP.gap,
     ]);
   }

@@ -18,5 +18,5 @@ test('the keys that work in the results, each named for a screen reader and labe
 test('the arrows and return are drawn as icons, not Unicode, which every font sizes differently', () => {
   const keys = [...mountComponent(() => h(SearchKeyHints)).querySelectorAll('kbd')];
   assertEquals(keys.map((k) => k.querySelector('svg') !== null), [true, true, false]);
-  assertEquals(keys[2].textContent!.trim(), 'esc');
+  assertEquals(keys[2]!.textContent!.trim(), 'esc');
 });

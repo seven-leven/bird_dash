@@ -22,7 +22,7 @@ test('every numbered section of DESIGN.md names the principles it serves', async
   for (const section of sections) {
     const [heading, , ...rest] = section.split('\n');
     // The italic line under the heading, which dprint may wrap.
-    const line = rest.join('\n').split('\n\n')[0].replace(/\n/g, ' ');
+    const line = rest.join('\n').split('\n\n')[0]!.replace(/\n/g, ' ');
     assert(/^_.+_$/.test(line), `${heading}: no line naming its principles`);
     const named = line.slice(1, -1).split(' · ');
     assert(named.length > 0);

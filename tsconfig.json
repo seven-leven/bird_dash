@@ -12,6 +12,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
     "verbatimModuleSyntax": true,
     // Node runs the scripts by stripping types, so only syntax it can erase is allowed
     // (no enums, namespaces or parameter properties), and imports keep their .ts extension.

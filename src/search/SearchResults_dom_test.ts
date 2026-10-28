@@ -34,5 +34,5 @@ test('after the first line, only a Latin name is set in italics', () => {
   );
   const lines = [...host.querySelectorAll('[role="option"] p')];
   assertEquals(lines.map((p) => p.textContent), ['Anas platyrhynchos', 'Mallard']);
-  assertEquals(lines[1].classList.contains('italic'), false);
+  assertEquals(lines[1]!.classList.contains('italic'), false);
 });

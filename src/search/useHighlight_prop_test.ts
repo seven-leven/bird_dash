@@ -66,7 +66,7 @@ test('property: a highlighted span is a case-insensitive match of the query', ()
       if (!q) return true;
       const out = highlightText(text, query);
       for (const m of out.matchAll(/<mark class="[^"]*">(.*?)<\/mark>/gs)) {
-        if (unescapeHtml(m[1]).toLowerCase() !== q.toLowerCase()) return false;
+        if (unescapeHtml(m[1]!).toLowerCase() !== q.toLowerCase()) return false;
       }
       return true;
     }),

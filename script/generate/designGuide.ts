@@ -87,10 +87,9 @@ function section(y: number, label: string, says: string, specifics: string) {
 }
 
 function ramp(y: number, name: string, colors: Record<string, string>): string {
-  const steps = Object.keys(colors);
+  const steps = Object.entries(colors);
   const w = (W - 2 * X) / steps.length;
-  return steps.map((step, i) => {
-    const hex = colors[step];
+  return steps.map(([step, hex], i) => {
     const on = contrast(hex, '#ffffff') > 3 ? '#ffffff' : INK;
     const x = X + i * w;
     return rect(x, y, w - 6, 78, hex, 8, `stroke="${RULE}"`) +

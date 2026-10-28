@@ -36,7 +36,7 @@ function fakeObserver() {
       log.disconnected++;
     }
   } as unknown as typeof IntersectionObserver;
-  return { log, fire: () => callbacks[callbacks.length - 1]() };
+  return { log, fire: () => callbacks[callbacks.length - 1]!() };
 }
 
 /** A scroll-spy over a container at the top of the screen and the given headers. */

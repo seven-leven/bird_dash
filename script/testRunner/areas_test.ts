@@ -99,7 +99,7 @@ test('the markdown report names what each area protects and lists unloaded files
     }),
   );
   assertStringIncludes(md, '### By area');
-  assertStringIncludes(md, AREAS[0].protects);
+  assertStringIncludes(md, AREAS[0]!.protects);
   assertStringIncludes(md, '1 source file(s) no test imports');
   assertStringIncludes(md, '`script/build/build.ts`');
   assertStringIncludes(md, '⚠️ no tests');

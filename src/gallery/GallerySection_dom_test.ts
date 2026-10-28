@@ -38,8 +38,8 @@ function mount(items: Item[], { first = false } = {}) {
 test('its heading names the section and counts it; a tile per item', () => {
   const { host } = mount(drawn(3));
   const heading = host.querySelector('h2')!;
-  assertEquals(heading.children[0].textContent!.trim(), 'Ducks');
-  assertEquals(heading.children[1].textContent!.trim(), '4 of 8 drawn');
+  assertEquals(heading.children[0]!.textContent!.trim(), 'Ducks');
+  assertEquals(heading.children[1]!.textContent!.trim(), '4 of 8 drawn');
   assertEquals(host.querySelectorAll('img').length, 3);
 });
 
@@ -52,8 +52,8 @@ test('the section registers itself under its name, for the scroll-spy', () => {
 test('a tile asks for the viewer on its drawing', () => {
   const items = drawn(2);
   const { host, opened } = mount(items);
-  host.querySelectorAll<HTMLElement>('[role="button"]')[1].click();
-  assertEquals(opened.map((i) => i.id), [items[1].id]);
+  host.querySelectorAll<HTMLElement>('[role="button"]')[1]!.click();
+  assertEquals(opened.map((i) => i.id), [items[1]!.id]);
 });
 
 test("the first section's first six tiles load at once; the rest, and other sections', wait", () => {

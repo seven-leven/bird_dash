@@ -89,8 +89,8 @@ test('a slow load for a collection the user left cannot overwrite the screen or 
   assertEquals(c.loadState.loading, false);
   assertEquals(c.loadState.error, undefined);
   // ...and each cache slot holds its own collection's items.
-  assertEquals(names(c.itemsByCollection['c']), ['item of c']);
-  assertEquals(names(c.itemsByCollection['b']), ['item of b']);
+  assertEquals(names(c.itemsByCollection['c']!), ['item of c']);
+  assertEquals(names(c.itemsByCollection['b']!), ['item of b']);
 });
 
 test('a failed load for a collection the user left does not show an error', async () => {
@@ -180,7 +180,7 @@ test('link templates from collections.json become functions of the item', async 
   const c = useCollectionLoader();
   await c.init();
   const link = c.activeCollection.value!.links[0];
-  assertEquals(link.url(c.loadState.items[0]), 'https://w.test/?q=item%20of%20a');
+  assertEquals(link!.url(c.loadState.items[0]!), 'https://w.test/?q=item%20of%20a');
   assertEquals(c.activeCollection.value!.dataUrl, '/lists/a.json');
 });
 

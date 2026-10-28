@@ -43,7 +43,7 @@ defineProps<{
   name: string;
   items: Item[];
   /** The collection on screen, whose icon stands in for what is not drawn yet. */
-  collection: { icon?: string; emoji: string };
+  collection: { icon?: string | undefined; emoji: string };
   /** "4 of 8 drawn", or "3 drawings". */
   count: string;
   /** The first section on the page, whose first tiles are wanted at once. */

@@ -22,7 +22,7 @@ test('group mode: buckets by group, drawn-first then sortKey', () => {
 
   assertEquals(Object.keys(groups).sort(), ['A', 'B']);
   // Drawn (001) sorts ahead of undrawn, then undrawn by sortKey (002, 003).
-  assertEquals(groups['A'].map((i) => i.itemId), ['001', '002', '003']);
+  assertEquals(groups['A']!.map((i) => i.itemId), ['001', '002', '003']);
 
   const sidebarA = activeData.value.sidebarItems.find((s) => s.id === 'A')!;
   assertEquals({ count: sidebarA.count, total: sidebarA.total }, { count: 1, total: 3 });
@@ -34,14 +34,14 @@ test('filtering: searchText substring narrows all outputs', () => {
     makeItem({ commonName: 'Garganey', group: 'Ducks' }),
   ];
   const { activeData, stats } = setup(items, 'mallard');
-  assertEquals(activeData.value.grouped['Ducks'].map((i) => i.commonName), ['Mallard']);
+  assertEquals(activeData.value.grouped['Ducks']!.map((i) => i.commonName), ['Mallard']);
   assertEquals(stats.value.filtered, 1);
 });
 
 test('filtering ignores surrounding whitespace and letter case in the query', () => {
   const items = [makeItem({ commonName: 'Mallard', group: 'Ducks' })];
   const { activeData } = setup(items, '  MALLARD  ');
-  assertEquals(activeData.value.grouped['Ducks'].length, 1);
+  assertEquals(activeData.value.grouped['Ducks']!.length, 1);
 });
 
 test('group stats: total = all items, drawn = drawn count', () => {
@@ -65,7 +65,7 @@ test('month view: buckets drawn items by month, newest month and newest drawing 
   const keys = Object.keys(activeData.value.grouped);
 
   assertEquals(keys, ['March 2025', 'January 2025']);
-  assertEquals(activeData.value.grouped['January 2025'].map((i) => i.itemId), ['003', '002']);
+  assertEquals(activeData.value.grouped['January 2025']!.map((i) => i.itemId), ['003', '002']);
   // month view: total counts drawn items only
   assertEquals(stats.value.total, 3);
 });
@@ -164,9 +164,9 @@ test('family view, drawn only: undrawn items and empty groups are hidden, counts
   ];
   const { activeData } = useCollectionView(ref(items), ref(''), ref('group'), ref(true));
   assertEquals(Object.keys(activeData.value.grouped), ['A']);
-  assertEquals(activeData.value.grouped.A.map((i) => i.itemId), ['001']);
+  assertEquals(activeData.value.grouped.A!.map((i) => i.itemId), ['001']);
   const a = activeData.value.sidebarItems[0];
-  assertEquals([a.id, a.count, a.total], ['A', 1, 2]); // "1 of 2": the hidden item still counts
+  assertEquals([a!.id, a!.count, a!.total], ['A', 1, 2]); // "1 of 2": the hidden item still counts
 });
 
 test('drawn only does not apply to a collection with nothing drawn: what is planned still shows', () => {

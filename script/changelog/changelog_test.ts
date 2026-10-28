@@ -24,7 +24,7 @@ test('insertEntries never creates an "Unreleased" section: every merge is live',
 
 test('insertEntries with no section yet adds the lines after the divider', () => {
   const out = insertEntries('# Changelog\n\n---\n', LINES);
-  assert(out.indexOf(LINES[0]) > out.indexOf('---'));
+  assert(out.indexOf(LINES[0]!) > out.indexOf('---'));
   for (const line of LINES) assertStringIncludes(out, line);
 });
 
@@ -90,7 +90,7 @@ test('the new entries go above the old ones, once', async () => {
 test('without git the command fails with exit 1 and says why', async () => {
   const io = fakeIo({ files: { [PATHS.changelog]: FILE } });
   assertEquals(await main([], io), 1);
-  assert(io.errLines[0].startsWith('✗ git log -1'), io.errLines[0]);
+  assert(io.errLines[0]!.startsWith('✗ git log -1'), io.errLines[0]);
 });
 
 test('insertEntries with no heading and no divider puts the entries at the very top', () => {

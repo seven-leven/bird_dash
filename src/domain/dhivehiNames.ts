@@ -1,7 +1,7 @@
 /** One Dhivehi name in Thaana, with how to say it when the list gives one. */
 export interface DhivehiName {
   script: string;
-  roman?: string;
+  roman?: string | undefined;
 }
 
 const split = (s: string) => s.split('/').map((t) => t.trim()).filter(Boolean);

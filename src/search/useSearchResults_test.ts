@@ -40,13 +40,13 @@ test('matches group by collection with counts', () => {
 
 test('matchedFields flags which display fields matched', () => {
   const { globalResults } = useSearchResults(ref([birds]), cache, ref('mallard'));
-  const result = globalResults.value[0].results[0];
-  assertEquals(result.matchedFields, ['commonName']);
+  const result = globalResults.value[0]!.results[0];
+  assertEquals(result!.matchedFields, ['commonName']);
 });
 
 test('id match is reported in matchedFields', () => {
   const { globalResults } = useSearchResults(ref([birds]), cache, ref('001'));
-  assertEquals(globalResults.value[0].results[0].matchedFields, ['id']);
+  assertEquals(globalResults.value[0]!.results[0]!.matchedFields, ['id']);
 });
 
 test('a collection whose list has not loaded yet is searched as empty', () => {
@@ -79,7 +79,7 @@ test('the drawn count covers every collection; a match on the group alone is rec
     ref('plover'),
   );
   assertEquals([globalResultCount.value, globalDrawnCount.value], [2, 1]);
-  const [plover, lapwing] = globalResults.value[0].results;
-  assertEquals(plover.matchedFields, ['commonName', 'group']);
-  assertEquals(lapwing.matchedFields, ['group']);
+  const [plover, lapwing] = globalResults.value[0]!.results;
+  assertEquals(plover!.matchedFields, ['commonName', 'group']);
+  assertEquals(lapwing!.matchedFields, ['group']);
 });

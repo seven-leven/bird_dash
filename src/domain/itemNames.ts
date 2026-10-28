@@ -18,15 +18,15 @@ export interface ItemName {
   lang: NameLang;
   role: NameRole;
   /** How to say a Dhivehi name, in Latin letters, when the list gives it. */
-  roman?: string;
+  roman?: string | undefined;
 }
 
 /** The name fields a list entry may carry (`public/lists/<id>.json`). */
 export interface NameFields {
   name?: string;
   sci?: string;
-  dhiv?: string;
-  dhiv_script?: string;
+  dhiv?: string | undefined;
+  dhiv_script?: string | undefined;
 }
 
 /**

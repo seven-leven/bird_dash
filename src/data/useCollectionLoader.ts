@@ -9,7 +9,7 @@ import { checkCollections, checkList } from './files.ts';
 export interface LoadState {
   items: Item[];
   loading: boolean;
-  error?: string;
+  error?: string | undefined;
 }
 
 /** How much of the whole archive is drawn, over every collection loaded so far. */
@@ -146,9 +146,10 @@ export function useCollectionLoader() {
       return;
     }
 
-    activeCollectionId.value = collections.value[0].id;
+    const first = collections.value[0]!; // checked above: at least one
+    activeCollectionId.value = first.id;
     isInitialized.value = true;
-    await loadData(collections.value[0]);
+    await loadData(first);
     prefetchOtherCollections();
   };
 

@@ -10,21 +10,21 @@ const g = (label: string, n: number) => ({
 
 test('groups sit side by side with one empty cell between them', () => {
   const [a, b] = iconGridLayout([g('a', 3), g('b', 2)], 10);
-  assertEquals([a.row, a.col], [0, 0]);
-  assertEquals(a.icons.map((i) => i.col), [0, 1, 2]);
-  assertEquals([b.row, b.col], [0, 4]); // column 3 is the gap
-  assertEquals(b.icons.map((i) => i.col), [4, 5]);
+  assertEquals([a!.row, a!.col], [0, 0]);
+  assertEquals(a!.icons.map((i) => i.col), [0, 1, 2]);
+  assertEquals([b!.row, b!.col], [0, 4]); // column 3 is the gap
+  assertEquals(b!.icons.map((i) => i.col), [4, 5]);
 });
 
 test('a group that does not fit starts the next row at the first column', () => {
   const [, b, c] = iconGridLayout([g('a', 3), g('b', 7), g('c', 2)], 10);
-  assertEquals([b.row, b.col], [1, 0]); // 3 + gap + 7 would need 11 cells
-  assertEquals([c.row, c.col], [1, 8]);
+  assertEquals([b!.row, b!.col], [1, 0]); // 3 + gap + 7 would need 11 cells
+  assertEquals([c!.row, c!.col], [1, 8]);
 });
 
 test('a group that exactly fills the rest of the row stays on it', () => {
   const [, b] = iconGridLayout([g('a', 2), g('b', 7)], 10);
-  assertEquals([b.row, b.col], [0, 3]);
+  assertEquals([b!.row, b!.col], [0, 3]);
 });
 
 test('the real icon set stays inside the grid at both sizes the docs use', () => {

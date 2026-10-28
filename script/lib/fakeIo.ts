@@ -8,9 +8,9 @@ export interface FakeIoOptions {
   /** git's answers, by its arguments joined with spaces (`'rev-list --count HEAD'`). */
   git?: Record<string, string>;
   /** The repository's commit count and short commit id, the two answers the version asks git for. */
-  commits?: number;
-  commit?: string;
-  env?: Record<string, string>;
+  commits?: undefined | number;
+  commit?: undefined | string;
+  env?: Record<string, string> | undefined;
   now?: Date;
   /** Exit codes for scripts run with `runNode`, by script path; any other exits 0. */
   exitCodes?: Record<string, number>;

@@ -45,9 +45,9 @@ test('a picture that is not square is padded with white, never cropped', () =>
       return [data[at], data[at + 1], data[at + 2]];
     };
     const [r, g, b] = pixel(1024, 20); // the band above the 2:1 picture
-    assert(r > 240 && g > 240 && b > 240, `expected white padding, got ${[r, g, b]}`);
+    assert(r! > 240 && g! > 240 && b! > 240, `expected white padding, got ${[r, g, b]}`);
     const [cr, cg] = pixel(1024, 1024); // the middle: the red picture
-    assert(cr > 150 && cg < 100, `expected the picture in the middle, got ${[cr, cg]}`);
+    assert(cr! > 150 && cg! < 100, `expected the picture in the middle, got ${[cr, cg]}`);
   }));
 
 test('missing source art is a failure with a reason, not an exception', () =>

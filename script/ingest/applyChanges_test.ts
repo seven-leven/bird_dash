@@ -72,8 +72,8 @@ test('an image that cannot be made is a failure for that item, reported, and the
   assertEquals(applied.failures, [{ id: '002', reason: 'boom' }, { id: '001', reason: 'boom' }]);
   assertEquals(made, ['full 002', 'thumb 001']);
   assertEquals(io.errLines.length, 2);
-  assert(io.errLines[0].includes('could not make  002  boom'));
-  assert(io.errLines[1].includes('could not repair the thumbnail  001  boom'));
+  assert(io.errLines[0]!.includes('could not make  002  boom'));
+  assert(io.errLines[1]!.includes('could not repair the thumbnail  001  boom'));
 });
 
 test("an item's other images are made, full size alone, and a failure says which", async () => {

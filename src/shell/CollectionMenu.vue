@@ -67,7 +67,7 @@ import type { Collection } from '../domain/toCollectionItems.ts';
 defineProps<{
   collections: Collection[];
   /** The collection on screen, once one is. */
-  active?: Collection;
+  active?: Collection | undefined;
 }>();
 const emit = defineEmits<{ select: [collectionId: string] }>();
 

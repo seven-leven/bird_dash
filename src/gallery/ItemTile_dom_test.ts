@@ -61,9 +61,9 @@ test('the caption sits under the image: Dhivehi first, then English, both shown'
   const caption = tile.lastElementChild as HTMLElement;
   assert(!caption.contains(img), 'the names are not laid over the drawing');
   const [dhivehi, english] = [...caption.children] as HTMLElement[];
-  assertEquals(dhivehi.textContent?.trim(), 'ވަލު ބޮނޑަނަ');
-  assertEquals(dhivehi.getAttribute('dir'), 'rtl');
-  assertEquals(english.textContent?.trim(), 'Greater Sand-Plover');
+  assertEquals(dhivehi!.textContent?.trim(), 'ވަލު ބޮނޑަނަ');
+  assertEquals(dhivehi!.getAttribute('dir'), 'rtl');
+  assertEquals(english!.textContent?.trim(), 'Greater Sand-Plover');
   assertStringIncludes(tile.className, 'bg-white'); // paper
 });
 
@@ -124,7 +124,7 @@ test('a drawing that fails to load shows the icon instead, named for the drawing
 test("an undrawn tile's names are muted, Dhivehi included", () => {
   const { tile } = mount({ item: makeItem({ ...teal, meta: { dhiv_script: 'ސަޓު' } }) });
   const [dhivehi, english] = [...(tile.lastElementChild as HTMLElement).children];
-  for (const line of [dhivehi, english]) assertStringIncludes(line.className, 'text-stone-600');
+  for (const line of [dhivehi, english]) assertStringIncludes(line!.className, 'text-stone-600');
 });
 
 test("the id badge's layer stays inside its tile, under the sticky section heading", () => {

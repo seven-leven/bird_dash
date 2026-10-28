@@ -20,8 +20,8 @@ export interface FileCoverage {
   branches: Counter;
   functions: Counter;
   /** Lines no test ran, and lines holding a branch no test took (ascending, no repeats). */
-  missedLines?: number[];
-  missedBranches?: number[];
+  missedLines?: number[] | undefined;
+  missedBranches?: number[] | undefined;
 }
 
 const empty = (): Counter => ({ found: 0, hit: 0 });
@@ -129,7 +129,7 @@ export function lineRanges(lines: number[]): string {
   const out: string[] = [];
   for (let i = 0; i < lines.length; i++) {
     const start = lines[i];
-    while (lines[i + 1] === lines[i] + 1) i++;
+    while (lines[i + 1] === lines[i]! + 1) i++;
     out.push(start === lines[i] ? `${start}` : `${start}–${lines[i]}`);
   }
   return out.join(', ');

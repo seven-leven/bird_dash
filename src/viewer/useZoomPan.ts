@@ -69,8 +69,9 @@ export function useZoomPan({ onSwipe }: { onSwipe: (dir: 'next' | 'prev') => voi
   let downAt = { x: 0, y: 0 };
   const MOVE_SLOP = 8; // px a pointer may wander and still count as a click
 
+  // Measured only with two pointers down (a pinch).
   const pointerDistance = () => {
-    const [a, b] = [...pointers.values()];
+    const [a, b] = [...pointers.values()] as [{ x: number; y: number }, { x: number; y: number }];
     return Math.hypot(a.x - b.x, a.y - b.y);
   };
 

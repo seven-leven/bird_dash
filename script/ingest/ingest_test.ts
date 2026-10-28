@@ -37,7 +37,7 @@ test('ingesting dates the new drawing today, makes its images, writes the stats 
 
   assertEquals(listOf(io).Ducks[1].drawn, '2026-10-26');
   assert(
-    io.outLines[0].includes('this changes files git tracks'),
+    io.outLines[0]!.includes('this changes files git tracks'),
     'the first line says it changes the repo',
   );
   const out = io.outLines.join('\n');
@@ -53,7 +53,7 @@ test('a dry run says what it would do and changes nothing', async () => {
   assertEquals(await main(['--dry-run'], io, options), 0);
 
   assertEquals(io.files, before);
-  assert(io.outLines[0].includes('dry run'));
+  assert(io.outLines[0]!.includes('dry run'));
   assert(io.outLines.some((line) => /would register\s+002/.test(line)), io.outLines.join('\n'));
 });
 

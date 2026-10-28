@@ -84,7 +84,7 @@ test('the newest drawings come first; a shared day keeps collection order, then 
       ...sharks,
       groups: { S: [{ id: '1', name: 'S', drawn: '2026-01-01', dhiv: 'Miyaru' }] },
     }])
-      .newest[0].roman,
+      .newest[0]!.roman,
     undefined,
   );
   const all = computeStats([birds]).newest;

@@ -33,8 +33,8 @@ test('a list is read from the collection file, and its drawn ids with it', async
 test('marking an undrawn item dates it, saves the file and gives its name', async () => {
   const io = withList();
   assertEquals(await markDrawn(birds, '002', '2025-06-01', io), 'Garganey');
-  assertEquals(saved(io).Ducks[1].drawn, '2025-06-01');
-  assertEquals(saved(io).Ducks[0].drawn, '2025-01-01', 'other items are untouched');
+  assertEquals(saved(io).Ducks![1]!.drawn, '2025-06-01');
+  assertEquals(saved(io).Ducks![0]!.drawn, '2025-01-01', 'other items are untouched');
   assertEquals(
     io.files.get(birds.paths.json)!.endsWith('}\n'),
     true,

@@ -78,12 +78,12 @@ test('it hands on what the pointer does: focus on hover, select on click', () =>
   second.dispatchEvent(new MouseEvent('mouseenter'));
   second.click();
   assertEquals(emitted.map(([name]) => name), ['focus', 'select']);
-  assertEquals(emitted[0][1], 1);
-  assertEquals((emitted[1][1] as SearchResult).item.commonName, 'Garganey');
+  assertEquals(emitted[0]![1], 1);
+  assertEquals((emitted[1]![1] as SearchResult).item.commonName, 'Garganey');
 });
 
 test('a folded group offers the rest, and asks to open it', () => {
-  const folded: VisibleGroup[] = [{ ...GROUPS[0], count: 12, hidden: 10 }];
+  const folded: VisibleGroup[] = [{ ...GROUPS[0]!, count: 12, hidden: 10 }];
   const { host, emitted } = mount({ results: folded, count: 12 });
   const more = [...host.querySelectorAll('button')].find((b) =>
     b.textContent!.includes('Show 10 more in Birds')

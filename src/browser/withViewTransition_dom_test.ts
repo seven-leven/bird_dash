@@ -32,7 +32,7 @@ test('with them, the change is made inside one, which waits for Vue to draw it',
   let changed = 0;
   withViewTransition(() => changed++);
   assertEquals([updates.length, changed], [1, 0]); // the browser runs it when ready
-  await updates[0]();
+  await updates[0]!();
   assertEquals(changed, 1);
 });
 

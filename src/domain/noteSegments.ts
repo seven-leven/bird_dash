@@ -12,7 +12,7 @@ export function noteSegments(note: string, collectionId: string, idLength: numbe
   let last = 0;
   for (const m of note.matchAll(/#(\d+)/g)) {
     if (m.index > last) segments.push({ text: note.slice(last, m.index) });
-    segments.push({ text: m[0], href: `#${collectionId}/${m[1].padStart(idLength, '0')}` });
+    segments.push({ text: m[0], href: `#${collectionId}/${m[1]!.padStart(idLength, '0')}` });
     last = m.index + m[0].length;
   }
   if (last < note.length) segments.push({ text: note.slice(last) });

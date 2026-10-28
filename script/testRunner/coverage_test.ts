@@ -35,10 +35,10 @@ end_of_record
 test('parseLcov reads every record with line, branch and function counters', () => {
   const files = parseLcov(LCOV);
   assertEquals(files.length, 2);
-  assertEquals(files[0].file, 'C:\\proj\\src\\a.ts');
-  assertEquals(files[0].lines, { found: 10, hit: 5 });
-  assertEquals(files[0].branches, { found: 2, hit: 1 });
-  assertEquals(files[0].functions, { found: 4, hit: 3 });
+  assertEquals(files[0]!.file, 'C:\\proj\\src\\a.ts');
+  assertEquals(files[0]!.lines, { found: 10, hit: 5 });
+  assertEquals(files[0]!.branches, { found: 2, hit: 1 });
+  assertEquals(files[0]!.functions, { found: 4, hit: 3 });
 });
 
 test('percent: nothing to cover counts as fully covered', () => {
@@ -55,9 +55,9 @@ test('totals add up across files (not an average of percentages)', () => {
 test('formatCoverageText lists the worst-covered file first and shows relative paths', () => {
   const table = formatCoverageText(parseLcov(LCOV), 'C:\\proj');
   const lines = table.split('\n');
-  assertStringIncludes(lines[2], 'src/a.ts'); // 50% comes before 100%
-  assertStringIncludes(lines[3], 'src/b.ts');
-  assertStringIncludes(lines[lines.length - 1], ' 75.0%');
+  assertStringIncludes(lines[2]!, 'src/a.ts'); // 50% comes before 100%
+  assertStringIncludes(lines[3]!, 'src/b.ts');
+  assertStringIncludes(lines[lines.length - 1]!, ' 75.0%');
 });
 
 test('a floor is a percentage, 0 when not given, and nonsense is rejected', () => {
@@ -79,14 +79,14 @@ test('formatCoverageMarkdown leads with the total and folds the per-file table a
   assert(md.indexOf('Not fully covered') < md.indexOf('<details>'));
   assertStringIncludes(md, '<details><summary>Every file (2, least covered first)');
   const rows = md.split('\n').filter((l) => l.startsWith('| `'));
-  assertStringIncludes(rows[0], 'src/a.ts'); // least covered first, relative path
-  assertStringIncludes(rows[1], 'src/b.ts');
+  assertStringIncludes(rows[0]!, 'src/a.ts'); // least covered first, relative path
+  assertStringIncludes(rows[1]!, 'src/b.ts');
 });
 
 test('formatCoverageText with a limit shows only the worst files but totals them all', () => {
   const lines = formatCoverageText(parseLcov(LCOV), 'C:\\proj', 1).split('\n');
   assertEquals(lines.filter((l) => l.includes('src/')).length, 1);
-  assertStringIncludes(lines[lines.length - 1], ' 75.0%');
+  assertStringIncludes(lines[lines.length - 1]!, ' 75.0%');
 });
 
 test('parseLcov ignores counters that come before any SF line', () => {
@@ -115,8 +115,8 @@ test('parseLcov records the lines and branches no test reached', () => {
     'SF:C:/proj/src/x.vue\nDA:3,1\nDA:4,0\nDA:5,0\nDA:9,0\nLF:4\nLH:1\n' +
       'BRDA:7,0,0,1\nBRDA:7,0,1,0\nBRDA:12,1,0,-\nBRF:3\nBRH:1\nend_of_record\n',
   );
-  assertEquals(f.missedLines, [4, 5, 9]);
-  assertEquals(f.missedBranches, [7, 12]);
+  assertEquals(f!.missedLines, [4, 5, 9]);
+  assertEquals(f!.missedBranches, [7, 12]);
 });
 
 test('lineRanges collapses runs of line numbers', () => {
@@ -139,9 +139,9 @@ test('notFullyCovered finds every miss exactly, worst first, branches as well as
 });
 
 test('formatGaps names each file and the lines to look at', () => {
-  const [f] = parseLcov(
+  const f = parseLcov(
     'SF:C:/proj/src/x.vue\nDA:4,0\nDA:5,0\nLF:6\nLH:4\nBRDA:7,0,1,0\nBRF:2\nBRH:1\nend_of_record\n',
-  );
+  )[0]!;
   assertEquals(
     formatGaps([f], 'C:/proj'),
     '  src/x.vue\n    lines 4/6, missed: 4–5\n    branches 1/2, missed on: 7',
@@ -158,9 +158,9 @@ test('formatGaps names each file and the lines to look at', () => {
 });
 
 test('coverageAnnotations marks each file on its first missed line, listing the rest', () => {
-  const [f] = parseLcov(
+  const f = parseLcov(
     'SF:C:/proj/src/x.vue\nDA:9,0\nDA:10,0\nLF:6\nLH:4\nBRDA:7,0,1,0\nBRF:2\nBRH:1\nend_of_record\n',
-  );
+  )[0]!;
   assertEquals(coverageAnnotations([f], 'C:/proj', 'error'), [
     '::error file=src/x.vue,line=7,title=Not covered by any test::' +
     'lines 9–10 never run; a branch on 7 never taken',
@@ -173,5 +173,5 @@ test('coverageAnnotations marks each file on its first missed line, listing the 
 
 test('parseLcov lists a line once, however many of its branches were missed', () => {
   const [f] = parseLcov('SF:a.ts\nBRDA:7,0,0,0\nBRDA:7,0,1,-\nBRF:2\nBRH:0\nend_of_record\n');
-  assertEquals(f.missedBranches, [7]);
+  assertEquals(f!.missedBranches, [7]);
 });

@@ -13,9 +13,9 @@ test('IdBadge prints the id, or its slot, on a surface or over a drawing', () =>
     ])
   );
   const [surface, overlay, slotted] = [...host.querySelectorAll('span')];
-  assertEquals(surface.textContent, '#042');
-  assertEquals(surface.className.includes('bg-hush'), true); // the soft fill, in either theme
-  assertEquals(overlay.className.includes('bg-black/50'), true);
-  assertEquals(slotted.textContent, 'custom');
-  assertEquals(slotted.className, surface.className); // one style for every surface
+  assertEquals(surface!.textContent, '#042');
+  assertEquals(surface!.className.includes('bg-hush'), true); // the soft fill, in either theme
+  assertEquals(overlay!.className.includes('bg-black/50'), true);
+  assertEquals(slotted!.textContent, 'custom');
+  assertEquals(slotted!.className, surface!.className); // one style for every surface
 });

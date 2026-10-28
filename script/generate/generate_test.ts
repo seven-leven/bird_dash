@@ -23,7 +23,7 @@ test('the stats are written where they belong, and the first line says the repo 
   const io = emptyRepository();
   assertEquals(await main(['stats'], io), 0);
   assertEquals(JSON.parse(io.files.get(PATHS.stats)!).total, 0);
-  assert(io.outLines[0].includes('this changes files git tracks'));
+  assert(io.outLines[0]!.includes('this changes files git tracks'));
   assertEquals(io.outLines.at(-1), `  ✓ stats  ${PATHS.stats}`);
 });
 
@@ -33,7 +33,7 @@ test('--into writes into the folder given instead, and changes nothing else', as
   assertEquals(await main(['--into', './out', 'stats'], io), 0);
   assert(io.files.has('./out/stats.json'));
   assertEquals(io.files.get(PATHS.stats), stats);
-  assert(io.outLines[0].includes('into ./out, so nothing git tracks is changed'));
+  assert(io.outLines[0]!.includes('into ./out, so nothing git tracks is changed'));
 });
 
 test('with nothing drawn the README’s strip has nothing to draw', async () => {

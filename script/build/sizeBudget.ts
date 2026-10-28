@@ -59,7 +59,7 @@ export function judgeBudgets(
       `  ${ok ? MARK.done : MARK.problem} ${what}: ${kb(measured)} of ${kb(budget.limit)}`,
     );
     if (!ok) {
-      const biggest = sizes.toSorted((a, b) => b.bytes - a.bytes)[0];
+      const biggest = sizes.toSorted((a, b) => b.bytes - a.bytes)[0]!; // over budget: not empty
       over.push(
         budget.per === 'total'
           ? `${what} is ${kb(measured)}`

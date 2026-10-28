@@ -48,6 +48,6 @@ test('the build puts the policy first in <head>, before any script', () => {
 test("the real index.html's theme script is allowed by the hash the build gives it", async () => {
   const html = await readFile('./index.html', 'utf8');
   const [theme] = inlineScripts(html);
-  assertStringIncludes(theme, "localStorage.getItem('theme')");
-  assertStringIncludes(transform(html), hashSource(theme));
+  assertStringIncludes(theme!, "localStorage.getItem('theme')");
+  assertStringIncludes(transform(html), hashSource(theme!));
 });

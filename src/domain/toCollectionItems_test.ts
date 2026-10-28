@@ -9,14 +9,14 @@ test('toCollectionItems: a drawn item gets its thumbnail, date and flags', () =>
   const [item] = toCollectionItems(col, {
     Ducks: [{ id: '007', name: 'Garganey', sci: 'Spatula querquedula', drawn: '2025-03-01' }],
   });
-  assertEquals(item.id, 'birds-item-1');
-  assertEquals(item.itemId, '007');
-  assertEquals(item.group, 'Ducks');
-  assertEquals(item.isDrawn, true);
-  assertEquals(item.imageUrl, '/thumb/birds/007.webp');
-  assertEquals(item.smallImageUrl, '/small/birds/007.webp');
-  assertEquals(item.sortKey, 7);
-  assertEquals(item.drawnTime, Date.UTC(2025, 2, 1));
+  assertEquals(item!.id, 'birds-item-1');
+  assertEquals(item!.itemId, '007');
+  assertEquals(item!.group, 'Ducks');
+  assertEquals(item!.isDrawn, true);
+  assertEquals(item!.imageUrl, '/thumb/birds/007.webp');
+  assertEquals(item!.smallImageUrl, '/small/birds/007.webp');
+  assertEquals(item!.sortKey, 7);
+  assertEquals(item!.drawnTime, Date.UTC(2025, 2, 1));
 });
 
 test('toCollectionItems: no date, or an empty one, is not drawn and has no image', () => {
@@ -32,8 +32,8 @@ test('toCollectionItems: no date, or an empty one, is not drawn and has no image
 
 test('toCollectionItems: an unparseable date still counts as drawn, with time 0', () => {
   const [item] = toCollectionItems(col, { G: [{ id: '1', name: 'A', drawn: 'soon' }] });
-  assertEquals(item.isDrawn, true);
-  assertEquals(item.drawnTime, 0);
+  assertEquals(item!.isDrawn, true);
+  assertEquals(item!.drawnTime, 0);
 });
 
 test('toCollectionItems: the name fields become names; other string fields become meta', () => {
@@ -48,12 +48,12 @@ test('toCollectionItems: the name fields become names; other string fields becom
       rank: 3,
     }],
   });
-  assertEquals(item.names, [
+  assertEquals(item!.names, [
     { text: 'މާކަނާ', lang: 'dv', role: 'title', roman: 'Maakanaa' },
     { text: 'Grey Heron', lang: 'en', role: 'common' },
     { text: 'Ardea cinerea', lang: 'la', role: 'latin' },
   ]);
-  assertEquals(item.meta, { habitat: 'Shore' }); // names have left it; non-strings dropped
+  assertEquals(item!.meta, { habitat: 'Shore' }); // names have left it; non-strings dropped
 });
 
 test('toCollectionItems: every name, the group, the id and the meta are searchable', () => {
@@ -67,14 +67,14 @@ test('toCollectionItems: every name, the group, the id and the meta are searchab
     }],
   });
   for (const term of ['grey heron', 'herons', '010', 'maakanaa', 'މާކަނާ', 'shore']) {
-    assert(item.searchText.includes(term), `searchText is missing "${term}"`);
+    assert(item!.searchText.includes(term), `searchText is missing "${term}"`);
   }
-  assertEquals(item.searchText, item.searchText.toLowerCase());
+  assertEquals(item!.searchText, item!.searchText.toLowerCase());
 });
 
 test('toCollectionItems: no extra fields means no meta object', () => {
   const [item] = toCollectionItems(col, { G: [{ id: '1', name: 'A' }] });
-  assertEquals(item.meta, undefined);
+  assertEquals(item!.meta, undefined);
 });
 
 test('toCollectionItems: ids are unique across groups and items are frozen', () => {
@@ -102,7 +102,7 @@ test('toCollection: derives the data and image URLs from the id and base', () =>
   assertEquals(config.smallImageBase, './small/sharks/');
   assertEquals(config.fullImageBase, './full/sharks/');
   const item = makeItem({ scientificName: 'Carcharhinus melanopterus' });
-  assertEquals(config.links[0].url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');
+  assertEquals(config.links[0]!.url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');
 });
 
 test('toCollection: a collection that names no kind is of species; a series keeps its medium', () => {
@@ -116,8 +116,8 @@ test('toCollectionItems: missing fields become empty, a non-numeric id sorts as 
   const [bare, odd] = toCollectionItems(col, {
     G: [{} as never, { id: 'x1', name: 'Odd', drawn: 'not a date' }],
   });
-  assertEquals([bare.itemId, bare.commonName, bare.scientificName], ['', '', '']);
-  assertEquals([odd.sortKey, odd.isDrawn, odd.drawnTime], [0, true, 0]);
+  assertEquals([bare!.itemId, bare!.commonName, bare!.scientificName], ['', '', '']);
+  assertEquals([odd!.sortKey, odd!.isDrawn, odd!.drawnTime], [0, true, 0]);
 });
 
 test('toCollectionItems: an item lists its images, the drawing and as many more as `images` counts', () => {
@@ -129,7 +129,7 @@ test('toCollectionItems: an item lists its images, the drawing and as many more 
       images: 3,
     }],
   });
-  assertEquals(one.imageIds, ['001']);
-  assertEquals(three.imageIds, ['002', '002-2', '002-3']);
-  assertEquals(three.meta, undefined); // `images` is not a fact to show
+  assertEquals(one!.imageIds, ['001']);
+  assertEquals(three!.imageIds, ['002', '002-2', '002-3']);
+  assertEquals(three!.meta, undefined); // `images` is not a fact to show
 });

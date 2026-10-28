@@ -62,20 +62,20 @@ test('parseJunit reads every test case with file, line and time', () => {
 
 test('a failure is captured, with XML entities decoded', () => {
   const [failed] = parseJunit(XML);
-  assertEquals(failed.name, 'boom & <b>');
-  assertEquals(failed.failure, 'Uncaught Error: bad "thing" happened');
+  assertEquals(failed!.name, 'boom & <b>');
+  assertEquals(failed!.failure, 'Uncaught Error: bad "thing" happened');
 });
 
 test('self-closing test cases and empty input are handled', () => {
-  assertEquals(parseJunit(XML)[2].name, 'self closing');
-  assertEquals(parseJunit(XML)[2].failure, undefined);
+  assertEquals(parseJunit(XML)[2]!.name, 'self closing');
+  assertEquals(parseJunit(XML)[2]!.failure, undefined);
   assertEquals(parseJunit(''), []); // e.g. the run died before writing anything
 });
 
 test('entities are decoded once (&amp;lt; is the text "&lt;")', () => {
   const xml =
     '<testcase name="a &amp;lt; b" classname="./x_test.ts" time="0" line="1">\n</testcase>';
-  assertEquals(parseJunit(xml)[0].name, 'a &lt; b');
+  assertEquals(parseJunit(xml)[0]!.name, 'a &lt; b');
 });
 
 test('missing attributes get defaults, and a failure without a message still counts', () => {

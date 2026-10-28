@@ -85,7 +85,7 @@ const props = withDefaults(
   defineProps<{
     item: Item;
     /** Its collection, whose icon stands in for a drawing not made (or not loaded) yet. */
-    collection: { icon?: string; emoji: string };
+    collection: { icon?: string | undefined; emoji: string };
     /** Above-the-fold tiles load eagerly with high priority (helps LCP). */
     eager?: boolean;
   }>(),

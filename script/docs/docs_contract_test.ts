@@ -20,7 +20,7 @@ test('every live section in the docs names a component the docs theme registers'
     }
   }
   // And no component is registered that no page uses.
-  assertEquals([...registered].filter((n) => !asked.has(n)), []);
+  assertEquals([...registered].filter((n) => !asked.has(n!)), []);
 });
 
 test('every accent in accents.css, and stone, has a full ramp in Tailwind', async () => {

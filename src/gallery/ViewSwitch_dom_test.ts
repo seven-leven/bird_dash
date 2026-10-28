@@ -15,14 +15,14 @@ test('the current view is pressed; pressing the other switches to it', async () 
   const stores = appStores();
   const host = mountComponent(() => h(ViewSwitch), { stores });
   const [group, month] = [...host.querySelectorAll<HTMLButtonElement>('button')];
-  assertEquals([group.getAttribute('aria-pressed'), month.getAttribute('aria-pressed')], [
+  assertEquals([group!.getAttribute('aria-pressed'), month!.getAttribute('aria-pressed')], [
     'true',
     'false',
   ]);
-  month.click();
+  month!.click();
   await nextTick();
   assertEquals(stores.view.viewMode.value, 'month');
-  assertEquals([group.getAttribute('aria-pressed'), month.getAttribute('aria-pressed')], [
+  assertEquals([group!.getAttribute('aria-pressed'), month!.getAttribute('aria-pressed')], [
     'false',
     'true',
   ]);

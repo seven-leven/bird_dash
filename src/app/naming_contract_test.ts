@@ -11,13 +11,13 @@ const sources = async () =>
     !/_test\.ts$/.test(path) && !path.startsWith('src/testing/') && !path.endsWith('.d.ts')
   );
 const nameOf = (path: string) => path.split('/').at(-1)!.replace(/\.(ts|vue)$/, '');
-const capital = (word: string) => word[0].toUpperCase() + word.slice(1);
+const capital = (word: string) => word[0]!.toUpperCase() + word.slice(1);
 
 /** The values a module exports by name (functions, constants, classes, and destructured pairs). */
 const exportsOf = (code: string) => [
   ...[...code.matchAll(/^export (?:async )?(?:function|const|class|let) (\w+)/gm)].map((m) => m[1]),
   ...[...code.matchAll(/^export const \[([^\]]+)\]/gm)].flatMap((m) =>
-    m[1].split(',').map((name) => name.trim())
+    m[1]!.split(',').map((name) => name.trim())
   ),
 ];
 
@@ -36,7 +36,7 @@ test('a file is named after what it makes: its one export, its composable, or it
     const name = nameOf(path);
     const exported = exportsOf(await readFile(path, 'utf8'));
     // A store or the app's actions: made by `create…`, shared by `provide…` and `use…`.
-    const injected = exported.find((e) => e.startsWith('provide'));
+    const injected = exported.find((e) => e!.startsWith('provide'));
     const expected = injected
       ? [`create${capital(name)}`, `provide${capital(name)}`, `use${capital(name)}`]
       : name.startsWith('use') || exported.length === 1
@@ -62,7 +62,7 @@ test('no function is defined twice under one name: a helper two places need is w
     const defined = code.matchAll(
       /^(?:export )?(?:async )?function (\w+)|^(?:export )?const (\w+) = (?:async )?\(/gm,
     );
-    for (const m of defined) where.set(m[1] ?? m[2], [...where.get(m[1] ?? m[2]) ?? [], path]);
+    for (const m of defined) where.set(m[1] ?? m[2]!, [...where.get(m[1] ?? m[2]!) ?? [], path]);
   }
   assertEquals([...where].filter(([, paths]) => paths.length > 1), []);
 });

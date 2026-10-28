@@ -94,7 +94,7 @@ export function formatTiersText(
     }`,
   );
 
-  if (s.slowest.length > 0 && s.slowest[0].time >= 0.05) {
+  if (s.slowest.length > 0 && s.slowest[0]!.time >= 0.05) {
     out.push('', 'slowest:');
     for (const c of s.slowest.filter((c) => c.time >= 0.05)) {
       out.push(`  ${secs(c.time).padStart(6)}  ${c.file} › ${c.name}`);
@@ -156,7 +156,7 @@ export function annotations(failures: TestCase[]): string[] {
       file: f.file,
       line: f.line,
       title: `Test failed: ${f.name}`,
-      message: (f.failure ?? 'failed').split('\n')[0],
+      message: (f.failure ?? 'failed').split('\n')[0]!,
     })
   );
 }

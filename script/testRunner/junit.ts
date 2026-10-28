@@ -14,7 +14,7 @@ export interface TestCase {
   /** Seconds. */
   time: number;
   /** The failure message; undefined when the test passed. */
-  failure?: string;
+  failure?: string | undefined;
 }
 
 const decode = (s: string) =>
@@ -23,21 +23,21 @@ const decode = (s: string) =>
 
 const attributes = (text: string): Record<string, string> => {
   const attrs: Record<string, string> = {};
-  for (const m of text.matchAll(/([\w:-]+)="([^"]*)"/g)) attrs[m[1]] = decode(m[2]);
+  for (const m of text.matchAll(/([\w:-]+)="([^"]*)"/g)) attrs[m[1]!] = decode(m[2]!);
   return attrs;
 };
 
 export function parseJunit(xml: string): TestCase[] {
   const cases: TestCase[] = [];
   for (const m of xml.matchAll(/<testcase\s+([^>]*?)(?:\/>|>([\s\S]*?)<\/testcase>)/g)) {
-    const attrs = attributes(m[1]);
+    const attrs = attributes(m[1]!);
     const failure = /<(?:failure|error)\b([^>]*)/.exec(m[2] ?? '');
     cases.push({
       name: attrs.name ?? '(unnamed)',
       file: repoPath(attrs.classname ?? ''),
       line: Number(attrs.line ?? 0),
       time: Number(attrs.time ?? 0),
-      failure: failure ? (attributes(failure[1]).message ?? 'failed') : undefined,
+      failure: failure ? (attributes(failure[1]!).message ?? 'failed') : undefined,
     });
   }
   return cases;

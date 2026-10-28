@@ -43,12 +43,12 @@ export interface CollectionEntry {
   /** Absent means `species`. */
   kind?: CollectionKind;
   /** A series: what every piece in it is drawn in ("colour pencil"). */
-  medium?: string;
+  medium?: string | undefined;
   emoji: string;
   /** Name of a line icon in src/ui/icons.ts; the emoji is the fallback. */
-  icon?: string;
+  icon?: string | undefined;
   /** The collection's accent colour: one of the palettes in src/styles/accents.css (default teal). */
-  accent?: string;
+  accent?: string | undefined;
   groupLabel: string;
   itemLabel: string;
   /** `url` may contain `{{common}}` and `{{sci}}` placeholders. */
@@ -78,8 +78,8 @@ export interface NewestDrawing {
   id: string;
   name: string;
   /** The Dhivehi name in Thaana, when the list has one, and how to say it. */
-  dhivehi?: string;
-  roman?: string;
+  dhivehi?: string | undefined;
+  roman?: string | undefined;
   drawn: string;
 }
 

@@ -416,7 +416,7 @@ test('unmounting while open unlocks the page and stops listening for keys', asyn
 test("the arrows page through an item's images, each loaded afresh at fit, then on to the next", async () => {
   const t = setup(0);
   t.props.item = makeItem({ itemId: '001', imageIds: ['001', '001-2'] });
-  t.props.drawnItems = [t.props.item, items[1]];
+  t.props.drawnItems = [t.props.item, items[1]!];
   await t.open();
   assertEquals(t.lb.imageUrl.value, '/full/x/001.webp');
   t.lb.handleImageLoad();

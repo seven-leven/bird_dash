@@ -11,6 +11,6 @@ import { computed } from 'vue';
 import Icon from './Icon.vue';
 import { isIconName } from './icons.ts';
 
-const props = defineProps<{ collection: { icon?: string; emoji: string } }>();
+const props = defineProps<{ collection: { icon?: string | undefined; emoji: string } }>();
 const name = computed(() => (isIconName(props.collection.icon) ? props.collection.icon : null));
 </script>

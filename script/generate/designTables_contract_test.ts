@@ -27,7 +27,8 @@ function colour(name: string): string {
   if (name === 'white') return '#ffffff';
   if (name === 'black') return '#000000';
   const [ramp, step] = name.split('-');
-  const hex = (ramp === 'stone' ? STONE : ramp === 'accent' ? TEAL : {})[step];
+  const steps: Record<string, string> = ramp === 'stone' ? STONE : ramp === 'accent' ? TEAL : {};
+  const hex = steps[step!];
   assert(hex, `DESIGN.md names a colour the palette does not have: ${name}`);
   return hex;
 }
@@ -36,7 +37,8 @@ test('the ramps in DESIGN.md are the palette, step for step', async () => {
   const rows = await table('| Step ');
   assertEquals(rows.map((r) => r[0]), Object.keys(STONE));
   for (const [step, stone, accent] of rows) {
-    assertEquals([stone, accent], [STONE[step], TEAL[step]], `step ${step}`);
+    const key = step as keyof typeof STONE;
+    assertEquals([stone, accent], [STONE[key], TEAL[key]], `step ${step}`);
   }
 });
 
@@ -44,15 +46,15 @@ test('every contrast ratio in DESIGN.md is what the palette measures', async () 
   const rows = await table('| Pair ');
   assert(rows.length >= 6);
   for (const [pair, ratio] of rows) {
-    const [fg, bg] = pair.split(' on ');
-    assertEquals(ratio, `${contrast(colour(fg), colour(bg)).toFixed(1)}:1`, pair);
+    const [fg, bg] = pair!.split(' on ');
+    assertEquals(ratio, `${contrast(colour(fg!), colour(bg!)).toFixed(1)}:1`, pair);
   }
 });
 
 test("the undrawn tile's colours in DESIGN.md are the ones the site and the guide draw in", async () => {
   const rows = await table('| Theme | Tile ');
   const hexes = (cell: string) => cell.match(/#[0-9a-f]{6}/g);
-  assertEquals(rows.map((r) => [hexes(r[1])?.at(-1), hexes(r[2])?.at(-1)]), [
+  assertEquals(rows.map((r) => [hexes(r[1]!)?.at(-1), hexes(r[2]!)?.at(-1)]), [
     [STONE[UNDRAWN.light.background], STONE[UNDRAWN.light.ink]],
     [STONE[UNDRAWN.dark.background], STONE[UNDRAWN.dark.ink]],
   ]);

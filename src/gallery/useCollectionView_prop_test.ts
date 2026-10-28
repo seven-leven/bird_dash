@@ -56,8 +56,8 @@ test('property: within a group, drawn items come first and ids ascend', () => {
       for (const group of Object.values(data.activeData.value.grouped)) {
         for (let i = 1; i < group.length; i++) {
           const [a, b] = [group[i - 1], group[i]];
-          if (a.isDrawn !== b.isDrawn) assert(a.isDrawn, 'an undrawn item precedes a drawn one');
-          else assert(a.sortKey <= b.sortKey, 'ids out of order');
+          if (a!.isDrawn !== b!.isDrawn) assert(a!.isDrawn, 'an undrawn item precedes a drawn one');
+          else assert(a!.sortKey <= b!.sortKey, 'ids out of order');
         }
       }
     }),
@@ -122,7 +122,7 @@ test('property: the lightbox order is drawn-only and never goes back in time', (
       const { data } = run(specs, q, 'group');
       const seq = data.searchedDrawnItems.value;
       assert(seq.every((i) => i.isDrawn));
-      for (let i = 1; i < seq.length; i++) assert(seq[i - 1].drawnTime <= seq[i].drawnTime);
+      for (let i = 1; i < seq.length; i++) assert(seq[i - 1]!.drawnTime <= seq[i]!.drawnTime);
     }),
     { numRuns: 300 },
   );

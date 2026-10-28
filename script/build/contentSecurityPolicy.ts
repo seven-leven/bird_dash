@@ -7,7 +7,7 @@ import type { Plugin } from 'vite';
 
 /** The contents of every inline `<script>` (one with no `src`) in the page. */
 export function inlineScripts(html: string): string[] {
-  return [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+  return [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map((m) => m[1]!);
 }
 
 /** A script's CSP hash source: `'sha256-…'` of its exact text. */

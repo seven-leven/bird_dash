@@ -22,7 +22,7 @@ test("a drawn item is a button that names it; one not drawn yet shows its collec
   // In its place, the collection's icon (ItemTile_dom_test.ts), named for what is not there yet.
   const garganey = app.all('[role="img"][aria-label="Garganey (not drawn yet)"]');
   assertEquals(garganey.length, 1);
-  assertEquals(garganey[0].closest('[role="button"]'), null);
+  assertEquals(garganey[0]!.closest('[role="button"]'), null);
   assertEquals(app.all('img[alt="Garganey"]'), []);
 });
 

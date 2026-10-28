@@ -22,7 +22,7 @@ test('every icon in a component is drawn at one of the four sizes', async () => 
       if (cls === undefined) continue; // sized by its parent (.with-icon) or the caller
       icons++;
       const sizes = cls.split(/\s+/).filter((c) => /^(size|w|h)-/.test(c));
-      if (sizes.length !== 1 || !SIZES.has(sizes[0])) offScale.push(`${file}: ${cls}`);
+      if (sizes.length !== 1 || !SIZES.has(sizes[0]!)) offScale.push(`${file}: ${cls}`);
       if (sizes[0] === 'size-10') emblems.push(file);
       if (sizes[0] === 'size-[56%]') standIns.push(file);
     }

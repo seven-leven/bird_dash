@@ -16,7 +16,7 @@ export function makeScriptCollection(
 ): Collection {
   return {
     id,
-    label: overrides.label ?? id[0].toUpperCase() + id.slice(1),
+    label: overrides.label ?? id[0]!.toUpperCase() + id.slice(1),
     emoji: overrides.emoji ?? '🐦',
     paths: {
       json: PATHS.list(id),
@@ -30,7 +30,7 @@ export function makeScriptCollection(
 }
 
 /** The fixture archive's two ducks: 001 Mallard, drawn, and 002 Garganey, not drawn yet. */
-export const twoDucks = (): ListFile => ({ Ducks: archiveLists().birds.Ducks });
+export const twoDucks = (): ListFile => ({ Ducks: archiveLists().birds.Ducks! });
 
 /**
  * A transcoder that makes no image: it records what it was asked for (`made`, as

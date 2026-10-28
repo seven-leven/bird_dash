@@ -70,7 +70,7 @@ test('names come from the drawings in drawing order, each Dhivehi name once', ()
     species: 'Gray Heron',
   });
   // Collection order breaks a tie on the same day.
-  assertEquals(lineNames([shells, birds])[1].roman, 'Kaha');
+  assertEquals(lineNames([shells, birds])[1]!.roman, 'Kaha');
 });
 
 test('line 0.n takes the n-th name; past the last, or from 1.0, there is none', () => {
