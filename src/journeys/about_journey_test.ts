@@ -6,7 +6,7 @@ import { renderApp } from '../testing/renderApp.ts';
 import { fails, inTurn, json } from '../testing/fakes/fakeFetch.ts';
 import { archiveStats } from '../testing/scenarios/archive.ts';
 
-const dialog = () => document.querySelector<HTMLElement>('[role="dialog"]');
+const dialog = () => document.querySelector<HTMLElement>('dialog');
 
 /** The page's section named `heading` (its `aria-labelledby`). */
 const section = (heading: string) =>

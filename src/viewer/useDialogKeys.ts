@@ -1,14 +1,11 @@
-// useDialogKeys.ts — a modal dialog's keyboard: focus in, Tab kept inside, shortcut keys.
+// useDialogKeys.ts — a modal dialog: opened as one, focus in and back, shortcut keys.
 import { nextTick, onScopeDispose, ref, watch } from 'vue';
 
-const FOCUSABLE =
-  'button:not([disabled]), [href], input:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 /**
- * While `isOpen()`: focus moves into the dialog (bind `dialogRef` to it), Tab and
- * Shift+Tab stay inside it, the page behind does not scroll, and each key in `keys`
- * runs its handler (by `KeyboardEvent.key`). On close, focus goes back where it was.
- * Keys typed into a text field are left alone.
+ * While `isOpen()`: the dialog (bind `dialogRef` to it) opens as a modal, `showModal()`, so
+ * the page behind is inert and Tab cannot leave it; focus moves into it; the page behind does
+ * not scroll; and each key in `keys` runs its handler (by `KeyboardEvent.key`). On close,
+ * focus goes back where it was. Keys typed into a text field are left alone.
  */
 export function useDialogKeys(deps: {
   isOpen: () => boolean;
@@ -16,32 +13,6 @@ export function useDialogKeys(deps: {
 }) {
   const dialogRef = ref<HTMLElement | null>(null);
   let previouslyFocused: HTMLElement | null = null;
-
-  const focusableInDialog = () =>
-    dialogRef.value ? [...dialogRef.value.querySelectorAll<HTMLElement>(FOCUSABLE)] : [];
-
-  const trapTab = (e: KeyboardEvent) => {
-    const els = focusableInDialog();
-    if (els.length === 0) {
-      e.preventDefault();
-      dialogRef.value?.focus();
-      return;
-    }
-    const first = els[0];
-    const last = els[els.length - 1];
-    const active = document.activeElement;
-
-    if (!dialogRef.value?.contains(active)) {
-      e.preventDefault();
-      first.focus();
-    } else if (e.shiftKey && (active === first || active === dialogRef.value)) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && active === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  };
 
   const handleKeydown = (e: KeyboardEvent) => {
     // Cannot happen: the listener is attached only while open (see the watcher below).
@@ -51,8 +22,14 @@ export function useDialogKeys(deps: {
     if ((e.target as HTMLElement | null)?.closest?.('input, textarea, [contenteditable="true"]')) {
       return;
     }
-    if (e.key === 'Tab') trapTab(e);
-    else deps.keys[e.key]?.(e);
+    deps.keys[e.key]?.(e);
+  };
+
+  /** Open the dialog as a modal (once it is in the page), and put focus in it. */
+  const showDialog = () => {
+    const dialog = dialogRef.value;
+    if (dialog instanceof HTMLDialogElement && !dialog.open) dialog.showModal();
+    dialog?.focus({ preventScroll: true });
   };
 
   // `immediate`: a dialog may mount already open (the viewer is loaded on demand, so a deep
@@ -62,10 +39,14 @@ export function useDialogKeys(deps: {
       previouslyFocused = document.activeElement instanceof HTMLElement
         ? document.activeElement
         : null;
-      nextTick(() => dialogRef.value?.focus({ preventScroll: true }));
+      nextTick(showDialog);
       document.body.style.overflow = 'hidden';
       globalThis.addEventListener('keydown', handleKeydown);
     } else {
+      // Closed first, so the page is no longer inert and can take focus back; the dialog
+      // still shows as it fades out (its own display wins over a closed dialog's none).
+      const dialog = dialogRef.value;
+      if (dialog instanceof HTMLDialogElement && dialog.open) dialog.close();
       previouslyFocused?.focus({ preventScroll: true });
       previouslyFocused = null;
       document.body.style.overflow = '';

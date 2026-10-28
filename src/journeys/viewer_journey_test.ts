@@ -5,7 +5,7 @@ import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';
 import { press } from '../testing/events.ts';
 
-const dialog = () => document.querySelector<HTMLElement>('[role="dialog"]');
+const dialog = () => document.querySelector<HTMLElement>('dialog');
 const zoom = (app: { text(el: Element): string }) => app.text(dialog()!).match(/\d+%/)?.[0];
 
 test('a drawn tile opens the viewer on it, and the address names it', async () => {
@@ -13,7 +13,7 @@ test('a drawn tile opens the viewer on it, and the address names it', async () =
   app.control('Mallard, #001').click();
   await app.until(dialog, 'the viewer');
   assertEquals(dialog()!.getAttribute('aria-label'), 'Mallard, #001');
-  assertEquals(dialog()!.getAttribute('aria-modal'), 'true');
+  await app.until(() => (dialog() as HTMLDialogElement).open, 'it to open as a modal');
   await app.until(() => location.hash === '#birds/001', 'the address');
   assertStringIncludes(app.text(dialog()!), 'Anas platyrhynchos');
   await app.until(() => document.activeElement === dialog(), 'focus to move into the viewer');
@@ -23,12 +23,12 @@ test('the arrows page through the drawings in order, and stop at the ends', asyn
   using app = await renderApp();
   app.control('Mallard, #001').click();
   await app.until(dialog, 'the viewer');
-  assertEquals(app.all('[role="dialog"] button[aria-label="Previous"]').length, 0);
+  assertEquals(app.all('dialog button[aria-label="Previous"]').length, 0);
 
   press('ArrowRight');
   await app.until(() => dialog()!.getAttribute('aria-label') === 'Grey Heron, #003', 'the next');
   await app.until(() => location.hash === '#birds/003', 'the address to follow');
-  assertEquals(app.all('[role="dialog"] button[aria-label="Next"]').length, 0);
+  assertEquals(app.all('dialog button[aria-label="Next"]').length, 0);
 
   app.control('Previous').click();
   await app.until(() => dialog()!.getAttribute('aria-label') === 'Mallard, #001', 'the previous');

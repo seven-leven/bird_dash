@@ -127,25 +127,6 @@ test('keys typed into a text field do not zoom or page the image', async () => {
   t.stop();
 });
 
-test('Tab wraps from the last control to the first, Shift+Tab the other way', async () => {
-  const t = setup();
-  await t.open();
-
-  t.el('last').focus();
-  const forward = t.key('Tab', {}, t.el('last'));
-  assert(forward.defaultPrevented, 'Tab on the last control must be intercepted');
-  assertEquals(document.activeElement, t.el('first'));
-
-  const back = t.key('Tab', { shiftKey: true }, t.el('first'));
-  assert(back.defaultPrevented, 'Shift+Tab on the first control must be intercepted');
-  assertEquals(document.activeElement, t.el('last'));
-
-  t.el('mid').focus();
-  const middle = t.key('Tab', {}, t.el('mid'));
-  assert(!middle.defaultPrevented, 'Tab in the middle is left to the browser');
-  t.stop();
-});
-
 test('keys are ignored while closed', async () => {
   const t = setup();
   t.key('+'); // never opened, so the window listener was never attached
@@ -374,40 +355,6 @@ test('closing while a move is waiting for its frame cancels it', async () => {
   t.stop();
 });
 
-test('with nothing focusable in the dialog, Tab keeps focus on the dialog itself', async () => {
-  const t = setup();
-  t.dialog.innerHTML = '<p>only text</p>';
-  await t.open();
-  const e = t.key('Tab', {}, t.dialog);
-  assert(e.defaultPrevented);
-  assertEquals(document.activeElement, t.dialog);
-  t.stop();
-});
-
-test('Tab from outside the dialog pulls focus back in; Shift+Tab on the dialog goes to the end', async () => {
-  const t = setup();
-  await t.open();
-  const outside = document.createElement('button');
-  document.body.append(outside);
-  outside.focus();
-  assert(t.key('Tab', {}, outside).defaultPrevented);
-  assertEquals(document.activeElement, t.el('first'));
-
-  t.dialog.focus();
-  assert(t.key('Tab', { shiftKey: true }, t.dialog).defaultPrevented);
-  assertEquals(document.activeElement, t.el('last'));
-  t.stop();
-});
-
-test('without a dialog element the focus trap does nothing', async () => {
-  const t = setup();
-  t.lb.dialogRef.value = null;
-  await t.open();
-  const e = t.key('Tab');
-  assert(e.defaultPrevented); // still kept inside: there is nowhere to go
-  t.stop();
-});
-
 test('lifting one of three fingers keeps the pinch going', async () => {
   const t = setup();
   await t.open();
@@ -482,6 +429,30 @@ test("the arrows page through an item's images, each loaded afresh at fit, then 
   assertEquals(t.lb.imagePosition.value, 'image 2 of 2');
   assertEquals(t.emitted, []);
 
+  t.key('ArrowRight');
+  assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '002']]);
+  t.stop();
+});
+
+test('the dialog opens as a modal (the page behind inert, Tab kept in by the browser)', async () => {
+  const t = setup(0);
+  const dialog = document.createElement('dialog');
+  dialog.tabIndex = -1;
+  document.body.append(dialog);
+  t.lb.dialogRef.value = dialog;
+  await t.open();
+  assertEquals([dialog.open, document.activeElement === dialog], [true, true]);
+  // Closing closes the modal before focus goes back, or the page would still be inert.
+  t.props.isOpen = false;
+  await nextTick();
+  assertEquals(dialog.open, false);
+  t.stop();
+});
+
+test('without a dialog element to open, opening still listens for its keys', async () => {
+  const t = setup(0);
+  t.lb.dialogRef.value = null;
+  await t.open();
   t.key('ArrowRight');
   assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '002']]);
   t.stop();
