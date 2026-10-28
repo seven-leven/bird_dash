@@ -5,7 +5,7 @@
     <div
       v-for="n in 10"
       :key="n"
-      class="rounded-card overflow-hidden animate-pulse bg-slate-200 dark:bg-slate-800"
+      class="rounded-card overflow-hidden skeleton"
     >
       <div class="aspect-square" />
       <div class="h-14" />

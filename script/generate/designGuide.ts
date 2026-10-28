@@ -46,21 +46,21 @@ export interface FormTokens {
 }
 
 /**
- * The form tokens, from the text of tokens.css and main.css (rem at 16px to the rem).
+ * The form tokens, from the text of tokens.css and utilities.css (rem at 16px to the rem).
  * Throws when one is missing, so a renamed token fails the guide instead of a number
  * going stale on it.
  */
-export function formTokensFrom(tokensCss: string, mainCss: string): FormTokens {
+export function formTokensFrom(tokensCss: string, utilitiesCss: string): FormTokens {
   const rem = (name: string) => {
     const found = tokensCss.match(new RegExp(`--wi-radius-${name}:\\s*([\\d.]+)rem`));
     if (!found) throw new Error(`tokens.css has no --wi-radius-${name} in rem`);
     return Number(found[1]) * 16;
   };
   const ms = (name: string) => {
-    const found = mainCss.match(
+    const found = utilitiesCss.match(
       new RegExp(`@utility duration-${name} \\{\\s*transition-duration:\\s*(\\d+)ms`),
     );
-    if (!found) throw new Error(`main.css has no duration-${name} in ms`);
+    if (!found) throw new Error(`utilities.css has no duration-${name} in ms`);
     return Number(found[1]);
   };
   return { controlPx: rem('control'), cardPx: rem('card'), fastMs: ms('fast'), slowMs: ms('slow') };
@@ -70,7 +70,7 @@ export function formTokensFrom(tokensCss: string, mainCss: string): FormTokens {
 export async function readFormTokens(): Promise<FormTokens> {
   return formTokensFrom(
     await readFile(PATHS.tokensCss, 'utf8'),
-    await readFile(PATHS.mainCss, 'utf8'),
+    await readFile(PATHS.utilitiesCss, 'utf8'),
   );
 }
 

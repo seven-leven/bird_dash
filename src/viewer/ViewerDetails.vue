@@ -7,7 +7,7 @@
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs viewer-label">
       <IdBadge :id="item.itemId" />
       <button
-        class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+        class="focus-ring rounded-control link"
         :title="`Show ${item.group} in the grid`"
         @click="emit('go-to-group', item.group)"
       >
@@ -84,7 +84,7 @@
               <a
                 v-if="part.href"
                 :href="part.href"
-                class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 underline underline-offset-2 hover:opacity-80"
+                class="focus-ring rounded-control link underline hover:opacity-80"
               >{{ part.text }}</a>
               <template v-else>{{ part.text }}</template>
             </template>
@@ -92,7 +92,7 @@
         </div>
         <button
           v-if="isLong"
-          class="focus-ring rounded-control mt-2 text-xs font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+          class="focus-ring rounded-control mt-2 text-xs link"
           aria-controls="illustrator-note"
           :aria-expanded="!folded"
           @click="expanded = !expanded"

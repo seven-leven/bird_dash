@@ -199,10 +199,12 @@ every file moves.
       the top bar (a slot) and the footer after the gallery or a page (their default slot), and
       hands the footer the build; `App.vue` hands the page list to the layout store, where the shell
       reads it.
-- [ ] **7. Styles.** `main.css` split into `tokens`, `accents` (if not already), `base`
-      (`.font-dhivehi`, reduced motion), `components` (the `@layer components` classes) and
-      `utilities`; `main.css` keeps only Tailwind's setup and the imports. _Done when_ each file has
-      one kind of rule.
+- [x] **7. Styles** (2026-10-28). `main.css` is Tailwind's setup (the sources, the dark variant, the
+      theme mapping) and the imports; `base.css` the page's own rules (colour scheme, reduced
+      motion, the Thaana line), `components.css` the `@layer components` classes, `utilities.css`
+      the speeds, the tile grid and the scrollbar; `tokens.css` and `accents.css` as they were.
+      Folded: `.skeleton` and `.link`. The guide reads the speeds from `utilities.css`. Gone: the
+      unused `shimmer` animation.
 - [ ] **8. Close.** The import-direction test covers every layer; a naming test (file name matches
       its main export; no banned word in a composable's name; no function defined twice under one
       name); the layout diagram in ARCHITECTURE.md redrawn; `types/` gone; this page deleted. _Done

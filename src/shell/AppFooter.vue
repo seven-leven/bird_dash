@@ -29,7 +29,7 @@
         v-for="p in pages"
         :key="p.id"
         :href="`#${p.id}`"
-        class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+        class="focus-ring rounded-control link"
         :aria-current="page === p.id ? 'page' : undefined"
       >
         {{ p.label }}
@@ -37,7 +37,7 @@
       <!-- The docs site, served beside the gallery (docs/.vitepress). -->
       <a
         href="docs/"
-        class="focus-ring rounded-control font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+        class="focus-ring rounded-control link"
       >
         Docs
       </a>

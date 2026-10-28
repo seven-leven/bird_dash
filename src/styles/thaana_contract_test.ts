@@ -7,9 +7,9 @@ import { assert, assertEquals } from '@std/assert';
 // clipped (truncate) caption cuts the marks off (docs/DESIGN.md §02).
 
 test('.font-dhivehi gives Thaana the line height its marks need', async () => {
-  const css = await readFile('./src/styles/main.css', 'utf8');
+  const css = await readFile('./src/styles/base.css', 'utf8');
   const rule = /\.font-dhivehi \{([^}]*)\}/.exec(css)?.[1];
-  assert(rule, 'main.css has no .font-dhivehi rule');
+  assert(rule, 'base.css has no .font-dhivehi rule');
   const lineHeight = Number(/line-height: ([\d.]+);/.exec(rule)?.[1]);
   assert(lineHeight >= 1.8, `.font-dhivehi line-height is ${lineHeight}, below 1.8`);
 });

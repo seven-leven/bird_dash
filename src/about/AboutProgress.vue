@@ -35,7 +35,7 @@
     </ul>
     <button
       v-if="cards.length > CARDS_FIT"
-      class="focus-ring mt-4 rounded-control text-sm font-medium text-accent-700 dark:text-accent-400 hover:underline underline-offset-2"
+      class="focus-ring mt-4 rounded-control text-sm link"
       :aria-expanded="allCards"
       @click="allCards = !allCards"
     >

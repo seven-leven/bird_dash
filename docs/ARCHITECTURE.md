@@ -76,7 +76,8 @@ src/
                         wording, dates, the project's links (the scripts use some of it too)
   journeys/             Whole visits through the real app (TESTING.md, the journey tier)
   types/                Types still shared from one place, until the site overhaul's phase 8
-  styles/               main.css (Tailwind), tokens.css and accents.css (shared with the docs site), fonts/
+  styles/               main.css (Tailwind's setup and the imports), tokens.css and accents.css
+                        (shared with the docs site), base.css, components.css, utilities.css, fonts/
   testing/              Shared test fixtures, the fake-DOM setup and property-test depth.
                         The tests themselves sit next to the code they cover (see TESTING.md)
 script/                 One folder per command, run by Node; shared code in lib/ (SCRIPTS.md)

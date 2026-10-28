@@ -11,11 +11,11 @@ This document is both its point of view and its practical reference.
 ![Design guide](assets/design-guide.png)
 
 The picture is drawn from the real tokens and icons by `npm run generate`. The source of truth for
-the tokens is [`src/styles/main.css`](../src/styles/main.css), with the parts the docs site shares
-in [`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css); this
-guide explains the decisions behind them and how to apply them. The picture has a voice of its own
-(warm paper, a serif for statements); neither is a site token. The site's colours are the swatches
-drawn on it.
+the tokens is [`src/styles/`](../src/styles/main.css): `main.css` maps them into Tailwind,
+[`tokens.css`](../src/styles/tokens.css) and [`accents.css`](../src/styles/accents.css) hold the
+parts the docs site shares, and `components.css` the classes each role uses; this guide explains the
+decisions behind them and how to apply them. The picture has a voice of its own (warm paper, a serif
+for statements); neither is a site token. The site's colours are the swatches drawn on it.
 
 ---
 

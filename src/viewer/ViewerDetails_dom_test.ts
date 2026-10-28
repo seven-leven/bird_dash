@@ -127,7 +127,7 @@ test('links within the site are in the accent; links that leave it are not', () 
   const group = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Ducks'))!;
   const noteLink = host.querySelector('#illustrator-note a')!;
   const more = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Read'))!;
-  for (const el of [group, noteLink, more]) assertStringIncludes(el.className, 'text-accent-700');
+  for (const el of [group, noteLink, more]) assert(el.classList.contains('link'), el.className);
   const external = host.querySelector('a[target="_blank"]')!;
   assert(!external.className.includes('accent'), 'an external link stays neutral');
 });

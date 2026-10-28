@@ -8,7 +8,7 @@ import { readJson } from '../lib/fs.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 
 // The generated images are drawn from the real tokens, icons and data, so these
-// read main.css, collections.json and the placeholder files.
+// read utilities.css, collections.json and the placeholder files.
 
 test('the guide names every accent hue on the menu and who uses each', async () => {
   const { svg } = await designGuide();
@@ -76,5 +76,5 @@ test('a form token missing from the CSS fails the guide instead of going stale o
     '@utility duration-slow {\n  transition-duration: 300ms;\n}';
   assertEquals(formTokensFrom(tokens, main).cardPx, 12);
   assertThrows(() => formTokensFrom('', main), Error, 'tokens.css has no --wi-radius-control');
-  assertThrows(() => formTokensFrom(tokens, ''), Error, 'main.css has no duration-fast');
+  assertThrows(() => formTokensFrom(tokens, ''), Error, 'utilities.css has no duration-fast');
 });

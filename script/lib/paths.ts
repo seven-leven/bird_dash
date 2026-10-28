@@ -13,7 +13,8 @@ export const PATHS = {
   baseVersion: './script/version/base_version.json',
   changelog: './CHANGELOG.md',
   /** The site's CSS, and the parts the docs site shares. */
-  mainCss: './src/styles/main.css',
+  baseCss: './src/styles/base.css',
+  utilitiesCss: './src/styles/utilities.css',
   tokensCss: './src/styles/tokens.css',
   accentsCss: './src/styles/accents.css',
   faruma: './src/styles/fonts/Faruma.woff',

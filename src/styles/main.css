@@ -1,8 +1,15 @@
+/* Tailwind's setup, and the site's styles in order. One kind of rule a file:
+     tokens.css      Faruma, the type stack, the radii, the shadows (shared with the docs site)
+     accents.css     the accent palettes a collection picks its hue from (shared too)
+     base.css        the page's own rules: colour scheme, reduced motion, the Thaana line
+     components.css  the site's classes (buttons, links, the current marker, labels)
+     utilities.css   what Tailwind lacks: the speeds, the tile grid, the scrollbar */
 @import 'tailwindcss';
-/* Shared with the docs site: Faruma, the type stack, the radii and the shadows. */
 @import './tokens.css';
-/* The accent palettes, the menu a collection picks its hue from; shared with the docs site. */
 @import './accents.css';
+@import './base.css';
+@import './components.css';
+@import './utilities.css';
 
 /* Tailwind looks for class names in every file git tracks. Words in the docs and the
    GitHub config (e.g. `[version-update:semver-major]` in dependabot.yml) would otherwise
@@ -12,17 +19,6 @@
 
 /* Dark mode is class-based (.dark on <html>), driven by useTheme — not the OS. */
 @custom-variant dark (&:where(.dark, .dark *));
-
-/* The browser's own parts (scrollbars, the search box, form controls) follow the page's
-   theme too, so they are not drawn light on a dark page. */
-@layer base {
-  :root {
-    color-scheme: light;
-  }
-  :root.dark {
-    color-scheme: dark;
-  }
-}
 
 /*
   Design tokens — the whole app draws from these, so a change here is a change
@@ -43,17 +39,6 @@
 
   --text-micro: 0.6875rem;
   --text-micro--line-height: 1rem;
-
-  --animate-shimmer: shimmer 1.5s infinite linear;
-
-  @keyframes shimmer {
-    0% {
-      background-position: -200% 0;
-    }
-    100% {
-      background-position: 200% 0;
-    }
-  }
 }
 
 /*
@@ -73,180 +58,4 @@
   --color-accent-800: var(--accent-800);
   --color-accent-900: var(--accent-900);
   --color-accent-950: var(--accent-950);
-}
-
-@utility duration-fast {
-  transition-duration: 150ms;
-}
-@utility duration-slow {
-  transition-duration: 300ms;
-}
-
-@layer components {
-  /* A link that leaves the site, or out to the docs: neutral, never the accent (docs/DESIGN.md §01). */
-  .link-out {
-    @apply font-medium text-slate-600 underline underline-offset-2
-      hover:text-slate-900 dark:text-slate-300 dark:hover:text-white;
-  }
-
-  /* Neutral icon/text button used across the chrome (header, sidebar). */
-  /* The one primary action on a screen (accent-700 with white, 5.5:1). */
-  .btn-primary {
-    @apply inline-flex items-center gap-1.5 rounded-control px-3 py-1.5 text-sm font-medium
-      bg-accent-700 text-white transition-colors duration-fast hover:bg-accent-600;
-  }
-  .btn-ghost {
-    @apply rounded-control text-slate-500 transition-colors duration-fast
-      hover:bg-slate-100 hover:text-slate-800
-      dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
-  }
-
-  /*
-    A choice among siblings: collection tabs, the view switch, sidebar sections.
-    The one look for "this is the current one" is a quiet grey fill, strong text
-    and an accent marker — driven by the ARIA state, so the styling cannot disagree
-    with what assistive tech is told. Solid teal is kept for primary actions.
-  */
-  .nav-item {
-    @apply relative rounded-control text-sm font-medium text-slate-500 transition-colors
-      duration-fast
-      hover:bg-slate-100 hover:text-slate-800
-      dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200;
-  }
-  .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true']) {
-    @apply bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100;
-  }
-  .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true'])::after {
-    content: '';
-    @apply absolute rounded-full bg-accent-700;
-  }
-  /* `dark:` cannot follow a pseudo-element, so the dark theme's marker has a rule of its own. */
-  .dark .nav-item:is([aria-current]:not([aria-current='false']), [aria-pressed='true'])::after {
-    @apply bg-accent-500;
-  }
-  /* Marker under a horizontal item, or beside a vertical one. */
-  .nav-item.marker-b::after {
-    @apply inset-x-2 bottom-0 h-0.5;
-  }
-  .nav-item.marker-l::after {
-    @apply left-0 top-1/2 h-4 w-0.5 -translate-y-1/2;
-  }
-
-  /* Small count pill (search results, group totals). */
-  .count-pill {
-    @apply rounded-full px-1.5 py-0.5 text-micro font-semibold tabular-nums
-      bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300;
-  }
-
-  /* Icon button layered over imagery (lightbox controls). */
-  /* The viewer follows the theme like the rest of the page (docs/DESIGN.md section 1):
-     its three text roles, light first. On white: 17.9, 7.6 and 4.8:1; on black: 21,
-     10.0 and 5.3:1. */
-  .viewer-title {
-    @apply text-slate-900 dark:text-white;
-  }
-  .viewer-body {
-    @apply text-slate-600 dark:text-white/70;
-  }
-  .viewer-label {
-    @apply text-slate-500 dark:text-white/50;
-  }
-  .icon-btn-overlay {
-    @apply flex items-center justify-center w-8 h-8 rounded-control
-      text-slate-500 transition-colors duration-fast
-      hover:text-slate-800 hover:bg-slate-900/5
-      dark:text-white/50 dark:hover:text-white/70 dark:hover:bg-white/10
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
-      dark:focus-visible:ring-accent-400;
-  }
-
-  /* Previous/next arrows beside the lightbox image. */
-  .nav-btn-overlay {
-    @apply absolute top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-10 h-10
-      rounded-control bg-white/80 text-slate-700 shadow-lift ring-1 ring-slate-200
-      transition-colors duration-fast hover:bg-white hover:text-slate-900
-      dark:bg-black/40 dark:text-white/70 dark:shadow-none dark:ring-0
-      dark:hover:bg-black/60 dark:hover:text-white
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
-      dark:focus-visible:ring-accent-400;
-  }
-
-  /* Shared keyboard focus treatment. A ring needs 3:1 against what it sits on: `500` is too
-     pale on white for some hues (teal 2.4:1), so a light page draws it in `700`. */
-  .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-700
-      dark:focus-visible:ring-accent-500
-      focus-visible:ring-offset-2 focus-visible:ring-offset-white
-      dark:focus-visible:ring-offset-slate-950;
-  }
-
-  /* Secondary/muted body text — WCAG-AA in both themes. */
-  .text-muted {
-    @apply text-slate-500 dark:text-slate-400;
-  }
-
-  /* Micro label: uppercase section/meta headings. Color set at point of use. */
-  .caps-label {
-    @apply text-micro font-semibold uppercase tracking-widest;
-  }
-
-  /* A small icon sitting before a label or a figure. */
-  .with-icon {
-    @apply inline-flex items-center gap-1.5;
-  }
-  .with-icon > svg {
-    @apply size-3 shrink-0;
-  }
-
-  /* Keyboard hint chip. */
-  .kbd-hint {
-    @apply rounded-control border px-1.5 py-0.5 font-mono text-micro
-      bg-slate-50 border-slate-200 text-slate-600
-      dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300;
-  }
-
-  /* Vertical divider in the header. */
-  .divider-v {
-    @apply w-px h-6 shrink-0 bg-slate-200 dark:bg-slate-700;
-  }
-}
-
-@layer utilities {
-  /* Responsive illustration grid — shared by the skeleton and the real grid. */
-  .tile-grid {
-    @apply grid gap-3 grid-cols-2
-      sm:gap-6 sm:grid-cols-[repeat(auto-fill,minmax(200px,1fr))];
-  }
-
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-slate-300 rounded-full hover:bg-slate-400 dark:bg-slate-700 dark:hover:bg-slate-600;
-  }
-}
-
-/* Respect "reduce motion": keep state changes, drop the movement. */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* Faruma's vowel marks (fili) reach up to 0.5em below the baseline, more than
-   twice what the font declares, so a tight or clipped (truncate) line cuts them
-   off. A line height of 1.85 leaves them 0.59em; measured over every name on the
-   site, the deepest needs 0.5. Unlayered, so it wins over any leading-* utility. */
-.font-dhivehi {
-  font-family: 'Faruma', 'Arial Unicode MS', 'FreeSerif', sans-serif;
-  line-height: 1.85;
 }
