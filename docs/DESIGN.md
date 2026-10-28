@@ -387,6 +387,7 @@ name="…" />`; the logo is the only other SVG in the project. The registry, the
 <!-- live: IconSheet -->
 
 - **Collections:** `bird`, `shark`, `shell`
+- **Series:** `butterfly`, `cake`, `mountain`, `sphere`, `face`, `hare`
 - **Views:** `taxonomy`, `calendar`
 - **Search:** `search`, `noResults`
 - **Navigation:** `menu`, `chevronLeft`, `chevronRight`, `chevronDown`, `close`, `externalLink`
