@@ -39,24 +39,19 @@ test('how many carry a Dhivehi name, and which sites each collection is checked 
 
 test('with no names and no reference sites, it still reads', () => {
   const words = text([shells], [counts('shells', 0)]);
-  assert(words.includes('Each species carries its Dhivehi name in Thaana where it has one.'));
+  assert(words.includes('Each carries its Dhivehi name in Thaana where it has one.'));
   assert(words.includes('Every page links to where to learn more.'));
 });
 
-test('names and references count the species collections alone; a series has neither', () => {
+test('a series of studies counts like any collection: where it has names, and where links', () => {
   const butterflies = makeCollection('butterflies', {
     label: 'Butterflies',
-    kind: 'series',
+    itemLabel: 'butterfly',
     medium: 'colour pencil',
-    links: [link('Etsy')],
   });
-  const words = text([birds, butterflies], [counts('birds', 191, 204), counts('butterflies', 3)]);
+  const words = text([birds, butterflies], [counts('birds', 191, 204), counts('butterflies', 0)]);
+  assert(words.includes('By hand, by name, by reference.'));
   assert(words.includes('191 of the 204 birds carry'));
+  assert(!words.includes('butterfl'));
   assert(words.includes('eBird and Wiki for birds.'));
-  assert(!words.includes('Etsy'));
-
-  const seriesAlone = text([butterflies], [counts('butterflies', 0)]);
-  assert(seriesAlone.includes('By hand.'));
-  assert(!seriesAlone.includes('Named in Dhivehi'));
-  assert(!seriesAlone.includes('Checked against references'));
 });

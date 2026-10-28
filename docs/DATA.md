@@ -24,7 +24,6 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 ```json
 {
   "id": "birds",
-  "kind": "species",
   "label": "Birds",
   "emoji": "🐦",
   "icon": "bird",
@@ -40,8 +39,7 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 | Field        | Required | Meaning                                                                                         |
 | ------------ | -------- | ----------------------------------------------------------------------------------------------- |
 | `id`         | yes      | Used in the URL (`#birds`), file names and folder names. Lowercase, no spaces, unique           |
-| `kind`       | no       | `species` (the default) or `series`: what the collection holds, below                           |
-| `medium`     | a series | What every piece in a series is drawn in ("colour pencil"); the viewer names it                 |
+| `medium`     | no       | What every piece in the collection is drawn in ("colour pencil"); the viewer names it           |
 | `label`      | yes      | The name on the tab                                                                             |
 | `emoji`      | yes      | Shown in terminal reports, and on the tab if there is no `icon`                                 |
 | `icon`       | no       | Name of an icon in `src/ui/icons.ts`. Also what an undrawn tile shows                           |
@@ -50,11 +48,10 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 | `itemLabel`  | yes      | The singular noun for an item ("bird")                                                          |
 | `links`      | yes      | "Learn more" links in the viewer; may be an empty array                                         |
 
-**Kinds.** A `species` collection is a list of living things: each item has a scientific name
-(`sci`), most a Dhivehi one, and the links look them up on reference sites. A `series` is a set of
-numbered studies in one medium, such as a 30-day challenge, grouped by week or difficulty: an item's
-`name` is its prompt, and it has no `sci`, `dhiv` or `dhiv_script`. The contract test checks each
-kind's fields, and the About page counts each kind on its own.
+**Every collection is the same kind of thing.** A list of birds and a series of studies in one
+medium (a 30-day challenge, grouped by week or difficulty) take the same fields: an item's `name` is
+its common name or its prompt, and `sci`, `dhiv` and `dhiv_script` are there where it has them. A
+series names its `medium`; a link that fills in `{{sci}}` suits only a list whose items have one.
 
 In a link, `url` must start with `http://` or `https://` and may contain `{{common}}` (the common
 name) and `{{sci}}` (the scientific name); both are URL-encoded when filled in. No other placeholder
@@ -142,10 +139,7 @@ contract tests run the same checks on the committed files.
 - `collections.json` is empty or has a duplicate `id`;
 - an `icon` is not in the icon registry, or an `accent` is not on the menu in `accents.css`;
 - a link has no label, is not `http(s)`, or uses an unknown `{{placeholder}}`;
-- a `kind` is neither `species` nor `series`; a series has no `medium` or a link that fills in
-  `{{sci}}`, or a species has a `medium`;
-- an item lacks its kind's fields (a species its `sci`) or has another kind's (a series item a
-  `sci`, `dhiv` or `dhiv_script`);
+- a `medium` is empty;
 - a collection has no list file;
 - an item's `id` is not digits or is repeated, its `name` is empty, its `drawn` is not a real
   `YYYY-MM-DD` date, or its `images` is not a whole number of 1 or more; or a group name is blank.

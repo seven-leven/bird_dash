@@ -3,7 +3,7 @@
               rounded-card p-6 w-full max-w-sm border shadow-float flex flex-col gap-5">
 
     <!-- Where it sits: its id, its group (a link back to it in the grid), and when it
-         was drawn, in the month view's words; a series piece, what in. -->
+         was drawn, in the month view's words, and what in where its collection names a medium. -->
     <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted">
       <IdBadge :id="item.itemId" />
       <button

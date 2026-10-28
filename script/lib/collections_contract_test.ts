@@ -64,43 +64,14 @@ test('collections.json: link templates only use known placeholders', async () =>
   }
 });
 
-test('collections.json: each kind has its own fields (a series its medium, a species none)', async () => {
+test('collections.json: a medium, where one is named, is words', async () => {
   const raw = await readJson<CollectionEntry[]>('./public/collections.json');
   for (const col of raw) {
-    const kind = col.kind ?? 'species';
-    assert(kind === 'species' || kind === 'series', `${col.id}: unknown kind "${col.kind}"`);
-    if (kind === 'series') {
-      assert(col.medium?.trim(), `${col.id}: a series names its medium`);
-      const sci = col.links.filter((l) => l.url.includes('{{sci}}'));
-      assertEquals(sci.map((l) => l.label), [], `${col.id}: a series has no {{sci}} to fill in`);
-    } else {
-      assertEquals(col.medium, undefined, `${col.id}: a medium belongs to a series`);
-    }
+    if (col.medium !== undefined) assert(col.medium.trim(), `${col.id}: an empty medium`);
   }
 });
 
-/** The fields an item of each kind must have, and those it must not. */
-const ITEM_FIELDS = {
-  species: { needs: ['sci'], never: [] as string[] },
-  series: { needs: [] as string[], never: ['sci', 'dhiv', 'dhiv_script'] },
-};
-
 for (const col of COLLECTIONS) {
-  test(`${col.id}: items have the fields of the collection's kind`, async () => {
-    const raw = await readJson<CollectionEntry[]>('./public/collections.json');
-    const { needs, never } = ITEM_FIELDS[raw.find((c) => c.id === col.id)!.kind ?? 'species'];
-    const problems: string[] = [];
-    for (const [group, items] of Object.entries(await readList(col))) {
-      for (const item of items) {
-        const missing = needs.filter((f) => !String(item[f] ?? '').trim());
-        const extra = never.filter((f) => f in item);
-        if (missing.length) problems.push(`${group} / ${item.id}: needs ${missing}`);
-        if (extra.length) problems.push(`${group} / ${item.id}: a series has no ${extra}`);
-      }
-    }
-    assertEquals(problems, [], problems.join('\n'));
-  });
-
   test(`${col.id}: list file has the files the app expects`, async () => {
     assert(await exists(col.paths.json), `missing ${col.paths.json}`);
   });

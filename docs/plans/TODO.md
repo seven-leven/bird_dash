@@ -34,29 +34,11 @@ Each is a numbered list of about 30 prompts in one medium, grouped by difficulty
 are not wildlife. "Every piece has its place from the start, drawn or not" already fits them, and
 `groupLabel` ("Difficulty", "Week") already works. Before the first one goes in:
 
-- [ ] **One kind of collection** (decided 2026-10-28, undoing the `kind` field added the same day).
-      A bird list and a series of studies are both just collections; nothing in the code tells them
-      apart. One pull request:
-
-      - `kind` goes: from `collections.json`, `CollectionEntry` and `Collection`, the load checks
-        (`data/files.ts`) and the data contract test. `medium` stays, optional for any
-        collection, and the viewer shows it wherever it is set.
-      - The fields are the same for every collection: `sci`, `dhiv` and `dhiv_script` optional
-        everywhere (today a species must have `sci`; a series may not have any of the three).
-      - The About page stops sorting: one sentence names every collection (by `label`, or counts
-        them past `NAMES_FIT`), "one species at a time" becomes "one at a time", and the
-        "Beside them, a series of studies" line and `speciesOf`/`seriesOf`/`seriesLine` go.
-        "Named in Dhivehi" and "Checked against references" already count only the collections
-        with names or links, so they need no kind.
-      - The series icons stay: any collection may take any icon.
-      - DATA.md (the "Kinds" paragraph and the checks), GLOSSARY.md and DECISIONS.md (the
-        reversal, and why: one rule for every collection is simpler than two) follow.
-- [ ] **The name** (a decision, not code; first). "Wildlife Illustrated" over a sweet-treats
-      collection: keep it as the umbrella (wildlife is the core, the series are its studies), or
-      keep the mark and the look and change the word. The logo, README, `index.html` and the About
-      page all carry it.
-- [ ] **The illustrator's note** can come from each piece's `## Result / reflection` in the art
-      notes.
+- [x] **One kind of collection** (2026-10-28): no `kind`; every collection takes the same fields,
+      `medium` among them, and the About page names them all in one sentence.
+- [x] **The name** (2026-10-28): "Wildlife Illustrated" stays, the umbrella over the series.
+- [x] **The illustrator's note** (2026-10-28): written straight into the list's `illustratorNote`,
+      not drawn from the art notes.
 
 ## 🗂️ Data and tooling
 
