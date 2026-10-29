@@ -17,6 +17,9 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | tests: the conventions marked ✓ are a contract (`conventions_contract_test.ts`): file
+  names, titles with no `name:` prefix, "should" or full stop, unique, no `.only`; four titles
+  fixed. "Not covered yet" shrinks to what the browser tier leaves (test overhaul, phase 8, part)
 - 2026-10-29 | tests: a real browser (test overhaul, phase 7). A `browser` tier, opt-in (`npm run
   test:browser`, after `npm run build:site`): `playwright-core`, pinned, drives the installed Chrome
   over the built site, through `testing/realBrowser.ts`. Four checks: no sideways scroll at 375px on
