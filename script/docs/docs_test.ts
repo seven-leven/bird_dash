@@ -33,7 +33,7 @@ test('URLs, anchors on the page and empty links are left alone', () => {
   }
 });
 
-test("githubSlug: GitHub's anchors, digits first included", () => {
+test('an anchor is made as GitHub makes it, a leading digit included', () => {
   assertEquals(githubSlug('3. Before you open a pull request'), '3-before-you-open-a-pull-request');
   assertEquals(
     githubSlug('01. Colour — quiet ground, clear signal'),
@@ -98,7 +98,7 @@ test('the accent hues are the palettes accents.css defines, in order', () => {
   assertEquals(accentHues(css), ['teal', 'sky-blue']);
 });
 
-test("missingSteps: the steps of a colour Tailwind's theme does not define", () => {
+test('the missing steps are those of a colour the Tailwind theme does not define', () => {
   const theme = STEPS.slice(0, -1).map((s) => `  --color-teal-${s}: oklch(${s}% 0.1 180);`)
     .join('\n');
   assertEquals(missingSteps('teal', theme), ['950']);

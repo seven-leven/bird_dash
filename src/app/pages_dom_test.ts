@@ -19,7 +19,7 @@ test('every page has a unique, hash-safe id, a label and a component', () => {
   }
 });
 
-test("PAGES: each page's component loads (a page is code-split; a wrong path would fail here)", async () => {
+test('every page loads its component (each is code-split; a wrong path fails here)', async () => {
   for (const p of PAGES) {
     const load = (p.component as { __asyncLoader?: () => Promise<unknown> }).__asyncLoader;
     assert(load, `${p.id}: not an async component`);

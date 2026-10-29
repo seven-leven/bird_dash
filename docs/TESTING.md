@@ -470,11 +470,10 @@ their normal depth in three timezones. If it fails, the seed is in the log.
 
 ## Not covered yet
 
-- **A real browser.** The journeys run the whole app in happy-dom, which has no layout. Things
-  verified by hand today: layout at phone width, hover and focus styles, transitions, the lightbox
-  gestures on a real touch screen (the overhaul's phase 7).
+- **Hover, transitions and popovers.** The browser tier (B1–B4) checks layout at phone width, touch,
+  Thaana and focus rings; hover styles, transitions, popovers and axe are still checked by hand.
 - **The last line of each command.** Every script's work is a tested function; what is left untested
   is the one line that starts it (`if (import.meta.main) …`) and the runner's function that starts
   the real Vitest.
-- **Real layout.** The scroll-spy and the breakpoint are tested with positions and widths the test
-  supplies. Whether the browser reports the right ones is still checked by hand.
+- **Real layout for the scroll-spy.** It is tested with positions the test supplies; the browser
+  tier does not check it yet.
