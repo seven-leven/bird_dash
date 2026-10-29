@@ -1,0 +1,37 @@
+name: Browser
+
+# The browser tier (docs/TESTING.md): the built site in a real Chrome, the one the runner
+# already has, so no browser is downloaded. Not a required check: it runs beside CI and does not
+# block a merge until it has passed for two weeks (docs/plans/TEST-OVERHAUL.md, phase 7).
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: browser-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  browser:
+    name: Browser checks (B1 to B4)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # the version in the footer counts commits
+      - name: Set up Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Build the site
+        run: node --run build:site
+      - name: Browser tests
+        run: node --run test:browser

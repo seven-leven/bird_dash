@@ -22,7 +22,7 @@ test('unknown tiers and options are rejected with a helpful message', () => {
   assertThrows(
     () => parseArgs(['e2e']),
     Error,
-    'tiers: unit, dom, journey, prop, contract; areas: data,',
+    'tiers: unit, dom, journey, prop, contract, browser; areas: data,',
   );
   assertThrows(() => parseArgs(['--nope']), Error, 'unknown option --nope');
 });

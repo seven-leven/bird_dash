@@ -16,7 +16,15 @@
  */
 
 import { spawn } from 'node:child_process';
-import { discoverTests, groupByTier, isTier, repoPath, type Tier, TIER_ORDER } from './tiers.ts';
+import {
+  DEFAULT_TIERS,
+  discoverTests,
+  groupByTier,
+  isTier,
+  repoPath,
+  type Tier,
+  TIER_ORDER,
+} from './tiers.ts';
 import { parseJunit } from './junit.ts';
 import { command, EXIT, parseArgs as parseCommandArgs, UsageError } from '../lib/cli.ts';
 import type { Io } from '../lib/io.ts';
@@ -102,7 +110,7 @@ export function parseArgs(args: string[]): Options {
   }
 
   return {
-    tiers: names.length > 0 ? TIER_ORDER.filter((t) => names.includes(t)) : [...TIER_ORDER],
+    tiers: names.length > 0 ? TIER_ORDER.filter((t) => names.includes(t)) : [...DEFAULT_TIERS],
     areas,
     paths,
     verbose: flags.has('--verbose'),
@@ -231,7 +239,8 @@ async function runTheTests(args: string[], io: Io, given: Partial<RunnerOptions>
 
   // The second view of the same run: by area (what is protected) rather than tier.
   // "Untested files" only means something when the whole suite ran.
-  const allTiers = opts.tiers.length === TIER_ORDER.length && !narrowed;
+  // "Every tier": the ones a plain `npm test` runs; the browser tier is its own job.
+  const allTiers = DEFAULT_TIERS.every((t) => opts.tiers.includes(t)) && !narrowed;
   const areas = summarizeAreas(cases, {
     coverage: cov,
     sources: cov && allTiers ? await deps.discoverSources() : [],

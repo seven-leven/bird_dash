@@ -64,6 +64,7 @@ exactly the promises whose "Kept by" names it.
 | `build`        | The build never ships a broken site                                              | WORKFLOW   | contracts (data, generated files); CI                            |
 | `sharedLink`   | A shared link to a drawing shows that drawing                                    | PLATFORM   | unit (preview pages); dom (Share); contract (a page per drawing) |
 | `theme`        | Dark or light as you choose, remembered on the next visit, with no flash on load | README     | journey J8; contract (the theme script)                          |
+| `keyboard`     | Every control can be reached by keyboard, and shows where focus is               | P5         | browser B4                                                       |
 
 ## Running them
 
@@ -94,13 +95,14 @@ once, in the table in [`script/testRunner/tiers.ts`](../script/testRunner/tiers.
 it is for and its helper. The runner, `tierOf`, the `test:<tier>` scripts and Vitest's projects in
 `vite.config.ts` all read it, and a contract test checks this table against it.
 
-| Tier       | File name            | Use it for                                               | Helper                                       |
-| ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------- |
-| `unit`     | `x_test.ts`          | Pure logic. Start here                                   | `testing/fixtures.ts`                        |
-| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage | `testing/domSetup.ts`, before every test     |
-| `journey`  | `x_journey_test.ts`  | A whole visit, through the real app                      | `testing/renderApp.ts` (`renderApp`)         |
-| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                    | `testing/propertyRuns.ts` (`assertProperty`) |
-| `contract` | `x_contract_test.ts` | The real files and history of this repo                  | none                                         |
+| Tier       | File name            | Use it for                                                                        | Helper                                       |
+| ---------- | -------------------- | --------------------------------------------------------------------------------- | -------------------------------------------- |
+| `unit`     | `x_test.ts`          | Pure logic. Start here                                                            | `testing/fixtures.ts`                        |
+| `dom`      | `x_dom_test.ts`      | Code that needs `document`, `location`, focus or storage                          | `testing/domSetup.ts`, before every test     |
+| `journey`  | `x_journey_test.ts`  | A whole visit, through the real app                                               | `testing/renderApp.ts` (`renderApp`)         |
+| `prop`     | `x_prop_test.ts`     | A rule that must hold for _any_ input                                             | `testing/propertyRuns.ts` (`assertProperty`) |
+| `contract` | `x_contract_test.ts` | The real files and history of this repo                                           | none                                         |
+| `browser`  | `x_browser_test.ts`  | What only a real browser shows: layout, touch, clipping, focus. On the built site | `testing/realBrowser.ts` (`openSite`)        |
 
 The helpers are in [`src/testing/`](../src/testing/).
 

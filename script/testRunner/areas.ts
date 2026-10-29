@@ -8,7 +8,7 @@
  */
 import type { TestCase } from './junit.ts';
 import type { Counter, FileCoverage } from './coverage.ts';
-import { findFiles, repoPath, type Tier, TIER_ORDER, tierOf } from './tiers.ts';
+import { findFiles, repoPath, type Tier, TIER_ORDER, tierOf, TIERS } from './tiers.ts';
 import { formatPercent } from './coverage.ts';
 
 export interface Area {
@@ -225,31 +225,35 @@ export function formatAreasMarkdown(rows: AreaSummary[]): string {
   return lines.join('\n');
 }
 
+/** The grid's columns: every tier `npm test` runs, and an opt-in one only when it ran. */
+const gridTiers = (rows: AreaSummary[]): Tier[] =>
+  TIER_ORDER.filter((t) => !TIERS[t].optIn || rows.some((r) => r.byTier[t] > 0));
+
 /**
  * The grid: areas down, tiers across, with how many tests each holds, so a gap shows (an
  * area with no property tests, one tested only by journeys). A zero is a dot.
  */
 export function formatGridText(rows: AreaSummary[]): string {
+  const tiers = gridTiers(rows);
   const width = Math.max(4, ...rows.map((r) => r.area.label.length));
   const cell = (n: number, t: Tier) => (n === 0 ? '·' : String(n)).padStart(Math.max(5, t.length));
   return [
-    `${'area'.padEnd(width)}  ${TIER_ORDER.map((t) => t.padStart(5)).join('  ')}`,
+    `${'area'.padEnd(width)}  ${tiers.map((t) => t.padStart(5)).join('  ')}`,
     ...rows.map((r) =>
-      `${r.area.label.padEnd(width)}  ${TIER_ORDER.map((t) => cell(r.byTier[t], t)).join('  ')}`
+      `${r.area.label.padEnd(width)}  ${tiers.map((t) => cell(r.byTier[t], t)).join('  ')}`
     ),
   ].join('\n');
 }
 
 /** The same grid for the job summary and the saved report. */
 export function formatGridMarkdown(rows: AreaSummary[]): string {
+  const tiers = gridTiers(rows);
   return [
     '### By area and tier',
     '',
-    `| Area | ${TIER_ORDER.join(' | ')} |`,
-    `| --- | ${TIER_ORDER.map(() => '---:').join(' | ')} |`,
-    ...rows.map((r) =>
-      `| ${r.area.label} | ${TIER_ORDER.map((t) => r.byTier[t] || '·').join(' | ')} |`
-    ),
+    `| Area | ${tiers.join(' | ')} |`,
+    `| --- | ${tiers.map(() => '---:').join(' | ')} |`,
+    ...rows.map((r) => `| ${r.area.label} | ${tiers.map((t) => r.byTier[t] || '·').join(' | ')} |`),
     '',
   ].join('\n');
 }

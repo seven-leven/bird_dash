@@ -144,7 +144,7 @@ test("the grid counts each area's tests by tier, a dot where there are none", ()
     testCase('src/journeys/search_journey_test.ts'),
   ]);
   const data = rows.find((r) => r.area.id === 'data')!;
-  assertEquals(data.byTier, { unit: 2, dom: 0, journey: 0, prop: 1, contract: 0 });
+  assertEquals(data.byTier, { unit: 2, dom: 0, journey: 0, prop: 1, contract: 0, browser: 0 });
 
   const text = formatGridText(rows).split('\n');
   assertEquals(text[0]!.trim().split(/\s+/), [

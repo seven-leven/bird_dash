@@ -47,7 +47,12 @@ test('Vitest gets one project per environment, worked out from the table', () =>
       test: {
         name: 'node',
         include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
-        exclude: ['**/*_dom_test.ts', '**/*_journey_test.ts', '**/node_modules/**'],
+        exclude: [
+          '**/*_dom_test.ts',
+          '**/*_journey_test.ts',
+          '**/*_browser_test.ts',
+          '**/node_modules/**',
+        ],
         environment: 'node',
       },
     },
@@ -59,6 +64,16 @@ test('Vitest gets one project per environment, worked out from the table', () =>
         exclude: ['**/node_modules/**'],
         environment: 'happy-dom',
         setupFiles: ['src/testing/domSetup.ts'],
+      },
+    },
+    {
+      extends: true,
+      test: {
+        name: 'browser',
+        include: ['src/**/*_browser_test.ts'],
+        exclude: ['**/node_modules/**'],
+        environment: 'node',
+        testTimeout: 30_000,
       },
     },
   ]);
@@ -73,6 +88,6 @@ test("the docs' table of tiers is a row per tier, in order", () => {
   );
   assertEquals(
     rows.at(-1),
-    '| `contract` | `x_contract_test.ts` | The real files and history of this repo | none |',
+    '| `browser` | `x_browser_test.ts` | What only a real browser shows: layout, touch, clipping, focus. On the built site | `testing/realBrowser.ts` (`openSite`) |',
   );
 });
