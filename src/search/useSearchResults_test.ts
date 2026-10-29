@@ -1,3 +1,4 @@
+// Keeps: search (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { ref } from 'vue';

@@ -1,3 +1,4 @@
+// Keeps: build (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { readFile, stat } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';

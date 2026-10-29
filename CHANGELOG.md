@@ -17,6 +17,10 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | tests: the promise map (test overhaul, phase 6). Each promise in TESTING.md has an
+  id, each test that keeps one says so (`// Keeps: place, counts`), and a contract test holds the
+  list and the tests to each other both ways, journeys included. It found the theme journey keeping
+  no promise: dark mode, remembered with no flash, is one now. The phone journey is J10
 - 2026-10-29 | tests: split and renamed to the conventions (test overhaul, phase 5 done). The
   viewer's tests are a file per composable: the dialog and its keys (`useDialogKeys_dom_test.ts`),
   zoom and pan (`useZoomPan_dom_test.ts`), and what `useViewer` adds; the runner's are three

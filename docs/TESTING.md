@@ -41,22 +41,29 @@ phases 4 and 5.
 What the project says it does, in the manifesto's principles (P1–P5) and the README's features, and
 the tests that keep each. A promise with no test is a gap; a test that keeps no promise is a
 question. The journeys are listed under "Journey tests" below; "browser" names checks the overhaul
-adds in phase 7, and phase 6 adds a contract test that checks this list against the tests.
+adds in phase 7.
 
-| Promise                                                                        | From       | Kept by                                                          |
-| ------------------------------------------------------------------------------ | ---------- | ---------------------------------------------------------------- |
-| Every item has its place from the start, drawn or not                          | README, P2 | journey J1; unit (lists to items)                                |
-| Every count says how many are drawn of how many, and is worded the same way    | P2, P4     | unit (`formatCount`); journey J1, J3                             |
-| You can always tell where you are: collection, view, section, page             | P3         | journeys J2, J3, J6                                              |
-| A link to a collection or a drawing opens it, and the back button undoes it    | README     | journey J6; prop (hash round trip)                               |
-| Search finds an item by any of its names, in any collection, from the keyboard | README, P5 | journey J4; unit (matching)                                      |
-| The viewer works with the keyboard alone, and gives focus back when it closes  | P5         | journey J5; dom (dialog keys)                                    |
-| Thaana is never clipped                                                        | P5, DESIGN | contract (line height); browser B3                               |
-| Nothing breaks at phone width                                                  | P5         | browser B1                                                       |
-| A failure says what failed and offers to try again                             | DESIGN §11 | journey J9; dom (each loader)                                    |
-| The numbers on the About page are the archive's, worked out by the build       | README     | contract (stats current); journey J7                             |
-| The build never ships a broken site                                            | WORKFLOW   | contracts (data, generated files); CI                            |
-| A shared link to a drawing shows that drawing                                  | PLATFORM   | unit (preview pages); dom (Share); contract (a page per drawing) |
+A test that keeps a promise says so on a line of its own, after its opening comment: `// Keeps:
+place, counts`. A journey names itself first, `// J1 First visit: …`.
+[`promises_contract_test.ts`](../script/testRunner/promises_contract_test.ts) holds the two
+together: every promise is kept by a test, every id a test names is on the list, and a journey keeps
+exactly the promises whose "Kept by" names it.
+
+| Id             | Promise                                                                          | From       | Kept by                                                          |
+| -------------- | -------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------- |
+| `place`        | Every item has its place from the start, drawn or not                            | README, P2 | journey J1; unit (lists to items)                                |
+| `counts`       | Every count says how many are drawn of how many, and is worded the same way      | P2, P4     | unit (`formatCount`); journey J1, J3                             |
+| `whereYouAre`  | You can always tell where you are: collection, view, section, page               | P3         | journeys J2, J3, J6                                              |
+| `links`        | A link to a collection or a drawing opens it, and the back button undoes it      | README     | journey J6; prop (hash round trip)                               |
+| `search`       | Search finds an item by any of its names, in any collection, from the keyboard   | README, P5 | journey J4; unit (matching)                                      |
+| `viewerKeys`   | The viewer works with the keyboard alone, and gives focus back when it closes    | P5         | journey J5; dom (dialog keys)                                    |
+| `thaana`       | Thaana is never clipped                                                          | P5, DESIGN | contract (line height); browser B3                               |
+| `phoneWidth`   | Nothing breaks at phone width                                                    | P5         | journey J10; browser B1                                          |
+| `failures`     | A failure says what failed and offers to try again                               | DESIGN §11 | journey J9; unit (each loader)                                   |
+| `aboutNumbers` | The numbers on the About page are the archive's, worked out by the build         | README     | contract (stats current); journey J7                             |
+| `build`        | The build never ships a broken site                                              | WORKFLOW   | contracts (data, generated files); CI                            |
+| `sharedLink`   | A shared link to a drawing shows that drawing                                    | PLATFORM   | unit (preview pages); dom (Share); contract (a page per drawing) |
+| `theme`        | Dark or light as you choose, remembered on the next visit, with no flash on load | README     | journey J8; contract (the theme script)                          |
 
 ## Running them
 
@@ -246,7 +253,7 @@ await app.until(() => !dialog(), 'the viewer to close'); // settle until it hold
 | **J7 About**              | `about_journey_test.ts`             | The archive's numbers; drawings link into the viewer    |
 | **J8 Theme**              | `theme_journey_test.ts`             | Dark and back, remembered; placeholders follow          |
 | **J9 Failures**           | `failures_journey_test.ts`          | The gallery, one collection or the numbers fail         |
-| **On a phone**            | `phone_journey_test.ts`             | The sections drawer; the search behind a button         |
+| **J10 On a phone**        | `phone_journey_test.ts`             | The sections drawer; the search behind a button         |
 
 A journey proves the pieces are joined. What only a component can show (a state the app never
 reaches, such as the header before any collection is known) is a component test, below.

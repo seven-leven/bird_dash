@@ -1,3 +1,4 @@
+// Keeps: sharedLink (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals, assertRejects, assertStringIncludes } from '@std/assert';
 import { fakeIo } from '../lib/fakeIo.ts';

@@ -1,5 +1,6 @@
 // J1 First visit: the first collection loads, every item in its place, drawn or not, with
 // honest counts and the footer (docs/TESTING.md, the promises).
+// Keeps: place, counts (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

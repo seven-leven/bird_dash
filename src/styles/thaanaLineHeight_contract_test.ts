@@ -1,3 +1,4 @@
+// Keeps: thaana (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { glob, readFile } from 'node:fs/promises';
 import { assert, assertEquals } from '@std/assert';

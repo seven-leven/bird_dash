@@ -1,3 +1,4 @@
+// Keeps: sharedLink (docs/TESTING.md, "Promises").
 import { afterEach, test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { h } from 'vue';
