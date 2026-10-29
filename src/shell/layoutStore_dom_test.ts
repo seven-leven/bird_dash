@@ -7,14 +7,14 @@ import { mountComposable } from '../testing/mount.ts';
 const PAGES = [{ id: 'about', label: 'About', component: {} }];
 
 /** The layout store, mounted so its window listeners are really attached. */
-function setup(width = 1400) {
+function mountLayoutStore(width = 1400) {
   Object.defineProperty(globalThis, 'innerWidth', { value: width, configurable: true });
   const { result: layout } = mountComposable(() => createLayoutStore(PAGES));
   return layout;
 }
 
 test('the sidebar opens, toggles and closes', () => {
-  const layout = setup();
+  const layout = mountLayoutStore();
   assertEquals(layout.sidebarOpen.value, false);
   layout.toggleSidebar();
   assertEquals(layout.sidebarOpen.value, true);
@@ -26,12 +26,12 @@ test('the sidebar opens, toggles and closes', () => {
 });
 
 test('isNarrow follows the window width', () => {
-  assertEquals(setup(600).isNarrow.value, true);
-  assertEquals(setup(1400).isNarrow.value, false);
+  assertEquals(mountLayoutStore(600).isNarrow.value, true);
+  assertEquals(mountLayoutStore(1400).isNarrow.value, false);
 });
 
 test('scrollToTop resets the bound element, and is safe before one is bound', () => {
-  const layout = setup();
+  const layout = mountLayoutStore();
   layout.scrollToTop(); // nothing bound yet: must not throw
 
   const scroller = document.createElement('div');
@@ -46,7 +46,7 @@ test('scrollToTop resets the bound element, and is safe before one is bound', ()
 });
 
 test('showPage switches between gallery and About, and the About page closes the sidebar', () => {
-  const layout = setup();
+  const layout = mountLayoutStore();
   assertEquals(layout.page.value, 'gallery');
   layout.toggleSidebar();
   layout.showPage('about');
@@ -57,7 +57,7 @@ test('showPage switches between gallery and About, and the About page closes the
 });
 
 test('currentPage is the page shown instead of the gallery, if any', () => {
-  const layout = setup();
+  const layout = mountLayoutStore();
   assertEquals(layout.currentPage.value, undefined);
   layout.showPage('about');
   assertEquals(layout.currentPage.value?.label, 'About');

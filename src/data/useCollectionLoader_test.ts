@@ -26,7 +26,7 @@ const list = (id: string) => ({
 
 const names = (items: { commonName: string }[]) => items.map((i) => i.commonName);
 
-test('init: an HTTP error sets initError instead of hanging or throwing', async () => {
+test('an HTTP error at start sets initError instead of hanging or throwing', async () => {
   using _fetch = fakeFetch({}); // everything 404s
   const c = useCollectionLoader();
   await c.init();
@@ -34,7 +34,7 @@ test('init: an HTTP error sets initError instead of hanging or throwing', async 
   assertEquals(c.initError.value, 'HTTP 404 loading collections.json');
 });
 
-test('init: a non-JSON response (e.g. an SPA fallback page) gets a readable message', async () => {
+test('a response at start that is not JSON (a fallback page) gets a readable message', async () => {
   using _fetch = fakeFetch({ '/collections.json': new Response('<!DOCTYPE html>') });
   const c = useCollectionLoader();
   await c.init();
@@ -42,7 +42,7 @@ test('init: a non-JSON response (e.g. an SPA fallback page) gets a readable mess
   assertEquals(c.initError.value, 'collections.json is not valid JSON');
 });
 
-test('init: an empty collection list is reported, not silently ignored', async () => {
+test('an empty list of collections at start is reported, not ignored', async () => {
   using _fetch = fakeFetch({ '/collections.json': json([]) });
   const c = useCollectionLoader();
   await c.init();
@@ -50,7 +50,7 @@ test('init: an empty collection list is reported, not silently ignored', async (
   assertEquals(c.initError.value, 'No collections are configured');
 });
 
-test('init: loads the first collection and clears any previous error', async () => {
+test('starting loads the first collection and clears any earlier error', async () => {
   using _fetch = fakeFetch({
     '/collections.json': json([col('a'), col('b')]),
     '/lists/a.json': json(list('a')),

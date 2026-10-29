@@ -10,7 +10,7 @@ import {
   whiteOnBlack,
 } from './palette.ts';
 
-test('contrast: black on white is 21:1 and the order of arguments does not matter', () => {
+test('black on white contrasts 21:1, whichever is given first', () => {
   assertEquals(Math.round(contrast('#000000', '#ffffff')), 21);
   assertEquals(contrast('#14b8a6', '#ffffff'), contrast('#ffffff', '#14b8a6'));
   assertEquals(contrast('#777777', '#777777'), 1);

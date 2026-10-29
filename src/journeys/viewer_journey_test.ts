@@ -3,7 +3,7 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';
-import { press } from '../testing/events.ts';
+import { pointer, press } from '../testing/events.ts';
 
 const dialog = () => document.querySelector<HTMLElement>('dialog');
 const zoom = (app: { text(el: Element): string }) => app.text(dialog()!).match(/\d+%/)?.[0];
@@ -98,20 +98,17 @@ test('a zoomed drawing is dragged around, and the drag is not taken for a click'
   await app.until(() => img().style.cursor === 'grab', 'the hand that says it can be dragged');
 
   const area = img().parentElement!; // the gesture area around the image
-  const pointer = (type: string, x: number) =>
-    area.dispatchEvent(
-      new PointerEvent(type, { pointerId: 1, clientX: x, clientY: 0, bubbles: true }),
-    );
-  pointer('pointerdown', 0);
+  const drag = (type: string, x: number) => area.dispatchEvent(pointer(type, 1, x, 0, 'mouse'));
+  drag('pointerdown', 0);
   await app.until(() => img().style.cursor === 'grabbing', 'the hand that is dragging');
-  pointer('pointermove', 40);
-  pointer('pointerup', 40);
+  drag('pointermove', 40);
+  drag('pointerup', 40);
   area.click(); // the click the browser sends after a drag
   await app.until(() => img().style.cursor === 'grab', 'the drag to end');
   assert(dialog(), 'still open: the drag was not a click on the backdrop');
 
-  pointer('pointerdown', 40);
-  pointer('pointercancel', 40); // the browser took the pointer over (a scroll, say)
+  drag('pointerdown', 40);
+  drag('pointercancel', 40); // the browser took the pointer over (a scroll, say)
   await app.until(() => img().style.cursor === 'grab', 'a cancelled drag to end');
 
   area.dispatchEvent(new WheelEvent('wheel', { deltaY: 100, bubbles: true, cancelable: true }));

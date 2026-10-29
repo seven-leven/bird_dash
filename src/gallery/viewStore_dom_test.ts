@@ -11,7 +11,7 @@ const drawn = makeItem({ drawnTime: at(2025, 1) });
 const undrawn = makeItem({ isDrawn: false });
 
 /** The view store over `items`, with a real layout store, mounted as the app mounts them. */
-function setup(
+function mountViewStore(
   { width = 1400, items = [drawn, undrawn] }: { width?: number; items?: Item[] } = {},
 ) {
   Object.defineProperty(globalThis, 'innerWidth', { value: width, configurable: true });
@@ -45,7 +45,7 @@ const header = (top: number) => {
 };
 
 /** A scroll element at the top of the window, bound as the shell binds it. */
-const scroller = (layout: ReturnType<typeof setup>['layout']) => {
+const scroller = (layout: ReturnType<typeof mountViewStore>['layout']) => {
   const el = document.createElement('div');
   el.getBoundingClientRect = () => ({ top: 0 }) as DOMRect;
   el.scrollTo = (() => {}) as HTMLElement['scrollTo'];
@@ -54,7 +54,7 @@ const scroller = (layout: ReturnType<typeof setup>['layout']) => {
 };
 
 test('the view starts on groups; choosing the current view again changes nothing', async () => {
-  const { layout, view, observers } = setup();
+  const { layout, view, observers } = mountViewStore();
   scroller(layout);
   assertEquals(view.viewMode.value, 'group');
 
@@ -69,7 +69,7 @@ test('the view starts on groups; choosing the current view again changes nothing
 });
 
 test('registered headers drive the active section; an unmounted header is forgotten', () => {
-  const { layout, view } = setup();
+  const { layout, view } = mountViewStore();
   scroller(layout);
   view.registerHeader('Ducks', header(-200));
   view.registerHeader('Herons', header(50));
@@ -84,7 +84,7 @@ test('registered headers drive the active section; an unmounted header is forgot
 });
 
 test('resetHeaders forgets every header, so a stale one cannot win after a switch', () => {
-  const { layout, view } = setup();
+  const { layout, view } = mountViewStore();
   scroller(layout);
   view.registerHeader('Old', header(90));
   view.updateActiveSection();
@@ -97,7 +97,7 @@ test('resetHeaders forgets every header, so a stale one cannot win after a switc
 });
 
 test('on a phone, jumping to a section closes the sidebar', () => {
-  const { layout, view } = setup({ width: 600 });
+  const { layout, view } = mountViewStore({ width: 600 });
   scroller(layout);
   view.registerHeader('Ducks', header(0));
 
@@ -108,7 +108,7 @@ test('on a phone, jumping to a section closes the sidebar', () => {
 });
 
 test('"Drawn only" is set, rebuilding the scroll-spy; setting it as it is changes nothing', async () => {
-  const { layout, view, observers } = setup();
+  const { layout, view, observers } = mountViewStore();
   scroller(layout);
   assertEquals(view.drawnOnly.value, false);
   view.setDrawnOnly(false);
@@ -122,17 +122,17 @@ test('"Drawn only" is set, rebuilding the scroll-spy; setting it as it is change
 });
 
 test('the drawn filter is offered only where it filters: the family view, partly drawn', () => {
-  assertEquals(setup().view.showsDrawnFilter.value, true);
-  assertEquals(setup({ items: [drawn] }).view.showsDrawnFilter.value, false); // all drawn
-  assertEquals(setup({ items: [undrawn] }).view.showsDrawnFilter.value, false); // none drawn
+  assertEquals(mountViewStore().view.showsDrawnFilter.value, true);
+  assertEquals(mountViewStore({ items: [drawn] }).view.showsDrawnFilter.value, false); // all drawn
+  assertEquals(mountViewStore({ items: [undrawn] }).view.showsDrawnFilter.value, false); // none drawn
 
-  const { view } = setup();
+  const { view } = mountViewStore();
   view.setViewMode('month');
   assertEquals(view.showsDrawnFilter.value, false);
 });
 
 test('showUndrawn brings back what is not drawn: the family view, every item, the plan', () => {
-  const { view } = setup();
+  const { view } = mountViewStore();
   view.setViewMode('month');
   view.setDrawnOnly(true);
   view.showUndrawn();

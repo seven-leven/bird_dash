@@ -5,7 +5,7 @@ import { makeItem } from '../testing/fixtures.ts';
 
 const col = { id: 'birds', imageBase: '/thumb/birds/', smallImageBase: '/small/birds/' };
 
-test('toCollectionItems: a drawn item gets its thumbnail, date and flags', () => {
+test('a drawn item gets its thumbnail, date and flags', () => {
   const [item] = toCollectionItems(col, {
     Ducks: [{ id: '007', name: 'Garganey', sci: 'Spatula querquedula', drawn: '2025-03-01' }],
   });
@@ -19,7 +19,7 @@ test('toCollectionItems: a drawn item gets its thumbnail, date and flags', () =>
   assertEquals(item!.drawnTime, Date.UTC(2025, 2, 1));
 });
 
-test('toCollectionItems: no date, or an empty one, is not drawn and has no image', () => {
+test('an item with no date, or an empty one, is not drawn and has no image', () => {
   const items = toCollectionItems(col, {
     Ducks: [{ id: '001', name: 'A' }, { id: '002', name: 'B', drawn: '' }],
   });
@@ -30,13 +30,13 @@ test('toCollectionItems: no date, or an empty one, is not drawn and has no image
   }
 });
 
-test('toCollectionItems: an unparseable date still counts as drawn, with time 0', () => {
+test('an unparseable date still counts as drawn, with time 0', () => {
   const [item] = toCollectionItems(col, { G: [{ id: '1', name: 'A', drawn: 'soon' }] });
   assertEquals(item!.isDrawn, true);
   assertEquals(item!.drawnTime, 0);
 });
 
-test('toCollectionItems: the name fields become names; other string fields become meta', () => {
+test('the name fields become names, and other string fields become meta', () => {
   const [item] = toCollectionItems(col, {
     Herons: [{
       id: '010',
@@ -56,7 +56,7 @@ test('toCollectionItems: the name fields become names; other string fields becom
   assertEquals(item!.meta, { habitat: 'Shore' }); // names have left it; non-strings dropped
 });
 
-test('toCollectionItems: every name, the group, the id and the meta are searchable', () => {
+test('every name, the group, the id and the meta are searchable', () => {
   const [item] = toCollectionItems(col, {
     Herons: [{
       id: '010',
@@ -72,12 +72,12 @@ test('toCollectionItems: every name, the group, the id and the meta are searchab
   assertEquals(item!.searchText, item!.searchText.toLowerCase());
 });
 
-test('toCollectionItems: no extra fields means no meta object', () => {
+test('no extra fields means no meta object', () => {
   const [item] = toCollectionItems(col, { G: [{ id: '1', name: 'A' }] });
   assertEquals(item!.meta, undefined);
 });
 
-test('toCollectionItems: ids are unique across groups and items are frozen', () => {
+test('ids are unique across groups and items are frozen', () => {
   const items = toCollectionItems(col, {
     A: [{ id: '1', name: 'a' }, { id: '2', name: 'b' }],
     B: [{ id: '3', name: 'c' }],
@@ -88,7 +88,7 @@ test('toCollectionItems: ids are unique across groups and items are frozen', () 
   }, TypeError);
 });
 
-test('toCollection: derives the data and image URLs from the id and base', () => {
+test('the data and image URLs of a collection come from its id and the base', () => {
   const config = toCollection({
     id: 'sharks',
     label: 'Sharks',
@@ -105,13 +105,13 @@ test('toCollection: derives the data and image URLs from the id and base', () =>
   assertEquals(config.links[0]!.url(item), 'https://example.org/?q=Carcharhinus%20melanopterus');
 });
 
-test('toCollection: a collection keeps its medium, and has none unless it names one', () => {
+test('a collection keeps its medium, and has none unless it names one', () => {
   const entry = { id: 'x', label: 'X', emoji: '', groupLabel: 'G', itemLabel: 'i', links: [] };
   assertEquals(toCollection(entry, './').medium, undefined);
   assertEquals(toCollection({ ...entry, medium: 'colour pencil' }, './').medium, 'colour pencil');
 });
 
-test('toCollectionItems: missing fields become empty, a non-numeric id sorts as 0, a bad date as 0', () => {
+test('missing fields become empty, and a non-numeric id or a bad date counts as 0', () => {
   const [bare, odd] = toCollectionItems(col, {
     G: [{} as never, { id: 'x1', name: 'Odd', drawn: 'not a date' }],
   });
@@ -119,7 +119,7 @@ test('toCollectionItems: missing fields become empty, a non-numeric id sorts as 
   assertEquals([odd!.sortKey, odd!.isDrawn, odd!.drawnTime], [0, true, 0]);
 });
 
-test('toCollectionItems: an item lists its images, the drawing and as many more as `images` counts', () => {
+test('an item lists its images, the drawing and as many more as `images` counts', () => {
   const [one, three] = toCollectionItems(col, {
     G: [{ id: '001', name: 'A', drawn: '2025-01-01' }, {
       id: '002',

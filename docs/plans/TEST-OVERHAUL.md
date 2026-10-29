@@ -1,12 +1,13 @@
 # Test overhaul
 
 > **Status:** planned 2026-10-26; phases 0 (the rules), 1 (the kit, in four parts), 2 (one way to a
-> browser) and 3 (journeys) done 2026-10-27. The tests were written bottom up, one file at a time,
-> as each piece of code was; this plans them top down, from what the site promises to the smallest
-> rule, and rebuilds the kit they share. One pull request per phase, 100% coverage throughout.
-> Phases 1 to 3 came **before** the site code overhaul (done 2026-10-28): journey tests are what
-> make moving every file safe. (The scripts overhaul went first, as the scripts already had direct
-> tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
+> browser) and 3 (journeys) done 2026-10-27; 4 (a test beside every component) 2026-10-28; 5 (split
+> and rename) 2026-10-29. The tests were written bottom up, one file at a time, as each piece of
+> code was; this plans them top down, from what the site promises to the smallest rule, and rebuilds
+> the kit they share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 came
+> **before** the site code overhaul (done 2026-10-28): journey tests are what make moving every file
+> safe. (The scripts overhaul went first, as the scripts already had direct tests; see
+> [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
 
@@ -228,11 +229,12 @@ Production code changes only where a test cannot reach it otherwise, and says so
       `aboutSentences_test.ts` for the wording rules; the share button's outcomes out of
       `ViewerDetails_dom_test.ts` into `ViewerShare_dom_test.ts`, which adds a phone's share sheet.
 
-- [ ] **5. Split and rename.** `useViewer_dom_test.ts` (was `useLightbox_dom_test.ts`) into one file
-      per composable; `testRunner_test.ts` by concern; the 116 `functionName:` titles rewritten as
-      sentences; the 18 local `setup()`s onto scenarios and `mount…` helpers; `key` and `pointer`
-      onto the kit's events; the arbitraries named `any…`; the contracts not tied to a file renamed
-      for what they guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`).
+- [x] **5. Split and rename** (done 2026-10-29). `useViewer_dom_test.ts` (was
+      `useLightbox_dom_test.ts`) into one file per composable; `testRunner_test.ts` by concern; the
+      116 `functionName:` titles rewritten as sentences; the 18 local `setup()`s onto scenarios and
+      `mount…` helpers; `key` and `pointer` onto the kit's events; the arbitraries named `any…`; the
+      contracts not tied to a file renamed for what they guard (`thaana_contract_test.ts` →
+      `thaanaLineHeight_contract_test.ts`).
 
       **One table of tiers** (done 2026-10-29, with the grid). What a tier is lived in four places that must agree: the
       descriptions in `tiers.ts`, the name checks in `tierOf`, the Vitest projects in

@@ -47,7 +47,7 @@ function mount() {
   };
 }
 
-test('empty: the shortcut hint, no clear button, and the results closed', () => {
+test('empty, it shows the shortcut hint, no clear button, and the results closed', () => {
   const { host, input, expanded, announced, clearButton } = mount();
   assertEquals(expanded(), 'false');
   assert(input.getAttribute('aria-controls'), 'it names the list it controls');

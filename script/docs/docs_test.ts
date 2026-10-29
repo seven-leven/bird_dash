@@ -5,13 +5,13 @@ import { REPO_URL } from '../../src/domain/links.ts';
 import { liveBlocks, liveNames } from './liveBlocks.ts';
 import { accentHues, missingSteps, STEPS } from './accents.ts';
 
-test('githubHref: a page inside docs/ stays a link to the site', () => {
+test('a link to a page inside docs/ stays a link to the site', () => {
   assertEquals(githubHref('TESTING.md', 'docs/README.md'), null);
   assertEquals(githubHref('TESTING.md#3-tiers', 'docs/DESIGN.md'), null);
   assertEquals(githubHref('../DESIGN.md', 'docs/plans/TODO.md'), null);
 });
 
-test('githubHref: a file or folder outside the pages opens on GitHub, anchor kept', () => {
+test('a link to a file or folder outside the pages opens on GitHub, anchor kept', () => {
   assertEquals(
     githubHref('../src/app/pages.ts', 'docs/ARCHITECTURE.md'),
     `${REPO_URL}/blob/main/src/app/pages.ts`,
@@ -27,7 +27,7 @@ test('githubHref: a file or folder outside the pages opens on GitHub, anchor kep
   );
 });
 
-test('githubHref: URLs, anchors on the page and empty links are left alone', () => {
+test('URLs, anchors on the page and empty links are left alone', () => {
   for (const href of ['https://example.org', 'mailto:a@b.c', '#p1', '/bird_dash/', '//cdn.x', '']) {
     assertEquals(githubHref(href, 'docs/DESIGN.md'), null);
   }
@@ -44,7 +44,7 @@ test("githubSlug: GitHub's anchors, digits first included", () => {
   assertEquals(githubSlug('Node on the LTS line'), 'node-on-the-lts-line');
 });
 
-test('githubLinks: rewrites the links in a page, using its path', () => {
+test('the links in a page are rewritten from its own path', () => {
   const link = (href: string) => {
     const attrs = new Map([['href', href]]);
     return {
@@ -76,7 +76,7 @@ test('githubLinks: rewrites the links in a page, using its path', () => {
   assertEquals(c.attrGet('href'), `${REPO_URL}/blob/main/docs/x.ts`);
 });
 
-test('liveBlocks: each marked section becomes its component; the rest is untouched', () => {
+test('each marked section becomes its component, and the rest is untouched', () => {
   const page = [
     '# Colour',
     '<!-- live: AccentRamps -->',
@@ -93,7 +93,7 @@ test('liveBlocks: each marked section becomes its component; the rest is untouch
   assertEquals(liveBlocks('No markers.'), 'No markers.');
 });
 
-test('accentHues: the palettes accents.css defines, in order', () => {
+test('the accent hues are the palettes accents.css defines, in order', () => {
   const css = ":root {}\n[data-accent='teal'] {}\n[data-accent='sky-blue'] {}";
   assertEquals(accentHues(css), ['teal', 'sky-blue']);
 });

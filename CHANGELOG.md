@@ -17,6 +17,14 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | tests: split and renamed to the conventions (test overhaul, phase 5 done). The
+  viewer's tests are a file per composable: the dialog and its keys (`useDialogKeys_dom_test.ts`),
+  zoom and pan (`useZoomPan_dom_test.ts`), and what `useViewer` adds; the runner's are three
+  (arguments, coverage, the rest) over one fake Vitest in the kit (`testing/fakes/fakeVitest.ts`).
+  No test file is over about 300 lines. 100 titles read as sentences instead of `name: …`, and the
+  property tests' as "for any …"; local `setup()`s are `mount…` helpers named for what they mount;
+  hand-made key and pointer events use the kit's `press` and `pointer`; arbitraries are `any…`; the
+  Thaana and icon contracts are named for what they guard
 - 2026-10-29 | tests: one table of tiers. `script/testRunner/tiers.ts` holds the environments (Node,
   and happy-dom with its setup file) and each tier as one of them plus its suffix, its use and its
   helper; `tierOf`, the runner, Vitest's projects in `vite.config.ts` and TESTING.md's table are

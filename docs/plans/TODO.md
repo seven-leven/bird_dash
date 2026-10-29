@@ -11,11 +11,9 @@ folder, and the item here points to it.
       journeys through the whole app, then features, units and contracts, with one kit for fakes,
       mounting and waiting. Phases 1–3 (the kit, one way to a browser, the journeys) come first:
       they are the safety net for everything below; phase 4 (a test beside every component) is done
-      too (2026-10-28). Next: phase 5, splitting the long test files and renaming to the
-      conventions, with **one table of tiers**: the environments (`node`, `dom`, later `browser`) as
-      the base, each tier one of them plus what is its own, and the runner, `tierOf` and Vite's
-      projects worked out from it; the report gains an area × tier grid (both done 2026-10-29). The
-      runner is already on `Io` (phase 1d).
+      too (2026-10-28), and phase 5, one table of tiers, the area × tier grid, the long files split
+      and every title and name to the conventions (2026-10-29). Next: phase 6, the promise map, then
+      7, a real browser, and 8, closing.
 - [ ] **2. Use the platform** ([PLATFORM.md](PLATFORM.md)). Done but for what needs the test
       overhaul's real browser (popovers, axe) and offline (once images are versioned).
 

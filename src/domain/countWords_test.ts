@@ -2,7 +2,7 @@ import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { drawings, drawnOf, matches, matchesDrawn, plural, ratio } from './countWords.ts';
 
-test('plural: singular only for exactly one', () => {
+test('a count is singular for exactly one and plural otherwise', () => {
   assertEquals(plural(0, 'result'), '0 results');
   assertEquals(plural(1, 'result'), '1 result');
   assertEquals(plural(2, 'result'), '2 results');
@@ -15,7 +15,7 @@ test('drawings, ratio and drawnOf share one wording', () => {
   assertEquals(drawnOf(15, 204), '15 of 204 drawn');
 });
 
-test('matches: "match" for one, "matches" otherwise; the dropdown adds how many are drawn', () => {
+test('a search says "1 match" or "2 matches", and the dropdown adds how many are drawn', () => {
   assertEquals([matches(0), matches(1), matches(10)], ['0 matches', '1 match', '10 matches']);
   assertEquals(matchesDrawn(10, 1), '10 matches, 1 drawn');
 });

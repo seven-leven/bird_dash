@@ -18,9 +18,9 @@ phases 4 and 5.
    names the promises it keeps and each promise has at least one test.
 3. **The lowest tier that can prove it.** One journey per path through the site, not per branch.
 4. **One way to fake each outside thing,** from `testing/fakes/`: `fakeFetch` (routes to answers),
-   `captureConsole`, `tempDir`, `fakeClock`, `fakeStorage`, and the scripts' `fakeIo`. A contract
-   test fails on a global swapped by hand (`globalThis.fetch =`, `console.log =`) outside
-   `testing/`.
+   `captureConsole`, `tempDir`, `fakeClock`, `fakeStorage`, the scripts' `fakeIo`, and `fakeVitest`
+   for the test runner's own tests. A contract test fails on a global swapped by hand
+   (`globalThis.fetch =`, `console.log =`) outside `testing/`.
 5. **One way to get a browser:** the tier. No wrapper to forget.
 6. **One way to mount:** `mountComponent(component, { props, stores })` and `mountComposable(fn)`;
    `runInScope` is folded in.
@@ -223,7 +223,7 @@ they would see.
 ```ts
 using app = await renderApp({ at: 'birds/003' }); // or { routes: { … } }, { width: 375 }
 app.control('Next').click(); // a button, link, tile or option, by its label or text
-press('Escape'); // testing/events.ts: press, type
+press('Escape'); // testing/events.ts: press, type, pointer
 await app.until(() => !dialog(), 'the viewer to close'); // settle until it holds, or fail by name
 ```
 
