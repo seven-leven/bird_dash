@@ -1,148 +1,31 @@
 import { test } from 'vitest';
-import { assert, assertEquals, assertStringIncludes, assertThrows } from '@std/assert';
-import { main, parseArgs, type RunnerOptions, toQuietOutput } from './testRunner.ts';
-import { fakeIo } from '../lib/fakeIo.ts';
-
-test('no arguments means every tier, in order', () => {
-  const o = parseArgs([]);
-  assertEquals(o.tiers, ['unit', 'dom', 'journey', 'prop', 'contract']);
-  assertEquals([o.verbose, o.failFast, o.coverage, o.minLines], [false, false, false, 0]);
-});
-
-test('tier names select tiers (in canonical order, whatever order they were typed)', () => {
-  assertEquals(parseArgs(['prop', 'unit']).tiers, ['unit', 'prop']);
-});
-
-test('flags are parsed', () => {
-  const o = parseArgs(['dom', '-v', '--fail-fast', '--coverage', '--min-lines=70']);
-  assertEquals([o.verbose, o.failFast, o.coverage, o.minLines], [true, true, true, 70]);
-});
-
-test('unknown tiers and options are rejected with a helpful message', () => {
-  assertThrows(
-    () => parseArgs(['e2e']),
-    Error,
-    'tiers: unit, dom, journey, prop, contract; areas: data,',
-  );
-  assertThrows(() => parseArgs(['--nope']), Error, 'unknown option --nope');
-});
-
-test('a coverage floor without --coverage is an error, not silently ignored', () => {
-  assertThrows(() => parseArgs(['--min-lines=50']), Error, '--min-lines needs --coverage');
-  assertThrows(() => parseArgs(['--min-branches=50']), Error, '--min-branches needs --coverage');
-});
+import { assert, assertEquals, assertStringIncludes } from '@std/assert';
+import { toQuietOutput } from './testRunner.ts';
+import { runWithFakeVitest } from '../../src/testing/fakes/fakeVitest.ts';
 
 test("toQuietOutput drops the dot reporter's progress lines and keeps the rest", () => {
   const raw = ' RUN  v5\n·····x··*·-·\n\n FAIL  a_test.ts > boom\nAssertionError: bad\n··\n';
   assertEquals(toQuietOutput(raw), ' RUN  v5\n FAIL  a_test.ts > boom\nAssertionError: bad');
 });
 
-test('--report asks for the saved report; it is off by default', () => {
-  assertEquals(parseArgs([]).report, false);
-  assertEquals(parseArgs(['--coverage', '--report']).report, true);
-});
-
-test('a bare "--" separator is ignored, so both ways of passing flags work', () => {
-  assertEquals(parseArgs(['--', '--verbose']).verbose, true);
-  assertEquals(parseArgs(['unit', '--', '--fail-fast']).tiers, ['unit']);
-});
-
-test('--html asks for the HTML coverage report and needs --coverage', () => {
-  assertEquals(parseArgs([]).html, false);
-  assertEquals(parseArgs(['--coverage', '--html']).html, true);
-  assertThrows(() => parseArgs(['--html']), Error, '--html needs --coverage');
-});
-
 // ── main, with a fake Vitest ────────────────────────────────────────────────────
 
 /** A test result for the fake JUnit file: file, name and, when it failed, the message. */
-type Case = [file: string, name: string, failure?: string];
-
-const junit = (cases: Case[]) =>
-  `<testsuites>${
-    cases.map(([file, name, failure]) =>
-      `<testcase classname="${file}" name="${name}" time="0.01">${
-        failure ? `<failure message="${failure}"/>` : ''
-      }</testcase>`
-    ).join('')
-  }</testsuites>`;
-
-const lcov = (files: Record<string, [found: number, hit: number]>) =>
-  Object.entries(files).map(([file, [found, hit]]) =>
-    `SF:${file}\nLF:${found}\nLH:${hit}\nend_of_record\n`
-  ).join('');
-
-interface Run {
-  code: number;
-  /** Everything it printed, problems included, in order. */
-  out: string;
-  /** The arguments main passed to Vitest. */
-  args: string[];
-  /** A file it left in the results folder, or undefined. */
-  result: (name: string) => string | undefined;
-  /** A file anywhere, as the run left it (the CI job summary). */
-  file: (path: string) => string | undefined;
-}
-
-/**
- * Run `main` on a fake Io, against a fake Vitest that writes the given JUnit (and LCOV, when
- * asked for coverage) where main told it to.
- */
-async function runMain(argv: string[], opts: {
-  cases?: Case[];
-  coverage?: Record<string, [number, number]>;
-  sources?: string[];
-  success?: boolean;
-  env?: Record<string, string>;
-  tests?: string[];
-  /** Raw LCOV, used instead of `coverage` (for branch counters). */
-  lcovText?: string;
-  /** Vitest died before writing its JUnit file. */
-  crashed?: boolean;
-} = {}): Promise<Run> {
-  const io = fakeIo({ env: opts.env });
-  let args: string[] = [];
-  const options: RunnerOptions = {
-    discoverTests: async () => opts.tests ?? ['src/domain/a_test.ts', 'src/domain/b_dom_test.ts'],
-    discoverSources: async () =>
-      opts.sources ?? (opts.lcovText ? ['src/domain/a.ts'] : Object.keys(opts.coverage ?? {})),
-    vitest: async (given) => {
-      args = given;
-      const value = (flag: string) => given.find((a) => a.startsWith(flag))?.slice(flag.length);
-      if (!opts.crashed) await io.writeText(value('--outputFile.junit=')!, junit(opts.cases ?? []));
-      const covDir = value('--coverage.reportsDirectory=');
-      if (covDir) {
-        await io.writeText(`${covDir}/lcov.info`, opts.lcovText ?? lcov(opts.coverage ?? {}));
-      }
-      return { success: opts.success ?? true, output: ' RUN  v5\n···x\n FAIL  boom detail' };
-    },
-    resultsDir: 'results',
-  };
-  const code = await main(argv, io, options);
-  return {
-    code,
-    out: io.printed.join('\n'),
-    args,
-    result: (name) => io.files.get(`results/${name}`),
-    file: (path) => io.files.get(path),
-  };
-}
-
-test('main: bad arguments exit 2 before anything runs', async () => {
-  const run = await runMain(['e2e']);
+test('bad arguments exit 2 before anything runs', async () => {
+  const run = await runWithFakeVitest(['e2e']);
   assertEquals(run.code, 2);
   assertStringIncludes(run.out, 'unknown tier or area "e2e"');
   assertEquals(run.args, []);
 });
 
-test('main: a tier with no test files exits 2', async () => {
-  const run = await runMain(['prop']);
+test('a tier with no test files exits 2', async () => {
+  const run = await runWithFakeVitest(['prop']);
   assertEquals(run.code, 2);
   assertStringIncludes(run.out, 'no test files for prop');
 });
 
-test('main: a green run exits 0, runs only the chosen tier and prints its tables', async () => {
-  const run = await runMain(['unit'], { cases: [['src/domain/a_test.ts', 'adds']] });
+test('a green run exits 0, runs only the chosen tier and prints its tables', async () => {
+  const run = await runWithFakeVitest(['unit'], { cases: [['src/domain/a_test.ts', 'adds']] });
   assertEquals(run.code, 0);
   assertEquals(run.args.at(-1), 'src/domain/a_test.ts'); // the dom file is not passed
   assert(run.args.includes('--reporter=junit'));
@@ -151,8 +34,8 @@ test('main: a green run exits 0, runs only the chosen tier and prints its tables
   assert(!run.out.includes('FAIL  boom detail'), "Vitest's own output is shown only on failure");
 });
 
-test("main: a failing run exits 1, lists the failure and replays Vitest's output", async () => {
-  const run = await runMain(['--fail-fast'], {
+test("a failing run exits 1, lists the failure and replays Vitest's output", async () => {
+  const run = await runWithFakeVitest(['--fail-fast'], {
     cases: [['src/domain/a_test.ts', 'adds', 'expected 2'], [
       'src/domain/b_dom_test.ts',
       'renders',
@@ -167,49 +50,8 @@ test("main: a failing run exits 1, lists the failure and replays Vitest's output
   assert(!run.out.includes('···x'), 'the dot line is dropped');
 });
 
-test('main: coverage at or above the floor passes and reports the total', async () => {
-  const run = await runMain(['--coverage', '--min-lines=80'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    coverage: { 'src/domain/a.ts': [10, 9] },
-  });
-  assertEquals(run.code, 0);
-  assert(run.args.includes('--coverage.enabled'));
-  assertStringIncludes(run.out, '✓ line coverage 90.0% (floor 80%)');
-  // A file short of 100% is named with its gap, not lost in a rounded table.
-  assertStringIncludes(run.out, 'not fully covered (1):\n  src/domain/a.ts\n    lines 9/10');
-});
-
-test('main: with nothing missed, the least-covered table is shown instead', async () => {
-  const run = await runMain(['--coverage'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    coverage: { 'src/domain/a.ts': [10, 10] },
-  });
-  assertStringIncludes(run.out, 'least covered files');
-  assert(!run.out.includes('not fully covered'));
-});
-
-test('main: coverage below the floor fails even when every test passes', async () => {
-  const run = await runMain(['--coverage', '--min-lines=95'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    coverage: { 'src/domain/a.ts': [10, 9] },
-  });
-  assertEquals(run.code, 1);
-  assertStringIncludes(run.out, '✗ line coverage 90.0% is below the 95% floor');
-});
-
-test('main: a source file no test loads fails the coverage run and is named', async () => {
-  const run = await runMain(['--coverage'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    coverage: { 'src/domain/a.ts': [10, 10] },
-    sources: ['src/domain/a.ts', 'src/domain/forgotten.ts'],
-  });
-  assertEquals(run.code, 1);
-  assertStringIncludes(run.out, '1 source file(s) are not imported by any test');
-  assertStringIncludes(run.out, 'src/domain/forgotten.ts');
-});
-
-test('main: in CI it keeps the JUnit file, saves the report, annotates failures and fills the job summary', async () => {
-  const run = await runMain([], {
+test('in CI it keeps the JUnit file, saves the report, annotates failures and fills the job summary', async () => {
+  const run = await runWithFakeVitest([], {
     cases: [['src/domain/a_test.ts', 'adds', 'expected 2']],
     success: false,
     env: { GITHUB_ACTIONS: 'true', GITHUB_STEP_SUMMARY: 'summary.md', TZ: 'UTC' },
@@ -227,90 +69,29 @@ test('main: in CI it keeps the JUnit file, saves the report, annotates failures 
   assertStringIncludes(run.out, '❌ 1 of 1 test failed');
 });
 
-test('main: --html points to the coverage report Vitest wrote into the results folder', async () => {
-  const run = await runMain(['--coverage', '--html'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    coverage: { 'src/domain/a.ts': [4, 4] },
-  });
-  assertEquals(run.code, 0);
-  assert(run.args.includes('--coverage.reporter=html'));
-  assertStringIncludes(run.out, 'coverage report: results/coverage/index.html');
-  assertStringIncludes(run.result('coverage/lcov.info')!, 'src/domain/a.ts');
-});
-
-test('main: a run that produced no results prints no tables and fails', async () => {
-  const run = await runMain([], { success: false });
+test('a run that produced no results prints no tables and fails', async () => {
+  const run = await runWithFakeVitest([], { success: false });
   assertEquals(run.code, 1);
   assert(!run.out.includes('tier '), 'no tier table without results');
   assertStringIncludes(run.out, 'FAIL  boom detail');
 });
 
-test('main: --report saves the report and says where, outside CI', async () => {
-  const run = await runMain(['--report'], { cases: [['src/domain/a_test.ts', 'adds']] });
+test('--report saves the report and says where, outside CI', async () => {
+  const run = await runWithFakeVitest(['--report'], { cases: [['src/domain/a_test.ts', 'adds']] });
   assertEquals(run.code, 0);
   assertStringIncludes(run.out, 'full report: results/report.md');
   assertStringIncludes(run.result('report.md')!, 'All 1 tests passed');
 });
 
-test('--min-branches sets the branch floor', () => {
-  assertEquals(parseArgs(['--coverage']).minBranches, 0);
-  assertEquals(parseArgs(['--coverage', '--min-branches=95']).minBranches, 95);
-});
-
-/** LCOV with branch counters, for the branch-floor tests. */
-const withBranches = (found: number, hit: number) =>
-  `SF:src/domain/a.ts\nLF:10\nLH:10\nBRF:${found}\nBRH:${hit}\nend_of_record\n`;
-
-test('main: branch coverage below its floor fails even when lines are fine', async () => {
-  const run = await runMain(['--coverage', '--min-lines=90', '--min-branches=95'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    lcovText: withBranches(20, 18),
-  });
-  assertEquals(run.code, 1);
-  assertStringIncludes(run.out, '✓ line coverage 100.0% (floor 90%)');
-  assertStringIncludes(run.out, '✗ branch coverage 90.0% is below the 95% floor');
-});
-
-test('main: branch coverage at its floor passes', async () => {
-  const run = await runMain(['--coverage', '--min-branches=90'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    lcovText: withBranches(20, 18),
-  });
-  assertEquals(run.code, 0);
-  assertStringIncludes(run.out, '✓ branch coverage 90.0% (floor 90%)');
-});
-
-test('main: a Vitest crash that left no JUnit file fails with its output, not an error of our own', async () => {
-  const run = await runMain([], { crashed: true, success: false });
+test('a Vitest crash that left no JUnit file fails with its output, not an error of our own', async () => {
+  const run = await runWithFakeVitest([], { crashed: true, success: false });
   assertEquals(run.code, 1);
   assertStringIncludes(run.out, 'FAIL  boom detail');
 });
 
-test('positional arguments can name areas and paths as well as tiers', () => {
-  const o = parseArgs(['dom', 'interface', 'src\\ui\\', './script/lib/x_test.ts']);
-  assertEquals(o.tiers, ['dom']);
-  assertEquals(o.areas, ['interface']);
-  assertEquals(o.paths, ['src/ui/', 'script/lib/x_test.ts']);
-  assertEquals([parseArgs([]).areas, parseArgs([]).paths], [[], []]);
-});
-
-test('a coverage floor on part of the suite is an error', () => {
-  assertThrows(
-    () => parseArgs(['interface', '--coverage', '--min-lines=100']),
-    Error,
-    'apply to the whole suite',
-  );
-  assertThrows(
-    () => parseArgs(['src/lib', '--coverage', '--min-branches=1']),
-    Error,
-    'whole suite',
-  );
-  assertEquals(parseArgs(['interface', '--coverage']).coverage, true); // a report alone is fine
-});
-
-test('main: an area or a path narrows the run to its test files', async () => {
+test('an area or a path narrows the run to its test files', async () => {
   const tests = ['src/domain/a_test.ts', 'src/ui/x/b_dom_test.ts', 'script/lib/c_test.ts'];
-  const byArea = await runMain(['interface'], {
+  const byArea = await runWithFakeVitest(['interface'], {
     tests,
     cases: [['src/ui/x/b_dom_test.ts', 'draws']],
   });
@@ -323,28 +104,18 @@ test('main: an area or a path narrows the run to its test files', async () => {
     'src/ui/x/b_dom_test.ts',
   ]);
 
-  const byPath = await runMain(['script/lib'], { tests });
+  const byPath = await runWithFakeVitest(['script/lib'], { tests });
   assertEquals(byPath.args.filter((a) => a.endsWith('_test.ts')), ['script/lib/c_test.ts']);
 });
 
-test('main: a narrowed run with no matching files exits 2 and says what it looked for', async () => {
-  const run = await runMain(['release'], { tests: ['src/domain/a_test.ts'] });
+test('a narrowed run with no matching files exits 2 and says what it looked for', async () => {
+  const run = await runWithFakeVitest(['release'], { tests: ['src/domain/a_test.ts'] });
   assertEquals(run.code, 2);
   assertStringIncludes(run.out, 'no test files for unit, dom, journey, prop, contract, release');
 });
 
-test('main: a narrowed coverage run does not report the files it did not load as untested', async () => {
-  const run = await runMain(['data', '--coverage'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    coverage: { 'src/domain/a.ts': [10, 10] },
-    sources: ['src/domain/a.ts', 'src/domain/never_loaded.ts'],
-  });
-  assertEquals(run.code, 0);
-  assert(!run.out.includes('not imported by any test'));
-});
-
-test('main: the verdict names every reason a run failed, in one line', async () => {
-  const run = await runMain(['--coverage', '--min-lines=95', '--min-branches=50'], {
+test('the verdict names every reason a run failed, in one line', async () => {
+  const run = await runWithFakeVitest(['--coverage', '--min-lines=95', '--min-branches=50'], {
     cases: [['src/domain/a_test.ts', 'adds']],
     lcovText:
       'SF:src/domain/a.ts\nDA:3,0\nLF:10\nLH:9\nBRDA:7,0,0,1\nBRF:1\nBRH:1\nend_of_record\n',
@@ -358,32 +129,14 @@ test('main: the verdict names every reason a run failed, in one line', async () 
   );
 });
 
-test('main: a run that dies before reporting says so in the verdict', async () => {
-  const run = await runMain([], { crashed: true, success: false });
+test('a run that dies before reporting says so in the verdict', async () => {
+  const run = await runWithFakeVitest([], { crashed: true, success: false });
   assertStringIncludes(run.out, '❌ the run stopped before any test reported');
 });
 
-test('main: in CI each coverage gap is marked on its file: an error below the floor, else a warning', async () => {
-  const lcovText = 'SF:src/domain/a.ts\nDA:3,0\nDA:4,0\nLF:10\nLH:8\nend_of_record\n';
-  const failing = await runMain(['--coverage', '--min-lines=100'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    lcovText,
-    env: { GITHUB_ACTIONS: 'true' },
+test('a file no area claims is left out of an area run', async () => {
+  const run = await runWithFakeVitest(['data'], {
+    tests: ['src/domain/a_test.ts', 'misc/loose_test.ts'],
   });
-  assertStringIncludes(
-    failing.out,
-    '::error file=src/domain/a.ts,line=3,title=Not covered by any test::lines 3–4 never run',
-  );
-
-  const reporting = await runMain(['--coverage'], {
-    cases: [['src/domain/a_test.ts', 'adds']],
-    lcovText,
-    env: { GITHUB_ACTIONS: 'true' },
-  });
-  assertStringIncludes(reporting.out, '::warning file=src/domain/a.ts,line=3');
-});
-
-test('main: a file no area claims is left out of an area run', async () => {
-  const run = await runMain(['data'], { tests: ['src/domain/a_test.ts', 'misc/loose_test.ts'] });
   assertEquals(run.args.filter((a) => a.endsWith('_test.ts')), ['src/domain/a_test.ts']);
 });

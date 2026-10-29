@@ -6,7 +6,7 @@ import { at, makeItem } from '../testing/fixtures.ts';
 import type { Item } from '../domain/toCollectionItems.ts';
 import type { View } from '../domain/viewName.ts';
 
-function setup(items: Item[], query = '', mode: View = 'group') {
+function mountCollectionView(items: Item[], query = '', mode: View = 'group') {
   return useCollectionView(ref(items), ref(query), ref(mode));
 }
 
@@ -17,7 +17,7 @@ test('group mode: buckets by group, drawn-first then sortKey', () => {
     makeItem({ itemId: '002', group: 'A', sortKey: 2, isDrawn: false }),
     makeItem({ itemId: '004', group: 'B', sortKey: 4, drawnTime: at(2025, 2) }),
   ];
-  const { activeData } = setup(items);
+  const { activeData } = mountCollectionView(items);
   const groups = activeData.value.grouped;
 
   assertEquals(Object.keys(groups).sort(), ['A', 'B']);
@@ -28,19 +28,19 @@ test('group mode: buckets by group, drawn-first then sortKey', () => {
   assertEquals({ count: sidebarA.count, total: sidebarA.total }, { count: 1, total: 3 });
 });
 
-test('filtering: searchText substring narrows all outputs', () => {
+test('a search narrows every output to the items whose text contains it', () => {
   const items = [
     makeItem({ commonName: 'Mallard', group: 'Ducks' }),
     makeItem({ commonName: 'Garganey', group: 'Ducks' }),
   ];
-  const { activeData, stats } = setup(items, 'mallard');
+  const { activeData, stats } = mountCollectionView(items, 'mallard');
   assertEquals(activeData.value.grouped['Ducks']!.map((i) => i.commonName), ['Mallard']);
   assertEquals(stats.value.filtered, 1);
 });
 
 test('filtering ignores surrounding whitespace and letter case in the query', () => {
   const items = [makeItem({ commonName: 'Mallard', group: 'Ducks' })];
-  const { activeData } = setup(items, '  MALLARD  ');
+  const { activeData } = mountCollectionView(items, '  MALLARD  ');
   assertEquals(activeData.value.grouped['Ducks']!.length, 1);
 });
 
@@ -50,7 +50,7 @@ test('group stats: total = all items, drawn = drawn count', () => {
     makeItem({ isDrawn: false }),
     makeItem({ isDrawn: false }),
   ];
-  const { stats } = setup(items);
+  const { stats } = mountCollectionView(items);
   assertEquals(stats.value, { total: 3, filtered: 3, filteredDrawn: 1, drawn: 1 });
 });
 
@@ -61,7 +61,7 @@ test('month view: buckets drawn items by month, newest month and newest drawing 
     makeItem({ itemId: '003', drawnTime: at(2025, 1, 20) }),
     makeItem({ itemId: '004', isDrawn: false }), // excluded from month view
   ];
-  const { activeData, stats } = setup(items, '', 'month');
+  const { activeData, stats } = mountCollectionView(items, '', 'month');
   const keys = Object.keys(activeData.value.grouped);
 
   assertEquals(keys, ['March 2025', 'January 2025']);
@@ -75,7 +75,7 @@ test('month view: the months are continuous and an empty one is shown, disabled'
     makeItem({ drawnTime: at(2025, 1, 1) }),
     makeItem({ drawnTime: at(2025, 3, 1) }),
   ];
-  const { activeData } = setup(items, '', 'month');
+  const { activeData } = mountCollectionView(items, '', 'month');
   const labels = activeData.value.sidebarItems.map((s) => s.id);
   // the timeline ends (oldest) with March, the empty February, then January
   assertEquals(labels.slice(-3), ['March 2025', 'February 2025', 'January 2025']);
@@ -86,18 +86,18 @@ test('month view: the months are continuous and an empty one is shown, disabled'
 
 test('month view: a drawing dated the 1st lands in its own month, the oldest end of the timeline', () => {
   const items = [makeItem({ drawnTime: at(2025, 10, 1) })];
-  const { activeData } = setup(items, '', 'month');
+  const { activeData } = mountCollectionView(items, '', 'month');
   assertEquals(Object.keys(activeData.value.grouped), ['October 2025']);
   assertEquals(activeData.value.sidebarItems.at(-1)?.id, 'October 2025');
 });
 
-test('searchedDrawnItems: drawn only, ordered by drawnTime then sortKey', () => {
+test('the searched drawings are drawn only, by date and then by id', () => {
   const items = [
     makeItem({ itemId: '010', drawnTime: at(2025, 5, 1), sortKey: 10 }),
     makeItem({ itemId: '002', drawnTime: at(2025, 2, 1), sortKey: 2 }),
     makeItem({ itemId: '009', isDrawn: false, sortKey: 9 }),
   ];
-  const { searchedDrawnItems } = setup(items);
+  const { searchedDrawnItems } = mountCollectionView(items);
   assertEquals(searchedDrawnItems.value.map((i) => i.itemId), ['002', '010']);
 });
 
@@ -106,7 +106,7 @@ test('month view leaves out a drawn item whose date could not be read', () => {
     makeItem({ itemId: '001', drawnTime: at(2025, 1, 5) }),
     makeItem({ itemId: '002', isDrawn: true, drawnTime: 0 }), // "drawn" with an unreadable date
   ];
-  const { activeData } = setup(items, '', 'month');
+  const { activeData } = mountCollectionView(items, '', 'month');
   const all = Object.values(activeData.value.grouped).flat().map((i) => i.itemId);
   assertEquals(all, ['001']);
 });
@@ -116,8 +116,13 @@ test('a query narrows the drawn items the viewer pages through; no query keeps t
     makeItem({ itemId: '001', commonName: 'Mallard', drawnTime: at(2025, 1, 5) }),
     makeItem({ itemId: '002', commonName: 'Heron', drawnTime: at(2025, 1, 6) }),
   ];
-  assertEquals(setup(items, 'heron').searchedDrawnItems.value.map((i) => i.itemId), ['002']);
-  assertEquals(setup(items, '').searchedDrawnItems.value.map((i) => i.itemId), ['001', '002']);
+  assertEquals(mountCollectionView(items, 'heron').searchedDrawnItems.value.map((i) => i.itemId), [
+    '002',
+  ]);
+  assertEquals(mountCollectionView(items, '').searchedDrawnItems.value.map((i) => i.itemId), [
+    '001',
+    '002',
+  ]);
 });
 
 test('drawings from the same day are paged through in id order', () => {
@@ -127,7 +132,11 @@ test('drawings from the same day are paged through in id order', () => {
     makeItem({ itemId: '003', sortKey: 3, drawnTime: sameDay }),
     makeItem({ itemId: '001', sortKey: 1, drawnTime: at(2025, 4, 1) }),
   ];
-  assertEquals(setup(items).searchedDrawnItems.value.map((i) => i.itemId), ['001', '003', '009']);
+  assertEquals(mountCollectionView(items).searchedDrawnItems.value.map((i) => i.itemId), [
+    '001',
+    '003',
+    '009',
+  ]);
 });
 
 test('monthRows folds three or more empty months into one disabled row, but not one or two', () => {

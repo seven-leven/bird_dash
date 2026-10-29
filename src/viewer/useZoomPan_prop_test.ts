@@ -7,7 +7,7 @@ import { clampScale, pinchScale, swipeDirection } from './useZoomPan.ts';
 // Any number a gesture could plausibly feed in — including the awkward ones.
 const anyNumber = fc.double({ noNaN: false });
 
-test('property: clampScale always returns a usable scale in [1, 5]', () => {
+test('for any number, the zoom is kept to a usable scale in [1, 5]', () => {
   assertProperty(
     fc.property(anyNumber, (x) => {
       const y = clampScale(x);
@@ -17,7 +17,7 @@ test('property: clampScale always returns a usable scale in [1, 5]', () => {
   );
 });
 
-test('property: clampScale is idempotent and monotonic', () => {
+test('for any numbers, keeping the zoom in range is idempotent and monotonic', () => {
   assertProperty(
     fc.property(fc.double({ noNaN: true }), fc.double({ noNaN: true }), (a, b) => {
       assertEquals(clampScale(clampScale(a)), clampScale(a));
@@ -28,7 +28,7 @@ test('property: clampScale is idempotent and monotonic', () => {
   );
 });
 
-test('property: pinchScale is the identity for unchanged spread and scales linearly', () => {
+test('for any spread, an unchanged pinch keeps the zoom and a pinch scales it linearly', () => {
   const pos = fc.double({ min: 0.01, max: 1e4, noNaN: true });
   assertProperty(
     fc.property(pos, pos, (scale, dist) => {
@@ -39,7 +39,7 @@ test('property: pinchScale is the identity for unchanged spread and scales linea
   );
 });
 
-test('property: swiping right is the mirror image of swiping left', () => {
+test('for any drag, swiping right is the mirror image of swiping left', () => {
   const d = fc.double({ min: -1e4, max: 1e4, noNaN: true });
   assertProperty(
     fc.property(d, d, (dx, dy) => {
@@ -52,7 +52,7 @@ test('property: swiping right is the mirror image of swiping left', () => {
   );
 });
 
-test('property: a mostly-vertical drag is never a swipe', () => {
+test('for any drag, a mostly vertical one is never a swipe', () => {
   const d = fc.double({ min: -1e4, max: 1e4, noNaN: true });
   assertProperty(
     fc.property(d, d, (dx, dy) => {

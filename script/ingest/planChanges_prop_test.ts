@@ -6,8 +6,10 @@ import { countBlockingIssues, planChanges } from './planChanges.ts';
 
 // Small id pool so the four sets overlap a lot (that's where the bugs live).
 const POOL: string[] = ['001', '002', '003', '004', '005', '006', '007', '008'];
-const ids = fc.uniqueArray(fc.constantFrom(...POOL));
-const state = fc.record({ drawn: ids, source: ids, full: ids, thumb: ids }).map((s) => ({
+const anyIds = fc.uniqueArray(fc.constantFrom(...POOL));
+const anyState = fc.record({ drawn: anyIds, source: anyIds, full: anyIds, thumb: anyIds }).map((
+  s,
+) => ({
   drawnIds: new Set(s.drawn),
   extraIds: new Set<string>(),
   sourceIds: new Set(s.source),
@@ -19,9 +21,9 @@ const state = fc.record({ drawn: ids, source: ids, full: ids, thumb: ids }).map(
 const sorted = (a: Iterable<string>) => [...a].sort();
 const minus = (a: Set<string>, b: Set<string>) => [...a].filter((x) => !b.has(x));
 
-test('property: every bucket is exactly the set difference the docs promise', () => {
+test('for any state, every bucket is exactly the set difference the docs promise', () => {
   assertProperty(
-    fc.property(state, (s) => {
+    fc.property(anyState, (s) => {
       const plan = planChanges(s);
       const allDrawn = new Set([...s.drawnIds, ...minus(s.sourceIds, s.drawnIds)]);
 
@@ -39,9 +41,9 @@ test('property: every bucket is exactly the set difference the docs promise', ()
   );
 });
 
-test('property: carrying out a plan leaves nothing left to do', () => {
+test('for any state, carrying out its plan leaves nothing to do', () => {
   assertProperty(
-    fc.property(state, (s) => {
+    fc.property(anyState, (s) => {
       const first = planChanges(s);
       // Simulate applyChanges: register new PNGs, transcode (full + thumb), repair thumbs.
       const after = {
@@ -62,9 +64,9 @@ test('property: carrying out a plan leaves nothing left to do', () => {
   );
 });
 
-test('property: a fully consistent state has no blocking issues', () => {
+test('for any consistent state, there are no blocking issues', () => {
   assertProperty(
-    fc.property(ids, (drawn) => {
+    fc.property(anyIds, (drawn) => {
       const set = new Set(drawn);
       // every drawn id has raw, full and thumb; nothing else exists
       const plan = planChanges({

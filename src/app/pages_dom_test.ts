@@ -3,13 +3,13 @@ import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { findPage, PAGES } from './pages.ts';
 
-test('findPage: a page by its id; a collection id is not a page', () => {
+test('a page is found by its id, and a collection id is not a page', () => {
   assertEquals(findPage('about')?.label, 'About');
   assertEquals(findPage('birds'), undefined);
   assertEquals(findPage(''), undefined);
 });
 
-test('PAGES: unique ids that are hash-safe, each with a label and a component', () => {
+test('every page has a unique, hash-safe id, a label and a component', () => {
   const ids = PAGES.map((p) => p.id);
   assertEquals(new Set(ids).size, ids.length);
   for (const p of PAGES) {

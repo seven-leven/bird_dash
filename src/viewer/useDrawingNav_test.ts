@@ -22,7 +22,7 @@ function nav(start: Item | undefined) {
   return { n, item, asked };
 }
 
-test('useDrawingNav: where the open drawing sits, and the moves beside it', () => {
+test('the open drawing knows where it sits and the moves beside it', () => {
   const { n, asked } = nav(items[0]);
   assertEquals([n.position.value, n.hasPrevious.value, n.hasNext.value], ['1 of 3', false, true]);
   n.goToPrevious(); // nothing before the first
@@ -34,7 +34,7 @@ test('useDrawingNav: where the open drawing sits, and the moves beside it', () =
   assertEquals(asked, ['002', '003', '002']);
 });
 
-test('useDrawingNav: no open item, or one not in the order, has no place and no moves', () => {
+test('with no open item, or one not in the order, there is no place and no move', () => {
   for (const start of [undefined, makeItem({ itemId: '999' })]) {
     const { n, asked } = nav(start);
     assertEquals([n.position.value, n.hasPrevious.value, n.hasNext.value], ['', false, false]);
@@ -70,7 +70,7 @@ test("useDrawingNav: an item's images come first, then the next drawing, which o
   assertEquals(asked, ['003']);
 });
 
-test('useDrawingNav: an item of one image has no image count; the last image of the last item stops', () => {
+test('an item of one image has no image count, and the last image of the last item stops', () => {
   const sketched = makeItem({ itemId: '009', imageIds: ['009', '009-2'] });
   const item = ref<Item | undefined>(sketched);
   const n = useDrawingNav({

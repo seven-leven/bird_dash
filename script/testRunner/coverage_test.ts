@@ -41,7 +41,7 @@ test('parseLcov reads every record with line, branch and function counters', () 
   assertEquals(files[0]!.functions, { found: 4, hit: 3 });
 });
 
-test('percent: nothing to cover counts as fully covered', () => {
+test('nothing to cover counts as fully covered', () => {
   assertEquals(percent({ found: 0, hit: 0 }), 100);
   assertEquals(percent({ found: 4, hit: 1 }), 25);
 });

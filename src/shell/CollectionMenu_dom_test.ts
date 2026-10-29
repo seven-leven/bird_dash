@@ -6,6 +6,7 @@ import CollectionMenu from './CollectionMenu.vue';
 import { makeCollection } from '../testing/fixtures.ts';
 import type { Page } from './layoutStore.ts';
 import { mountComponent } from '../testing/mount.ts';
+import { press } from '../testing/events.ts';
 
 /** Mount the menu over three collections, Birds current; record what it switches to. */
 function mount(page: Page = 'gallery') {
@@ -71,14 +72,14 @@ test('Escape closes the list and returns focus to the button', async () => {
   const { button, items } = mount();
   button.click();
   await nextTick();
-  items()[2]!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  press('Escape', items()[2]!);
   await nextTick();
   await nextTick();
   assertEquals(items(), []);
   assertEquals(document.activeElement, button);
 
   // With the list already closed, Escape does nothing.
-  button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+  press('Escape', button);
   await nextTick();
   assertEquals(button.getAttribute('aria-expanded'), 'false');
 });

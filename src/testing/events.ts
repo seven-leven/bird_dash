@@ -4,6 +4,7 @@
 //   press('Escape')                     on the focused element (the page if none)
 //   press('ArrowDown', input)           on `input`
 //   type(input, 'grey')                 replaces the field's text, as typing does
+//   pointer('pointerdown', 1, 300, 300)  a finger (or 'mouse') at a point, to hand a gesture handler
 
 /** Press `key` on `target` (the focused element by default); returns the event, to check `defaultPrevented`. */
 export function press(
@@ -22,3 +23,14 @@ export function type(field: HTMLInputElement, text: string): void {
   field.value = text;
   field.dispatchEvent(new Event('input', { bubbles: true }));
 }
+
+/** A pointer event for finger `id` at (`x`, `y`): a touch unless `kind` says 'mouse' or 'pen'. */
+export const pointer = (type: string, id: number, x: number, y: number, kind = 'touch') =>
+  new PointerEvent(type, {
+    pointerId: id,
+    clientX: x,
+    clientY: y,
+    pointerType: kind,
+    bubbles: true,
+    cancelable: true,
+  });

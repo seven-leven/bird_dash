@@ -55,7 +55,7 @@ test('closed, it draws nothing', () => {
   assertEquals(mount({ open: false }).host.textContent, '');
 });
 
-test('open: the summary, the results as a listbox, then the keys', () => {
+test('open, it shows the summary, the results as a listbox, then the keys', () => {
   const { host, text } = mount();
   assert(text().includes('2 matches, 1 drawn'));
   const listbox = host.querySelector('[role="listbox"]')!;

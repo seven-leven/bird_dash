@@ -8,7 +8,7 @@ const { highlightText } = useHighlight();
 
 // Random strings almost never collide with HTML entity names, so build text and
 // queries partly from the tokens that matter: markup characters and entity words.
-const tokens = fc.constantFrom(
+const anyToken = fc.constantFrom(
   '&',
   '<',
   '>',
@@ -23,8 +23,8 @@ const tokens = fc.constantFrom(
   'B',
   'mark',
 );
-const tokenString = fc.array(tokens, { maxLength: 8 }).map((t) => t.join(''));
-const anyText = fc.oneof(fc.string(), tokenString);
+const anyTokens = fc.array(anyToken, { maxLength: 8 }).map((t) => t.join(''));
+const anyText = fc.oneof(fc.string(), anyTokens);
 
 const MARK = /<mark class="[^"]*">|<\/mark>/g;
 const unescapeHtml = (s: string) =>
@@ -37,7 +37,7 @@ const unescapeHtml = (s: string) =>
 // for ANY text and query: nothing but our own <mark> tags may be markup, and
 // removing the marks must give back exactly the original text.
 
-test('property: the output never contains markup other than <mark>', () => {
+test('for any text and query, the output has no markup but <mark>', () => {
   assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const withoutMarks = highlightText(text, query).replace(MARK, '');
@@ -49,7 +49,7 @@ test('property: the output never contains markup other than <mark>', () => {
 
 // A browser decodes entities within each run of text between tags; an entity can
 // never span a tag. Model that: decode every segment on its own, then join.
-test('property: the text a browser would show is exactly the original text', () => {
+test('for any text and query, the text a browser shows is exactly the original', () => {
   assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const shown = highlightText(text, query).split(MARK).map(unescapeHtml).join('');
@@ -59,7 +59,7 @@ test('property: the text a browser would show is exactly the original text', () 
   );
 });
 
-test('property: a highlighted span is a case-insensitive match of the query', () => {
+test('for any text and query, each highlighted span matches the query, ignoring case', () => {
   assertProperty(
     fc.property(anyText, anyText, (text, query) => {
       const q = query.trim();

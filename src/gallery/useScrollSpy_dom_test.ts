@@ -40,7 +40,7 @@ function fakeObserver() {
 }
 
 /** A scroll-spy over a container at the top of the screen and the given headers. */
-function setup(headers: Record<string, number>, mobile = false) {
+function mountScrollSpy(headers: Record<string, number>, mobile = false) {
   const observer = fakeObserver();
   const scrolls: ScrollToOptions[] = [];
   const container = at(0, {
@@ -65,7 +65,7 @@ function setup(headers: Record<string, number>, mobile = false) {
 
 test('the active section is the last header that has passed the line near the top', () => {
   // The line is 100px below the top of the container.
-  const t = setup({ Ducks: -400, Herons: 40, Terns: 600 });
+  const t = mountScrollSpy({ Ducks: -400, Herons: 40, Terns: 600 });
   t.spy.updateActiveSection();
   assertEquals(t.spy.activeSection.value, 'Herons');
 
@@ -76,14 +76,14 @@ test('the active section is the last header that has passed the line near the to
 });
 
 test('with every header still below the line, the first section is the current one', () => {
-  const t = setup({ Ducks: 300, Herons: 700 });
+  const t = mountScrollSpy({ Ducks: 300, Herons: 700 });
   t.spy.updateActiveSection();
   assertEquals(t.spy.activeSection.value, 'Ducks', 'nothing has reached the top yet');
   t.stop();
 });
 
 test('a remembered section that is still in the view is kept while none has reached the line', () => {
-  const t = setup({ Ducks: 0, Herons: 500 });
+  const t = mountScrollSpy({ Ducks: 0, Herons: 500 });
   t.spy.updateActiveSection(); // starts watching
   t.spy.goToSection('Herons');
   t.tops.Ducks = 300; // scrolled back up: nothing at the line now
@@ -94,7 +94,7 @@ test('a remembered section that is still in the view is kept while none has reac
 });
 
 test('a section from the other view is replaced, not shown (the stale-label bug)', () => {
-  const t = setup({ Ducks: 0, Herons: 500 });
+  const t = mountScrollSpy({ Ducks: 0, Herons: 500 });
   t.spy.goToSection('Herons');
   // the view changes: the headers are now months, none at the line yet
   for (const name of Object.keys(t.els)) delete t.els[name];
@@ -106,7 +106,7 @@ test('a section from the other view is replaced, not shown (the stale-label bug)
 });
 
 test('updating watches every header and a band at the top of the container', () => {
-  const t = setup({ Ducks: 0, Herons: 500 });
+  const t = mountScrollSpy({ Ducks: 0, Herons: 500 });
   t.spy.updateActiveSection();
   assertEquals(t.observer.log.observed.length, 2);
   assertEquals(t.observer.log.options.root, t.container);
@@ -119,7 +119,7 @@ test('updating watches every header and a band at the top of the container', () 
 });
 
 test('fast scrolling is caught by the scroll listener, at most once per 100ms', () => {
-  const t = setup({ Ducks: -50, Herons: 900 });
+  const t = mountScrollSpy({ Ducks: -50, Herons: 900 });
   let now = 1000;
   const realNow = performance.now;
   performance.now = () => now;
@@ -147,7 +147,7 @@ test('fast scrolling is caught by the scroll listener, at most once per 100ms', 
 });
 
 test('jumping to a section scrolls to it and marks it active at once', () => {
-  const t = setup({ Ducks: 0, Herons: 500 });
+  const t = mountScrollSpy({ Ducks: 0, Herons: 500 });
   Object.defineProperty(t.els.Herons, 'offsetTop', { value: 1280 });
   t.spy.goToSection('Herons');
   assertEquals(t.scrolls, [{ top: 1280, behavior: 'smooth' }]); // container at offset 0
@@ -157,14 +157,14 @@ test('jumping to a section scrolls to it and marks it active at once', () => {
 });
 
 test('on a phone, jumping to a section also closes the sidebar', () => {
-  const t = setup({ Ducks: 0 }, true);
+  const t = mountScrollSpy({ Ducks: 0 }, true);
   t.spy.goToSection('Ducks');
   assertEquals(t.closed(), 1);
   t.stop();
 });
 
 test('jumping to a section that is not on the page does nothing', () => {
-  const t = setup({ Ducks: 0 });
+  const t = mountScrollSpy({ Ducks: 0 });
   t.spy.goToSection('Nope');
   assertEquals(t.scrolls, []);
   assertEquals(t.spy.activeSection.value, '');
@@ -183,7 +183,7 @@ test('before the scroll container exists, updating is a safe no-op', () => {
 });
 
 test('stopping the spy disconnects the observer and the scroll listener', () => {
-  const t = setup({ Ducks: -10, Herons: 900 });
+  const t = mountScrollSpy({ Ducks: -10, Herons: 900 });
   t.spy.updateActiveSection();
   t.stop();
   assert(t.observer.log.disconnected >= 1);

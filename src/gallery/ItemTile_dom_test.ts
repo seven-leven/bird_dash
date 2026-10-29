@@ -5,6 +5,7 @@ import ItemTile from './ItemTile.vue';
 import { at, makeItem } from '../testing/fixtures.ts';
 import type { Item } from '../domain/toCollectionItems.ts';
 import { mountComponent } from '../testing/mount.ts';
+import { press } from '../testing/events.ts';
 
 const drawn = makeItem({
   itemId: '042',
@@ -37,12 +38,6 @@ function mount(props: { item: Item; eager?: boolean; collection?: typeof birds }
   };
 }
 
-const key = (el: HTMLElement, k: string) => {
-  const e = new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true });
-  el.dispatchEvent(e);
-  return e;
-};
-
 test('a drawn tile is a button named after the drawing, and opens it by click, Enter or Space', () => {
   const { tile, clicked } = mount({ item: drawn });
   assertEquals(tile.getAttribute('role'), 'button');
@@ -50,8 +45,8 @@ test('a drawn tile is a button named after the drawing, and opens it by click, E
   assertEquals(tile.getAttribute('aria-label'), 'Greater Sand-Plover, #042');
 
   tile.click();
-  key(tile, 'Enter');
-  const space = key(tile, ' ');
+  press('Enter', tile);
+  const space = press(' ', tile);
   assert(space.defaultPrevented, 'Space must not also scroll the page');
   assertEquals(clicked.map((i) => i.itemId), ['042', '042', '042']);
 });
@@ -76,7 +71,7 @@ test('an undrawn tile is not a button, says so to screen readers, and does nothi
   assertStringIncludes(tile.className, 'bg-stone-100'); // the interface grey, not paper
 
   tile.click();
-  const space = key(tile, ' ');
+  const space = press(' ', tile);
   assert(!space.defaultPrevented);
   assertEquals(clicked, []);
 });

@@ -1,10 +1,15 @@
+// What useViewer adds to the parts it is made of: which key does what, paging through the
+// drawings and their images, loading each image, and when a click closes it. The parts have their
+// own files: the dialog and its keys (useDialogKeys_dom_test.ts), zoom and pan
+// (useZoomPan_dom_test.ts) and where a drawing sits (useDrawingNav_test.ts).
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, reactive } from 'vue';
 import { useViewer } from './useViewer.ts';
 import { at, makeCollection, makeItem } from '../testing/fixtures.ts';
 import type { Item } from '../domain/toCollectionItems.ts';
-import { mountComposable, runInScope } from '../testing/mount.ts';
+import { runInScope } from '../testing/mount.ts';
+import { pointer, press } from '../testing/events.ts';
 
 const items = [
   makeItem({ itemId: '001', drawnTime: at(2025, 1, 10) }),
@@ -12,8 +17,8 @@ const items = [
   makeItem({ itemId: '003', drawnTime: at(2025, 3, 10) }),
 ];
 
-/** A lightbox with a real dialog element (2 buttons + 1 link) attached to the fake DOM. */
-function setup(startAt = 0) {
+/** The viewer on the drawing at `startAt`, closed, with a dialog element; records what it emits. */
+function mountViewer(startAt = 0) {
   const props = reactive({
     isOpen: false,
     item: items[startAt] as Item | undefined,
@@ -26,66 +31,37 @@ function setup(startAt = 0) {
 
   const dialog = document.createElement('div');
   dialog.tabIndex = -1;
-  dialog.innerHTML =
-    '<button id="first">a</button><button id="mid">b</button><a id="last" href="#">c</a>';
+  dialog.innerHTML = '<button id="first">a</button>';
   document.body.append(dialog);
 
-  const { value: lb, stop } = runInScope(() => useViewer({ props, emit }));
-  lb.dialogRef.value = dialog;
+  const { value: viewer, stop } = runInScope(() => useViewer({ props, emit }));
+  viewer.dialogRef.value = dialog;
 
-  const key = (k: string, init: KeyboardEventInit = {}, target: EventTarget = document.body) => {
-    const e = new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init });
-    target.dispatchEvent(e);
-    return e;
-  };
+  const key = (k: string) => press(k, document.body);
   const open = async () => {
     props.isOpen = true;
     await nextTick();
     await nextTick();
   };
-  const el = (id: string) => dialog.querySelector<HTMLElement>(`#${id}`)!;
-
-  return { props, lb, emitted, dialog, key, open, el, stop };
+  /** Which drawings it asked to move to, by id. */
+  const movedTo = () => emitted.filter(([e]) => e === 'update:item').map(([, p]) => p?.itemId);
+  return { props, viewer, emitted, dialog, key, open, movedTo, stop };
 }
 
-const pointer = (type: string, id: number, x: number, y: number, kind = 'touch') =>
-  new PointerEvent(type, { pointerId: id, clientX: x, clientY: y, pointerType: kind });
-
-test('opening moves focus into the dialog and locks page scroll', async () => {
-  const t = setup();
-  await t.open();
-  assertEquals(document.activeElement, t.dialog);
-  assertEquals(document.body.style.overflow, 'hidden');
-  t.stop();
-});
-
-test('closing restores focus to what opened it and unlocks scroll', async () => {
-  const opener = document.createElement('button');
-  document.body.append(opener);
-  opener.focus();
-
-  const t = setup();
-  await t.open();
-  assert(document.activeElement !== opener);
-
-  t.props.isOpen = false;
-  await nextTick();
-  assertEquals(document.activeElement, opener);
-  assertEquals(document.body.style.overflow, '');
-  t.stop();
-});
+const clickOn = (target: object, currentTarget: object = target) =>
+  ({ target, currentTarget }) as unknown as MouseEvent;
 
 test('+ / - / 0 zoom, and Escape asks the parent to close', async () => {
-  const t = setup();
+  const t = mountViewer();
   await t.open();
 
   t.key('+');
   t.key('+');
-  assertEquals(t.lb.scale.value, 1.5);
+  assertEquals(t.viewer.scale.value, 1.5);
   t.key('-');
-  assertEquals(t.lb.scale.value, 1.25);
+  assertEquals(t.viewer.scale.value, 1.25);
   t.key('0');
-  assertEquals(t.lb.scale.value, 1);
+  assertEquals(t.viewer.scale.value, 1);
 
   t.key('Escape');
   assertEquals(t.emitted, [['close', undefined]]);
@@ -93,367 +69,166 @@ test('+ / - / 0 zoom, and Escape asks the parent to close', async () => {
 });
 
 test('arrow keys page through the drawn items and stop at the ends', async () => {
-  const t = setup(0);
+  const t = mountViewer(0);
   await t.open();
-
   t.key('ArrowLeft'); // already first: nothing to go back to
-  assertEquals(t.emitted, []);
-
   t.key('ArrowRight');
-  assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '002']]);
+  assertEquals(t.movedTo(), ['002']);
   t.stop();
 });
 
 test('up and down page too, as left and right do, and keep the page from scrolling', async () => {
-  const t = setup(1);
+  const t = mountViewer(1);
   await t.open();
   const up = t.key('ArrowUp');
   const down = t.key('ArrowDown');
-  assertEquals(t.emitted.map(([, p]) => p?.itemId), ['001', '003']);
-  assert(up.defaultPrevented && down.defaultPrevented);
+  assertEquals(t.movedTo(), ['001', '003']);
+  assert(up.defaultPrevented && down.defaultPrevented, 'the arrows do not scroll the page');
   t.stop();
 });
 
-test('keys typed into a text field do not zoom or page the image', async () => {
-  const t = setup();
+test('a finger swipe pages to the next or previous drawing, and not past the first', async () => {
+  const t = mountViewer(1);
   await t.open();
-  const input = document.createElement('input');
-  document.body.append(input);
-
-  t.key('+', {}, input);
-  t.key('ArrowRight', {}, input);
-  assertEquals(t.lb.scale.value, 1);
-  assertEquals(t.emitted, []);
+  t.viewer.handlePointerDown(pointer('pointerdown', 1, 400, 300));
+  t.viewer.handlePointerUp(pointer('pointerup', 1, 250, 305)); // left: next
+  t.viewer.handlePointerDown(pointer('pointerdown', 1, 200, 300));
+  t.viewer.handlePointerUp(pointer('pointerup', 1, 350, 305)); // right: back
+  assertEquals(t.movedTo(), ['003', '001']);
   t.stop();
+
+  const first = mountViewer(0);
+  await first.open();
+  first.viewer.handlePointerDown(pointer('pointerdown', 1, 200, 300));
+  first.viewer.handlePointerUp(pointer('pointerup', 1, 350, 305));
+  assertEquals(first.emitted, []);
+  first.stop();
 });
-
-test('keys are ignored while closed', async () => {
-  const t = setup();
-  t.key('+'); // never opened, so the window listener was never attached
-  assertEquals(t.lb.scale.value, 1);
-  await t.open();
-  t.props.isOpen = false;
-  await nextTick();
-  t.key('+'); // closed again: listener removed
-  assertEquals(t.lb.scale.value, 1);
-  t.stop();
-});
-
-test('a two-finger pinch zooms by how far the fingers spread', async () => {
-  const t = setup();
-  await t.open();
-
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
-  t.lb.handlePointerDown(pointer('pointerdown', 2, 400, 300)); // 100px apart
-  t.lb.handlePointerMove(pointer('pointermove', 2, 550, 300)); // 250px apart
-  assertEquals(t.lb.scale.value, 2.5);
-
-  t.lb.handlePointerUp(pointer('pointerup', 2, 550, 300));
-  t.lb.handlePointerUp(pointer('pointerup', 1, 300, 300));
-  t.stop();
-});
-
-test('a finger swipe pages; a mouse drag at 1x does not', async () => {
-  const t = setup(0);
-  await t.open();
-
-  // mouse drag left at 1x: no paging
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 400, 300, 'mouse'));
-  t.lb.handlePointerUp(pointer('pointerup', 1, 200, 300, 'mouse'));
-  assertEquals(t.emitted, []);
-
-  // finger swipe left: next item
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 400, 300));
-  t.lb.handlePointerUp(pointer('pointerup', 1, 250, 305));
-  assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '002']]);
-  t.stop();
-});
-
-test('dragging while zoomed pans by the distance divided by the scale', async () => {
-  const t = setup();
-  await t.open();
-  t.key('+');
-  t.key('+'); // 1.5x
-
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
-  t.lb.handlePointerMove(pointer('pointermove', 1, 360, 330)); // (60, 30) / 1.5
-  await new Promise((r) => requestAnimationFrame(() => r(null))); // the write is per-frame
-  assertEquals([t.lb.translateX.value, t.lb.translateY.value], [40, 20]);
-  assertEquals(t.lb.isDragging.value, true);
-
-  t.lb.handlePointerUp(pointer('pointerup', 1, 360, 330));
-  assertEquals(t.lb.isDragging.value, false);
-  t.stop();
-});
-
-const clickOn = (target: object, currentTarget: object = target) =>
-  ({ target, currentTarget }) as unknown as MouseEvent;
 
 test('a click on empty space closes; a click that bubbled from a child does not', async () => {
-  const t = setup();
+  const t = mountViewer();
   await t.open();
-  t.lb.handleBackdropClick(clickOn(t.el('first'), t.dialog)); // came from a control
+  t.viewer.handleBackdropClick(clickOn(t.dialog.querySelector('#first')!, t.dialog));
   assertEquals(t.emitted, []);
-  t.lb.handleBackdropClick(clickOn(t.dialog));
+  t.viewer.handleBackdropClick(clickOn(t.dialog));
   assertEquals(t.emitted.map(([e]) => e), ['close']);
   t.stop();
 });
 
 test('the click that ends a drag does not close; the next plain click does', async () => {
-  const t = setup();
+  const t = mountViewer();
   await t.open();
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 400, 300, 'mouse'));
-  t.lb.handlePointerUp(pointer('pointerup', 1, 300, 300, 'mouse')); // moved 100px
-  t.lb.handleBackdropClick(clickOn(t.dialog));
+  t.viewer.handlePointerDown(pointer('pointerdown', 1, 400, 300, 'mouse'));
+  t.viewer.handlePointerUp(pointer('pointerup', 1, 300, 300, 'mouse')); // moved 100px
+  t.viewer.handleBackdropClick(clickOn(t.dialog));
   assertEquals(t.emitted, [], 'a drag was treated as a click');
 
-  t.lb.handlePointerDown(pointer('pointerdown', 2, 400, 300, 'mouse'));
-  t.lb.handlePointerUp(pointer('pointerup', 2, 402, 301, 'mouse')); // a real click
-  t.lb.handleBackdropClick(clickOn(t.dialog));
+  t.viewer.handlePointerDown(pointer('pointerdown', 2, 400, 300, 'mouse'));
+  t.viewer.handlePointerUp(pointer('pointerup', 2, 402, 301, 'mouse')); // a real click
+  t.viewer.handleBackdropClick(clickOn(t.dialog));
   assertEquals(t.emitted.map(([e]) => e), ['close']);
   t.stop();
 });
 
 test('position reports where the open item sits among the drawn items', () => {
-  const t = setup(1);
-  assertEquals(t.lb.position.value, '2 of 3');
+  const t = mountViewer(1);
+  assertEquals(t.viewer.position.value, '2 of 3');
   t.props.item = undefined;
-  assertEquals(t.lb.position.value, '');
-  t.stop();
-});
-
-test('the image URL is empty while closed and points at the full image while open', async () => {
-  const t = setup(1);
-  assertEquals(t.lb.imageUrl.value, '');
-  await t.open();
-  assertEquals(t.lb.imageUrl.value, '/full/x/002.webp');
-  t.stop();
-});
-
-test('opening shows the spinner until the image loads; a failed image shows an error', async () => {
-  const t = setup();
-  await t.open();
-  assertEquals([t.lb.loading.value, t.lb.error.value], [true, null]);
-
-  t.lb.handleImageLoad();
-  assertEquals([t.lb.loading.value, t.lb.error.value], [false, null]);
-
-  t.props.item = items[1]; // paging starts a new load
-  await nextTick();
-  assertEquals(t.lb.loading.value, true);
-  t.lb.handleImageError();
-  assertEquals([t.lb.loading.value, t.lb.error.value], [false, 'Image not found']);
-  t.stop();
-});
-
-test('the wheel zooms in steps, never below 1x or above 5x', async () => {
-  const t = setup();
-  await t.open();
-  const wheel = (deltaY: number) => t.lb.handleWheel({ deltaY } as WheelEvent);
-
-  wheel(100); // zooming out at 1x stays at 1x
-  assertEquals(t.lb.scale.value, 1);
-  wheel(-100);
-  assert(t.lb.scale.value > 1);
-  for (let i = 0; i < 100; i++) wheel(-100);
-  assertEquals(t.lb.scale.value, 5);
-  for (let i = 0; i < 100; i++) wheel(100);
-  assertEquals(t.lb.scale.value, 1);
-  t.stop();
-});
-
-test('paging to another item resets the zoom', async () => {
-  const t = setup();
-  await t.open();
-  t.lb.zoomIn();
-  t.lb.zoomIn();
-  assert(t.lb.scale.value > 1);
-  t.props.item = items[1];
-  await nextTick();
-  assertEquals(t.lb.scale.value, 1);
+  assertEquals(t.viewer.position.value, '');
   t.stop();
 });
 
 test('previous and next are offered only where there is somewhere to go', () => {
-  const first = setup(0);
-  assertEquals([first.lb.hasPrevious.value, first.lb.hasNext.value], [false, true]);
+  const first = mountViewer(0);
+  assertEquals([first.viewer.hasPrevious.value, first.viewer.hasNext.value], [false, true]);
   first.stop();
 
-  const last = setup(2);
-  assertEquals([last.lb.hasPrevious.value, last.lb.hasNext.value], [true, false]);
-  last.lb.goToNext(); // nothing after the last item
+  const last = mountViewer(2);
+  assertEquals([last.viewer.hasPrevious.value, last.viewer.hasNext.value], [true, false]);
+  last.viewer.goToNext(); // nothing after the last item
   assertEquals(last.emitted, []);
   last.stop();
 
-  const none = setup(0);
+  const none = mountViewer(0);
   none.props.item = undefined;
-  assertEquals([none.lb.hasPrevious.value, none.lb.hasNext.value], [false, false]);
+  assertEquals([none.viewer.hasPrevious.value, none.viewer.hasNext.value], [false, false]);
   none.stop();
 });
 
-test('pointer events for a pointer that never went down are ignored', async () => {
-  const t = setup();
+test('the image URL is empty while closed and points at the full image while open', async () => {
+  const t = mountViewer(1);
+  assertEquals(t.viewer.imageUrl.value, '');
   await t.open();
-  t.lb.handlePointerMove(pointer('pointermove', 7, 500, 500));
-  t.lb.handlePointerUp(pointer('pointerup', 7, 500, 500));
-  assertEquals([t.lb.scale.value, t.lb.isDragging.value, t.emitted], [1, false, []]);
+  assertEquals(t.viewer.imageUrl.value, '/full/x/002.webp');
   t.stop();
 });
 
-test('a finger swipe right pages back, and does nothing on the first drawing', async () => {
-  const t = setup(1);
+test('opening shows the spinner until the image loads; a failed image shows an error', async () => {
+  const t = mountViewer();
   await t.open();
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 200, 300));
-  t.lb.handlePointerUp(pointer('pointerup', 1, 350, 305));
-  assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '001']]);
-  t.stop();
+  assertEquals([t.viewer.loading.value, t.viewer.error.value], [true, null]);
 
-  const first = setup(0);
-  await first.open();
-  first.lb.handlePointerDown(pointer('pointerdown', 1, 200, 300));
-  first.lb.handlePointerUp(pointer('pointerup', 1, 350, 305));
-  assertEquals(first.emitted, []);
-  first.stop();
-});
+  t.viewer.handleImageLoad();
+  assertEquals([t.viewer.loading.value, t.viewer.error.value], [false, null]);
 
-test('a tap (a finger that hardly moves) neither pages nor counts as a drag', async () => {
-  const t = setup(1);
-  await t.open();
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
-  t.lb.handlePointerMove(pointer('pointermove', 1, 302, 301));
-  t.lb.handlePointerUp(pointer('pointerup', 1, 302, 301));
-  assertEquals(t.emitted, []);
-  t.lb.handleBackdropClick(clickOn(t.dialog)); // the tap's click still closes
-  assertEquals(t.emitted.map(([e]) => e), ['close']);
-  t.stop();
-});
-
-test('several moves in one frame are written once, with the latest position', async () => {
-  const t = setup();
-  await t.open();
-  t.key('+');
-  t.key('+'); // 1.5x
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
-  t.lb.handlePointerMove(pointer('pointermove', 1, 315, 300));
-  t.lb.handlePointerMove(pointer('pointermove', 1, 330, 300)); // same frame
-  await new Promise((r) => requestAnimationFrame(() => r(null)));
-  assertEquals(t.lb.translateX.value, 20); // 30px / 1.5, not 10 then 20
-  t.lb.handlePointerUp(pointer('pointerup', 1, 330, 300));
-  t.stop();
-});
-
-test('closing while a move is waiting for its frame cancels it', async () => {
-  const t = setup();
-  await t.open();
-  t.key('+'); // zoomed, so a drag pans
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
-  t.lb.handlePointerMove(pointer('pointermove', 1, 360, 300)); // a frame is now pending
-  t.props.isOpen = false;
+  t.props.item = items[1]; // paging starts a new load
   await nextTick();
-  await new Promise((r) => requestAnimationFrame(() => r(null)));
-  assertEquals(t.lb.translateX.value, 0);
+  assertEquals(t.viewer.loading.value, true);
+  t.viewer.handleImageError();
+  assertEquals([t.viewer.loading.value, t.viewer.error.value], [false, 'Image not found']);
   t.stop();
 });
 
-test('lifting one of three fingers keeps the pinch going', async () => {
-  const t = setup();
+test('paging to another item resets the zoom', async () => {
+  const t = mountViewer();
   await t.open();
-  t.lb.handlePointerDown(pointer('pointerdown', 1, 300, 300));
-  t.lb.handlePointerDown(pointer('pointerdown', 2, 400, 300));
-  t.lb.handlePointerDown(pointer('pointerdown', 3, 500, 500));
-  t.lb.handlePointerUp(pointer('pointerup', 3, 500, 500)); // two fingers still down
-  t.lb.handlePointerMove(pointer('pointermove', 2, 500, 300)); // 100px → 200px apart
-  assertEquals(t.lb.scale.value, 2);
+  t.viewer.zoomIn();
+  t.viewer.zoomIn();
+  assert(t.viewer.scale.value > 1, 'zoomed in before paging');
+  t.props.item = items[1];
+  await nextTick();
+  assertEquals(t.viewer.scale.value, 1);
   t.stop();
 });
 
 test('a new item while closed does not start loading it', async () => {
-  const t = setup(0);
+  const t = mountViewer(0);
   t.props.item = items[1];
   await nextTick();
-  assertEquals([t.lb.loading.value, t.lb.scale.value], [false, 1]);
+  assertEquals([t.viewer.loading.value, t.viewer.scale.value], [false, 1]);
   t.stop();
 });
 
-test('if nothing focusable had focus when it opened, closing leaves focus alone', async () => {
-  const t = setup();
-  // Shadow the inherited getter for the moment of opening, then remove the shadow.
-  Object.defineProperty(document, 'activeElement', { configurable: true, get: () => null });
-  try {
-    await t.open();
-  } finally {
-    delete (document as unknown as Record<string, unknown>).activeElement;
-  }
+test('closing while a pan is waiting for its frame drops it', async () => {
+  const t = mountViewer();
+  await t.open();
+  t.key('+'); // zoomed, so a drag pans
+  t.viewer.handlePointerDown(pointer('pointerdown', 1, 300, 300));
+  t.viewer.handlePointerMove(pointer('pointermove', 1, 360, 300)); // a frame is now pending
   t.props.isOpen = false;
-  await nextTick(); // must not throw trying to focus nothing
-  assertEquals(document.body.style.overflow, '');
-  t.stop();
-});
-
-test('unmounting while open unlocks the page and stops listening for keys', async () => {
-  const props = reactive({
-    isOpen: false,
-    item: items[0] as Item | undefined,
-    drawnItems: items,
-    fullImageBaseUrl: '/full/x/',
-    collection: makeCollection('x'),
-  });
-  const emitted: string[] = [];
-  const { result: lb, unmount } = mountComposable(() =>
-    useViewer({ props, emit: ((e: string) => emitted.push(e)) as never })
-  );
-  props.isOpen = true;
   await nextTick();
-  assertEquals(document.body.style.overflow, 'hidden');
-
-  unmount();
-  assertEquals(document.body.style.overflow, '');
-  globalThis.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
-  assertEquals(emitted, []);
-  assertEquals(lb.scale.value, 1);
+  await new Promise((r) => requestAnimationFrame(() => r(null)));
+  assertEquals(t.viewer.translateX.value, 0);
+  t.stop();
 });
 
 test("the arrows page through an item's images, each loaded afresh at fit, then on to the next", async () => {
-  const t = setup(0);
+  const t = mountViewer(0);
   t.props.item = makeItem({ itemId: '001', imageIds: ['001', '001-2'] });
   t.props.drawnItems = [t.props.item, items[1]!];
   await t.open();
-  assertEquals(t.lb.imageUrl.value, '/full/x/001.webp');
-  t.lb.handleImageLoad();
-  t.lb.zoomIn();
+  assertEquals(t.viewer.imageUrl.value, '/full/x/001.webp');
+  t.viewer.handleImageLoad();
+  t.viewer.zoomIn();
 
   t.key('ArrowRight');
   await nextTick();
-  assertEquals(t.lb.imageUrl.value, '/full/x/001-2.webp');
-  assertEquals([t.lb.loading.value, t.lb.scale.value], [true, 1]);
-  assertEquals(t.lb.imagePosition.value, 'image 2 of 2');
+  assertEquals(t.viewer.imageUrl.value, '/full/x/001-2.webp');
+  assertEquals([t.viewer.loading.value, t.viewer.scale.value], [true, 1]);
+  assertEquals(t.viewer.imagePosition.value, 'image 2 of 2');
   assertEquals(t.emitted, []);
 
   t.key('ArrowRight');
-  assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '002']]);
-  t.stop();
-});
-
-test('the dialog opens as a modal (the page behind inert, Tab kept in by the browser)', async () => {
-  const t = setup(0);
-  const dialog = document.createElement('dialog');
-  dialog.tabIndex = -1;
-  document.body.append(dialog);
-  t.lb.dialogRef.value = dialog;
-  await t.open();
-  assertEquals([dialog.open, document.activeElement === dialog], [true, true]);
-  // Closing closes the modal before focus goes back, or the page would still be inert.
-  t.props.isOpen = false;
-  await nextTick();
-  assertEquals(dialog.open, false);
-  t.stop();
-});
-
-test('without a dialog element to open, opening still listens for its keys', async () => {
-  const t = setup(0);
-  t.lb.dialogRef.value = null;
-  await t.open();
-  t.key('ArrowRight');
-  assertEquals(t.emitted.map(([e, p]) => [e, p?.itemId]), [['update:item', '002']]);
+  assertEquals(t.movedTo(), ['002']);
   t.stop();
 });

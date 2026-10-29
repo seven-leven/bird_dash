@@ -8,7 +8,7 @@ const drawn = makeItem({ itemId: '042', drawnTime: at(2025, 3, 10) });
 const undrawn = makeItem({ itemId: '042', isDrawn: false });
 
 /** Actions over stand-in stores, plus a tile in the fake DOM to flash. */
-function setup(active: string) {
+function mountActions(active: string) {
   const calls: string[] = [];
   const current = ref<{ id: string } | undefined>({ id: active });
   const actions = createActions({
@@ -43,7 +43,7 @@ function setup(active: string) {
 }
 
 test('selecting a result in the open collection closes the dropdown and flashes the tile', async () => {
-  const { actions, calls, tile } = setup('birds');
+  const { actions, calls, tile } = mountActions('birds');
   await actions.selectGlobalResult('birds', drawn);
   // No collection switch; from the About page, the result shows the gallery.
   assertEquals(calls, ['dropdown:false', 'page:gallery', 'scrollIntoView']);
@@ -51,7 +51,7 @@ test('selecting a result in the open collection closes the dropdown and flashes 
 });
 
 test('selecting a result in another collection switches first, then flashes the tile', async () => {
-  const { actions, calls, tile } = setup('birds');
+  const { actions, calls, tile } = mountActions('birds');
   await actions.selectGlobalResult('sharks', drawn);
   assertEquals(calls, [
     'dropdown:false',
@@ -67,7 +67,7 @@ test('selecting a result in another collection switches first, then flashes the 
 });
 
 test('a tile not drawn yet is shown before it is ringed, or the ring would find nothing', async () => {
-  const { actions, calls, tile } = setup('birds');
+  const { actions, calls, tile } = mountActions('birds');
   await actions.ringTile(undrawn);
   assertEquals(calls, ['showUndrawn', 'scrollIntoView']);
   assert(tile.classList.contains('ring-2'));

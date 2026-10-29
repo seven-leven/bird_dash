@@ -5,7 +5,7 @@ import { createActions } from './actions.ts';
 
 // A stand-in collections store: `switch` makes the collection active and resolves
 // either at once (cached) or when the test releases it (still loading).
-function setup(known: string[]) {
+function mountActions(known: string[]) {
   const calls: string[] = [];
   const pages: string[] = [];
   const active = ref<{ id: string } | undefined>({ id: known[0]! });
@@ -36,15 +36,15 @@ function setup(known: string[]) {
   return { actions, calls, pages, slow, finish };
 }
 
-test('selectCollection: clears the search, then scrolls to the top once the data is in', async () => {
-  const { actions, calls } = setup(['a', 'b']);
+test('choosing a collection clears the search, then scrolls to the top once its data is in', async () => {
+  const { actions, calls } = mountActions(['a', 'b']);
   await actions.selectCollection('b');
   // The planned list folds away: the next collection opens as itself.
   assertEquals(calls, ['clear', 'hidePlanned', 'resetHeaders', 'scrollToTop']);
 });
 
-test('selectCollection: a collection that has to be fetched is scrolled to the top too', async () => {
-  const { actions, calls, slow, finish } = setup(['a', 'b']);
+test('a collection that has to be fetched first is scrolled to the top too', async () => {
+  const { actions, calls, slow, finish } = mountActions(['a', 'b']);
   slow('b');
   const done = actions.selectCollection('b');
   await Promise.resolve();
@@ -55,8 +55,8 @@ test('selectCollection: a collection that has to be fetched is scrolled to the t
   assertEquals(calls.filter((c) => c === 'scrollToTop').length, 1);
 });
 
-test('selectCollection: a load the user has already left does not scroll the new view', async () => {
-  const { actions, calls, slow, finish } = setup(['a', 'b', 'c']);
+test('a load the visitor has already left does not scroll the new view', async () => {
+  const { actions, calls, slow, finish } = mountActions(['a', 'b', 'c']);
   slow('b');
   const toB = actions.selectCollection('b');
   await actions.selectCollection('c'); // moved on while b was loading
@@ -67,14 +67,14 @@ test('selectCollection: a load the user has already left does not scroll the new
   assertEquals(calls.filter((c) => c === 'scrollToTop').length, 1, 'b scrolled c to the top');
 });
 
-test('selectCollection: an unknown id does not scroll', async () => {
-  const { actions, calls } = setup(['a']);
+test('choosing an unknown collection does not scroll', async () => {
+  const { actions, calls } = mountActions(['a']);
   await actions.selectCollection('nope');
   assertEquals(calls.includes('scrollToTop'), false);
 });
 
 test('choosing a collection shows the gallery, from the About page too', async () => {
-  const { actions, pages } = setup(['birds', 'sharks']);
+  const { actions, pages } = mountActions(['birds', 'sharks']);
   await actions.selectCollection('sharks');
   assertEquals(pages, ['gallery']);
 });

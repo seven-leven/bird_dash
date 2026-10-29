@@ -9,16 +9,30 @@ import { at, makeItem } from '../testing/fixtures.ts';
 import type { View } from '../domain/viewName.ts';
 
 const DAY = 86_400_000;
-const words = fc.constantFrom('heron', 'egret', 'plover', 'tern', 'noddy', 'kite', 'Reef', 'REEF');
+const anyWord = fc.constantFrom(
+  'heron',
+  'egret',
+  'plover',
+  'tern',
+  'noddy',
+  'kite',
+  'Reef',
+  'REEF',
+);
 
-const itemSpec = fc.record({
-  name: fc.tuple(words, words).map(([a, b]) => `${a} ${b}`),
+const anyItemSpec = fc.record({
+  name: fc.tuple(anyWord, anyWord).map(([a, b]) => `${a} ${b}`),
   group: fc.constantFrom('A', 'B', 'C'),
   drawn: fc.boolean(),
   dayOffset: fc.integer({ min: 0, max: 900 }), // days after 2024-01-01
 });
-const collection = fc.array(itemSpec, { maxLength: 40 });
-const query = fc.oneof(fc.constant(''), words, fc.constant('  REEF '), fc.constant('zzz-no-match'));
+const anyItems = fc.array(anyItemSpec, { maxLength: 40 });
+const anyQuery = fc.oneof(
+  fc.constant(''),
+  anyWord,
+  fc.constant('  REEF '),
+  fc.constant('zzz-no-match'),
+);
 
 function items(specs: Array<{ name: string; group: string; drawn: boolean; dayOffset: number }>) {
   return specs.map((s) =>
@@ -36,9 +50,9 @@ const run = (specs: Parameters<typeof items>[0], q: string, mode: View) => {
 };
 const norm = (q: string) => q.trim().toLowerCase();
 
-test('property: group mode keeps exactly the items that match, each once', () => {
+test('for any items and query, the family view keeps exactly the matches, each once', () => {
   assertProperty(
-    fc.property(collection, query, (specs, q) => {
+    fc.property(anyItems, anyQuery, (specs, q) => {
       const { list, data } = run(specs, q, 'group');
       const expected = list.filter((i) => i.searchText.includes(norm(q))).map((i) => i.id).sort();
       const actual = Object.values(data.activeData.value.grouped).flat().map((i) => i.id).sort();
@@ -49,9 +63,9 @@ test('property: group mode keeps exactly the items that match, each once', () =>
   );
 });
 
-test('property: within a group, drawn items come first and ids ascend', () => {
+test('for any items, drawn ones come first in a group and ids ascend', () => {
   assertProperty(
-    fc.property(collection, (specs) => {
+    fc.property(anyItems, (specs) => {
       const { data } = run(specs, '', 'group');
       for (const group of Object.values(data.activeData.value.grouped)) {
         for (let i = 1; i < group.length; i++) {
@@ -65,9 +79,9 @@ test('property: within a group, drawn items come first and ids ascend', () => {
   );
 });
 
-test('property: sidebar counts add up to the drawn items in every view', () => {
+test('for any items, the counts in the sidebar add up to the drawn items in every view', () => {
   assertProperty(
-    fc.property(collection, query, fc.constantFrom<View>('group', 'month'), (specs, q, mode) => {
+    fc.property(anyItems, anyQuery, fc.constantFrom<View>('group', 'month'), (specs, q, mode) => {
       const { list, data } = run(specs, q, mode);
       const matching = list.filter((i) => i.searchText.includes(norm(q)));
       const drawn = matching.filter((i) => i.isDrawn).length;
@@ -78,9 +92,9 @@ test('property: sidebar counts add up to the drawn items in every view', () => {
   );
 });
 
-test('property: month view puts each drawn item in its UTC month, newest month first', () => {
+test('for any items, the month view puts each drawing in its UTC month, newest first', () => {
   assertProperty(
-    fc.property(collection, query, (specs, q) => {
+    fc.property(anyItems, anyQuery, (specs, q) => {
       const { list, data } = run(specs, q, 'month');
       const grouped = data.activeData.value.grouped;
 
@@ -102,9 +116,9 @@ test('property: month view puts each drawn item in its UTC month, newest month f
   );
 });
 
-test('property: a month is disabled in the sidebar exactly when it is empty', () => {
+test('for any items, a month is disabled in the sidebar exactly when it is empty', () => {
   assertProperty(
-    fc.property(collection, query, (specs, q) => {
+    fc.property(anyItems, anyQuery, (specs, q) => {
       const { data } = run(specs, q, 'month');
       const { grouped, sidebarItems } = data.activeData.value;
       for (const s of sidebarItems) {
@@ -116,9 +130,9 @@ test('property: a month is disabled in the sidebar exactly when it is empty', ()
   );
 });
 
-test('property: the lightbox order is drawn-only and never goes back in time', () => {
+test('for any items, the order in the viewer is drawn only and never goes back in time', () => {
   assertProperty(
-    fc.property(collection, query, (specs, q) => {
+    fc.property(anyItems, anyQuery, (specs, q) => {
       const { data } = run(specs, q, 'group');
       const seq = data.searchedDrawnItems.value;
       assert(seq.every((i) => i.isDrawn));
