@@ -5,6 +5,8 @@ import {
   AREAS,
   formatAreasMarkdown,
   formatAreasText,
+  formatGridMarkdown,
+  formatGridText,
   summarizeAreas,
   untestedFiles,
 } from './areas.ts';
@@ -132,4 +134,37 @@ test('the longest matching prefix wins: the generated data files are pipeline, t
   assertEquals(areaOf('script/generate/stats.ts')?.id, 'pipeline');
   assertEquals(areaOf('script/generate/stats_test.ts')?.id, 'pipeline');
   assertEquals(areaOf('script/generate/logo.ts')?.id, 'tooling');
+});
+
+test("the grid counts each area's tests by tier, a dot where there are none", () => {
+  const rows = summarizeAreas([
+    testCase('src/domain/a_test.ts'),
+    testCase('src/domain/a_test.ts'),
+    testCase('src/domain/a_prop_test.ts'),
+    testCase('src/journeys/search_journey_test.ts'),
+  ]);
+  const data = rows.find((r) => r.area.id === 'data')!;
+  assertEquals(data.byTier, { unit: 2, dom: 0, journey: 0, prop: 1, contract: 0 });
+
+  const text = formatGridText(rows).split('\n');
+  assertEquals(text[0]!.trim().split(/\s+/), [
+    'area',
+    'unit',
+    'dom',
+    'journey',
+    'prop',
+    'contract',
+  ]);
+  const dataRow = text.find((l) => l.startsWith(data.area.label))!;
+  assertEquals(dataRow.slice(data.area.label.length).trim().split(/\s+/), [
+    '2',
+    '·',
+    '·',
+    '1',
+    '·',
+  ]);
+
+  const md = formatGridMarkdown(rows);
+  assertStringIncludes(md, '| Area | unit | dom | journey | prop | contract |');
+  assertStringIncludes(md, `| ${data.area.label} | 2 | · | · | 1 | · |`);
 });

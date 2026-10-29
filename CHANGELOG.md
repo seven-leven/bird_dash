@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | tests: one table of tiers. `script/testRunner/tiers.ts` holds the environments (Node,
+  and happy-dom with its setup file) and each tier as one of them plus its suffix, its use and its
+  helper; `tierOf`, the runner, Vitest's projects in `vite.config.ts` and TESTING.md's table are
+  worked out from it, and contract tests hold the docs and the `test:<tier>` scripts to it. A run of
+  the whole suite adds a grid, areas down and tiers across, so a gap shows (test overhaul, phase 5)
 - 2026-10-29 | feat: a footer in two rows. First the archive (the mark, the name, "18 of 276 drawn,
   by hand") beside its links, About, Docs and GitHub in one style; then the small print, the line's
   name, the version and the commit, and the year. The build icons and the credits line go; the

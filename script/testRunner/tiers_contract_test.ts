@@ -1,7 +1,7 @@
-import { readdir } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
-import { discoverTests, groupByTier, TIER_ORDER, tierOf } from './tiers.ts';
+import { discoverTests, groupByTier, TIER_ORDER, tierOf, tiersMarkdown } from './tiers.ts';
 import { areaOf, AREAS, discoverSources } from './areas.ts';
 
 // The runner only looks in src/ and script/. A test file anywhere else would pass
@@ -65,4 +65,27 @@ test('every component has a test of its own beside it (Foo.vue, Foo_dom_test.ts)
     [],
     'a journey is not enough: give each a _dom_test.ts for its own states (docs/TESTING.md)',
   );
+});
+
+test("docs/TESTING.md's table of tiers says what the table in tiers.ts says", async () => {
+  const doc = await readFile('docs/TESTING.md', 'utf8');
+  // The rows as written, with dprint's column padding taken out.
+  const rows = doc.split('\n')
+    .filter((line) => /^\| `\w+` +\| `x\w*_test\.ts`/.test(line))
+    .map((line) => line.split('|').slice(1, -1).map((cell) => cell.trim()).join(' | '))
+    .map((line) => `| ${line} |`);
+  assertEquals(
+    rows,
+    tiersMarkdown(),
+    'update the table in docs/TESTING.md ("Tiers") from tiers.ts',
+  );
+});
+
+test('every tier has its own npm script, test:<tier>', async () => {
+  const { scripts } = JSON.parse(await readFile('package.json', 'utf8')) as {
+    scripts: Record<string, string>;
+  };
+  for (const tier of TIER_ORDER) {
+    assertEquals(scripts[`test:${tier}`], `node script/testRunner/testRunner.ts ${tier}`);
+  }
 });

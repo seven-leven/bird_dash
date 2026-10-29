@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals, assertThrows } from '@std/assert';
-import { groupByTier, isTier, TIER_ORDER, tierOf } from './tiers.ts';
+import { groupByTier, isTier, TIER_ORDER, tierOf, tiersMarkdown, vitestProjects } from './tiers.ts';
 
 test('the tier comes from the file-name suffix', () => {
   assertEquals(tierOf('src/app/useHashRoute_test.ts'), 'unit');
@@ -37,4 +37,42 @@ test('isTier accepts real tiers only', () => {
   assertEquals(isTier('prop'), true);
   assertEquals(isTier('e2e'), false);
   assertEquals(isTier('toString'), false); // not a prototype-property false positive
+});
+
+test('Vitest gets one project per environment, worked out from the table', () => {
+  // The same projects vite.config.ts spelled out by hand before the table.
+  assertEquals(vitestProjects(), [
+    {
+      extends: true,
+      test: {
+        name: 'node',
+        include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
+        exclude: ['**/*_dom_test.ts', '**/*_journey_test.ts', '**/node_modules/**'],
+        environment: 'node',
+      },
+    },
+    {
+      extends: true,
+      test: {
+        name: 'dom',
+        include: ['src/**/*_dom_test.ts', 'src/**/*_journey_test.ts'],
+        exclude: ['**/node_modules/**'],
+        environment: 'happy-dom',
+        setupFiles: ['src/testing/domSetup.ts'],
+      },
+    },
+  ]);
+});
+
+test("the docs' table of tiers is a row per tier, in order", () => {
+  const rows = tiersMarkdown();
+  assertEquals(rows.length, TIER_ORDER.length);
+  assertEquals(
+    rows[0],
+    '| `unit` | `x_test.ts` | Pure logic. Start here | `testing/fixtures.ts` |',
+  );
+  assertEquals(
+    rows.at(-1),
+    '| `contract` | `x_contract_test.ts` | The real files and history of this repo | none |',
+  );
 });

@@ -219,6 +219,7 @@ test('main: in CI it keeps the JUnit file, saves the report, annotates failures 
   assertStringIncludes(run.out, '::error file=src/domain/a_test.ts,title=Test failed%3A adds');
   assertStringIncludes(run.result('junit.xml')!, 'adds');
   assertStringIncludes(run.result('report.md')!, '### By area');
+  assertStringIncludes(run.result('report.md')!, '### By area and tier');
   const md = run.file('summary.md')!;
   assertStringIncludes(md, '### Tests (TZ=UTC)');
   // The verdict comes first, before any table.
@@ -313,9 +314,11 @@ test('main: an area or a path narrows the run to its test files', async () => {
     tests,
     cases: [['src/ui/x/b_dom_test.ts', 'draws']],
   });
-  // Only the area that ran is reported; the others would only say "no tests".
+  // Only the area that ran is reported; the others would only say "no tests". No grid: its
+  // gaps would be the ones the narrowing made.
   assertStringIncludes(byArea.out, 'Site: viewer and interface');
   assert(!byArea.out.includes('Site: data and search'));
+  assert(!byArea.out.includes('journey   prop'));
   assertEquals(byArea.args.filter((a) => a.endsWith('_test.ts')), [
     'src/ui/x/b_dom_test.ts',
   ]);

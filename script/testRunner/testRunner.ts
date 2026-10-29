@@ -27,6 +27,8 @@ import {
   discoverSources,
   formatAreasMarkdown,
   formatAreasText,
+  formatGridMarkdown,
+  formatGridText,
   summarizeAreas,
   untestedFiles,
 } from './areas.ts';
@@ -238,6 +240,11 @@ async function runTheTests(args: string[], io: Io, given: Partial<RunnerOptions>
   const shown = narrowed ? areas.filter((a) => a.tests > 0) : areas;
   if (cases.length > 0) io.out('\n' + formatAreasText(shown));
   summaryMd += '\n' + formatAreasMarkdown(shown);
+  // The grid only means something across every tier: a narrowed run would show gaps it made.
+  if (allTiers) {
+    if (cases.length > 0) io.out('\n' + formatGridText(areas));
+    summaryMd += '\n' + formatGridMarkdown(areas);
+  }
 
   if (cov) {
     const total = totals(cov);

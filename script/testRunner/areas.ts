@@ -8,7 +8,7 @@
  */
 import type { TestCase } from './junit.ts';
 import type { Counter, FileCoverage } from './coverage.ts';
-import { findFiles, repoPath } from './tiers.ts';
+import { findFiles, repoPath, type Tier, TIER_ORDER, tierOf } from './tiers.ts';
 import { formatPercent } from './coverage.ts';
 
 export interface Area {
@@ -120,6 +120,8 @@ export interface AreaSummary {
   files: number;
   tests: number;
   failed: number;
+  /** Its tests by tier: the row of the area × tier grid. */
+  byTier: Record<Tier, number>;
   /** Line coverage over the area's files that a test loaded; undefined without coverage. */
   lines?: Counter | undefined;
   /** Source files in the area that no test imported, so coverage says nothing about them. */
@@ -152,6 +154,9 @@ export function summarizeAreas(
       files: new Set(own.map((c) => c.file)).size,
       tests: own.length,
       failed: own.filter((c) => c.failure !== undefined).length,
+      byTier: Object.fromEntries(
+        TIER_ORDER.map((t) => [t, own.filter((c) => tierOf(c.file) === t).length]),
+      ) as Record<Tier, number>,
       lines,
       unloaded,
     };
@@ -218,4 +223,33 @@ export function formatAreasMarkdown(rows: AreaSummary[]): string {
   }
   lines.push('');
   return lines.join('\n');
+}
+
+/**
+ * The grid: areas down, tiers across, with how many tests each holds, so a gap shows (an
+ * area with no property tests, one tested only by journeys). A zero is a dot.
+ */
+export function formatGridText(rows: AreaSummary[]): string {
+  const width = Math.max(4, ...rows.map((r) => r.area.label.length));
+  const cell = (n: number, t: Tier) => (n === 0 ? '·' : String(n)).padStart(Math.max(5, t.length));
+  return [
+    `${'area'.padEnd(width)}  ${TIER_ORDER.map((t) => t.padStart(5)).join('  ')}`,
+    ...rows.map((r) =>
+      `${r.area.label.padEnd(width)}  ${TIER_ORDER.map((t) => cell(r.byTier[t], t)).join('  ')}`
+    ),
+  ].join('\n');
+}
+
+/** The same grid for the job summary and the saved report. */
+export function formatGridMarkdown(rows: AreaSummary[]): string {
+  return [
+    '### By area and tier',
+    '',
+    `| Area | ${TIER_ORDER.join(' | ')} |`,
+    `| --- | ${TIER_ORDER.map(() => '---:').join(' | ')} |`,
+    ...rows.map((r) =>
+      `| ${r.area.label} | ${TIER_ORDER.map((t) => r.byTier[t] || '·').join(' | ')} |`
+    ),
+    '',
+  ].join('\n');
 }

@@ -81,9 +81,11 @@ and then Vitest's full output, with the diff and the failing line. The tests run
 
 ## Tiers
 
-Tests sit next to the code they cover, and **the file name decides the tier**.
-[`script/testRunner/tiers.ts`](../script/testRunner/tiers.ts) is the one place that maps names to
-tiers.
+Tests sit next to the code they cover, and **the file name decides the tier**. A tier is defined
+once, in the table in [`script/testRunner/tiers.ts`](../script/testRunner/tiers.ts): where it runs
+(its _environment_: plain Node, or happy-dom with `domSetup.ts` before each test), its suffix, what
+it is for and its helper. The runner, `tierOf`, the `test:<tier>` scripts and Vitest's projects in
+`vite.config.ts` all read it, and a contract test checks this table against it.
 
 | Tier       | File name            | Use it for                                               | Helper                                       |
 | ---------- | -------------------- | -------------------------------------------------------- | -------------------------------------------- |
@@ -132,7 +134,9 @@ A new folder must be added to an area, or a contract test fails.
 
 ## Reading the report
 
-Every run prints two tables: by tier, then by area.
+Every run prints two tables, by tier and then by area; a run of the whole suite adds a third, the
+grid, with areas down and tiers across and how many tests each holds (`·` for none), so a gap shows:
+an area with no property tests, or one tested only by journeys.
 
 ```
 area                           tests  lines   untested files  result

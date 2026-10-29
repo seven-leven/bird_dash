@@ -234,7 +234,7 @@ Production code changes only where a test cannot reach it otherwise, and says so
       onto the kit's events; the arbitraries named `any…`; the contracts not tied to a file renamed
       for what they guard (`thaana_contract_test.ts` → `thaanaLineHeight_contract_test.ts`).
 
-      **One table of tiers.** What a tier is lives in four places that must agree: the
+      **One table of tiers** (done 2026-10-29, with the grid). What a tier is lived in four places that must agree: the
       descriptions in `tiers.ts`, the name checks in `tierOf`, the Vitest projects in
       `vite.config.ts` (whose include and exclude lists repeat the suffixes) and the setup file.
       The tier axis also mixes two things: where a test runs (`dom`, `journey`: the fake browser)
