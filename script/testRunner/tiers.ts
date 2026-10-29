@@ -5,8 +5,8 @@
  * `vitestProjects`) and the table in docs/TESTING.md (a contract test compares them).
  *
  * Two axes, kept apart: an ENVIRONMENT is where a test runs (plain Node, or a fake
- * browser); a TIER is one environment plus what is its own (its suffix, what it is for,
- * the helper it brings). A real browser would be one more environment and one more row.
+ * browser, or a real Chrome); a TIER is one environment plus what is its own (its suffix,
+ * what it is for, the helper it brings).
  */
 
 import { glob } from 'node:fs/promises';
@@ -18,11 +18,15 @@ export interface Environment {
   setupFiles: string[];
   /** Where its tests may live. */
   roots: string[];
+  /** How long one test may take, when longer than the suite's default. */
+  timeout?: number;
 }
 
 export const ENVIRONMENTS = {
   node: { vitest: 'node', setupFiles: [], roots: ['src', 'script'] },
   dom: { vitest: 'happy-dom', setupFiles: ['src/testing/domSetup.ts'], roots: ['src'] },
+  // A real Chrome, driven from Node over the built site (src/testing/realBrowser.ts).
+  browser: { vitest: 'node', setupFiles: [], roots: ['src'], timeout: 30_000 },
 } as const satisfies Record<string, Environment>;
 
 export type EnvironmentName = keyof typeof ENVIRONMENTS;
@@ -35,6 +39,8 @@ export interface TierRow {
   about: string;
   /** What the tier brings of its own, from src/testing/, or "none". */
   helper: string;
+  /** Only when named (`npm run test:browser`): it needs the built site and a Chrome. */
+  optIn: boolean;
 }
 
 /** The tiers, in the order the report lists them. */
@@ -44,35 +50,49 @@ export const TIERS = {
     environment: 'node',
     about: 'Pure logic. Start here',
     helper: '`testing/fixtures.ts`',
+    optIn: false,
   },
   dom: {
     suffix: '_dom_test.ts',
     environment: 'dom',
     about: 'Code that needs `document`, `location`, focus or storage',
     helper: '`testing/domSetup.ts`, before every test',
+    optIn: false,
   },
   journey: {
     suffix: '_journey_test.ts',
     environment: 'dom',
     about: 'A whole visit, through the real app',
     helper: '`testing/renderApp.ts` (`renderApp`)',
+    optIn: false,
   },
   prop: {
     suffix: '_prop_test.ts',
     environment: 'node',
     about: 'A rule that must hold for _any_ input',
     helper: '`testing/propertyRuns.ts` (`assertProperty`)',
+    optIn: false,
   },
   contract: {
     suffix: '_contract_test.ts',
     environment: 'node',
     about: 'The real files and history of this repo',
     helper: 'none',
+    optIn: false,
+  },
+  browser: {
+    suffix: '_browser_test.ts',
+    environment: 'browser',
+    about: 'What only a real browser shows: layout, touch, clipping, focus. On the built site',
+    helper: '`testing/realBrowser.ts` (`openSite`)',
+    optIn: true,
   },
 } as const satisfies Record<string, TierRow>;
 
 export type Tier = keyof typeof TIERS;
 export const TIER_ORDER = Object.keys(TIERS) as Tier[];
+/** What `npm test` runs when no tier is named: every tier but the opt-in ones. */
+export const DEFAULT_TIERS = TIER_ORDER.filter((t) => !TIERS[t].optIn);
 
 export const isTier = (value: string): value is Tier => Object.hasOwn(TIERS, value);
 
@@ -111,6 +131,7 @@ export function vitestProjects() {
         exclude: [...excluded.map((t) => `**/*${suffix(t)}`), '**/node_modules/**'],
         environment: env.vitest,
         ...(env.setupFiles.length > 0 ? { setupFiles: [...env.setupFiles] } : {}),
+        ...(env.timeout ? { testTimeout: env.timeout } : {}),
       },
     };
   });

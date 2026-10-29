@@ -12,8 +12,9 @@ folder, and the item here points to it.
       mounting and waiting. Phases 1–3 (the kit, one way to a browser, the journeys) come first:
       they are the safety net for everything below; phase 4 (a test beside every component) is done
       too (2026-10-28), and phase 5, one table of tiers, the area × tier grid, the long files split
-      and every title and name to the conventions, and phase 6, the promise map (2026-10-29). Next:
-      phase 7, a real browser, then 8, closing.
+      and every title and name to the conventions, and phase 6, the promise map (2026-10-29). Phase
+      7, a real browser, is built (2026-10-29) and runs in CI, not required; after two green weeks,
+      decide whether it is, then phase 8, closing.
 - [ ] **2. Use the platform** ([PLATFORM.md](PLATFORM.md)). Done but for what needs the test
       overhaul's real browser (popovers, axe) and offline (once images are versioned).
 

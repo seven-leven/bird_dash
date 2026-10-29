@@ -255,11 +255,14 @@ Production code changes only where a test cannot reach it otherwise, and says so
       it found the theme journey keeping no promise, so dark mode is one now). Each journey names
       its promises (`// Keeps: P2, P3`); a contract test checks the list in TESTING.md against them.
       _Done when_ every promise is kept by a test.
-- [ ] **7. A real browser.** Playwright, pinned, on the built `dist/`, as a CI job that does not
-      block merges at first: **B1** no sideways scroll at 375px on every page, **B2** a swipe pages
-      the viewer on a touch screen, **B3** Thaana is not clipped in a tile, the viewer or search,
-      **B4** the focus ring shows on every control by keyboard. _Done when_ it has passed for two
-      weeks; then decide whether it becomes required.
+- [ ] **7. A real browser** (built 2026-10-29: `playwright-core` on the installed Chrome, the
+      `browser` tier, `testing/realBrowser.ts`, B1–B4 in `src/journeys/*_browser_test.ts`, and
+      `.github/workflows/browser.yml`, not required; waiting out the two weeks). Playwright, pinned,
+      on the built `dist/`, as a CI job that does not block merges at first: **B1** no sideways
+      scroll at 375px on every page, **B2** a swipe pages the viewer on a touch screen, **B3**
+      Thaana is not clipped in a tile, the viewer or search, **B4** the focus ring shows on every
+      control by keyboard. _Done when_ it has passed for two weeks; then decide whether it becomes
+      required.
 - [ ] **8. Close.** TESTING.md rewritten top down (promises, journeys, features, units, contracts);
       a contract test for the conventions marked ✓ (file names, title rules, no `.only`/`.skip`, no
       duplicate titles); "Not covered yet" shrinks to what is left; this page deleted.

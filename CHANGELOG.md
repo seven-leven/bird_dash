@@ -17,6 +17,12 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | tests: a real browser (test overhaul, phase 7). A `browser` tier, opt-in (`npm run
+  test:browser`, after `npm run build:site`): `playwright-core`, pinned, drives the installed Chrome
+  over the built site, through `testing/realBrowser.ts`. Four checks: no sideways scroll at 375px on
+  any page or the viewer (B1), a touch swipe pages the viewer (B2), Thaana is never clipped in a
+  tile, the viewer or search (B3), and every control Tab reaches shows its focus ring (B4, a new
+  promise, `keyboard`). CI runs them in their own workflow, not required for now
 - 2026-10-29 | tests: the promise map (test overhaul, phase 6). Each promise in TESTING.md has an
   id, each test that keeps one says so (`// Keeps: place, counts`), and a contract test holds the
   list and the tests to each other both ways, journeys included. It found the theme journey keeping
@@ -254,7 +260,7 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 - 2026-10-26 | scripts: taking in new drawings is its own command, `npm run ingest` (phase 2 of the
   scripts overhaul), in `script/ingest/`. Its first line says it changes files git tracks, and `--
   --dry-run` says what it would do and changes nothing. `npm run build` now only builds the site
-  from what is committed and never writes a tracked file; `build:assets` and `build:vite` are gone.
+  from what is committed and never writes a tracked file; `build:assets` and `build:site` are gone.
   Ingest runs on `Io`, so its tests use a fake repository and a stand-in for sharp, with one real
   end-to-end test on tiny images. The words follow the glossary: source art, register, make, repair
 - 2026-10-26 | scripts: the foundation every command will share (phase 1 of the scripts overhaul).
