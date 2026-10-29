@@ -1,5 +1,6 @@
 // J5 The viewer: a tile opens it; the arrows page through the drawings in order; zoom; Escape
 // closes it and gives focus back to the tile; the group link shows the group in the grid.
+// Keeps: viewerKeys (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

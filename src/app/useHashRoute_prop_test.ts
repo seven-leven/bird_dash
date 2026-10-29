@@ -1,3 +1,4 @@
+// Keeps: links (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import * as fc from 'fast-check';

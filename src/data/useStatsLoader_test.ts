@@ -1,3 +1,4 @@
+// Keeps: failures (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { useStatsLoader } from './useStatsLoader.ts';

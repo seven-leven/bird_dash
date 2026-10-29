@@ -1,3 +1,4 @@
+// Keeps: aboutNumbers, build (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';

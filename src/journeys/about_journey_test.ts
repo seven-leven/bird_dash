@@ -1,5 +1,6 @@
 // J7 About: the numbers and the newest drawings are the archive's, as the build works them out
 // (stats.json); a drawing links into the viewer; a failure says so and offers to try again.
+// Keeps: aboutNumbers (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

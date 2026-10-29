@@ -1,5 +1,6 @@
 // J8 Theme: dark and back; the choice is remembered on the next visit. Everything follows the
 // class on <html>, the icons standing in for undrawn drawings included (no image per theme).
+// Keeps: theme (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

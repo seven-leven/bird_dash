@@ -1,3 +1,4 @@
+// Keeps: place (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals, assertThrows } from '@std/assert';
 import { toCollection, toCollectionItems } from './toCollectionItems.ts';

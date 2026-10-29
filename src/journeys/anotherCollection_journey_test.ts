@@ -1,5 +1,6 @@
 // J2 Another collection: by a tab or the menu; the accent, the address and the sidebar follow,
 // and a collection with nothing drawn says so.
+// Keeps: whereYouAre (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

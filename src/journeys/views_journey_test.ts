@@ -1,4 +1,5 @@
 // J3 Views: by group and by month; drawn only; the sidebar jumps to a section and marks it.
+// Keeps: counts, whereYouAre (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

@@ -1,3 +1,4 @@
+// Keeps: sharedLink (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { access } from 'node:fs/promises';
 import { assertEquals } from '@std/assert';

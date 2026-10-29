@@ -2,12 +2,12 @@
 
 > **Status:** planned 2026-10-26; phases 0 (the rules), 1 (the kit, in four parts), 2 (one way to a
 > browser) and 3 (journeys) done 2026-10-27; 4 (a test beside every component) 2026-10-28; 5 (split
-> and rename) 2026-10-29. The tests were written bottom up, one file at a time, as each piece of
-> code was; this plans them top down, from what the site promises to the smallest rule, and rebuilds
-> the kit they share. One pull request per phase, 100% coverage throughout. Phases 1 to 3 came
-> **before** the site code overhaul (done 2026-10-28): journey tests are what make moving every file
-> safe. (The scripts overhaul went first, as the scripts already had direct tests; see
-> [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
+> and rename) and 6 (the promise map) 2026-10-29. The tests were written bottom up, one file at a
+> time, as each piece of code was; this plans them top down, from what the site promises to the
+> smallest rule, and rebuilds the kit they share. One pull request per phase, 100% coverage
+> throughout. Phases 1 to 3 came **before** the site code overhaul (done 2026-10-28): journey tests
+> are what make moving every file safe. (The scripts overhaul went first, as the scripts already had
+> direct tests; see [SCRIPTS.md](../SCRIPTS.md).) Delete this page when phase 8 is done.
 
 ## What the tests are today
 
@@ -251,8 +251,10 @@ Production code changes only where a test cannot reach it otherwise, and says so
 
       _Done when_ no test file is over about 300 lines, every title and file name follows the
       conventions, and a tier is defined in one place.
-- [ ] **6. The promise map.** Each journey names its promises (`// Keeps: P2, P3`); a contract test
-      checks the list in TESTING.md against them. _Done when_ every promise is kept by a test.
+- [x] **6. The promise map** (done 2026-10-29: ids, `// Keeps:` lines, `promises_contract_test.ts`;
+      it found the theme journey keeping no promise, so dark mode is one now). Each journey names
+      its promises (`// Keeps: P2, P3`); a contract test checks the list in TESTING.md against them.
+      _Done when_ every promise is kept by a test.
 - [ ] **7. A real browser.** Playwright, pinned, on the built `dist/`, as a CI job that does not
       block merges at first: **B1** no sideways scroll at 375px on every page, **B2** a swipe pages
       the viewer on a touch screen, **B3** Thaana is not clipped in a tile, the viewer or search,

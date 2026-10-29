@@ -1,6 +1,7 @@
-// On a phone: the sections are a drawer, opened from the header and closed by a tap outside,
+// J10 On a phone: the sections are a drawer, opened from the header and closed by a tap outside,
 // Escape or a choice; below 420px the search is a button that opens it across the row.
 // (Layout itself, nothing cut off at 375px, needs a real browser: TEST-OVERHAUL.md, B1.)
+// Keeps: phoneWidth (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

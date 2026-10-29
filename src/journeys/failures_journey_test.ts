@@ -1,5 +1,6 @@
 // J9 Failures: a failure says what failed and offers to try again. If the list of collections
 // fails, nothing can be shown; if one collection's list fails, the rest still works.
+// Keeps: failures (docs/TESTING.md, "Promises").
 import { test, vi } from 'vitest';
 import { assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

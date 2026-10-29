@@ -1,3 +1,4 @@
+// Keeps: theme (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { readFile } from 'node:fs/promises';
 import { assert } from '@std/assert';

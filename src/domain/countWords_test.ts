@@ -1,3 +1,4 @@
+// Keeps: counts (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
 import { drawings, drawnOf, matches, matchesDrawn, plural, ratio } from './countWords.ts';

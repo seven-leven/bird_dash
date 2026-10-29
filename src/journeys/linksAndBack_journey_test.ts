@@ -1,5 +1,6 @@
 // J6 Links and back: a link to a collection, a drawing or a page opens it on load; the back
 // button undoes what a click did; a link to something that is not there does no harm.
+// Keeps: whereYouAre, links (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

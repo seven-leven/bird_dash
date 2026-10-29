@@ -1,5 +1,6 @@
 // J4 Search: typing finds items by any name, in every collection, grouped by collection; long
 // groups fold; the keyboard alone picks one, which is shown in its collection.
+// Keeps: search (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals, assertStringIncludes } from '@std/assert';
 import { renderApp } from '../testing/renderApp.ts';

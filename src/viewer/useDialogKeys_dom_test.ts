@@ -1,3 +1,4 @@
+// Keeps: viewerKeys (docs/TESTING.md, "Promises").
 import { test } from 'vitest';
 import { assert, assertEquals } from '@std/assert';
 import { nextTick, ref } from 'vue';
