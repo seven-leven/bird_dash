@@ -2,15 +2,14 @@
 
 How the tests are organised, how to run them, and how to write a new one. For step-by-step
 instructions (setting up a machine, what to do when a test or CI fails, maintenance, the runner's
-flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). The `.ts` code is at 100% coverage; tests for
-the `.vue` components are next, in the [test overhaul](plans/TEST-OVERHAUL.md) (phase 4).
+flags), see [TEST-PROCEDURES.md](TEST-PROCEDURES.md). Read it top down, as the suite is built: what
+the site promises, then the tests from a whole visit down to a single rule. Every line and branch is
+covered, `.vue` components included.
 
 ## The rules
 
-Where the suite is going: the [test overhaul](plans/TEST-OVERHAUL.md) moves the tests to these,
-phase by phase. The kit and the tiers that rules 4 to 8 name (`testing/fakes/`, `settle`, scenarios,
-the journey tier) are in place since its phases 1 to 3; the rest of the suite moves onto them in
-phases 4 and 5.
+What every test in the suite follows. The ones a machine can check are contract tests (marked ✓
+under "Conventions").
 
 1. **A test states a promise.** Its title is a sentence that must stay true ("an undrawn result
    highlights its tile instead of opening the viewer"), not the name of the function.
@@ -65,6 +64,182 @@ exactly the promises whose "Kept by" names it.
 | `sharedLink`   | A shared link to a drawing shows that drawing                                    | PLATFORM   | unit (preview pages); dom (Share); contract (a page per drawing) |
 | `theme`        | Dark or light as you choose, remembered on the next visit, with no flash on load | README     | journey J8; contract (the theme script)                          |
 | `keyboard`     | Every control can be reached by keyboard, and shows where focus is               | P5         | browser B4                                                       |
+
+## The tests, top down
+
+From a whole visit to a single rule. Prove each thing at the lowest level that can: a journey checks
+that the pieces are joined, not every branch inside them.
+
+### Journey tests
+
+A journey is a visit, start to finish, through the real `App.vue` with its stores, router and every
+component, in happy-dom, with `fetch` answered from the fixture archive. It goes the way a visitor
+goes: by clicking what they would click and pressing the keys they would press, and it checks what
+they would see.
+
+```ts
+using app = await renderApp({ at: 'birds/003' }); // or { routes: { … } }, { width: 375 }
+app.control('Next').click(); // a button, link, tile or option, by its label or text
+press('Escape'); // testing/events.ts: press, type, pointer
+await app.until(() => !dialog(), 'the viewer to close'); // settle until it holds, or fail by name
+```
+
+- `renderApp` (in [`src/testing/renderApp.ts`](../src/testing/renderApp.ts)) waits for the app to
+  load; leaving the `using` block unmounts it and puts `fetch` back. Pass only the routes the test
+  changes, and `width` for a phone (`domSetup.ts` restores the window after the test).
+- **Wait with `app.until(check, what)`**, never a fixed delay: it settles until the check holds, and
+  a failure names what it was waiting for. The search filters the grid 120ms after typing, so wait
+  for the grid, not for the box.
+- One file per journey in `src/journeys/`, its first comment saying which promise it keeps:
+
+| Journey                   | File                                | What happens                                            |
+| ------------------------- | ----------------------------------- | ------------------------------------------------------- |
+| **J1 First visit**        | `firstVisit_journey_test.ts`        | Tiles in sections, placeholders, honest counts, footer  |
+| **J2 Another collection** | `anotherCollection_journey_test.ts` | Tab or menu; the address, accent and sidebar follow     |
+| **J3 Views**              | `views_journey_test.ts`             | By group, by month, drawn only; the sidebar jumps       |
+| **J4 Search**             | `search_journey_test.ts`            | Results by collection, folding, ↑ ↓ ↵, Ctrl+K, no match |
+| **J5 The viewer**         | `viewer_journey_test.ts`            | Opens from a tile; arrows, zoom, drag; focus comes back |
+| **J6 Links and back**     | `linksAndBack_journey_test.ts`      | Deep links, pages, the back button, links to nothing    |
+| **J7 About**              | `about_journey_test.ts`             | The archive's numbers; drawings link into the viewer    |
+| **J8 Theme**              | `theme_journey_test.ts`             | Dark and back, remembered; placeholders follow          |
+| **J9 Failures**           | `failures_journey_test.ts`          | The gallery, one collection or the numbers fail         |
+| **J10 On a phone**        | `phone_journey_test.ts`             | The sections drawer; the search behind a button         |
+
+A journey proves the pieces are joined. What only a component can show (a state the app never
+reaches, such as the header before any collection is known) is a component test, below.
+
+### Component tests
+
+A `.vue` component is tested by mounting it into a fake DOM and checking what a visitor would get:
+its text, roles and labels, what a click or a key does, what it emits. See
+[`ItemTile_dom_test.ts`](../src/gallery/ItemTile_dom_test.ts):
+
+- Name the file `_dom_test.ts`. That gives it a document from the start, which Vue's DOM renderer
+  looks up when it is first imported.
+- Mount with `mountComponent(() => h(Component, props))` from
+  [`src/testing/mount.ts`](../src/testing/mount.ts). It returns the host element, and everything it
+  mounts is unmounted after each test. A component that injects stores gets typed stand-ins:
+  `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with only the
+  members it reads; or the app's real stores, with nothing loaded, from `appStores()`
+  ([`src/testing/appStores.ts`](../src/testing/appStores.ts)).
+- One test file per component, beside it and named after it (`DrawnFilter.vue` →
+  `DrawnFilter_dom_test.ts`), so a failure says which component broke. Every component has one, even
+  one a journey covers: a contract test checks. A part split out of a bigger component (an About
+  section, `ViewerShare`) is tested on its own props; its parent's test keeps only what the parent
+  does (the About page: loading, failing, the order of its sections).
+- What a component places but does not own comes in by a slot (the footer after a page, the search
+  box in the top bar); its test passes a stand-in and checks where it lands.
+- happy-dom is not a full browser: it does not support the `~` sibling selector, so walk
+  `parentElement.children` instead.
+- A component a test loads counts toward coverage at once, so cover every branch of its template
+  (both sides of each `v-if` and `:class` choice).
+
+### Unit tests and what every test does
+
+A unit test:
+
+```ts
+import { test } from 'vitest';
+import { assertEquals } from '@std/assert';
+import { drawnOf } from './formatCount.ts';
+
+test('drawnOf words a share the same way everywhere', () => {
+  assertEquals(drawnOf(15, 204), '15 of 204 drawn');
+});
+```
+
+Conventions:
+
+- **Name the behaviour, not the function:** "a drag does not close the viewer", not
+  "handleBackdropClick works".
+- **Build data with the fixtures** (`makeItem`, `makeCollection`, `at(year, month, day)`) so a test
+  states only what matters to it.
+- **Mount with `src/testing/mount.ts`**, by what you mount; everything is unmounted after the test:
+  a component with `mountComponent` (below); a composable whose `onMounted` / `onUnmounted` must
+  really fire (a window listener, say) with `mountComposable(...)`, which mounts a real component
+  that draws nothing; a composable or store that only needs a reactive scope with `runInScope(...)`
+  (its hooks never fire; `stop()` tears it down); components with no document at all (provide /
+  inject) with `mountWithoutDom(component)`.
+- **Code that reads the layout** (the scroll-spy) is tested by giving each fake element the position
+  the test wants it to report. That checks the decision, not the browser's measuring.
+- **Use real files when the code is about files.** The asset pipeline tests
+  ([`script/ingest/ingest_pipeline_test.ts`](../script/ingest/ingest_pipeline_test.ts)) build a
+  throwaway collection in a temporary folder with tiny real images, run the real transcoder, and
+  delete it.
+- **Fake the edges, not the logic,** with the kit in [`src/testing/fakes/`](../src/testing/fakes/),
+  and run the real code in between. Each fake undoes itself when its `using` block ends, so a test
+  never restores anything in a `finally`; a contract test fails on a global swapped by hand:
+
+  ```ts
+  using fetch = fakeFetch({ '/stats.json': inTurn(status(500), json(stats)) }); // fetch.calls
+  using warnings = captureConsole((line) => line.includes('readonly')); // warnings.lines
+  await using dir = await tempDir('ingest'); // dir.path, dir.join('a.png')
+  await settle(); // every settled promise has run, and Vue has drawn it
+  ```
+
+  A fake kept only for its cleanup is named with a leading `_` (`using _fetch = …`). The scripts'
+  outside world is `fakeIo` instead (below).
+- **Shared data before your own.** `src/testing/scenarios/archive.ts` is a small whole archive
+  (Birds and Sharks, with `archiveRoutes()` for `fakeFetch` and `archiveStats()`, worked out as the
+  build does); `scriptFixtures.ts` has the scripts' `makeScriptCollection`, `twoDucks` and
+  `fakeTranscoder`; `fakes/tempCollection.ts` puts a collection with real images in a temporary
+  folder. Write data of your own only for the edge case the test is about.
+- **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI
+  runs the suite in four.
+- **A test must be able to fail.** After writing one, break the code it covers on purpose and
+  confirm the test goes red.
+
+### Script tests
+
+A command's `main(args, io)` takes an `Io` ([`script/lib/io.ts`](../script/lib/io.ts)); a test
+passes `fakeIo({ files, git, env, now })` ([`script/lib/fakeIo.ts`](../script/lib/fakeIo.ts)) and
+reads what the command wrote (`io.files`) and printed (`io.outLines`, `io.errLines`). Nothing
+touches the disk, git or the console. A contract test runs against the real repository instead
+(`realIo`). Every command is on `Io`, the test runner included: its tests hand `main` a fake Vitest
+and fake file discovery as options, as `ingest`'s hand it a fake transcoder.
+
+### Property tests
+
+```ts
+assertProperty(
+  fc.property(fc.string(), fc.string(), (text, query) => {
+    const shown = stripMarks(highlightText(text, query));
+    assertEquals(shown, text); // highlighting never changes the text
+  }),
+  { numRuns: 500 },
+);
+```
+
+- `FC_RUNS_MULTIPLIER=10 npm run test:prop` runs ten times as many inputs.
+- When a property fails, fast-check prints a **seed** and a **path**. Add `{ seed, path }` to the
+  parameters to replay exactly that case, fix it, then remove them.
+- Random strings rarely hit special cases. Mix in the tokens that matter (see the highlight test,
+  which feeds it `&`, `<` and entity names).
+
+### Contract tests
+
+A contract test reads the repository's real files: the lists, `collections.json`, the CSS, the docs,
+the generated images, git's history. It fails when the _data_ or the docs are wrong, not the code,
+and is named after what it guards (`thaanaLineHeight_contract_test.ts`). The scripts' ones run with
+`realIo`. The suite's own rules are contracts too: the tier table, the promise map and the
+conventions (`script/testRunner/`).
+
+### Browser tests
+
+What only a real browser shows: layout at phone width, touch, how Thaana is set, the focus ring.
+`openSite` ([`src/testing/realBrowser.ts`](../src/testing/realBrowser.ts)) serves the built site and
+drives the installed Chrome with Playwright:
+
+```ts
+await using site = await openSite({ width: 375, touch: true });
+await site.open('birds/001');
+const wide = await site.page.evaluate(() => document.scrollingElement!.scrollWidth);
+```
+
+The tier is opt-in, as it needs a build: `npm run build:site`, then `npm run test:browser`. It runs
+in CI in its own workflow ([`browser.yml`](../.github/workflows/browser.yml)), not yet required.
+Each check (B1–B4, in `src/journeys/`) looks at everything on the page and names what it found
+wrong, so a failure says which element, not just that one did.
 
 ## Running them
 
@@ -166,152 +341,6 @@ page on every run and keeps it, with the JUnit file, as the `test-results` artif
 
 Use it to decide what to test next: start with the area whose **untested files** or low **lines**
 would hurt most if it broke, not with the file that is easiest to cover.
-
-## Writing a test
-
-A unit test:
-
-```ts
-import { test } from 'vitest';
-import { assertEquals } from '@std/assert';
-import { drawnOf } from './formatCount.ts';
-
-test('drawnOf words a share the same way everywhere', () => {
-  assertEquals(drawnOf(15, 204), '15 of 204 drawn');
-});
-```
-
-Conventions:
-
-- **Name the behaviour, not the function:** "a drag does not close the viewer", not
-  "handleBackdropClick works".
-- **Build data with the fixtures** (`makeItem`, `makeCollection`, `at(year, month, day)`) so a test
-  states only what matters to it.
-- **Mount with `src/testing/mount.ts`**, by what you mount; everything is unmounted after the test:
-  a component with `mountComponent` (below); a composable whose `onMounted` / `onUnmounted` must
-  really fire (a window listener, say) with `mountComposable(...)`, which mounts a real component
-  that draws nothing; a composable or store that only needs a reactive scope with `runInScope(...)`
-  (its hooks never fire; `stop()` tears it down); components with no document at all (provide /
-  inject) with `mountWithoutDom(component)`.
-- **Code that reads the layout** (the scroll-spy) is tested by giving each fake element the position
-  the test wants it to report. That checks the decision, not the browser's measuring.
-- **Use real files when the code is about files.** The asset pipeline tests
-  ([`script/ingest/ingest_pipeline_test.ts`](../script/ingest/ingest_pipeline_test.ts)) build a
-  throwaway collection in a temporary folder with tiny real images, run the real transcoder, and
-  delete it.
-- **Fake the edges, not the logic,** with the kit in [`src/testing/fakes/`](../src/testing/fakes/),
-  and run the real code in between. Each fake undoes itself when its `using` block ends, so a test
-  never restores anything in a `finally`; a contract test fails on a global swapped by hand:
-
-  ```ts
-  using fetch = fakeFetch({ '/stats.json': inTurn(status(500), json(stats)) }); // fetch.calls
-  using warnings = captureConsole((line) => line.includes('readonly')); // warnings.lines
-  await using dir = await tempDir('ingest'); // dir.path, dir.join('a.png')
-  await settle(); // every settled promise has run, and Vue has drawn it
-  ```
-
-  A fake kept only for its cleanup is named with a leading `_` (`using _fetch = …`). The scripts'
-  outside world is `fakeIo` instead (below).
-- **Shared data before your own.** `src/testing/scenarios/archive.ts` is a small whole archive
-  (Birds and Sharks, with `archiveRoutes()` for `fakeFetch` and `archiveStats()`, worked out as the
-  build does); `scriptFixtures.ts` has the scripts' `makeScriptCollection`, `twoDucks` and
-  `fakeTranscoder`; `fakes/tempCollection.ts` puts a collection with real images in a temporary
-  folder. Write data of your own only for the edge case the test is about.
-- **Time and timezones:** build dates with `at(...)` (UTC). Never rely on the machine's zone; CI
-  runs the suite in four.
-- **A test must be able to fail.** After writing one, break the code it covers on purpose and
-  confirm the test goes red.
-
-### Journey tests
-
-A journey is a visit, start to finish, through the real `App.vue` with its stores, router and every
-component, in happy-dom, with `fetch` answered from the fixture archive. It goes the way a visitor
-goes: by clicking what they would click and pressing the keys they would press, and it checks what
-they would see.
-
-```ts
-using app = await renderApp({ at: 'birds/003' }); // or { routes: { … } }, { width: 375 }
-app.control('Next').click(); // a button, link, tile or option, by its label or text
-press('Escape'); // testing/events.ts: press, type, pointer
-await app.until(() => !dialog(), 'the viewer to close'); // settle until it holds, or fail by name
-```
-
-- `renderApp` (in [`src/testing/renderApp.ts`](../src/testing/renderApp.ts)) waits for the app to
-  load; leaving the `using` block unmounts it and puts `fetch` back. Pass only the routes the test
-  changes, and `width` for a phone (`domSetup.ts` restores the window after the test).
-- **Wait with `app.until(check, what)`**, never a fixed delay: it settles until the check holds, and
-  a failure names what it was waiting for. The search filters the grid 120ms after typing, so wait
-  for the grid, not for the box.
-- One file per journey in `src/journeys/`, its first comment saying which promise it keeps:
-
-| Journey                   | File                                | What happens                                            |
-| ------------------------- | ----------------------------------- | ------------------------------------------------------- |
-| **J1 First visit**        | `firstVisit_journey_test.ts`        | Tiles in sections, placeholders, honest counts, footer  |
-| **J2 Another collection** | `anotherCollection_journey_test.ts` | Tab or menu; the address, accent and sidebar follow     |
-| **J3 Views**              | `views_journey_test.ts`             | By group, by month, drawn only; the sidebar jumps       |
-| **J4 Search**             | `search_journey_test.ts`            | Results by collection, folding, ↑ ↓ ↵, Ctrl+K, no match |
-| **J5 The viewer**         | `viewer_journey_test.ts`            | Opens from a tile; arrows, zoom, drag; focus comes back |
-| **J6 Links and back**     | `linksAndBack_journey_test.ts`      | Deep links, pages, the back button, links to nothing    |
-| **J7 About**              | `about_journey_test.ts`             | The archive's numbers; drawings link into the viewer    |
-| **J8 Theme**              | `theme_journey_test.ts`             | Dark and back, remembered; placeholders follow          |
-| **J9 Failures**           | `failures_journey_test.ts`          | The gallery, one collection or the numbers fail         |
-| **J10 On a phone**        | `phone_journey_test.ts`             | The sections drawer; the search behind a button         |
-
-A journey proves the pieces are joined. What only a component can show (a state the app never
-reaches, such as the header before any collection is known) is a component test, below.
-
-### Component tests
-
-A `.vue` component is tested by mounting it into a fake DOM and checking what a visitor would get:
-its text, roles and labels, what a click or a key does, what it emits. See
-[`ItemTile_dom_test.ts`](../src/gallery/ItemTile_dom_test.ts):
-
-- Name the file `_dom_test.ts`. That gives it a document from the start, which Vue's DOM renderer
-  looks up when it is first imported.
-- Mount with `mountComponent(() => h(Component, props))` from
-  [`src/testing/mount.ts`](../src/testing/mount.ts). It returns the host element, and everything it
-  mounts is unmounted after each test. A component that injects stores gets typed stand-ins:
-  `mountComponent(() => h(CollectionMenu), { stores: { collections, actions } })`, with only the
-  members it reads; or the app's real stores, with nothing loaded, from `appStores()`
-  ([`src/testing/appStores.ts`](../src/testing/appStores.ts)).
-- One test file per component, beside it and named after it (`DrawnFilter.vue` →
-  `DrawnFilter_dom_test.ts`), so a failure says which component broke. Every component has one, even
-  one a journey covers: a contract test checks. A part split out of a bigger component (an About
-  section, `ViewerShare`) is tested on its own props; its parent's test keeps only what the parent
-  does (the About page: loading, failing, the order of its sections).
-- What a component places but does not own comes in by a slot (the footer after a page, the search
-  box in the top bar); its test passes a stand-in and checks where it lands.
-- happy-dom is not a full browser: it does not support the `~` sibling selector, so walk
-  `parentElement.children` instead.
-- A component a test loads counts toward coverage at once, so cover every branch of its template
-  (both sides of each `v-if` and `:class` choice).
-
-### Script tests
-
-A command's `main(args, io)` takes an `Io` ([`script/lib/io.ts`](../script/lib/io.ts)); a test
-passes `fakeIo({ files, git, env, now })` ([`script/lib/fakeIo.ts`](../script/lib/fakeIo.ts)) and
-reads what the command wrote (`io.files`) and printed (`io.outLines`, `io.errLines`). Nothing
-touches the disk, git or the console. A contract test runs against the real repository instead
-(`realIo`). Every command is on `Io`, the test runner included: its tests hand `main` a fake Vitest
-and fake file discovery as options, as `ingest`'s hand it a fake transcoder.
-
-### Property tests
-
-```ts
-assertProperty(
-  fc.property(fc.string(), fc.string(), (text, query) => {
-    const shown = stripMarks(highlightText(text, query));
-    assertEquals(shown, text); // highlighting never changes the text
-  }),
-  { numRuns: 500 },
-);
-```
-
-- `FC_RUNS_MULTIPLIER=10 npm run test:prop` runs ten times as many inputs.
-- When a property fails, fast-check prints a **seed** and a **path**. Add `{ seed, path }` to the
-  parameters to replay exactly that case, fix it, then remove them.
-- Random strings rarely hit special cases. Mix in the tokens that matter (see the highlight test,
-  which feeds it `&`, `<` and entity names).
 
 ## Conventions
 
