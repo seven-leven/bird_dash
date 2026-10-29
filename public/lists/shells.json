@@ -1,5 +1,5 @@
 {
-  "Sea Snails": [
+  "Gastropods": [
     {
       "id": "001",
       "name": "Limpet",
@@ -163,7 +163,7 @@
       "illustratorNote": ""
     }
   ],
-  "Clams and Scallops": [
+  "Bivalves": [
     {
       "id": "019",
       "name": "Scallop Shell",
@@ -246,7 +246,7 @@
       "illustratorNote": ""
     }
   ],
-  "Nautilus": [
+  "Cephalopods": [
     {
       "id": "028",
       "name": "Nautilus Shell",
@@ -257,7 +257,7 @@
       "illustratorNote": ""
     }
   ],
-  "Sea Urchins and Sand Dollars": [
+  "Sea Urchins": [
     {
       "id": "029",
       "name": "Sand Dollar",

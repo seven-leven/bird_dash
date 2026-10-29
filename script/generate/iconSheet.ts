@@ -2,7 +2,7 @@
 // same grid as the design guide's icon section.
 import sharp from 'sharp';
 import { PATHS } from '../lib/paths.ts';
-import { iconGroups, rect } from './guideDrawing.ts';
+import { iconGroups, rect, svgDocument } from './guideDrawing.ts';
 
 /** The icon sheet (docs/assets/icons.png) as an SVG. */
 export function iconSheetSvg(): string {
@@ -15,8 +15,11 @@ export function iconSheetSvg(): string {
     label: 13,
     name: 14,
   }, '#111111');
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${groups.bottom}">` +
-    rect(0, 0, width, groups.bottom, '#ffffff') + groups.svg + '</svg>';
+  return svgDocument(
+    width,
+    groups.bottom,
+    rect(0, 0, width, groups.bottom, '#ffffff') + groups.svg,
+  );
 }
 
 /** Draw the icon sheet into `dir` (docs/assets/ by default) as icons.png. */

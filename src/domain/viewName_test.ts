@@ -6,6 +6,7 @@ test('the group view is named after the groups, in the plural', () => {
   assertEquals(viewName('group', 'Family'), 'Families');
   assertEquals(viewName('group', 'Order'), 'Orders');
   assertEquals(viewName('group', 'Group'), 'Groups');
+  assertEquals(viewName('group', 'Class'), 'Classes');
 });
 
 test('the month view is "Months", whatever the collection groups by', () => {

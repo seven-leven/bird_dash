@@ -4,6 +4,7 @@
  * it with the other images, so it follows the archive rather than being a screenshot.
  */
 import { STONE } from './palette.ts';
+import { svgDocument } from './guideDrawing.ts';
 import sharp, { type Sharp } from 'sharp';
 import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
@@ -33,8 +34,11 @@ export async function drawDrawingsStrip(
       tile - 1
     }" rx="12" fill="#ffffff" stroke="${STONE['200']}"/>`
   ).join('');
-  const page = `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
-    `<rect width="100%" height="100%" fill="${STONE['50']}"/>${cards}</svg>`;
+  const page = svgDocument(
+    width,
+    height,
+    `<rect width="100%" height="100%" fill="${STONE['50']}"/>${cards}`,
+  );
 
   // The drawing inside its card, with a margin so it does not touch the edge.
   const inset = 8;

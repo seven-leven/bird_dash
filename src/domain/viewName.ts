@@ -7,5 +7,6 @@ export type View = 'group' | 'month';
  */
 export function viewName(mode: View, groupLabel: string): string {
   if (mode === 'month') return 'Months';
-  return groupLabel.endsWith('y') ? `${groupLabel.slice(0, -1)}ies` : `${groupLabel}s`;
+  if (groupLabel.endsWith('y')) return `${groupLabel.slice(0, -1)}ies`;
+  return groupLabel.endsWith('s') ? `${groupLabel}es` : `${groupLabel}s`;
 }

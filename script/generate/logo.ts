@@ -7,19 +7,16 @@ import sharp from 'sharp';
 import { LOGO_MARK, LOGO_TILE, WORDMARK } from '../../src/ui/logo.ts';
 import { STONE } from './palette.ts';
 import { PATHS } from '../lib/paths.ts';
-
-const INK = STONE['900'];
-const MUTED = STONE['500'];
-const FONT = 'font-family="Segoe UI, Helvetica, Arial, sans-serif"';
+import { FONT, INK, MUTED, svgDocument, text } from './guideDrawing.ts';
 
 /** The mark or tile as a complete SVG document in one colour. */
 export function logoSvg(kind: 'mark' | 'tile', color: string, size = 32): string {
   const body = (kind === 'mark' ? LOGO_MARK : LOGO_TILE).replaceAll('currentColor', color);
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 32 32">${body}</svg>`;
+  return svgDocument(size, size, body, '0 0 32 32');
 }
 
-const text = (x: number, y: number, s: string, size = 14, fill = MUTED, weight = 400, extra = '') =>
-  `<text x="${x}" y="${y}" ${FONT} font-size="${size}" font-weight="${weight}" fill="${fill}" ${extra}>${s}</text>`;
+/** A line of the sheet's muted small print. */
+const note = (x: number, y: number, s: string) => text(x, y, s, 14, MUTED);
 const at = (body: string, x: number, y: number, size: number, color: string) =>
   `<g transform="translate(${x} ${y}) scale(${size / 32})">${
     body.replaceAll('currentColor', color)
@@ -62,6 +59,7 @@ export function logoSheetSvg(): string {
       102,
       'A bird perched on the open edge of an unfinished frame, looking out of the page it was drawn on. Same stroke as the icons.',
       17,
+      MUTED,
     ),
   );
 
@@ -69,43 +67,43 @@ export function logoSheetSvg(): string {
   p.push(text(60, 160, 'MARK', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(panel(60, 172, 300, 220, false) + at(LOGO_MARK, 146, 218, 128, INK));
   p.push(panel(376, 172, 300, 220, true) + at(LOGO_MARK, 462, 218, 128, '#ffffff'));
-  p.push(text(60, 416, 'The default. Stone-900 on light, white on dark. 20px and up.'));
+  p.push(note(60, 416, 'The default. Stone-900 on light, white on dark. 20px and up.'));
 
   p.push(text(724, 160, 'TILE', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(panel(724, 172, 300, 220, false) + at(LOGO_TILE, 810, 218, 128, INK));
   p.push(panel(1040, 172, 300, 220, true) + at(LOGO_TILE, 1126, 218, 128, STONE['800']));
-  p.push(text(724, 416, 'For small or busy places: favicon, app icon, avatar. Below 20px.'));
+  p.push(note(724, 416, 'For small or busy places: favicon, app icon, avatar. Below 20px.'));
 
   // ── Row 2: lockups ──
   p.push(text(60, 480, 'HORIZONTAL LOCKUP', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(panel(60, 492, 440, 130, false) + lockup(92, 529, 56, INK, MUTED));
   p.push(panel(516, 492, 440, 130, true) + lockup(548, 529, 56, '#ffffff', STONE['400']));
-  p.push(text(60, 646, 'Header and anywhere wide. “Wildlife” semibold, “Illustrated” light.'));
+  p.push(note(60, 646, 'Header and anywhere wide. “Wildlife” semibold, “Illustrated” light.'));
 
   p.push(text(1004, 480, 'STACKED', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(panel(1004, 492, 336, 130, false) + stacked(1172, 508, 62, INK, MUTED));
-  p.push(text(1004, 646, 'Square spaces and title cards.'));
+  p.push(note(1004, 646, 'Square spaces and title cards.'));
 
   // ── Row 3: sizes, clear space, don'ts ──
   p.push(text(60, 710, 'SIZES', 12, MUTED, 600, 'letter-spacing="1"'));
   let x = 60;
   for (const s of [64, 40, 24, 20]) {
-    p.push(at(LOGO_MARK, x, 786 - s, s, INK) + text(x, 808, `${s}`, 12));
+    p.push(at(LOGO_MARK, x, 786 - s, s, INK) + text(x, 808, `${s}`, 12, MUTED));
     x += s + 26;
   }
   x += 14;
   for (const s of [32, 16]) {
-    p.push(at(LOGO_TILE, x, 786 - s, s, INK) + text(x, 808, `${s}`, 12));
+    p.push(at(LOGO_TILE, x, 786 - s, s, INK) + text(x, 808, `${s}`, 12, MUTED));
     x += s + 26;
   }
-  p.push(text(60, 836, 'Mark down to 20px; tile below that.'));
+  p.push(note(60, 836, 'Mark down to 20px; tile below that.'));
 
   p.push(text(470, 710, 'CLEAR SPACE', 12, MUTED, 600, 'letter-spacing="1"'));
   p.push(
     `<rect x="470" y="724" width="112" height="112" fill="none" stroke="${
       STONE['300']
     }" stroke-dasharray="4 4"/>` + at(LOGO_MARK, 498, 752, 56, INK) +
-      text(596, 772, 'Keep half the mark’s width') + text(596, 792, 'clear on every side.'),
+      note(596, 772, 'Keep half the mark’s width') + note(596, 792, 'clear on every side.'),
   );
 
   p.push(text(860, 710, 'DON’T', 12, MUTED, 600, 'letter-spacing="1"'));
@@ -117,8 +115,7 @@ export function logoSheetSvg(): string {
   ];
   donts.forEach((d, i) => p.push(text(860, 742 + i * 24, `×  ${d}`, 14, INK)));
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}">` +
-    `<rect width="100%" height="100%" fill="${STONE['50']}"/>${p.join('')}</svg>`;
+  return svgDocument(W, H, `<rect width="100%" height="100%" fill="${STONE['50']}"/>${p.join('')}`);
 }
 
 /** The logo's standalone SVG files, by name, exactly as written into `logo/`. */
