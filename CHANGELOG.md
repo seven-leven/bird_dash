@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | feat: a footer in two rows. First the archive (the mark, the name, "18 of 276 drawn,
+  by hand") beside its links, About, Docs and GitHub in one style; then the small print, the line's
+  name, the version and the commit, and the year. The build icons and the credits line go; the
+  divider is the rule colour, visible in both themes; on a phone each row stacks. A link that opens
+  a new tab now tells a screen reader so after a space ("GitHub (opens in a new tab)")
 - 2026-10-28 | feat: one kind of collection. The `kind` field goes: a list of species and a series
   of studies take the same fields, `medium` optional for any, and the viewer names it wherever it is
   set. The About page names every collection in one sentence ("one at a time"), and counts the

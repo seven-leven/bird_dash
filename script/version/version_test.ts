@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertRejects } from '@std/assert';
-import { computeVersion, countDrawn, formatVersion, formatVersionLine, main } from './version.ts';
+import { computeVersion, countItems, formatVersion, formatVersionLine, main } from './version.ts';
 import type { Version } from './version.ts';
 import { fakeIo, type FakeIoOptions } from '../lib/fakeIo.ts';
 import { PATHS } from '../lib/paths.ts';
@@ -12,6 +12,7 @@ const version = (over: Partial<Version> = {}): Version => ({
   patch: 154,
   name: null,
   drawn: 18,
+  planned: 276,
   commit: 'a1b2c3d',
   ...over,
 });
@@ -85,13 +86,14 @@ test('major.minor come from base_version.json, the patch and commit from git', a
     patch: 310,
     name: { roman: 'Reyru', script: 'ރޭރު', species: 'Lesser Whistling-Duck' },
     drawn: 2,
+    planned: 3,
     commit: 'd3c113e',
   });
 });
 
-test('a collection whose list is not written yet has no drawings', async () => {
-  assertEquals(await countDrawn(repository(), collections), 2);
-  assertEquals(await countDrawn(repository(), [ghosts]), 0);
+test('the items are counted drawn and in all; a list not written yet has none', async () => {
+  assertEquals(await countItems(repository(), collections), { drawn: 2, planned: 3 });
+  assertEquals(await countItems(repository(), [ghosts]), { drawn: 0, planned: 0 });
 });
 
 test('without git, a strict version fails instead of inventing one', async () => {

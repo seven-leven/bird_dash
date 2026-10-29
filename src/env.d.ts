@@ -7,5 +7,7 @@ declare const __APP_VERSION__: string;
 declare const __APP_NAME__: { roman: string; script: string; species: string } | null;
 /** Illustrations marked drawn across all collections. */
 declare const __APP_DRAWN__: number;
+/** Items in the lists across all collections, drawn or not. */
+declare const __APP_PLANNED__: number;
 /** Short hash of the commit built from, or "unknown" without git. */
 declare const __APP_COMMIT__: string;
