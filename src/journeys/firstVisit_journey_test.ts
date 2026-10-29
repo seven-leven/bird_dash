@@ -43,9 +43,10 @@ test('the collection tabs name the current one, and only the lists needed are fe
   assert(app.fetch.calls.includes('/lists/birds.json'));
 });
 
-test('the footer closes the page: the name, the version, the links out', async () => {
+test('the footer closes the page: the archive and how far it has come, the links out', async () => {
   using app = await renderApp();
   const footer = app.host.querySelector('footer')!;
-  assertStringIncludes(app.text(footer), 'Wildlife Illustrated ©');
+  assertStringIncludes(app.text(footer), 'Wildlife Illustrated');
+  assertStringIncludes(app.text(footer), ' drawn, by hand');
   assertEquals(app.control('GitHub (opens in a new tab)').getAttribute('target'), '_blank');
 });

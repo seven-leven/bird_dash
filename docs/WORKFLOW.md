@@ -124,7 +124,7 @@ Merging pushes to `main`, which starts [`deploy.yml`](../.github/workflows/deplo
    and the site stays as it was.
 
 A newer merge cancels a deploy still in progress, so only the latest `main` goes out. To check what
-is live, compare the commit hash in the site's footer (`v0.9.230 · 18 drawings · 0f5de0a`) with
+is live, compare the commit hash in the site's footer (`Valu Kukulhu · v0.9.230 · 0f5de0a`) with
 `main`.
 
 ## 8. Afterwards
@@ -192,16 +192,17 @@ Grouped by job, as [SCRIPTS.md](SCRIPTS.md) names them. Every command takes `-- 
 
 ## Versioning
 
-The footer of the site reads something like `v0.9.161 Valu Kukulhu · 18 drawings · 4f0f400`. Nothing
-here is stored except `major.minor`; the rest is worked out from the repo when the site is built, so
-it cannot drift.
+The footer of the site says how far the archive has come (`18 of 276 drawn, by hand`) and, in its
+small print, which build this is (`Valu Kukulhu · v0.9.161 · 4f0f400`); `npm run version -- --long`
+prints `0.9.161 Valu Kukulhu · 18 drawings · 4f0f400`. Nothing here is stored except `major.minor`;
+the rest is worked out from the repo when the site is built, so it cannot drift.
 
 | Part           | Where it comes from                                                                                    |
 | -------------- | ------------------------------------------------------------------------------------------------------ |
 | `0.9`          | `script/version/base_version.json` — edit by hand when a new line of work starts (e.g. `0.9` → `0.10`) |
 | `.157` patch   | number of commits in the history (`git rev-list --count HEAD`) — see the note below                    |
 | `Valu Kukulhu` | the line's name: the Dhivehi names of the drawings, in the order they were drawn — see below           |
-| `18 drawings`  | illustrations with a `drawn` date across `public/lists/*.json`                                         |
+| `18 of 276`    | illustrations with a `drawn` date, of all the items in `public/lists/*.json`                           |
 | `4f0f400`      | the commit the build was made from                                                                     |
 
 - **Each line is named after a drawing.** Line `0.n` takes the n-th Dhivehi name the archive gives,

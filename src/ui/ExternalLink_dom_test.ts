@@ -16,7 +16,8 @@ test('a link out opens in a new tab, says so to screen readers, and takes the ca
   assertEquals(link.getAttribute('href'), 'https://example.org/');
   assertEquals([link.target, link.rel], ['_blank', 'noopener noreferrer']);
   assertEquals(link.textContent?.trim().startsWith('GitHub'), true);
-  assertEquals(link.querySelector('.sr-only')?.textContent, '(opens in a new tab)');
+  // A space first, so a screen reader says "GitHub (opens…", not "GitHub(opens…".
+  assertEquals(link.querySelector('.sr-only')?.textContent, ' (opens in a new tab)');
   assertEquals(link.classList.contains('underline'), true);
 });
 

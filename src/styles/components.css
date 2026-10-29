@@ -18,6 +18,14 @@
       hover:text-stone-900 dark:text-stone-300 dark:hover:text-white;
   }
 
+  /* The footer's links, the pages, the docs and the source alike: plain body text that takes the
+     accent on hover and on the page you are on, so one row reads as one list. */
+  .footer-link {
+    @apply font-medium text-stone-600 transition-colors duration-fast dark:text-stone-300
+      hover:text-accent-700 aria-[current=page]:text-accent-700
+      dark:hover:text-accent-400 dark:aria-[current=page]:text-accent-400;
+  }
+
   /* The one primary action on a screen (accent-700 with white, 5.5:1). */
   .btn-primary {
     @apply inline-flex items-center gap-1.5 rounded-control px-3 py-1.5 text-sm font-medium

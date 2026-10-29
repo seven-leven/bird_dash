@@ -18,11 +18,6 @@ export function eachDrawnItem(list: ListFile): ListEntry[] {
 /** A drawn item's images after the first, by file name: `001-2`, `001-3`. */
 export const extraImageIds = (item: ListEntry): string[] => imageIds(item.id, item.images).slice(1);
 
-/** The ids of the collection's drawn items. */
-export async function readDrawnIds(collection: Collection, io: Io = realIo): Promise<Set<string>> {
-  return new Set(eachDrawnItem(await readList(collection, io)).map((item) => item.id));
-}
-
 /**
  * Date an item as drawn on `date`, unless it already has a date. Returns the item's
  * name, or null if the list has no item with that id (and then writes nothing).

@@ -103,8 +103,10 @@ out.
 The accent is a signal, not decoration. Reserve it for keyboard focus, the current item, progress,
 search matches, the primary action, and links that move you within the site (in the viewer: the
 group, "#11" in a note, "Read more"), in `accent-700` so they read as text. Links that leave the
-site stay neutral, with `.link-out` (and `ExternalLink`, which opens them in a new tab). If the
-accent appears in lots of places at once, it has stopped communicating.
+site stay neutral, with `.link-out` (and `ExternalLink`, which opens them in a new tab). The
+footer's links are one list in one style, `.footer-link`: body text that takes the accent on hover
+and on the page you are on, the source marked as leaving by its arrow. If the accent appears in lots
+of places at once, it has stopped communicating.
 
 Never make colour carry meaning alone. A current tab also has a fill and stronger text; colour
 reinforces the state rather than being the only clue.

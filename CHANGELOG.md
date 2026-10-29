@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | feat: a footer in two rows. First the archive (the mark, the name, "18 of 276 drawn,
+  by hand") beside its links, About, Docs and GitHub in one style; then the small print, the line's
+  name, the version and the commit, and the year. The build icons and the credits line go; the
+  divider is the rule colour, visible in both themes; on a phone each row stacks. A link that opens
+  a new tab now tells a screen reader so after a space ("GitHub (opens in a new tab)")
 - 2026-10-28 | chore: proper group names, and the script duplicates folded. The birds' families take
   eBird's names ("Sandpipers and Allies", "Gulls, Terns, and Skimmers"); the sharks are grouped by
   order (the requiem, reef and hammerhead sharks and the catsharks are all ground sharks; the

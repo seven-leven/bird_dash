@@ -1,6 +1,6 @@
 import { test } from 'vitest';
 import { assertEquals } from '@std/assert';
-import { eachDrawnItem, markDrawn, readDrawnIds, readList } from './lists.ts';
+import { eachDrawnItem, markDrawn, readList } from './lists.ts';
 import { fakeIo } from './fakeIo.ts';
 import type { ListFile } from '../../src/data/files.ts';
 import { makeScriptCollection } from '../../src/testing/scriptFixtures.ts';
@@ -24,10 +24,8 @@ test('the drawn items are every dated item, across all groups, in list order', (
   assertEquals(eachDrawnItem(list).map((item) => item.name), ['Mallard', 'Greylag']);
 });
 
-test('a list is read from the collection file, and its drawn ids with it', async () => {
-  const io = withList();
-  assertEquals(await readList(birds, io), list);
-  assertEquals([...await readDrawnIds(birds, io)], ['001', '003']);
+test('a list is read from the collection file', async () => {
+  assertEquals(await readList(birds, withList()), list);
 });
 
 test('marking an undrawn item dates it, saves the file and gives its name', async () => {

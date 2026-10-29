@@ -21,10 +21,11 @@ export default defineConfig({
   publicDir: 'public',
   base: './',
   define: {
-    // Shown in the page footer (see GalleryContent.vue).
+    // Shown in the page footer (src/shell/AppFooter.vue).
     __APP_VERSION__: JSON.stringify(formatVersion(version)),
     __APP_NAME__: JSON.stringify(version.name),
     __APP_DRAWN__: JSON.stringify(version.drawn),
+    __APP_PLANNED__: JSON.stringify(version.planned),
     __APP_COMMIT__: JSON.stringify(version.commit),
     // We use only the Composition API — drop the Options-API compat layer and
     // dev-only tooling from the production runtime.

@@ -1,63 +1,61 @@
 <!-- shell/AppFooter.vue
-     The one footer, under the gallery and under every page (the app places it): what this
-     build is (version, its line's name, the drawings, the commit; app/buildInfo.ts), the
-     pages, the docs, the source, and how it is made. -->
+     The one footer, under the gallery and under every page (the app places it). Two rows: the
+     archive and how far it has come beside the pages, the docs and the source; then, small and
+     muted, which build this is (version, its line's name, the commit; app/buildInfo.ts). Each
+     row stacks on a phone. -->
 <template>
-  <footer
-    class="mt-16 pt-6 pb-8 border-t text-center text-xs transition-colors
-           border-stone-100 text-muted dark:border-stone-800/50"
-  >
-    <p class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5">
-      <!-- Static per build -->
-      <span v-once>Wildlife Illustrated &copy; {{ new Date().getFullYear() }}</span>
-      <span class="with-icon" title="Version">
-        <Icon name="tag" aria-hidden="true" />v{{ appVersion }}
+  <footer class="mt-16 border-t border-rule pt-8 pb-10 text-sm transition-colors">
+    <div class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+      <div class="flex items-center gap-3">
+        <LogoMark class="size-6 shrink-0 text-strong" />
+        <div>
+          <p class="font-medium text-strong">Wildlife Illustrated</p>
+          <p class="text-xs text-body">{{ progress }}</p>
+        </div>
+      </div>
+      <nav aria-label="Site" class="flex flex-wrap items-center gap-x-6 gap-y-2">
+        <a
+          v-for="p in pages"
+          :key="p.id"
+          :href="`#${p.id}`"
+          class="footer-link focus-ring rounded-control"
+          :aria-current="page === p.id ? 'page' : undefined"
+        >
+          {{ p.label }}
+        </a>
+        <!-- The docs site, served beside the gallery (docs/.vitepress). -->
+        <a href="docs/" class="footer-link focus-ring rounded-control">Docs</a>
+        <ExternalLink :href="REPO_URL" class="footer-link">GitHub</ExternalLink>
+      </nav>
+    </div>
+
+    <div
+      class="mt-6 flex flex-col gap-1 border-t border-rule pt-5 text-xs text-muted
+             sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>
         <!-- The line's name: a Dhivehi name from the drawings, in drawing order. -->
-        <span
-          v-if="appName"
-          lang="dv-Latn"
-          :title="`This line of work is named after the ${appName.species}, ${appName.script}`"
-        >{{ appName.roman }}</span>
-      </span>
-      <span class="with-icon">
-        <Icon name="image" aria-hidden="true" />{{ drawnLabel }}
-      </span>
-      <span class="with-icon font-mono" title="The commit this site was built from">
-        <Icon name="commit" aria-hidden="true" />{{ appCommit }}
-      </span>
-      <a
-        v-for="p in pages"
-        :key="p.id"
-        :href="`#${p.id}`"
-        class="focus-ring rounded-control link"
-        :aria-current="page === p.id ? 'page' : undefined"
-      >
-        {{ p.label }}
-      </a>
-      <!-- The docs site, served beside the gallery (docs/.vitepress). -->
-      <a
-        href="docs/"
-        class="focus-ring rounded-control link"
-      >
-        Docs
-      </a>
-      <ExternalLink
-        :href="REPO_URL"
-        icon="github"
-        class="underline underline-offset-2 hover:text-stone-800 dark:hover:text-stone-200"
-      >
-        GitHub
-      </ExternalLink>
-    </p>
-    <p class="mt-2">Built in the open with Vue, Vite and Tailwind. Thaana set in Faruma.</p>
+        <template v-if="build.name">
+          <span
+            lang="dv-Latn"
+            :title="`This line of work is named after the ${build.name.species}, ${build.name.script}`"
+          >{{ build.name.roman }}</span>
+          ·
+        </template>
+        <span title="Version">v{{ build.version }}</span>
+        ·
+        <span class="font-mono" title="The commit this site was built from">{{ build.commit }}</span>
+      </p>
+      <p v-once>&copy; {{ new Date().getFullYear() }}</p>
+    </div>
   </footer>
 </template>
 
 <script setup lang="ts">
 import ExternalLink from '../ui/ExternalLink.vue';
-import Icon from '../ui/Icon.vue';
+import LogoMark from '../ui/LogoMark.vue';
 import { useLayoutStore } from './layoutStore.ts';
-import { drawings } from '../domain/countWords.ts';
+import { drawnOf } from '../domain/countWords.ts';
 import { REPO_URL } from '../domain/links.ts';
 
 /** The build this is (app/buildInfo.ts). */
@@ -66,14 +64,14 @@ interface Build {
   /** The line's name: a Dhivehi name from the drawings, in drawing order. */
   name: { roman: string; script: string; species: string } | null;
   drawn: number;
+  /** The items in the lists, drawn or not. */
+  planned: number;
   commit: string;
 }
 const props = defineProps<{ build: Build }>();
 
 const { pages, page } = useLayoutStore();
 
-const appVersion = props.build.version;
-const appName = props.build.name;
-const appCommit = props.build.commit;
-const drawnLabel = drawings(props.build.drawn);
+/** "18 of 276 drawn, by hand", as the rest of the site counts. */
+const progress = `${drawnOf(props.build.drawn, props.build.planned)}, by hand`;
 </script>

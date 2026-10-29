@@ -1,10 +1,10 @@
 import { test } from 'vitest';
 import { assert, assertEquals, assertMatch } from '@std/assert';
-import { computeVersion, countCommits, countDrawn, main } from './version.ts';
+import { computeVersion, countCommits, countItems, main } from './version.ts';
 import { readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import { COLLECTIONS } from '../lib/collections.ts';
-import { readDrawnIds } from '../lib/lists.ts';
+import { eachDrawnItem, readList } from '../lib/lists.ts';
 import { fakeIo } from '../lib/fakeIo.ts';
 
 // These run against the real repository: git history and the files in public/.
@@ -26,11 +26,16 @@ test("this repository's version: base_version.json, then git's count and commit"
   assert(version.name, 'the lists name the current line');
 });
 
-test('the drawn count is every collection’s drawn items added up', async () => {
-  let sum = 0;
-  for (const collection of COLLECTIONS) sum += (await readDrawnIds(collection)).size;
-  assertEquals(await countDrawn(realIo), sum);
-  assertEquals((await computeVersion()).drawn, sum);
+test('the counts are every collection’s items added up, drawn and in all', async () => {
+  const sum = { drawn: 0, planned: 0 };
+  for (const collection of COLLECTIONS) {
+    const list = await readList(collection);
+    sum.drawn += eachDrawnItem(list).length;
+    sum.planned += Object.values(list).flat().length;
+  }
+  assertEquals(await countItems(realIo), sum);
+  const { drawn, planned } = await computeVersion();
+  assertEquals({ drawn, planned }, sum);
 });
 
 test('the command prints this repository’s version, named, with --long', async () => {

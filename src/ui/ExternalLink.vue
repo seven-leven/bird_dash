@@ -11,7 +11,7 @@
     <Icon v-if="icon" :name="icon" class="size-3" aria-hidden="true" />
     <slot />
     <Icon v-if="!icon" name="externalLink" class="size-3 opacity-60" aria-hidden="true" />
-    <span class="sr-only">(opens in a new tab)</span>
+    <span class="sr-only"> (opens in a new tab)</span>
   </a>
 </template>
 

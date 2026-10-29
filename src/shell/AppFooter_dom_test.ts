@@ -14,12 +14,30 @@ function mount(page: Page) {
   return { host, text: host.textContent!.replace(/\s+/g, ' ') };
 }
 
-test('it says which build this is: the version, the drawings and the commit', () => {
-  const { text } = mount('gallery');
-  assert(text.includes(`Wildlife Illustrated © ${new Date().getFullYear()}`));
-  assert(text.includes(`v${buildInfo.version}`));
-  assert(text.includes(buildInfo.commit));
-  assert(text.includes('Thaana set in Faruma'));
+test('it says how far the archive has come, then which build this is', () => {
+  const { host, text } = mount('gallery');
+  assert(text.includes('Wildlife Illustrated'));
+  assert(text.includes(`${buildInfo.drawn} of ${buildInfo.planned} drawn, by hand`));
+  // The small print: the line's name, the version and the commit, then the year.
+  const small = host.querySelector('footer > div:last-child')!.textContent!.replace(/\s+/g, ' ');
+  assert(small.includes(`v${buildInfo.version}`));
+  assert(small.includes(buildInfo.commit));
+  if (buildInfo.name) assert(small.includes(buildInfo.name.roman));
+  assert(small.includes(`© ${new Date().getFullYear()}`));
+});
+
+test('a build whose lists name no line shows the version alone', () => {
+  const host = mountComponent(() => h(AppFooter, { build: { ...buildInfo, name: null } }), {
+    stores: { layout: { pages: PAGES, page: ref('gallery') } },
+  });
+  const small = host.querySelector('footer > div:last-child p')!.textContent!.replace(/\s+/g, ' ');
+  assertEquals(small.trim(), `v${buildInfo.version} · ${buildInfo.commit}`);
+});
+
+test('the links are one list, in one style', () => {
+  const links = [...mount('gallery').host.querySelectorAll('nav a')];
+  assertEquals(links.map((a) => a.className.includes('footer-link')), links.map(() => true));
+  assertEquals(links.length, PAGES.length + 2);
 });
 
 test('it links every page, marking the one you are on, the docs and the source', () => {

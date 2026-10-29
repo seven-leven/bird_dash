@@ -11,7 +11,8 @@
  *                          build counter, not a count of fixes.
  *   Valu Kukulhu           the line's name: a Dhivehi name from the drawings, in the
  *                          order they were drawn (lineNames.ts)
- *   18 drawings            how many illustrations are marked drawn in public/lists/*.json
+ *   18 drawings            how many illustrations are marked drawn in public/lists/*.json,
+ *                          of how many items they list (the footer's "18 of 276 drawn")
  *   a1b2c3d                the commit the build was made from
  *
  * Used by `npm run version`, the build/check summaries, and vite.config.ts (which
@@ -20,7 +21,7 @@
 
 import { plural } from '../../src/domain/countWords.ts';
 import { type Collection, COLLECTIONS } from '../lib/collections.ts';
-import { readDrawnIds } from '../lib/lists.ts';
+import { eachDrawnItem, readList } from '../lib/lists.ts';
 import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import { command, parseArgs } from '../lib/cli.ts';
@@ -34,6 +35,8 @@ export interface Version {
   name: LineName | null;
   /** Illustrations marked drawn, across all collections. */
   drawn: number;
+  /** Items in the lists, drawn or not. */
+  planned: number;
   /** Short hash of the commit built from ("unknown" when git was unavailable). */
   commit: string;
 }
@@ -43,11 +46,17 @@ export async function countCommits(io: Io): Promise<number> {
   return Number(await io.git('rev-list', '--count', 'HEAD'));
 }
 
-/** The drawn items across `collections`; a collection whose list is not written yet has none. */
-export async function countDrawn(io: Io, collections: Collection[] = COLLECTIONS): Promise<number> {
-  let count = 0;
+/** The items across `collections`, drawn and in all; a collection whose list is not written yet
+ * has none. */
+export async function countItems(
+  io: Io,
+  collections: Collection[] = COLLECTIONS,
+): Promise<{ drawn: number; planned: number }> {
+  const count = { drawn: 0, planned: 0 };
   for (const collection of collections) {
-    count += (await readDrawnIds(collection, io).catch(() => new Set())).size;
+    const list = await readList(collection, io).catch(() => ({}));
+    count.drawn += eachDrawnItem(list).length;
+    count.planned += Object.values(list).flat().length;
   }
   return count;
 }
@@ -63,7 +72,7 @@ export async function computeVersion(
   options: { lenient?: boolean; collections?: Collection[] } = {},
 ): Promise<Version> {
   const base = await readJson<{ major: number; minor: number }>(io, PATHS.baseVersion);
-  const drawn = await countDrawn(io, options.collections);
+  const { drawn, planned } = await countItems(io, options.collections);
   const name = lineName(await readLineNames(io, options.collections), base.major, base.minor);
 
   try {
@@ -71,14 +80,22 @@ export async function computeVersion(
       countCommits(io),
       io.git('rev-parse', '--short=7', 'HEAD'),
     ]);
-    return { major: base.major, minor: base.minor, patch, name, drawn, commit };
+    return { major: base.major, minor: base.minor, patch, name, drawn, planned, commit };
   } catch (err) {
     if (!options.lenient || io.env('CI')) throw err;
     io.err(
       `[version] git is unavailable (${(err as Error).message.split('\n')[0]}); ` +
         'using patch 0 and commit "unknown"',
     );
-    return { major: base.major, minor: base.minor, patch: 0, name, drawn, commit: 'unknown' };
+    return {
+      major: base.major,
+      minor: base.minor,
+      patch: 0,
+      name,
+      drawn,
+      planned,
+      commit: 'unknown',
+    };
   }
 }
 
