@@ -2,9 +2,9 @@
 
 > _The drawings carry the colour. Everything around them makes room._
 
-A gallery of hand-drawn wildlife, one species at a time: birds, sharks and shells, each shown with
-its English and scientific names, and its Dhivehi name where it has one. Every species has its place
-from the start, drawn or not, so the gaps are part of the record.
+A gallery of hand-drawn wildlife, one drawing at a time: birds, sharks and shells, each shown with
+its name, and its scientific and Dhivehi names where it has them. Every piece has its place from the
+start, drawn or not, so the gaps are part of the record.
 
 [![The five newest drawings: a sand dollar, a moorhen, a coot, a shoveler and a waterhen](docs/assets/drawings.webp)](https://seven-leven.github.io/bird_dash/)
 
@@ -18,11 +18,11 @@ from the start, drawn or not, so the gaps are part of the record.
 - **Collections** — birds, sharks and shells, each with its own groups, icon, accent colour and
   reference links. Content is data: a new drawing or a whole new collection is JSON and images, no
   code.
-- **Two views** — by family, order or group, or by the month each piece was drawn.
+- **Two views** — by family, order or class, or by the month each piece was drawn.
 - **Search everything** — common, scientific and Dhivehi names across every collection, from the
   keyboard (`Ctrl`/`⌘ K`, `↑`/`↓`/`↵`).
-- **Honest progress** — an undrawn species shows its collection's silhouette, and every count says
-  how many are drawn of how many.
+- **Honest progress** — an undrawn piece shows its collection's icon, and every count says how many
+  are drawn of how many.
 - **The viewer** — full resolution with zoom and pan, the names in three languages, the
   illustrator's note, and where to learn more.
 - **An About page** — progress per collection and the newest drawings, every number worked out by
@@ -74,10 +74,11 @@ from these files on every deploy (`npm run docs:dev` serves it locally).
 
 ## Versions and deploys
 
-The footer reads like `v0.9.161 Valu Kukulhu · 18 drawings · 4f0f400`. Only `0.9` is stored; the
-patch counts commits, each line is named after a drawing (the Dhivehi names in the order they were
-drawn: v0.1 "Reyru", the first), the drawings are counted from the lists and the hash is the commit
-built, so it cannot drift ([how](docs/WORKFLOW.md#versioning)).
+The footer says how far the archive has come ("18 of 276 drawn, by hand") and, in its small print,
+which build this is: `Valu Kukulhu · v0.9.161 · 4f0f400`. Only `0.9` is stored; the patch counts
+commits, each line is named after a drawing (the Dhivehi names in the order they were drawn: v0.1
+"Reyru", the first), the drawings are counted from the lists and the hash is the commit built, so it
+cannot drift ([how](docs/WORKFLOW.md#versioning)).
 
 Every pull request and every merge runs the same checks: lint, format, types, every test tier at
 100% coverage (in four timezones, from UTC−8 to UTC+14), the asset check and the build. A merge to
