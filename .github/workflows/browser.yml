@@ -2,7 +2,7 @@ name: Browser
 
 # The browser tier (docs/TESTING.md): the built site in a real Chrome, the one the runner
 # already has, so no browser is downloaded. Not a required check: it runs beside CI and does not
-# block a merge until it has passed for two weeks (docs/plans/TEST-OVERHAUL.md, phase 7).
+# block a merge until it has passed for two weeks (docs/plans/TODO.md).
 on:
   pull_request:
   push:

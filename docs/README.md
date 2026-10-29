@@ -26,11 +26,10 @@ it is done.
 
 ## Plans
 
-| Page                                             | Status                                                                    |
-| ------------------------------------------------ | ------------------------------------------------------------------------- |
-| [plans/TODO.md](plans/TODO.md)                   | Open work by priority (fixes, the overhauls, features), then what is done |
-| [plans/TEST-OVERHAUL.md](plans/TEST-OVERHAUL.md) | Planned: the tests top down, from promises to units, one kit              |
-| [plans/PLATFORM.md](plans/PLATFORM.md)           | Planned: use what the stack already gives; general improvements           |
+| Page                                   | Status                                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------- |
+| [plans/TODO.md](plans/TODO.md)         | Open work by priority (fixes, the overhauls, features), then what is done |
+| [plans/PLATFORM.md](plans/PLATFORM.md) | Planned: use what the stack already gives; general improvements           |
 
 ## Assets
 

@@ -18,7 +18,8 @@ interface ListedPromise {
 /** The promise table's rows: `| \`place\` | … | … | journey J1; unit (…) |`. */
 async function promiseList(): Promise<ListedPromise[]> {
   const doc = await readFile('docs/TESTING.md', 'utf8');
-  const section = doc.slice(doc.indexOf('## Promises'), doc.indexOf('## Running them'));
+  const start = doc.indexOf('## Promises');
+  const section = doc.slice(start, doc.indexOf('\n## ', start + 1));
   return [...section.matchAll(/^\| `(\w+)` +\|[^|]+\|[^|]+\|([^|]+)\|$/gm)].map((m) => ({
     id: m[1]!,
     journeys: [...m[2]!.matchAll(/\bJ(\d+)\b/g)].map((j) => `J${j[1]}`),

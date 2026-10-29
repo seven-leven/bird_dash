@@ -9,7 +9,7 @@ says.
 Every script follows these rules today, and a contract test
 ([`script/lib/scriptNaming_contract_test.ts`](../script/lib/scriptNaming_contract_test.ts)) checks
 the ones a machine can. There are no exceptions: the test runner, the last one, moved onto `Io` in
-the [test overhaul](plans/TEST-OVERHAUL.md)'s phase 1d.
+the test overhaul's phase 1d (2026-10-27).
 
 ## Principles
 

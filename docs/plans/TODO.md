@@ -7,14 +7,10 @@ folder, and the item here points to it.
 
 ## 🧭 Next: the overhauls, in this order
 
-- [ ] **1. The tests, top down** ([TEST-OVERHAUL.md](TEST-OVERHAUL.md)). From the site's promises to
-      journeys through the whole app, then features, units and contracts, with one kit for fakes,
-      mounting and waiting. Phases 1–3 (the kit, one way to a browser, the journeys) come first:
-      they are the safety net for everything below; phase 4 (a test beside every component) is done
-      too (2026-10-28), and phase 5, one table of tiers, the area × tier grid, the long files split
-      and every title and name to the conventions, and phase 6, the promise map (2026-10-29). Phase
-      7, a real browser, is built (2026-10-29) and runs in CI, not required; after two green weeks,
-      decide whether it is, then phase 8, closing.
+- [ ] **1. Make the browser checks required** (decide after 2026-11-12). The test overhaul is done
+      (2026-10-29); its browser tier runs in CI in its own workflow, not required. Once it has
+      passed for two weeks, add "Browser checks (B1 to B4)" to `main`'s required checks, or say here
+      why not.
 - [ ] **2. Use the platform** ([PLATFORM.md](PLATFORM.md)). Done but for what needs the test
       overhaul's real browser (popovers, axe) and offline (once images are versioned).
 

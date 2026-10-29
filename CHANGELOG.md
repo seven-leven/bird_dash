@@ -17,6 +17,11 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-10-29 | docs: the test overhaul closed (phase 8). TESTING.md reads top down: the rules, the
+  promises, then the tests from a whole visit to a single rule (journeys, components, units,
+  scripts, properties, contracts, and the browser tier, newly described); running them, tiers, areas
+  and conventions follow. The plan page goes; what is left of it is one decision in the TODO,
+  whether the browser checks become required after two green weeks
 - 2026-10-29 | tests: the conventions marked ✓ are a contract (`conventions_contract_test.ts`): file
   names, titles with no `name:` prefix, "should" or full stop, unique, no `.only`; four titles
   fixed. "Not covered yet" shrinks to what the browser tier leaves (test overhaul, phase 8, part)
