@@ -4,12 +4,11 @@
  * src/ui/icons.ts. The colours and the contrast maths are in ./palette.ts; the drawing
  * kit it shares with the icon sheet is in ./guideDrawing.ts.
  */
-import { readFile } from 'node:fs/promises';
 import sharp, { type OverlayOptions } from 'sharp';
 import { ICONS, isIconName } from '../../src/ui/icons.ts';
 import { PRINCIPLES } from './principles.ts';
 import { ACCENT_HEX, accentMenu, contrast, STONE, TEAL, UNDRAWN, whiteOnBlack } from './palette.ts';
-import { readJson } from '../lib/fs.ts';
+import { type Io, readJson, realIo } from '../lib/io.ts';
 import { PATHS } from '../lib/paths.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 import {
@@ -31,6 +30,7 @@ import {
   serif,
   SERIF_FACE,
   statement,
+  svgDocument,
   text,
   thaana,
   W,
@@ -68,11 +68,8 @@ export function formTokensFrom(tokensCss: string, utilitiesCss: string): FormTok
 }
 
 /** The form tokens as the site's CSS defines them now, so the guide quotes what the site uses. */
-export async function readFormTokens(): Promise<FormTokens> {
-  return formTokensFrom(
-    await readFile(PATHS.tokensCss, 'utf8'),
-    await readFile(PATHS.utilitiesCss, 'utf8'),
-  );
+export async function readFormTokens(io: Io = realIo): Promise<FormTokens> {
+  return formTokensFrom(await io.readText(PATHS.tokensCss), await io.readText(PATHS.utilitiesCss));
 }
 
 /**
@@ -225,8 +222,9 @@ export function undrawnTile(
  */
 export async function designGuide(
   collections?: CollectionEntry[], // defaults to public/collections.json
+  io: Io = realIo,
 ): Promise<{ svg: string; dhivehi: Overlay[] }> {
-  const cols = collections ?? await readJson<CollectionEntry[]>('./public/collections.json');
+  const cols = collections ?? await readJson<CollectionEntry[]>(io, PATHS.collections);
   const parts: string[] = [];
   const dhivehi: Overlay[] = [];
 
@@ -333,7 +331,7 @@ export async function designGuide(
   const sizes: [string, number, number, string, string][] = [
     ['text-3xl', 30, 700, 'ރޭރު', 'Dhivehi title in the viewer'],
     ['text-xl', 20, 600, 'Lesser Whistling-Duck', 'English title, with no Dhivehi name'],
-    ['text-base', 16, 600, 'Ducks, Geese, and Swans', 'Section headings, sidebar title'],
+    ['text-base', 16, 600, 'Ducks, Geese, and Waterfowl', 'Section headings, sidebar title'],
     ['text-sm', 14, 500, 'Search all collections…', 'Controls, body text, tile titles'],
     ['text-xs', 12, 400, '4 of 8 drawn · FROM THE ILLUSTRATOR', 'Counts, labels, badges, keys'],
   ];
@@ -361,7 +359,7 @@ export async function designGuide(
   const corner = (x: number, rx: number, h: number, name: string, use: string) =>
     rect(x, sy + (52 - h) / 2, 150, h, '#ffffff', rx, `stroke="${STONE['300']}"`) +
     text(x, sy + 80, name, 15, INK, 600) + text(x, sy + 101, use, 15, LABEL);
-  const form = await readFormTokens();
+  const form = await readFormTokens(io);
   parts.push(
     corner(
       X,
@@ -454,8 +452,7 @@ export async function designGuide(
   );
   const height = y + 180;
 
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${height}">` +
-    rect(0, 0, W, height, PAPER) + parts.join('') + '</svg>';
+  const svg = svgDocument(W, height, rect(0, 0, W, height, PAPER) + parts.join(''));
   return { svg, dhivehi };
 }
 
@@ -487,8 +484,8 @@ export function contrastReport(): string[] {
 }
 
 /** Draw the guide into `dir` (docs/assets/ by default) as design-guide.png. */
-export async function writeDesignGuide(dir: string = PATHS.docsAssets): Promise<string> {
-  const { svg, dhivehi } = await designGuide();
+export async function writeDesignGuide(io: Io, dir: string = PATHS.docsAssets): Promise<string> {
+  const { svg, dhivehi } = await designGuide(undefined, io);
   const path = `${dir}/design-guide.png`;
   await sharp(new TextEncoder().encode(svg)).composite(dhivehi).png()
     .toFile(path);

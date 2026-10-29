@@ -1,15 +1,12 @@
 // The report `npm run check` prints, as lines: per collection, the drawn count, the
 // source art found and every problem that fails the check; then each generated file.
 import { plural } from '../../src/domain/countWords.ts';
-import { COLLECTIONS } from '../lib/collections.ts';
 import type { Collection } from '../lib/collections.ts';
 import { type Line, MARK } from '../lib/cli.ts';
+import { DIVIDER, ID_WIDTH } from '../lib/report.ts';
 import type { SourceScan } from '../ingest/scanSources.ts';
 import type { ChangePlan } from '../ingest/planChanges.ts';
 import type { GeneratedFile } from './checkGenerated.ts';
-
-const ID_WIDTH = Math.max(...COLLECTIONS.map((collection) => collection.id.length));
-const DIVIDER = '─'.repeat(52);
 
 /** One collection, as the check saw it. */
 export interface AssetRow {

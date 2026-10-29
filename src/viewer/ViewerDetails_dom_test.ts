@@ -17,7 +17,7 @@ const gooseFields = {
   itemId: '002',
   commonName: 'Cotton Pygmy-Goose',
   scientificName: 'Nettapus coromandelianus',
-  group: 'Ducks, Geese, and Swans',
+  group: 'Ducks, Geese, and Waterfowl',
   drawnTime: at(2024, 10, 10),
   meta: { dhiv: 'Reyru', dhiv_script: 'ރޭރު', habitat: 'Wetlands' },
   illustratorNote: 'Experimented with markers. Compare #1.',
@@ -69,7 +69,7 @@ test('the top line says where it sits and when: id, group (a link back), month d
   assertStringIncludes(host.textContent!, 'Drawn October 2024');
   const group = [...host.querySelectorAll('button')].find((b) => b.textContent?.includes('Ducks'))!;
   group.click();
-  assertEquals(groups, ['Ducks, Geese, and Swans']);
+  assertEquals(groups, ['Ducks, Geese, and Waterfowl']);
 });
 
 test('an undated drawing has no month', () => {

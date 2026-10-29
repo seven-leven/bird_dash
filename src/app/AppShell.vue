@@ -125,7 +125,7 @@ watch(page, async (now) => {
   }
 });
 
-// "Ducks, Geese, and Swans" in the viewer: close it and show that group in the grid,
+// "Ducks, Geese, and Waterfowl" in the viewer: close it and show that group in the grid,
 // switching to the family view first if the month view is showing.
 async function showGroup(group: string): Promise<void> {
   close();

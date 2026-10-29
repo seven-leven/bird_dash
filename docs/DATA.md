@@ -62,9 +62,13 @@ is allowed.
 An object whose keys are group names and whose values are arrays of items. Groups appear in the
 order written; within a group, drawn items come first, then by id.
 
+A group is a real rank, the one its collection's `groupLabel` names, under its English name: the
+birds by family as eBird names them ("Sandpipers and Allies"), the sharks by order ("Ground Sharks",
+Carcharhiniformes), the shells by class ("Gastropods").
+
 ```json
 {
-  "Ducks, Geese, and Swans": [
+  "Ducks, Geese, and Waterfowl": [
     {
       "id": "001",
       "name": "Lesser Whistling-Duck",

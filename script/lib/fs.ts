@@ -1,4 +1,4 @@
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readdir } from 'node:fs/promises';
 
 /** True when `err` is a Node system error with this `code` (e.g. `ENOENT`). */
 export const isErrno = (err: unknown, code: string): boolean =>
@@ -23,18 +23,4 @@ export async function listFiles(dir: string, filter: (name: string) => boolean):
  */
 export async function ensureDir(path: string): Promise<void> {
   await mkdir(path, { recursive: true });
-}
-
-/**
- * Read and parse a JSON file.
- */
-export async function readJson<T>(path: string): Promise<T> {
-  return JSON.parse(await readFile(path, 'utf8'));
-}
-
-/**
- * Write data as JSON to a file (2-space indent, trailing newline).
- */
-export async function writeJson(path: string, data: unknown): Promise<void> {
-  await writeFile(path, JSON.stringify(data, null, 2) + '\n');
 }

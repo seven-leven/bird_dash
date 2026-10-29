@@ -1,5 +1,5 @@
 {
-  "Ducks, Geese, and Swans": [
+  "Ducks, Geese, and Waterfowl": [
     {
       "id": "001",
       "name": "Lesser Whistling-Duck",
@@ -73,7 +73,7 @@
       "illustratorNote": ""
     }
   ],
-  "Pheasants and Allies": [
+  "Pheasants, Grouse, and Allies": [
     {
       "id": "009",
       "name": "Common Quail",
@@ -141,7 +141,7 @@
       "illustratorNote": ""
     }
   ],
-  "Nightjars": [
+  "Nightjars and Allies": [
     {
       "id": "016",
       "name": "Jungle Nightjar",
@@ -264,7 +264,7 @@
       "illustratorNote": ""
     }
   ],
-  "Rails, Crakes, and Coots": [
+  "Rails, Gallinules, and Coots": [
     {
       "id": "029",
       "name": "White-breasted Waterhen",
@@ -407,7 +407,7 @@
       "illustratorNote": ""
     }
   ],
-  "Sandpipers, Snipes, and Allies": [
+  "Sandpipers and Allies": [
     {
       "id": "044",
       "name": "Whimbrel",
@@ -694,7 +694,7 @@
       "illustratorNote": ""
     }
   ],
-  "Gulls, Terns, and Noddies": [
+  "Gulls, Terns, and Skimmers": [
     {
       "id": "075",
       "name": "Brown Noddy",
@@ -940,7 +940,7 @@
       "illustratorNote": ""
     }
   ],
-  "Austral Storm Petrels": [
+  "Southern Storm-Petrels": [
     {
       "id": "102",
       "name": "Wilson's Storm-Petrel",
@@ -960,7 +960,7 @@
       "illustratorNote": ""
     }
   ],
-  "Northern Storm Petrels": [
+  "Northern Storm-Petrels": [
     {
       "id": "104",
       "name": "Leach's Storm-Petrel",
@@ -1110,7 +1110,7 @@
       "illustratorNote": ""
     }
   ],
-  "Boobies": [
+  "Boobies and Gannets": [
     {
       "id": "120",
       "name": "Abbott's Booby",
@@ -1148,7 +1148,7 @@
       "illustratorNote": ""
     }
   ],
-  "Darters": [
+  "Anhingas": [
     {
       "id": "124",
       "name": "Oriental Darter",
@@ -1159,7 +1159,7 @@
       "illustratorNote": ""
     }
   ],
-  "Cormorants": [
+  "Cormorants and Shags": [
     {
       "id": "125",
       "name": "Little Cormorant",
@@ -1356,7 +1356,7 @@
       "illustratorNote": ""
     }
   ],
-  "Ospreys": [
+  "Osprey": [
     {
       "id": "146",
       "name": "Osprey",
@@ -1600,7 +1600,7 @@
       "illustratorNote": ""
     }
   ],
-  "Woodswallows": [
+  "Woodswallows, Bellmagpies, and Allies": [
     {
       "id": "171",
       "name": "Ashy Woodswallow",
@@ -1611,7 +1611,7 @@
       "illustratorNote": ""
     }
   ],
-  "Orioles": [
+  "Old World Orioles": [
     {
       "id": "172",
       "name": "Indian Golden Oriole",
@@ -1663,7 +1663,7 @@
       "illustratorNote": ""
     }
   ],
-  "Crows": [
+  "Crows, Jays, and Magpies": [
     {
       "id": "177",
       "name": "House Crow",
@@ -1685,7 +1685,7 @@
       "illustratorNote": ""
     }
   ],
-  "Swallows and Martins": [
+  "Swallows": [
     {
       "id": "179",
       "name": "Bank Swallow",
@@ -1732,7 +1732,7 @@
       "illustratorNote": ""
     }
   ],
-  "Starlings and Mynas": [
+  "Starlings": [
     {
       "id": "184",
       "name": "European Starling",
@@ -1837,7 +1837,7 @@
       "illustratorNote": ""
     }
   ],
-  "Grassbirds": [
+  "Grassbirds and Allies": [
     {
       "id": "195",
       "name": "Common Grasshopper-Warbler",
@@ -1849,7 +1849,7 @@
     }
   ],
   "Leaf Warblers": [],
-  "Sylviid Warblers": [
+  "Sylviid Warblers and Allies": [
     {
       "id": "196",
       "name": "Garden Warbler",
@@ -1860,7 +1860,7 @@
       "illustratorNote": ""
     }
   ],
-  "Thrushes": [
+  "Thrushes and Allies": [
     {
       "id": "197",
       "name": "Eyebrowed Thrush",
@@ -1871,7 +1871,7 @@
       "illustratorNote": ""
     }
   ],
-  "Old World Flycatchers & Chats": [
+  "Old World Flycatchers": [
     {
       "id": "198",
       "name": "Indian Robin",
@@ -1909,7 +1909,7 @@
       "illustratorNote": ""
     }
   ],
-  "Waxbills": [
+  "Waxbills and Allies": [
     {
       "id": "202",
       "name": "Red-cheeked Cordonbleu",
@@ -1920,7 +1920,7 @@
       "illustratorNote": ""
     }
   ],
-  "Finches": [
+  "Finches, Euphonias, and Allies": [
     {
       "id": "203",
       "name": "Common Rosefinch",
@@ -1931,7 +1931,7 @@
       "illustratorNote": ""
     }
   ],
-  "Buntings": [
+  "Old World Buntings": [
     {
       "id": "204",
       "name": "Ortolan Bunting",

@@ -10,7 +10,7 @@ import {
 import { iconSheetSvg } from './iconSheet.ts';
 import { accentMenu, STONE, UNDRAWN } from './palette.ts';
 import { ICON_GROUPS, ICONS } from '../../src/ui/icons.ts';
-import { readJson } from '../lib/fs.ts';
+import { readJson, realIo } from '../lib/io.ts';
 import type { CollectionEntry } from '../../src/data/files.ts';
 
 // The generated images are drawn from the real tokens, icons and data, so these
@@ -20,7 +20,7 @@ test('the guide names every accent hue on the menu and who uses each', async () 
   const { svg } = await designGuide();
   for (const hue of await accentMenu()) assertStringIncludes(svg, `>${hue}</text>`);
 
-  const collections = await readJson<CollectionEntry[]>('./public/collections.json');
+  const collections = await readJson<CollectionEntry[]>(realIo, './public/collections.json');
   for (const c of collections) assertStringIncludes(svg, `>${c.label}</text>`);
   assertStringIncludes(svg, '>free</text>'); // hues no collection has taken yet
 });
@@ -41,7 +41,7 @@ test('the guide and the icon sheet both show every icon, under its group', async
 
 test("the guide shows every collection's undrawn tile, light and dark", async () => {
   const { svg, dhivehi } = await designGuide();
-  const collections = await readJson<CollectionEntry[]>('./public/collections.json');
+  const collections = await readJson<CollectionEntry[]>(realIo, './public/collections.json');
   for (const c of collections) {
     const body = ICONS[c.icon as keyof typeof ICONS].body;
     assertEquals(svg.split(body).length - 1 >= 2, true, `${c.id}: light and dark`);
@@ -67,7 +67,7 @@ test('the contrast report gives a ratio for every pair the guide quotes', () => 
 });
 
 test('a collection with no accent set is listed under teal, the default', async () => {
-  const collections = await readJson<CollectionEntry[]>('./public/collections.json');
+  const collections = await readJson<CollectionEntry[]>(realIo, './public/collections.json');
   const unset = collections.map((c, i) =>
     i === 0 ? { ...c, accent: undefined, label: 'Unaccented' } : c
   );

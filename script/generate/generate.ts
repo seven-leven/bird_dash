@@ -41,7 +41,7 @@ export const GENERATORS: Generator[] = [
     id: 'designGuide',
     makes: 'docs/assets/design-guide.png',
     write: async (io, into) => {
-      const path = await writeDesignGuide(into);
+      const path = await writeDesignGuide(io, into);
       // The contrast figures docs/DESIGN.md quotes, worked out from the same colours.
       for (const line of contrastReport()) io.out(line);
       return [path];

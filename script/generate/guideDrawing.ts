@@ -75,6 +75,17 @@ export function wrapText(s: string, max: number): string[] {
   }
   return lines;
 }
+/** A whole SVG document, `width` by `height`, around `body`: what every generator writes. */
+export const svgDocument = (
+  width: number,
+  height: number,
+  body: string,
+  viewBox?: string,
+): string =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}"${
+    viewBox ? ` viewBox="${viewBox}"` : ''
+  }>${body}</svg>`;
+
 /** Several lines of text, `lead` apart, as one <text> of <tspan>s. */
 export const para = (x: number, y: number, lines: string[], lead: number, attrs: string) =>
   `<text x="${x}" y="${y}" ${attrs}>${
