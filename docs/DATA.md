@@ -44,7 +44,7 @@ An array, in the order the tabs appear. The first entry is the collection shown 
 | `emoji`      | yes      | Shown in terminal reports, and on the tab if there is no `icon`                                 |
 | `icon`       | no       | Name of an icon in `src/ui/icons.ts`. Also what an undrawn tile shows                           |
 | `accent`     | no       | The collection's accent colour: a hue from the menu in `src/styles/accents.css`. Default `teal` |
-| `groupLabel` | yes      | What a group is called ("Family", "Order"); labels the group view and the sidebar               |
+| `groupLabel` | yes      | What a group is called ("Family", "Order", "Class"); labels the group view and the sidebar      |
 | `itemLabel`  | yes      | The singular noun for an item ("bird")                                                          |
 | `links`      | yes      | "Learn more" links in the viewer; may be an empty array                                         |
 

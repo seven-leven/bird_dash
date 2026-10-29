@@ -5,11 +5,6 @@ bottom, newest first. When an item is done, tick it and move it to **Done** with
 line; the CHANGELOG keeps the detail. Work big enough to need phases gets a plan of its own in this
 folder, and the item here points to it.
 
-## 🔧 Fix now
-
-- [ ] **Local Node is behind.** This machine runs Node 24.18.0; `.nvmrc` and `engines` require
-      24.22.1. Everything passes, but upgrade to match CI.
-
 ## 🧭 Next: the overhauls, in this order
 
 - [ ] **1. The tests, top down** ([TEST-OVERHAUL.md](TEST-OVERHAUL.md)). From the site's promises to
@@ -32,13 +27,10 @@ The practice series in the art notes are coming: Butterflies (colour pencil), Dy
 Sweet Treats (fineliner), Landscapes (pencil), Digital Value Studies, Movie Character Portraits.
 Each is a numbered list of about 30 prompts in one medium, grouped by difficulty or week, and most
 are not wildlife. "Every piece has its place from the start, drawn or not" already fits them, and
-`groupLabel` ("Difficulty", "Week") already works. Before the first one goes in:
+`groupLabel` ("Difficulty", "Week") already works; nothing in the code stands in the way.
 
-- [x] **One kind of collection** (2026-10-28): no `kind`; every collection takes the same fields,
-      `medium` among them, and the About page names them all in one sentence.
-- [x] **The name** (2026-10-28): "Wildlife Illustrated" stays, the umbrella over the series.
-- [x] **The illustrator's note** (2026-10-28): written straight into the list's `illustratorNote`,
-      not drawn from the art notes.
+- [ ] **The first series**, when its drawings are ready: a list, a `medium`, an icon and the images,
+      by DATA.md's "Add a collection" recipe. No code change.
 
 ## 🗂️ Data and tooling
 
@@ -47,8 +39,17 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
 
 ## ✅ Done
 
+**2026-10-29**
+
+- [x] A footer in two rows: the archive and how far it has come beside one list of links, then the
+      build in small print.
+- [x] Local Node upgraded to 24.22.1, matching `.nvmrc` and CI.
+
 **2026-10-28**
 
+- [x] One kind of collection: no `kind`; every collection takes the same fields, and the About page
+      names them all in one sentence. Decided with it: the name "Wildlife Illustrated" stays, and an
+      illustrator's note is written straight into its list.
 - [x] Proper group names: bird families as eBird names them, sharks by order, shells by class
       (groups named "Class", which the sidebar calls "Classes").
 - [x] Images grouped by collection: every image folder (`raw_png/`, `full/`, `thumb/`, `small/`)
@@ -65,7 +66,7 @@ are not wildlife. "Every piece has its place from the start, drawn or not" alrea
       file, the layers and the naming checked by contract tests, `types/` gone.
 - [x] A test beside every component (the test overhaul's phase 4), kept so by a contract test.
 - [x] A `kind` per collection, the About page counting species and series apart, and an icon per
-      series.
+      series (the `kind` undone the same day: one kind of collection, above).
 - [x] Placeholders as icons; one set of text roles; five type sizes; fewer stores per component.
 - [x] Responsive thumbnails (240px beside the 400px), and several images per item in the viewer.
 

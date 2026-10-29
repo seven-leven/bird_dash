@@ -72,13 +72,15 @@ edited by hand.
 
 ### 5. One home for anything shared
 
-| What                                                  | Where                   |
-| ----------------------------------------------------- | ----------------------- |
-| Paths in the repository (`public/lists/`, `dist/`, …) | `script/lib/paths.ts`   |
-| Project links (repository, site, docs, write-up)      | `src/domain/links.ts`   |
-| Files, git, child processes, the clock                | `script/lib/io.ts`      |
-| Running a command, printing, exit codes               | `script/lib/cli.ts`     |
-| The collections and their lists                       | `script/lib/`, as today |
+| What                                                  | Where                             |
+| ----------------------------------------------------- | --------------------------------- |
+| Paths in the repository (`public/lists/`, `dist/`, …) | `script/lib/paths.ts`             |
+| Project links (repository, site, docs, write-up)      | `src/domain/links.ts`             |
+| Files, git, child processes, the clock                | `script/lib/io.ts`                |
+| Running a command, printing, exit codes               | `script/lib/cli.ts`               |
+| A report's columns and divider (`check`, `ingest`)    | `script/lib/report.ts`            |
+| The collections and their lists                       | `script/lib/`, as today           |
+| A generated drawing's colours, text and `svgDocument` | `script/generate/guideDrawing.ts` |
 
 A path or a URL written out in a second place is a bug waiting for a rename.
 

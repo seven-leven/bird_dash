@@ -90,7 +90,7 @@ script/                 One folder per command, run by Node; shared code in lib/
   changelog/            Insert unlogged commits into CHANGELOG.md
   docs/                 The docs site's helpers (links, live blocks, accents)
   testRunner/           The test runner (`npm test`): tiers, areas, reports, coverage
-  lib/                  Io, the command kit, collections, list files, paths
+  lib/                  Io, the command kit, collections, list files, paths, the reports' frame
 docs/                   Reference guides at the top level; plans/ for work not done yet,
                         assets/ for generated images (see README.md)
 ```
@@ -183,11 +183,11 @@ only through `Io`.
 
 ## Rules
 
-- **Imports follow the layers.** `domain/` imports nothing but itself; a helper in `lib/` never
-  imports a store; a component never imports a data composable directly.
-- **`src/` never imports from `public/`.** It fetches, through one helper (`lib/fetchJson.ts`), and
-  only in the loaders (`useCollections`, `useStats`): a page is a view of a store and never fetches.
-  `script/` may import `collections.json`.
+- **Imports follow the layers.** `domain/` imports nothing but itself; a component in `ui/` never
+  injects a store; a component never imports a data composable directly.
+- **`src/` never imports from `public/`.** It fetches, through one helper (`data/fetchJson.ts`), and
+  only in the loaders (`useCollectionLoader`, `useStatsLoader`): a page is a view of a store and
+  never fetches. `script/` may import `collections.json`.
 - **Components change state only through store actions.**
 - **Anything that can be computed is not stored.** The version, the counts and the grouped views are
   all derived.
