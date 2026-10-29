@@ -1,41 +1,126 @@
 /**
- * Test tiers. The tier of a test file is encoded in its name, and this module is
- * the ONE place that maps names to tiers — the runner, the CI summary and the
- * `npm run test:<tier>` scripts all read it.
+ * Test tiers, as one table. A test file's tier is in its name, and everything that
+ * needs to know what a tier is reads it from here: the runner, `tierOf`, the
+ * `npm run test:<tier>` scripts, Vitest's projects (vite.config.ts, through
+ * `vitestProjects`) and the table in docs/TESTING.md (a contract test compares them).
  *
- *   unit      x_test.ts            pure logic, no environment            (fastest)
- *   dom       x_dom_test.ts        needs a browser-like global (fake DOM)
- *   journey   x_journey_test.ts    a whole visit through the real app, in the fake DOM
- *   prop      x_prop_test.ts       property-based: hundreds of generated inputs
- *   contract  x_contract_test.ts   checks real repo files (public/*.json, …)
- *
- * Browser tests (a real Chrome against the built site) would be a fifth tier.
+ * Two axes, kept apart: an ENVIRONMENT is where a test runs (plain Node, or a fake
+ * browser); a TIER is one environment plus what is its own (its suffix, what it is for,
+ * the helper it brings). A real browser would be one more environment and one more row.
  */
 
 import { glob } from 'node:fs/promises';
 
+export interface Environment {
+  /** Vitest's `environment` for the files that run here. */
+  vitest: 'node' | 'happy-dom';
+  /** Run before each file here (and, through it, before each test). */
+  setupFiles: string[];
+  /** Where its tests may live. */
+  roots: string[];
+}
+
+export const ENVIRONMENTS = {
+  node: { vitest: 'node', setupFiles: [], roots: ['src', 'script'] },
+  dom: { vitest: 'happy-dom', setupFiles: ['src/testing/domSetup.ts'], roots: ['src'] },
+} as const satisfies Record<string, Environment>;
+
+export type EnvironmentName = keyof typeof ENVIRONMENTS;
+
+export interface TierRow {
+  /** The file name ends with it: `x` + suffix. */
+  suffix: string;
+  environment: EnvironmentName;
+  /** What the tier is for, as docs/TESTING.md's table says it. */
+  about: string;
+  /** What the tier brings of its own, from src/testing/, or "none". */
+  helper: string;
+}
+
+/** The tiers, in the order the report lists them. */
 export const TIERS = {
-  unit: 'pure logic, no environment',
-  dom: 'composables that need a browser-like global (fake DOM)',
-  journey: 'a whole visit through the real app, in the fake DOM',
-  prop: 'property-based tests over generated inputs',
-  contract: 'checks the real files in the repo (public/*.json, …)',
-} as const;
+  unit: {
+    suffix: '_test.ts',
+    environment: 'node',
+    about: 'Pure logic. Start here',
+    helper: '`testing/fixtures.ts`',
+  },
+  dom: {
+    suffix: '_dom_test.ts',
+    environment: 'dom',
+    about: 'Code that needs `document`, `location`, focus or storage',
+    helper: '`testing/domSetup.ts`, before every test',
+  },
+  journey: {
+    suffix: '_journey_test.ts',
+    environment: 'dom',
+    about: 'A whole visit, through the real app',
+    helper: '`testing/renderApp.ts` (`renderApp`)',
+  },
+  prop: {
+    suffix: '_prop_test.ts',
+    environment: 'node',
+    about: 'A rule that must hold for _any_ input',
+    helper: '`testing/propertyRuns.ts` (`assertProperty`)',
+  },
+  contract: {
+    suffix: '_contract_test.ts',
+    environment: 'node',
+    about: 'The real files and history of this repo',
+    helper: 'none',
+  },
+} as const satisfies Record<string, TierRow>;
 
 export type Tier = keyof typeof TIERS;
 export const TIER_ORDER = Object.keys(TIERS) as Tier[];
 
 export const isTier = (value: string): value is Tier => Object.hasOwn(TIERS, value);
 
+// Longest suffix first: "x_dom_test.ts" also ends with "_test.ts".
+const BY_SUFFIX = [...TIER_ORDER].sort((a, b) => TIERS[b].suffix.length - TIERS[a].suffix.length);
+
 /** Which tier a test file belongs to, from its name alone. */
 export function tierOf(path: string): Tier {
   const name = path.replaceAll('\\', '/');
-  if (name.endsWith('_dom_test.ts')) return 'dom';
-  if (name.endsWith('_journey_test.ts')) return 'journey';
-  if (name.endsWith('_prop_test.ts')) return 'prop';
-  if (name.endsWith('_contract_test.ts')) return 'contract';
-  if (name.endsWith('_test.ts')) return 'unit';
-  throw new Error(`not a test file: ${path}`);
+  const tier = BY_SUFFIX.find((t) => name.endsWith(TIERS[t].suffix));
+  if (!tier) throw new Error(`not a test file: ${path}`);
+  return tier;
+}
+
+/**
+ * Vitest's projects, one per environment: each takes the files of its tiers under its
+ * roots, and leaves the other environments' suffixes to them.
+ */
+export function vitestProjects() {
+  return (Object.keys(ENVIRONMENTS) as EnvironmentName[]).map((name) => {
+    const env: Environment = ENVIRONMENTS[name];
+    const suffix = (t: Tier) => TIERS[t].suffix;
+    const own = TIER_ORDER.filter((t) => TIERS[t].environment === name);
+    // "_test.ts" already takes in "_prop_test.ts": include the shortest suffixes only.
+    const included = own.filter((t) => !own.some((o) => o !== t && suffix(t).endsWith(suffix(o))));
+    // Leave out the other environments' files that those patterns would catch: node's
+    // "_test.ts" takes in "_dom_test.ts" too, so node leaves it to dom.
+    const excluded = TIER_ORDER.filter((t) =>
+      TIERS[t].environment !== name && included.some((i) => suffix(t).endsWith(suffix(i)))
+    );
+    return {
+      extends: true as const,
+      test: {
+        name,
+        include: env.roots.flatMap((root) => included.map((t) => `${root}/**/*${suffix(t)}`)),
+        exclude: [...excluded.map((t) => `**/*${suffix(t)}`), '**/node_modules/**'],
+        environment: env.vitest,
+        ...(env.setupFiles.length > 0 ? { setupFiles: [...env.setupFiles] } : {}),
+      },
+    };
+  });
+}
+
+/** docs/TESTING.md's table of tiers, as the table here makes it. */
+export function tiersMarkdown(): string[] {
+  return TIER_ORDER.map((t) =>
+    `| \`${t}\` | \`x${TIERS[t].suffix}\` | ${TIERS[t].about} | ${TIERS[t].helper} |`
+  );
 }
 
 /** A path as the runner compares them: forward slashes, no leading `./`. */

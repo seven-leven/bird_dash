@@ -6,6 +6,7 @@ import { realIo } from './script/lib/io.ts';
 import { sizeBudget } from './script/build/sizeBudget.ts';
 import { contentSecurityPolicy } from './script/build/contentSecurityPolicy.ts';
 import { linkPreviews } from './script/build/linkPreviews.ts';
+import { vitestProjects } from './script/testRunner/tiers.ts';
 
 // The version comes from the same function as `npm run version`; there is no
 // second copy of the formula here. Lenient so a dev server still starts without git
@@ -45,29 +46,11 @@ export default defineConfig({
   },
   // Tests: `npm test` (script/testRunner/testRunner.ts) runs these and picks the files per tier.
   test: {
-    // The tier sets the environment (docs/TESTING.md, rule 5): a `_dom_test` or `_journey_test`
+    // The tier sets the environment (docs/TESTING.md, rule 5): one project per environment, made
+    // from the table of tiers in script/testRunner/tiers.ts. A `_dom_test` or `_journey_test`
     // file runs in happy-dom, reset before each of its tests by src/testing/domSetup.ts; the rest
     // in Node.
-    projects: [
-      {
-        extends: true,
-        test: {
-          name: 'node',
-          include: ['src/**/*_test.ts', 'script/**/*_test.ts'],
-          exclude: ['**/*_dom_test.ts', '**/*_journey_test.ts', '**/node_modules/**'],
-          environment: 'node',
-        },
-      },
-      {
-        extends: true,
-        test: {
-          name: 'dom',
-          include: ['src/**/*_dom_test.ts', 'src/**/*_journey_test.ts'],
-          environment: 'happy-dom',
-          setupFiles: ['src/testing/domSetup.ts'],
-        },
-      },
-    ],
+    projects: vitestProjects(),
     // Each file in its own process (Vitest isolates files by default), so a fake DOM
     // or a stubbed global never leaks into another file.
     pool: 'forks',
