@@ -17,6 +17,8 @@ right. Entries up to v0.7 carry the old `x.y.z+w` labels, where `w` was the draw
 
 ## v0.9.0 Valu Kukulhu (Stores, Tests, Accessibility & Design)
 
+- 2026-11-13 | data: Rock Pigeon (012, Kotharu) drawn, ink and watercolor on paper, the first new
+  drawing since March; 19 drawings
 - 2026-10-29 | docs: the test overhaul closed (phase 8). TESTING.md reads top down: the rules, the
   promises, then the tests from a whole visit to a single rule (journeys, components, units,
   scripts, properties, contracts, and the browser tier, newly described); running them, tiers, areas

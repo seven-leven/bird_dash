@@ -1,16 +1,16 @@
 {
-  "drawn": 18,
+  "drawn": 19,
   "total": 276,
   "collections": [
     {
       "id": "birds",
       "label": "Birds",
       "total": 204,
-      "drawn": 15,
+      "drawn": 16,
       "groups": 56,
       "named": 191,
       "firstDrawn": "2024-10-10",
-      "lastDrawn": "2026-02-06"
+      "lastDrawn": "2026-11-13"
     },
     {
       "id": "sharks",
@@ -42,6 +42,14 @@
     "drawn": "2024-10-10"
   },
   "newest": [
+    {
+      "collection": "birds",
+      "id": "012",
+      "name": "Rock Pigeon",
+      "dhivehi": "ކޮތަރު",
+      "roman": "Kotharu",
+      "drawn": "2026-11-13"
+    },
     {
       "collection": "shells",
       "id": "029",
@@ -95,14 +103,6 @@
       "dhivehi": "ވަލު ކުކުޅު / ކުލީ ކުކުޅު",
       "roman": "Valu Kukulhu / Kulhee Kukulhu",
       "drawn": "2025-10-15"
-    },
-    {
-      "collection": "birds",
-      "id": "011",
-      "name": "Greater Flamingo",
-      "dhivehi": "ގުޑުގުޑާ ދޫނި",
-      "roman": "Gudugudaa Dhooni",
-      "drawn": "2025-10-07"
     }
   ]
 }
